@@ -1,0 +1,86 @@
+
+/*فرم*/
+.myRegister > .data{
+    direction: rtl;
+    margin-top: 20px;
+}
+
+.myRegister > .data  .col-xs-12 > .col-xs-7 > input:focus{
+    border: 1px solid #287e8f;
+}
+
+.myRegister > .data  .col-xs-12 > .col-xs-7 > input{
+    border: 1px solid #a4a39d;
+    outline: none;
+    float: right;
+    margin-top: 10px;
+    box-sizing: border-box;
+    max-width: 200px;
+    height: 32px;
+    margin-right: 0 !important;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+}
+
+.myRegister > .data  .col-xs-12 > .col-xs-5 > span{
+    float: left;
+    margin-top: 10px;
+    color: black;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+}
+
+.myRegister > .data  .col-xs-12 > .col-xs-7 > select:focus{
+    border: 1px solid #287e8f;
+}
+
+.myRegister > .data  .col-xs-12 > .col-xs-7 > select{
+    border: 1px solid #a4a39d;
+    outline: none;
+    float: right;
+    margin-top: 10px;
+    box-sizing: border-box;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+}
+
+.myRegister > .data  center > input[type=submit] {
+    padding: 15px;
+    margin-top: 10px;
+    border-radius: 3px;
+    background-color: transparent;
+    border: 1px solid black;
+    color: black;
+    font-family: IRANSans;
+}
+
+.myRegister > .data  center > input[type=submit]:hover{
+    background-color: #ccc;
+}
+
+input {
+    text-align: center;
+}
+/*راهنمای هر بخش*/
+.help  {
+    background-color : transparent;
+    margin-right : 10px;
+    margin-left : -15px;
+    float: left ;
+}
+/*بخش رمز عبور مجدد*/
+#recPass{
+    margin: 30px;
+}
+
+#recPass > a{
+    text-decoration: none;
+}
+
+#recPass > a:hover {
+    padding: 7px;
+    color: black;
+    background-color: #ccc;
+    border: 2px solid black;
+    border-radius: 10px;
+}

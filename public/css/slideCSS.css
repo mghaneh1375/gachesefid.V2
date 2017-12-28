@@ -1,0 +1,23 @@
+.fromUpload {
+    width: 585px;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.fromUpload input{
+    height: 40px;
+    padding: 10px;
+    outline: 0;
+    border: 1px solid #EBEBEB;
+    width: 100%;
+    border-radius: 2px;
+    box-shadow: -3px 2px 8px 0 rgba(0,0,0,.25) inset;
+    margin-bottom: 10px;
+}
+
+.fileContainer{
+    font-size: 12px;
+    direction: rtl;
+    display: block;
+}

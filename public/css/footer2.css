@@ -1,0 +1,510 @@
+html,
+body {
+    width: 100%;
+    overflow-y: visible
+}
+html {
+    height: 100%;
+    font-size: 100%;
+    -webkit-text-size-adjust: 100%
+}
+body {
+    direction: rtl;
+    color: #404040;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    background-attachment: fixed;
+    font-family: IRANSans !important;
+    min-height: 100%;
+    position: relative;
+    -webkit-animation-duration: 0.1s;
+    -webkit-animation-name: fontfix;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-delay: 0.1s
+}
+.container {
+    min-width: 960px !important
+}
+.container {
+    margin-right: auto;
+    margin-left: auto;
+    padding-left: 10px;
+    padding-right: 10px
+}
+.container:before,
+.container:after {
+    content: " ";
+    display: table
+}
+.container:after {
+    clear: both
+}
+
+.row {
+    margin-left: -10px;
+    margin-right: -10px
+}
+.row:before,
+.row:after {
+    content: " ";
+    display: table
+}
+.row:after {
+    clear: both
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    font-family: IRANSans !important;
+    line-height: 1.4;
+    font-size: 15px;
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+}
+p {
+    margin: 0 0 10px
+}
+img {
+    max-width: 100%;
+    vertical-align: middle;
+}
+a {
+    text-decoration: none;
+    /*color: #f06305*/
+}
+a:hover {
+    text-decoration: none
+}
+a:focus {
+    background: none
+}
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none
+}
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box
+}
+*:before,
+*:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box
+}
+li *:before,
+li *:after {
+    -webkit-box-sizing: initial;
+    -moz-box-sizing: initial;
+    box-sizing: initial
+}
+input {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit
+}
+input[type="text"]:focus {
+    outline: none
+}
+
+
+.footer-area {
+    background: #262626;
+    border-top: 3px solid #f06305;
+    border-bottom: 1px solid #141414
+}
+.footer-area h6 {
+    font-size: 16px;
+    border-bottom: 1px solid #404040;
+    font-weight: normal;
+    margin-bottom: 10px;
+    padding: 5px 0;
+    color: #e6e6e6
+}
+.footer-row {
+    margin-bottom: 20px
+}
+.footer-links {
+    font: normal 15px/1.5 IRANSans;
+    color: #e6e6e6;
+    margin-top: 30px;
+    padding-left: 30px
+}
+.footer-links a {
+    color: #b3b3b3
+}
+.footer-links ul li a {
+    display: block;
+    font-size: 13px;
+    color: gray;
+    padding: 4px 0;
+    -webkit-transition-duration: 0.1s;
+    transition-duration: 0.1s
+}
+.footer-links ul li a:before {
+    content: " ";
+    content: " ";
+    background-image: url(../images/tandis.jpg);
+    background-repeat: no-repeat;
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    background-position: -321px -71px;
+    margin: 4px 0 0 5px;
+    float: right
+}
+.footer-links ul li a:hover {
+    color: #e6e6e6
+}
+.footer-links ul li a:hover:before {
+    content: " ";
+    background-image: url(../images/tandis.jpg);
+    background-repeat: no-repeat;
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    background-position: -371px -21px
+}
+.footer-app-link {
+    height: 50px;
+    position: relative;
+    display: block;
+    background: #333;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+    padding: 11px 80px 0 0;
+    font-family: IRANSans !important;
+    font-size: 18px;
+    color: #b3b3b3;
+    -webkit-transition-duration: 0.2s;
+    transition-duration: 0.2s
+}
+.footer-app-link:before {
+    display: inline-block;
+    font-family:  IRANSans;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\f179";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 70px;
+    height: 50px;
+    background: #f06305;
+    color: white;
+    font-size: 30px;
+    padding: 10px 0;
+    text-align: center;
+    -webkit-border-radius: 0 4px 4px 0;
+    -moz-border-radius: 0 4px 4px 0;
+    -ms-border-radius: 0 4px 4px 0;
+    -o-border-radius: 0 4px 4px 0;
+    border-radius: 0 4px 4px 0
+}
+.footer-app-link:hover {
+    background: #3ca511;
+    color: #000
+}
+.footer-app-link.app-android:before {
+    content: "\f17b"
+}
+
+
+.copyright {
+    min-height: 100px;
+    background: #1c1c1c no-repeat center center;
+    border-top: 1px solid #333;
+    font: normal 12px/1.5  IRANSans;
+}
+.copyright .socials {
+    margin-top: 0;
+}
+.copyright .socials li a {
+    font-size: 28px;
+    margin-right: 3px;
+    color: gray;
+    -webkit-transition-duration: 0.2s;
+    transition-duration: 0.2s
+}
+.copyright .socials li a.color-telegram:hover {
+    border-bottom: 2px solid #3b5998;
+}
+.copyright .socials li a.color-twitter:hover {
+    border-bottom: 2px solid #00a0d1;
+}
+.copyright .socials li a.color-aparat:hover {
+    border-bottom: 2px solid #db4a39;
+}
+.copyright .socials li a.color-instagram:hover {
+    border-bottom: 2px solid #964b00;
+}
+.copyright .socials li a.color-youtube:hover {
+    border-bottom: 2px solid #bb0000;
+}
+.copyright .socials li a.color-rss:hover {
+    color: #FA9B39
+}
+
+.socials {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    direction: ltr
+}
+.socials li {
+    display: inline-block
+}
+.socials li a {
+    display: block;
+    padding: 0 0px;
+    margin: 0;
+    font-size: 20px;
+    margin: 0 !important;
+    color: #666
+}
+.socials li a:hover {
+    color: #000
+}
+.socials li a.color-telegram {
+    color: #3b5998
+}
+.socials li a.color-twitter {
+    color: #00a0d1
+}
+.socials li a.color-aparat {
+    color: #db4a39
+}
+.socials li a.color-instagram {
+    color: #964b00
+}
+.socials li a.color-youtube {
+    color: #bb0000
+}
+.socials.panel-socials li a {
+    font-size: 25px
+}
+
+
+
+
+.ft-phone {
+    margin: 10px 0 0 0;
+    padding: 13px 7px 0 2px;
+    height: 40px;
+    position: relative;
+    font-size: 13px;
+    font-family:  IRANSans;
+    color: #ccc;
+    margin-bottom: 5px
+}
+.ft-phone:before,
+.ft-phone:after {
+    content: " ";
+    display: table
+}
+.ft-phone:after {
+    clear: both
+}
+.ft-phone span {
+    padding-top: 7px;
+    float: left
+}
+.ft-phone:before {
+    display: inline-block;
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\f098";
+    font-size: 28px;
+    float: left;
+    margin: 1px 5px 0 0;
+    color: gray;
+    color: #f06305
+}
+.ft-phone:hover {
+    color: white
+}
+.ft-phone:hover:before {
+    color: #f06305
+}
+
+
+.copyright-text {
+    font: normal 12px/1.5 Tahoma, Geneva, sans-serif;
+    color: #bfbfbf;
+    margin-top: 30px;
+    margin-bottom: 5px
+}
+
+@media only screen and (max-width: 767px) {
+    .nextLineOnMobile {
+        display: block;
+    }
+}
+
+.copyright-links a {
+    color: gray
+}
+.copyright-links a:hover {
+    color: #f06305
+}
+
+
+.ft-right {
+    background: #1c1c1c;
+    height: 265px;
+    margin-top: 30px
+}
+.ft-right:before,
+.ft-right:after {
+    content: " ";
+    display: table
+}
+.ft-right:after {
+    clear: both
+}
+.ft-awardss {
+    text-align: center;
+    position: relative;
+    width: 100%;
+    height: 265px;
+    padding: 0
+}
+.ft-awardss .award {
+    text-align: center;
+    position: absolute;
+    width: 100%
+}
+.ft-awardss .award .award-img {
+    width: 100%;
+    height: 202px;
+    display: table;
+    border-bottom: 1px solid #4d4d4d
+}
+.ft-awardss .award .award-img:before,
+.ft-awardss .award .award-img:after {
+    content: " ";
+    display: table
+}
+.ft-awardss .award .award-img:after {
+    clear: both
+}
+.ft-awardss .award .award-img>.inner {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    width: 100%;
+    height: 100%
+}
+.ft-awardss .award .award-img img {
+    display: block;
+    clear: both;
+    margin: 0 auto;
+    max-height: 140px
+}
+.ft-awardss .award .award-caption {
+    width: 100%;
+    height: 63px;
+    display: table;
+    margin: 0 auto
+}
+.ft-awardss .award .award-caption span {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+    height: 100%;
+    color: #ccc;
+    font-size: 13px;
+    padding: 0 10px
+}
+.ft-awards {
+    text-align: center;
+    position: relative;
+    width: 100%;
+    height: 265px;
+    padding: 0
+}
+.ft-awards .award {
+    text-align: center;
+    position: absolute;
+    width: 100%
+}
+.ft-awards .award .award-img {
+    width: 100%;
+    height: 202px;
+    display: table;
+    border-bottom: 1px solid #4d4d4d;
+    background-image: url('../images/tandis.jpg');
+    background-repeat: no-repeat;
+    background-position: center -30px
+}
+.ft-awards .award .award-img:before,
+.ft-awards .award .award-img:after {
+    content: " ";
+    display: table
+}
+.ft-awards .award .award-img:after {
+    clear: both
+}
+.ft-awards .award .award-img.award-1 {
+    background-position: center -20px
+}
+.ft-awards .award .award-img.award-2 {
+    background-position: center -224px
+}
+.ft-awards .award .award-img.award-3 {
+    background-position: center -428px
+}
+.ft-awards .award .award-img.award-4 {
+    background-position: center -632px
+}
+.ft-awards .award .award-img.award-5 {
+    background-position: center -836px
+}
+.ft-awards .award .award-img.award-6 {
+    background-position: center -1040px
+}
+.ft-awards .award .award-img.award-7 {
+    background-position: center -1243px;
+}
+.ft-awards .award .award-caption {
+    width: 100%;
+    height: 63px;
+    display: table;
+    margin: 0 auto
+}
+.ft-awards .award .award-caption span {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+    height: 100%;
+    color: #ccc;
+    font-size: 13px;
+    padding: 0 10px
+}

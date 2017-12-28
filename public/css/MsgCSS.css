@@ -1,0 +1,149 @@
+.main {
+    margin: 0 auto;
+    padding: 5px 13px 14px;
+    direction: rtl;
+    font-size: 12px;
+    position: relative;
+    clear: both;
+}
+
+.subMain {
+    width: 100%;
+    padding: 5px 0 14px;
+    height: 100%;
+    zoom: 1;
+    margin: 0;
+    display: block;
+    direction: rtl;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    box-sizing: border-box;
+    font-size: 12px;
+    line-height: 1.42;
+    color: #333;
+    overflow: hidden !important;
+}
+
+.wrpHeader {
+    padding: 0;
+    display: block;
+    direction: rtl;
+    line-height: 1.42857143;
+}
+
+
+.wrap {
+    padding-bottom:10px;
+    color: #000;
+    font-family: IRANSans;
+    border-bottom: 2px solid #00AF87;
+    margin: 13px 28px 15px;
+    -webkit-margin-before: 0.67em;
+    -webkit-margin-after: 0.67em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+}
+
+.main_content {
+    padding: 0;
+    display: block;
+}
+
+.mb_12 {
+    border-collapse: separate;
+    background-color: transparent;
+    border-spacing: 0;
+    box-sizing: border-box;
+    width: 100%;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-color: gray;
+    direction: rtl;
+    font-size: 12px;
+}
+
+.mb_12 > tr{
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit;
+}
+
+.mb_12 > tr > td {
+    vertical-align: top;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    display: table-cell;
+}
+
+.floatRight {
+    width: 150px;
+    float: right;
+    margin: 0;
+    padding: 0;
+    display: block;
+}
+
+.saveLeftNav {
+    cursor: pointer;
+    padding: 3px 0 10px 0;
+    margin: 1px 0 3px 0;
+    display: block;
+}
+
+.menu_bar {
+    cursor: pointer;
+    padding: 6px;
+    border: 1px solid #ccc;
+    background-color: #f4f4f4;
+    margin: 2px 0;
+}
+
+.inbox {
+    vertical-align: top;
+    visibility: visible;
+    width: 785px;
+    padding: 0;
+    margin: 0;
+    display: table-cell;
+}
+
+.p5{
+    background-color:#F4F4F4;
+    padding: 5px;
+}
+
+.messagingButton {
+    background-image: linear-gradient(to top,#ebebeb 0,#ededed 22%,#f8f8f8 77%,#fbfbfb 100%);
+    border: 1px solid #c8c8c8;
+    float: right;
+    margin: 1px 5px 5px 0;
+    padding: 4px 6px;
+    background-color: #faf7f5;
+}
+
+.m2m_copy > span {
+    color: #23527c;
+    text-align: left
+}
+
+.m2m_link {
+    cursor: pointer;
+}
+
+.subItem > a {
+    text-align: center;
+    color: #000;
+    text-decoration: none !important;
+    display: block;
+    background-color: #fff;
+    padding: 2px 2px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.selectedFolder{
+    background-color: #777a7c;
+}

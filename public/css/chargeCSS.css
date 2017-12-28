@@ -1,0 +1,14 @@
+
+.suggestionBox {
+    margin: 5px;
+    cursor: pointer;
+    background-color: #337ab7;
+    color: #fff !important;
+    border: 2px solid #2e6da4;
+    border-radius: 6px;
+}
+
+.suggestionBox:hover {
+    background-color: #286090 !important;
+    border-color: #204d74;
+}

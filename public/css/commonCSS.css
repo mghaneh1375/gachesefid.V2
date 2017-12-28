@@ -1,0 +1,296 @@
+body {
+    background-size: 100% 100%;
+    margin: 0;
+    padding: 0;
+    background-attachment: fixed;
+    background-position: center center;
+}
+.spinner > div {
+    background-color: #00AF87;
+    height: 100%;
+    width: 6px;
+    display: inline-block;
+
+    -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+    animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+
+.header_text {
+    color: #963019;
+    border-bottom: 2px solid;
+    margin-bottom: 10px;
+    padding: 3px;
+}
+
+.spinner .rect2 {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
+}
+
+.spinner .rect3 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+}
+
+.spinner .rect4 {
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+}
+
+.spinner .rect5 {
+    -webkit-animation-delay: -0.8s;
+    animation-delay: -0.8s;
+}
+
+@-webkit-keyframes sk-stretchdelay {
+    0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
+    20% { -webkit-transform: scaleY(1.0) }
+}
+
+@keyframes sk-stretchdelay {
+    0%, 40%, 100% {
+        transform: scaleY(0.4);
+        -webkit-transform: scaleY(0.4);
+    }  20% {
+           transform: scaleY(1.0);
+           -webkit-transform: scaleY(1.0);
+       }
+}
+.number {
+    direction: ltr;;
+}
+
+.tooltip > .tooltip-inner {
+    font-family: IRANSans;
+}
+
+._MAIN_ {
+    font-family: IRANSans;
+}
+/*اسم سایت (گچ 3فید)*/
+.SiteName {
+    float: right;
+    /*background-color: #AFAFAF;*/
+    width: 199px;
+    background-color: transparent;
+    padding: 15px;
+    text-align: center;
+}
+/*عنوان های هر صفحه(مثل فرم ثبت نام)*/
+.title {
+    text-align: center;
+    font-size: 2.5em;
+    color: black;
+    border-bottom: 2px solid black;
+    max-width: 700px;
+    padding: 5px;
+    margin: 100px auto 0;
+}
+
+@media only screen and (max-width: 767px){
+    .title {
+        width: 300px !important;
+    }
+}
+
+#warning {
+    display: none !important;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) and (orientation: portrait) {
+    #warning {
+        display: block !important;
+    }
+}
+
+.mySelect {
+    color: black !important;
+    font-family: IRANSans !important;
+    max-width: 200px !important;
+    min-width: 200px !important;
+    margin-top: -7px;
+}
+
+textarea {
+    font-family: IRANSans !important;
+}
+
+/*منو سمت راست*/
+#NAV {
+    /*background-color: #AFAFAF;*/
+    background-color: transparent;
+    margin-top: 100px;
+    margin-right: -13px;
+    font-family: IRANSans;
+}
+
+.sub_menu {
+    width: 120px;
+    height:100%;
+    position : fixed;
+    top : 120px;
+    right : 120px;
+}
+
+.hidden {
+    display: none;
+}
+
+/*پیغام ارور برای اشتباهات هنگام ثبت نام*/
+.errorText {
+    width: 300px;
+    padding-top: 20px;
+    color: black;
+    border-bottom: 3px solid red;
+}
+
+.w3-row-padding img {
+    margin-bottom: 12px;
+}
+
+/* Set the width of the sidebar to 120px */
+
+@media only screen and (max-width:767px) {
+    .hiddenOnMobile {
+        display: none;
+        width: 0;
+        height:0;
+    }
+    #calendar-container > .calendar {
+        min-width: 350px !important;
+    }
+    .ui_overlay {
+        left: 0 !important;
+        right: 0 !important;
+        width: 90% !important;
+    }
+}
+
+@media only screen and (min-width:767px) {
+    .hiddenOnScreen {
+        display: none;
+        width: 0;
+        height: 0;
+    }
+}
+
+@media only screen and (min-width:1000px) {
+    .hiddenOnScreenMain {
+        display: none;
+        width: 0;
+        height: 0;
+    }
+}
+
+.w3-sidebar {
+    width: 120px;
+    right: 12px;
+}
+
+.ui_overlay {
+    z-index: 10004;
+    display: inline-block;
+    padding: 48px;
+    direction: rtl;
+    background-color: #fff;
+    box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+}
+
+.ui_close_x:before {
+    cursor: pointer;
+    margin-right: -30px;
+    position: absolute;
+    font-size: 28px;
+    line-height: 36px;
+    color: #00AF87;
+    margin-top: -50px;
+    content: "\00d7";
+}
+
+/*ستاره های قرمز*/
+.required {
+    font-size:1.2em;
+    color: red;
+    padding-right : 2px;
+}
+
+.circleBtn {
+    border-radius: 50% 50% 50% 50%;
+}
+
+.primaryBtn {
+    text-decoration: none;
+    border-color: #007c60 #2f582c #2f582c #007c60;
+    background-color: #007c60;
+    box-shadow: 1px 1px 0 0 rgba(0, 0, 0, 0.25);
+    color: #fff;
+    border-radius: 3px;
+    background-clip: padding-box;
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 17px;
+    text-align: center;
+    padding: 9px 16px 8px;
+    font-weight: bold;
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    margin: 0;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {display:none;}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cc1146;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #4dc7bc;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #4dc7bc;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}

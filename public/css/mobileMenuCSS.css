@@ -1,0 +1,39 @@
+@font-face {
+    font-weight: normal;
+    font-style: normal;
+    font-family: 'ghasem';
+    src: url('../fonts/ghasem.ttf');
+}
+
+#mobileMenuBar {
+    height: 100vh;
+    position: fixed;
+    width: 70%;
+    background-color: rgba(255, 254, 250, 0.91);
+    z-index: 10001;
+    right: 0;
+    top: 50px;
+}
+
+.menuBtn{
+    margin-top: 10px;
+    background-color: #3b6656;
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 16px;
+    min-width: 200px;
+}
+
+.topTitle {
+    min-height: 50px;
+    background-color: #9b9b9d;
+    position: fixed;
+    z-index: 10000001;
+}
+
+@media only screen and (max-width:767px) {
+    .fillWidthOnMobile {
+        width: 100%;
+    }
+}

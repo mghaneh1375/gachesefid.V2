@@ -1,0 +1,36 @@
+.MemberResetPassword {
+    margin: 0 auto;
+    padding: 5px 13px 14px;
+    direction: rtl;
+}
+
+.BODYCON {
+    width: 983px;
+    padding: 5px 0 14px;
+    height: 100%;
+    display: block;
+    margin: 0;
+}
+
+.ui_container {
+
+    @media (min-width: 1188px)
+    max-width: 1188px;
+    margin: 0 auto;
+    position: relative;
+    padding: 0 24px;
+    box-sizing: border-box;
+}
+
+.ui_container h1{
+    padding-bottom: 15px;
+    font-family: IRANSans;
+}
+
+.ui_container input {
+    padding: 5px;
+}
+
+.ui_container div {
+    margin-top: 10px;
+}

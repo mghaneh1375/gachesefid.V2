@@ -1,0 +1,432 @@
+.row {
+    margin-left: -10px;
+    margin-right: -10px
+}
+.row:before,
+.row:after {
+    content: " ";
+    display: table
+}
+.row:after {
+    clear: both
+}
+
+.col-lg-1,
+.col-lg-2,
+.col-lg-3,
+.col-lg-4,
+.col-lg-5,
+.col-lg-6,
+.col-lg-7,
+.col-lg-8,
+.col-lg-9,
+.col-lg-10,
+.col-lg-11,
+.col-lg-12 {
+    position: relative;
+    min-height: 1px;
+    padding-left: 10px;
+    padding-right: 10px
+}
+@media (min-width: 1200px) {
+    .col-lg-1,
+    .col-lg-2,
+    .col-lg-3,
+    .col-lg-4,
+    .col-lg-5,
+    .col-lg-6,
+    .col-lg-7,
+    .col-lg-8,
+    .col-lg-9,
+    .col-lg-10,
+    .col-lg-11,
+    .col-lg-12 {
+        float: right
+    }
+    .col-lg-1 {
+        width: 8.33333%
+    }
+    .col-lg-2 {
+        width: 16.66667%
+    }
+    .col-lg-3 {
+        width: 25%
+    }
+    .col-lg-4 {
+        width: 33.33333%
+    }
+    .col-lg-5 {
+        width: 41.66667%
+    }
+    .col-lg-6 {
+        width: 50%
+    }
+    .col-lg-7 {
+        width: 58.33333%
+    }
+    .col-lg-8 {
+        width: 66.66667%
+    }
+    .col-lg-9 {
+        width: 75%
+    }
+    .col-lg-10 {
+        width: 83.33333%
+    }
+    .col-lg-11 {
+        width: 91.66667%
+    }
+    .col-lg-12 {
+        width: 100%
+    }
+}
+@media (min-width: 1200px) {
+    .col-lg-10 {
+        max-width: 966px
+    }
+    .col-lg-10 .row.netbargs .col-md-4 {
+        width: 322px
+    }
+}
+.categories > li > a {
+    text-decoration: none;
+    color: #f06305
+}
+a:hover {
+    text-decoration: none
+}
+a:focus {
+    background: none
+}
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none
+}
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box
+}
+*:before,
+*:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box
+}
+li *:before,
+li *:after {
+    -webkit-box-sizing: initial;
+    -moz-box-sizing: initial;
+    box-sizing: initial
+}
+.sidebar .affixed {
+    z-index: 99;
+    width: 174px
+}
+.sidebar .affixed.affix {
+    top: 58px;
+    width: 174px;
+    position: fixed
+}
+@media (max-height: 600px) {
+    .sidebar .affixed.affix {
+        position: inherit;
+        top: inherit;
+        width: inherit
+    }
+}
+.sidebar .affixed.affix:before {
+    content: " ";
+    position: absolute;
+    top: -20px;
+    right: 0;
+    width: 100%;
+    height: 20px;
+    background: #ededed
+}
+.sidebar .affixed.affix-bottom {
+    position: absolute
+}
+.categories {
+    background: white;
+    border: 1px solid #e6e6e6;
+    font-size: 12px;
+    position: relative;
+    border-top: 1px solid #d9d9d9;
+    -webkit-border-radius: 4px 0 0 4px;
+    -moz-border-radius: 4px 0 0 4px;
+    -ms-border-radius: 4px 0 0 4px;
+    -o-border-radius: 4px 0 0 4px;
+    border-radius: 4px 0 0 4px
+}
+
+.login > a:before {
+    background: url('../images/login.png') no-repeat no-repeat;
+    background-size: 100% 100%;
+}
+
+.profile > a:before {
+    background: url('../images/user.png') no-repeat no-repeat;
+    background-size: 100% 100%;
+}
+
+.exit > a:before {
+    background: url('../images/exit.png') no-repeat no-repeat;
+    background-size: 100% 100%;
+}
+
+.exam > a:before {
+    background: url('../images/exam-icon.png') no-repeat no-repeat;
+    background-size: 100% 100%;
+}
+
+.home > a:before {
+    background: url('../images/home.png') no-repeat no-repeat;
+    background-size: 100% 100%;
+}
+
+.question > a:before {
+    background: url('../images/question-icon.png') no-repeat no-repeat;
+    background-size: 100% 100%;
+}
+
+.money > a:before {
+    background: url('../images/money.png') no-repeat no-repeat;
+    background-size: 100% 100%;
+}
+
+.groupRegistry > a:before{
+    background: url('../images/note.png') no-repeat no-repeat;
+    background-size: 100% 100%;
+}
+
+.quizRegistry > a:before{
+    background: url('../images/test.png') no-repeat no-repeat;
+    background-size: 100% 100%;
+}
+
+.quizRanking > a:before{
+    background: url('../images/badge.png') no-repeat no-repeat;
+    background-size: 100% 100%;
+}
+
+.ranking > a:before {
+    background: url('../images/ranking.png') no-repeat no-repeat;
+    background-size: 100% 100%;
+}
+
+.schools > a:before {
+    background: url('../images/schools.png') no-repeat no-repeat;
+    background-size: 100% 100%;
+}
+
+.students > a:before {
+    background: url('../images/students.png') no-repeat no-repeat;
+    background-size: 100% 100%;
+}
+
+.categories li {
+    border-bottom: 1px solid #ededed;
+    border-right: 3px solid gray;
+    position: relative;
+    z-index: 99;
+    white-space: nowrap
+}
+.categories  li  a {
+    height: 38px;
+    display: block;
+    padding: 9px 45px 9px 10px;
+    color: #404040;
+    white-space: nowrap
+}
+.categories  li  a:hover {
+    background: #e6e6e6
+}
+.categories > li > a:before {
+    display: inline-block;
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: " ";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    margin: 0;
+    border-left: 1px solid #ededed;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s
+}
+.categories  li  a:hover {
+    border-right-color: #f06305;
+    background: #f06305;
+    color: white
+}
+.categories li a:hover:before {
+    background-color: #84827f
+}
+.categories  li:hover {
+    border-right-color: #f06305
+}
+.categories  li.active {
+    border-right-color: #f06305
+}
+.categories li.active a:before {
+    background-color: #84827f;
+}
+.categories li.nb-vitrin a:before {
+    background-position: -6px -7px
+}
+.categories li.nb-vitrin a:hover:before,
+.categories li.nb-vitrin a.active:before {
+    background-position: -56px -7px
+}
+.categories li.nb-vitrin.active a:before {
+    background-position: -56px -7px
+}
+.categories li.nb-food a:before {
+    background-position: -6px -57px
+}
+.categories li.nb-food a:hover:before {
+    background-position: -56px -57px
+}
+.categories li.nb-food.active a:before {
+    background-position: -56px -57px
+}
+.categories li.nb-sport a:before {
+    background-position: -6px -107px
+}
+.categories li.nb-sport a:hover:before {
+    background-position: -56px -107px
+}
+.categories li.nb-sport.active a:before {
+    background-position: -56px -107px
+}
+.categories li.nb-health a:before {
+    background-position: -6px -157px
+}
+.categories li.nb-health a:hover:before {
+    background-position: -56px -157px
+}
+.categories li.nb-health.active a:before {
+    background-position: -56px -157px
+}
+.categories li.nb-art a:before {
+    background-position: -6px -207px
+}
+.categories li.nb-art a:hover:before {
+    background-position: -56px -207px
+}
+.categories li.nb-art.active a:before {
+    background-position: -56px -207px
+}
+.categories li.nb-product a:before {
+    background-position: -6px -257px
+}
+.categories li.nb-product a:hover:before {
+    background-position: -56px -257px
+}
+.categories li.nb-product.active a:before {
+    background-position: -56px -257px
+}
+.categories li.nb-family a:before {
+    background-position: -6px -307px
+}
+.categories li.nb-family a:hover:before {
+    background-position: -56px -307px
+}
+.categories li.nb-family.active a:before {
+    background-position: -56px -307px
+}
+.categories li.nb-others a:before {
+    background-position: -6px -357px
+}
+.categories li.nb-others a:hover:before {
+    background-position: -56px -357px
+}
+.categories li.nb-others.active a:before {
+    background-position: -56px -357px
+}
+.categories > li.nb-organization > a:before {
+    background-position: -6px -557px;
+    background-color: #f06305
+}
+.categories li.nb-organization a:hover:before {
+    background-position: -56px -557px;
+    background-color: #333
+}
+.categories > li.nb-organization.active > a {
+    background-color: #f06305;
+    color: white
+}
+.categories li.nb-organization.active a:before {
+    background-position: -56px -557px;
+    background-color: #333
+}
+.categories li.nb-medical a:before {
+    background-position: -6px -607px
+}
+.categories li.nb-medical a:hover:before {
+    background-position: -56px -607px
+}
+.categories li.nb-medical.active a:before {
+    background-position: -56px -607px
+}
+.categories li.nb-all a:before {
+    background-position: -6px -657px
+}
+.categories li.nb-all a:hover:before {
+    background-position: -56px -657px
+}
+.categories li.nb-all.active a:before {
+    background-position: -56px -657px
+}
+.categories li:first-child a {
+    -moz-border-radius-topleft: 4px;
+    -webkit-border-top-left-radius: 4px;
+    border-top-left-radius: 4px
+}
+.categories li:last-child a {
+    -moz-border-radius-bottomleft: 4px;
+    -webkit-border-bottom-left-radius: 4px;
+    border-bottom-left-radius: 4px
+}
+.affixed-holder {
+    min-height: 279px
+}
+
+.hidden {
+    display: none;
+}
+
+.subItem, .subSubItem {
+    position: absolute;
+    top: 0;
+    right: 100%;
+}
+
+.subItem li {
+    min-width: 169px;
+    height: 38px;
+    background-color: #ccc;
+}
+
+.subItem li a {
+    padding: 10px;
+}
+
+.subSubItem li {
+    min-width: 169px;
+    height: 38px;
+    background-color: #ccc;
+}
+
+.subSubItem li a {
+    padding: 5px;
+}
