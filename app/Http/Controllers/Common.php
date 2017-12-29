@@ -7,6 +7,7 @@ use App\models\State;
 use App\models\SchoolStudent;
 use App\models\School;
 use App\models\OrderId;
+use App\models\Mellat;
 
 
 function makeValidInput($input) {

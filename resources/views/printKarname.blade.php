@@ -350,9 +350,9 @@
 
             <script type="text/javascript">
 
-                var taraz = {{json_encode($taraz)}};
-                var lessons = {{json_encode($lessons)}};
-                var avgs = {{json_encode($avgs)}};
+                var taraz = {!! json_encode($taraz) !!};
+                var lessons = {!! json_encode($lessons) !!};
+                var avgs = {!! json_encode($avgs) !!};
 
 
                 percents = [];

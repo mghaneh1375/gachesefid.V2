@@ -5,9 +5,9 @@
 
     <script>
 
-        var answer = {{json_encode($roqs)}};
+        var answer = {!! json_encode($roqs) !!};
         var qIdx = 0;
-        var questionArr = {{json_encode($questions)}};
+        var questionArr = {!! json_encode($questions) !!};
         var quizId = "{{$quiz->id}}";
         var getRankingDir = '{{route('getOnlineStanding')}}';
 

@@ -150,9 +150,9 @@
 
             <script type="text/javascript">
 
-                var percents = {{json_encode($percent)}};
-                var subjects = {{json_encode($subjects)}};
-                var avgs = {{json_encode($avgs)}};
+                var percents = {!! json_encode($percent) !!};
+                var subjects = {!! json_encode($subjects) !!};
+                var avgs = {!! json_encode($avgs) !!};
 
                 var min = 0;
 

@@ -7,12 +7,17 @@ use App\models\QuizStatus;
 use App\models\RegularQOQ;
 use App\models\RegularQuiz;
 use App\models\User;
+use App\models\Mellat;
+use App\models\OrderId;
+use App\models\Question;
+use App\models\ROQ;
 use App\models\QuizRegistry;
 use App\models\UserCreatedQuiz;
 use App\models\SystemQuiz;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use soapclient;
 
 class QuizController extends Controller {
 

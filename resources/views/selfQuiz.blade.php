@@ -14,7 +14,7 @@
         @endif
 
         var qIdx = 0;
-        var questionArr = {{json_encode($roqs)}};
+        var questionArr = {!! json_encode($roqs) !!};
         var quizId = "{{$quiz->id}}";
         var submitAns = '{{route('submitAnsSelfQuiz')}}';
 

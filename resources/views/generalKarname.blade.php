@@ -228,9 +228,9 @@
             <div id="barChart1" style="min-width: 310px; height: 400px; margin-top: 10px; direction: ltr"></div>
             <script type="text/javascript">
 
-                var taraz = {{json_encode($taraz)}};
-                var lessons = {{json_encode($lessons)}};
-                var avgs = {{json_encode($avgs)}};
+                var taraz = {!! json_encode($taraz) !!};
+                var lessons = {!! json_encode($lessons) !!};
+                var avgs = {!! json_encode($avgs) !!};
 
 
                 percents = [];
