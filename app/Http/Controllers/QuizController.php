@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\models\OffCode;
+use App\models\QuizStatus;
 use App\models\RegularQOQ;
 use App\models\RegularQuiz;
 use App\models\User;
@@ -776,7 +778,7 @@ class QuizController extends Controller {
 
             $giftCode = makeValidInput($_POST["giftCode"]);
             if (checkOffCodeValidation($giftCode)) {
-                $code = OffCode::where('code', '=', $giftCode)->first();
+                $code = OffCode::whereCode($giftCode)->first();
 
                 if ($code->type == getValueInfo('staticOffCode'))
                     $toPay -= $code->amount;
@@ -807,7 +809,7 @@ class QuizController extends Controller {
             charge($amount, Auth::user()->id, getValueInfo('chargeTransaction'), getValueInfo('money2'));
 
             if($useGift != -1)
-                OffCode::where('code', '=', $useGift)->delete();
+                OffCode::whereCode($useGift)->delete();
             
             echo json_encode(['status' => 'ok2']);
             return;

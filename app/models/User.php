@@ -28,6 +28,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string $lastName
  * @method static \Illuminate\Database\Query\Builder|\App\models\User whereUsername($value)
  * @method static \Illuminate\Database\Query\Builder|\App\models\User whereLevel($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\models\User whereInvitationCode($value)
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @mixin \Eloquent

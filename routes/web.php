@@ -1,6 +1,6 @@
 <?php
 
-Route::post('doRegistration', 'RegistrationController@doRegistration');
+Route::post('doRegistration', 'RegistrationController@doRegistration')->name('doRegistration');
 
 Route::post('get_exam_answer_sheet_template/{exam_id}', array('as' => 'get_exam_answer_sheet_template', 'uses' => 'AdminController@get_exam_answer_sheet_template'));
 
@@ -26,8 +26,6 @@ Route::group(array('middleware' => 'nothing'), function (){
 	Route::post('checkAuth', array('as' => 'checkAuth', 'uses' => 'HomeController@checkAuth'));
 
 	Route::get('/', array('as' => 'home', 'uses' => 'HomeController@showHome'));
-
-	Route::get('recoveryPassword', array('as' => 'recovery', 'uses' => 'HomeController@recoveryPas'));
 
 	Route::post('recoveryPassword', array('as' => 'doRecovery', 'uses' => 'HomeController@doRecoveryPas'));
 

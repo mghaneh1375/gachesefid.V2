@@ -85,6 +85,9 @@ class RegistrationController extends Controller {
 
         if (isset($_POST["doRegistration"])) {
 
+            echo "SAdas";
+            return;
+
             $allow = 0;
 
             $username = makeValidInput($_POST["username"]);
@@ -103,7 +106,7 @@ class RegistrationController extends Controller {
                 $msg = "لطفا عنوان ثبت نام خود را وارد نمایید";
             }
 
-            else if(User::where('username', '=', $username)->count() > 0) {
+            else if(User::whereUsername($username)->count() > 0) {
                 $msg = "نام کاربری وارد شده در سامانه موجود است";
             }
 
@@ -113,7 +116,7 @@ class RegistrationController extends Controller {
 
                     $invitationCode = makeValidInput($_POST["invitationCode"]);
 
-                    $user = User::where('invitationCode', '=', $invitationCode)->select("id", "level")->first();
+                    $user = User::whereInvitationCode($invitationCode)->select("id", "level")->first();
 
                     if ($user == null || count($user) == 0) {
                         $msg = "کد معرف اشتباه است";
@@ -155,13 +158,9 @@ class RegistrationController extends Controller {
                     $activation->code = $activationCode;
                     $activation->phoneNum = $phoneNum;
                     $activation->sendTime = time();
-
                     $activation->save();
 
-                    $msgBody = "کد تایید گچ سفید:" . "<br/>" . $activationCode . "<br/>" . "www.gachesefid.com";
-
                     sendSMS($phoneNum, $activationCode, "activationCode");
-//                    SendREST($phoneNum, $msgBody, null);
 
                     return view("registration", array("mode" => "pending", "phoneNum" => $phoneNum,
                         'uId' => $user->id, 'reminder' => 300));
@@ -239,7 +238,9 @@ class RegistrationController extends Controller {
             return view("registration", array("mode" => "pending", "phoneNum" => $phoneNum,
                 'uId' => $uId, 'reminder' => 300 - time() + $activation->sendTime));
         }
-        
+
+        return "hello";
+
         return view('registration', array("mode" => "pass1", "msg" => $msg, "username" => $username,
             "phoneNum" => $phoneNum, "sex" => $sex, "firstName" => $firstName, "lastName" => $lastName,
             'invitationCode' => $invitationCode, 'level' => $level));
