@@ -27,6 +27,8 @@ Route::group(array('middleware' => 'nothing'), function (){
 
 	Route::get('/', array('as' => 'home', 'uses' => 'HomeController@showHome'));
 
+	Route::get('home', 'HomeController@showHome');
+
 	Route::post('recoveryPassword', array('as' => 'doRecovery', 'uses' => 'HomeController@doRecoveryPas'));
 
 	Route::get('resetPassword', array('as' => 'resetPas', 'uses' => 'HomeController@resetPas'));

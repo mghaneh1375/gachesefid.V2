@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
-use Larabookir\Gateway\Mellat\Mellat;
+use App\models\Mellat;
 use PHPExcel_IOFactory;
 use soapclient;
 

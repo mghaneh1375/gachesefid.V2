@@ -57,7 +57,7 @@
                     'newVal': questionArr[qIdx].result
                 },
                 error: function (response) {
-                    alert('Something went wrong' + response.responseText);
+//                    alert('Something went wrong' + response.responseText);
                 }
             });
         }

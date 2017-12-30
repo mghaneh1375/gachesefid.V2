@@ -1,4 +1,4 @@
-@extends('layouts.form')
+@extends('layouts.form2')
 
 @section('head')
     @parent
@@ -15,6 +15,34 @@
             padding: 6px;
             min-width: 200px;
         }
+        #myUl {
+            display: block;
+            list-style-type: disc !important;
+            margin-top: 1em;
+            margin-bottom: 1em;
+            margin-left: 0;
+            margin-right: 0;
+            padding-left: 40px;
+            cursor: pointer;
+        }
+        .LessonClass {
+            margin-right: 30px;
+        }
+        .LessonClass > li {
+            list-style-type: square !important;
+            cursor: pointer;
+        }
+        .SubjectClass {
+            margin-right: 60px;
+        }
+        .SubjectClass > li {
+            list-style-type: circle !important;
+            cursor: pointer;
+        }
+        .add {
+            font-size: 9px;
+            color: #963019;
+        }
     </style>
 
     <script src="{{URL::asset('js/jsNeededForBuyQuestion.js')}}"></script>
@@ -29,19 +57,28 @@
 
 @section('main')
 
-    <div class="col-xs-12 receipt">
-        <center class="col-xs-6" style="margin-top: 10px; border-right: 2px dotted black; height: 60vh; overflow: auto">
-            <h4 style="border-bottom: 2px solid black">فاکتور خرید</h4>
-            <h5 style="margin-top: 10px" id="totalPrice"></h5>
-            <p class="errorText hidden" id="errMsg"></p>
-        </center>
-        <center class="col-xs-6" style="margin-top: 10px">
-            <h4 style="border-bottom: 2px solid black">جعبه های موجود</h4>
-            <div class="col-xs-12" id="boxes"></div>
-            <div style="margin-top: 20px" data-toggle="tooltip" title="افزودن جعبه ی جدید">
-                <button onclick="addBox()" class="btn btn-primary circleBtn"><span class="glyphicon glyphicon-plus"></span></button>
+    <div class="col-xs-12">
+
+        <div class="col-xs-8" style="margin-top: 10px; border-right: 2px dotted black; height: 60vh; overflow: auto">
+            <div class="col-xs-12" style="max-height: 50vh; min-height: 50vh; overflow: auto">
+                <center><p style="font-weight: bolder; font-size: 28px; color: #963019">لیست خرید</p></center>
+                <center id="boxes"></center>
             </div>
-        </center>
+
+            <center>
+                <button onclick="showRecipe()" class="btn btn-primary">مشاهده فاکتور و پرداخت</button>
+            </center>
+        </div>
+
+        <div class="col-xs-4" style="margin-top: 10px">
+            <ul id="myUl">
+                @foreach($grades as $grade)
+                    <li><span onclick="openGrade('{{$grade->id}}')">{{$grade->name}}</span><span class="addGradeText" id="add_{{$grade->id}}"><span>&nbsp;&nbsp;&nbsp;</span><span onclick="addGradeBox('{{$grade->id}}', '{{$grade->name}}')" class="add">افزودن به لیست</span></span>
+                       <ul class="LessonClass" data-repeat="false" data-status="close" id="grade_{{$grade->id}}"></ul>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
     </div>
 
     <center class="col-xs-12 hidden addBox" style="margin-top: 10px">
@@ -110,20 +147,43 @@
 
     </center>
 
-    <span id="boxInfo" class="ui_overlay item hidden" style="position: fixed; left: 30%; width: 40%; right: auto; top: 100px; bottom: auto; max-height: 60vh; overflow: auto">
+    <span id="errAddBox" class="ui_overlay item hidden" style="position: fixed; left: 30%; width: 40%; right: auto; top: 100px; bottom: auto; max-height: 60vh; overflow: auto">
         <div onclick="$('.item').addClass('hidden'); $('.dark').addClass('hidden');" class="ui_close_x"></div>
-        <div class="header_text">اطلاعات جعبه</div>
+        <div class="header_text">خطا</div>
         <div class="body_text">
             <div class="col-xs-12">
-                <p><span>نام جعبه:</span><span>&nbsp;</span><span id="boxName"></span></p>
-                <p><span>پایه تحصیلی:</span><span>&nbsp;</span><span id="boxGrade"></span></p>
-                <p><span>درس:</span><span>&nbsp;</span><span id="boxLesson"></span></p>
-                <p><span>مبحث:</span><span>&nbsp;</span><span id="boxSubject"></span></p>
-                <p><span>تعداد سوالات:</span><span>&nbsp;</span><span id="boxQNo"></span></p>
-                <p><span>انتخاب بر اساس بیشترین لایک:</span><span>&nbsp;</span><span id="boxLike"></span></p>
-                <p>سوالات</p>
-                <p id="questionsDiv"></p>
+                <p>آیتم مورد نظر در لیست خرید وجود دارد.</p>
             </div>
         </div>
+    </span>
+
+    <span id="errAddBox2" class="ui_overlay item hidden" style="position: fixed; left: 30%; width: 40%; right: auto; top: 100px; bottom: auto; max-height: 60vh; overflow: auto">
+        <div onclick="$('.item').addClass('hidden'); $('.dark').addClass('hidden');" class="ui_close_x"></div>
+        <div class="header_text">خطا</div>
+        <div class="body_text">
+            <div class="col-xs-12">
+                <p>درس و یا پایه تحصیلی مورد نظر در لیست خرید وجود دارد.</p>
+            </div>
+        </div>
+    </span>
+
+    <span id="errAddBox3" class="ui_overlay item hidden" style="position: fixed; left: 30%; width: 40%; right: auto; top: 100px; bottom: auto; max-height: 60vh; overflow: auto">
+        <div onclick="$('.item').addClass('hidden'); $('.dark').addClass('hidden');" class="ui_close_x"></div>
+        <div class="header_text">خطا</div>
+        <div class="body_text">
+            <div class="col-xs-12">
+                <p>تعداد سوالات بانک به اندازه مورد نظر نمی رسد</p>
+            </div>
+        </div>
+    </span>
+
+    <span id="recipe" class="ui_overlay item hidden" style="position: fixed; left: 30%; width: 40%; right: auto; top: 100px; bottom: auto; max-height: 60vh; overflow: auto">
+        <div onclick="$('.item').addClass('hidden'); $('.dark').addClass('hidden');" class="ui_close_x"></div>
+        <div class="header_text">اطلاعات جعبه</div>
+        <div  style='max-height: 30vh; min-height: 30vh; overflow: auto' id="recipeBody" class="body_text"></div>
+
+        <center>
+            <button id="transactionBtn" onclick="goToPreTransaction()" class="btn btn-success">تایید و پرداخت</button>
+        </center>
     </span>
 @stop

@@ -6,11 +6,13 @@ use App\models\OffCode;
 use App\models\QuizStatus;
 use App\models\RegularQOQ;
 use App\models\RegularQuiz;
+use App\models\SoldQuestion;
 use App\models\User;
 use App\models\Mellat;
 use App\models\OrderId;
 use App\models\Question;
 use App\models\ROQ;
+use App\models\Grade;
 use App\models\QuizRegistry;
 use App\models\UserCreatedQuiz;
 use App\models\SystemQuiz;
@@ -2648,16 +2650,22 @@ class QuizController extends Controller {
 
     public function getSuggestionQuestionsCount() {
 
-        if(isset($_POST["gradeId"]) && isset($_POST["needed"])) {
-            $gradeId = makeValidInput($_POST["gradeId"]);
+        if(isset($_POST["filter"]) && isset($_POST["needed"]) && isset($_POST["id"])) {
+
+            $filter = makeValidInput($_POST["filter"]);
+            $id = makeValidInput($_POST["id"]);
+
+            $gradeId = -1;
+            if($filter == "grade")
+                $gradeId = $id;
 
             $sId = -1;
-            if(isset($_POST["sId"]))
-                $sId = makeValidInput($_POST["sId"]);
+            if($filter == "subject")
+                $sId = $id;
 
             $lId = -1;
-            if(isset($_POST["lId"]))
-                $lId = makeValidInput($_POST["lId"]);
+            if($filter == "lesson")
+                $lId = $id;
 
             $level = -1;
             if(isset($_POST["level"]))
@@ -2665,7 +2673,10 @@ class QuizController extends Controller {
             
             $needed = makeValidInput($_POST["needed"]);
 
-            echo json_encode(suggestionQuestionsCount($gradeId, $lId, $sId, Auth::user()->id, $level, makeValidInput($_POST["like"]), $needed));
+//            $like = makeValidInput($_POST["like"]);
+            $like = false;
+
+            echo json_encode(suggestionQuestionsCount($gradeId, $lId, $sId, Auth::user()->id, $level, $like, $needed));
             return;
         }
 

@@ -1,137 +1,159 @@
 var boxes = [];
 var questions = [];
 var totalPrice = 0;
-var totalTotalPrice = 0;
+var selectedGrade;
+var selectedLesson;
 
-function goBack() {
+function addGradeBox(id, name) {
 
-    $(".receipt").removeClass('hidden');
-
-    newElement = "";
-
-    for(i = 0; i < questions.length; i++) {
-
-        totalTmp = 0;
-
-        for(j = 0; j < questions[i].length; j++) {
-            totalTmp += parseInt(questions[i][j].price);
-        }
-
-        newElement += "<p><span>جعبه </span><span>" + (i + 1) + "</span><span>:&nbsp;</span><span>" + totalTmp + "</span></p>";
-    }
-
-    newElement += "<p><span>جمع کل:&nbsp;</span><span>" + totalTotalPrice + "</span></p>";
-
-    if(totalTotalPrice > 0) {
-        newElement += "<button onclick='goToPreTransaction()' class='btn btn-success'>پرداخت</button>";
-    }
-
-    $("#totalPrice").empty().append(newElement).persiaNumber();
-    $(".addBox").addClass('hidden');
-}
-
-function addBox() {
-    $(".receipt").addClass('hidden');
-    $(".addBox").removeClass('hidden');
-    getLessons();
-}
-
-function getLessons() {
-
-    $.ajax({
-        type: 'post',
-        url: getLessonsDir,
-        data: {
-            'gradeId': $("#grades").val()
-        },
-        success: function (response) {
-
-            $("#lessons").empty();
-
-            newElement = "<option value='-1'>مهم نیست</option>";
-
-            if(response.length != 0) {
-                response = JSON.parse(response);
-                for (i = 0; i < response.length; i++) {
-                    newElement += "<option value='" + response[i].id + "'>" + response[i].name + "</option>";
-                }
-            }
-
-            $("#lessons").append(newElement);
-            getSubjects();
-        }
-    });
-}
-
-function getSubjects() {
-
-    $.ajax({
-        type: 'post',
-        url: getSubjectsDir,
-        data: {
-            'lessonId': $("#lessons").val()
-        },
-        success: function (response) {
-
-            $("#subjects").empty();
-
-            newElement = "<option value='-1'>مهم نیست</option>";
-
-            if(response.length != 0) {
-
-                response = JSON.parse(response);
-
-                for (i = 0; i < response.length; i++) {
-                    newElement += "<option value='" + response[i].id + "'>" + response[i].name + "</option>";
-                }
-            }
-
-            $("#subjects").append(newElement);
-        }
-    });
-}
-
-function doAddBox() {
-
-    if($("#qNo").val().length == 0) {
-        $("#err").empty().append('لطفا تعداد سوالات مورد نظر خود را وارد کنید');
-        return;
-    }
+    $(".item").addClass('hidden');
 
     for(i = 0; i < boxes.length; i++) {
-        if(boxes[i].gradeId == $("#grades").val() && (boxes[i].lId == $("#lessons").val() || boxes[i].lId == -1)) {
-            $("#err").empty().append('درس مورد نظر در جعبه های ایجاد شده موجود است');
+        if (boxes[i].filter == 'grade' && boxes[i].id == id) {
+            $("#errAddBox").removeClass('hidden');
+            $(".dark").removeClass('hidden');
+            return;
+        }
+
+        if(boxes[i].selectedGrade == id) {
+            $("#errAddBox2").removeClass('hidden');
+            $(".dark").removeClass('hidden');
             return;
         }
     }
+
+    boxes[boxes.length] = {
+        'id': id,
+        'filter': 'grade',
+        'name': name,
+        'needed': 0,
+        'like': false,
+        'price': 0
+    };
+
+    addNewEntry(name, id);
+}
+
+function showRecipe() {
+
+    price = 0;
+    newElement = "";
+
+    for(i = 0; i < boxes.length; i++) {
+        if(boxes[i].needed > 0) {
+            price += boxes[i].price;
+            newElement += "<div><span>" + boxes[i].needed + "</span><span> تا </span>";
+            newElement += "<span>" + boxes[i].name + "</span><span>&nbsp;</span>";
+            newElement += "<span>" + boxes[i].price + "</span><span> تومان </span></div>";
+        }
+    }
+
+    newElement += "<center><span>جمع کل:</span><span>&nbsp;</span><span>" + price + "</span></center>";
+
+    if(price > 0)
+        $("#transactionBtn").removeAttr('disabled');
+    else
+        $("#transactionBtn").attr('disabled', 'disabled');
+
+    $("#recipeBody").empty().append(newElement);
+    $(".dark").removeClass('hidden');
+    $(".item").addClass('hidden');
+    $("#recipe").removeClass('hidden');
+}
+
+function addLessonBox(id, name) {
+
+    $(".item").addClass('hidden');
+
+    for (i = 0; i < boxes.length; i++) {
+        
+        if (boxes[i].filter == 'lesson' && boxes[i].id == id) {
+            $("#errAddBox").removeClass('hidden');
+            $(".dark").removeClass('hidden');
+            return;
+        }
+        
+        if(boxes[i].id == selectedGrade || boxes[i].selectedLesson == id) {
+            $("#errAddBox2").removeClass('hidden');
+            $(".dark").removeClass('hidden');
+            return;
+        }
+    }
+
+    boxes[boxes.length] = {
+        'id': id,
+        'filter': 'grade',
+        'name': name,
+        'needed': 0,
+        'like': false,
+        'price': 0,
+        'selectedGrade': selectedGrade
+    };
+
+    addNewEntry(name, id);
+}
+
+function addSubjectBox(id, name) {
+
+    $(".item").addClass('hidden');
+
+    for (i = 0; i < boxes.length; i++) {
+        if (boxes[i].filter == 'subject' && boxes[i].id == id) {
+            $("#errAddBox").removeClass('hidden');
+            $(".dark").removeClass('hidden');
+            return;
+        }
+        if(boxes[i].id == selectedLesson || boxes[i].id == selectedGrade) {
+            $("#errAddBox2").removeClass('hidden');
+            $(".dark").removeClass('hidden');
+            return;
+        }
+    }
+
+    boxes[boxes.length] = {
+        'id': id,
+        'filter': 'grade',
+        'name': name,
+        'needed': 0,
+        'like': false,
+        'price': 0,
+        'selectedGrade': selectedGrade,
+        'selectedLesson': selectedLesson
+    };
+
+    addNewEntry(name, id);
+}
+
+function getSuggest(idx, newVal) {
 
     $.ajax({
         type: 'post',
         url: getSuggestionQuestionsCount,
         data: {
-            'gradeId': $("#grades").val(),
-            'lId': $("#lessons").val(),
-            'sId': $("#subjects").val(),
-            'level': $("#level").val(),
-            'needed': $("#qNo").val(),
-            'like': ($("#sort").is(':checked')) ? 1 : 0
+            'id': boxes[idx].id,
+            'filter': boxes[idx].filter,
+            'level': boxes[idx].level,
+            'needed': newVal
+            // 'like': ($("#sort").is(':checked')) ? 1 : 0
         },
         success: function (response) {
 
+            $(".item").addClass('hidden');
 
             response = JSON.parse(response);
 
             if(response.length == 0) {
-                $("#err").empty().append('تعداد سوالات بانک به اندازه مورد نظر نمی رسد');
+                $("#errAddBox3").removeClass('hidden');
+                $("#needed_" + boxes[idx].id).val(0);
+                $(".dark").removeClass('hidden');
                 return;
             }
 
             totalPrice = 0;
-            tmpIdx = questions.length;
-            questions[tmpIdx] = [];
+            tmpArr = [];
 
             for(i = 0; i < response.length; i++) {
-                questions[tmpIdx][i] = {
+                tmpArr[i] = {
                     'subject': response[i].subjectName,
                     'lesson': response[i].lessonName,
                     'price': parseInt(response[i].price),
@@ -142,79 +164,187 @@ function doAddBox() {
                 totalPrice += parseInt(response[i].price);
             }
 
-            totalTotalPrice += parseInt(totalPrice);
-
-            boxes[boxes.length] = {
-                'gradeId': $("#grades").val(),
-                'lId': $("#lessons").val(),
-                'sId': $("#subjects").val(),
-                'level': $("#level").val(),
-                'needed': $("#qNo").val(),
-                'name': 'جعبه ' + (boxes.length + 1),
-                'like': ($("#sort").is(':checked')) ? true : false,
-                'grade': $("#grades").find(":selected").text(),
-                'lesson': ($("#lessons").val() == -1) ? 'مهم نیست' : $("#lessons").find(":selected").text(),
-                'subject': ($("#subjects").val() == -1) ? 'مهم نیست' : $("#subjects").find(":selected").text()
+            questions[questions.length] = {
+                'boxIdx': idx,
+                'arr': tmpArr
             };
 
-            showBoxes();
+
+            boxes[idx].needed = newVal;
+            boxes[idx].price = parseInt(totalPrice);
         }
     });
 }
 
-function showBoxes() {
-
-    newElement = "";
-
+function changeQNo(id, newVal) {
+    
     for(i = 0; i < boxes.length; i++) {
-        newElement += "<div style='float: right; padding: 10px; border-radius: 6px; margin-right: 6px; border: 2px solid black; margin-top: 10px'><span style='padding: 5px; cursor: pointer' onclick='removeBox(\"" + i + "\")' class='glyphicon glyphicon-remove'></span><span style='padding: 5px; cursor: pointer' onclick='infoBox(\"" + i + "\")' class='glyphicon glyphicon-info-sign'></span><span>" + boxes[i].name + "</span></div>";
+        if(boxes[i].id == id) {
+            getSuggest(i, newVal);
+        }
     }
 
-    $("#boxes").empty().append(newElement);
-    goBack();
 }
 
-function infoBox(idx) {
+function changeLevel(id, newVal) {
 
-    $(".dark").removeClass('hidden');
-
-    $("#boxInfo").removeClass('hidden');
-
-    $("#boxName").empty().append(boxes[idx].name);
-
-    $("#boxGrade").empty().append(boxes[idx].grade);
-
-    $("#boxLesson").empty().append(boxes[idx].lesson);
-
-    $("#boxSubject").empty().append(boxes[idx].subject);
-
-    $("#boxLike").empty();
-    if(boxes[idx].like)
-        $("#boxLike").append('<i class="fa fa-check" aria-hidden="true"></i>');
-    else
-        $("#boxLike").append('<i class="fa fa-times" aria-hidden="true"></i>');
-
-    $("#boxQNo").empty().append(boxes[idx].needed);
-
-    $("#questionsDiv").empty();
-    newElement = "";
-    for(i = 0; i < questions[idx].length; i++) {
-        newElement += "<div><span> درس: " + questions[idx][i].lesson + " - </span>";
-        newElement += "<span> مبحث: " + questions[idx][i].subject + " - </span>";
-        newElement += "<span> قیمت: " + questions[idx][i].price + " - </span>";
-        newElement += "<span> سطح سختی " + questions[idx][i].level + "</span></div>";
+    for(i = 0; i < boxes.length; i++) {
+        if(boxes[i].id == id) {
+            boxes[i].level = newVal;
+            return;
+        }
     }
-    $("#questionsDiv").append(newElement);
+}
+
+function addNewEntry(name, id) {
+
+    newElement = "<p id='addedBox_" + id + "'><span> " + name + " - </span>تعداد: <input id='needed_" + id + "' style='max-width: 60px' onchange='changeQNo(\"" + id + "\", this.value)' type='number' min='0' value='0'>";
+    newElement += "<span>&nbsp;</span><span>سطح سختی: <select onchange='changeLevel(\"" + id + "\", this.value)'>";
+    newElement += "<option value='-1'>انتخاب تصادفی</option><option value='1'>ساده</option><option value='2'>متوسط</option><option value='3'>دشوار</option></select></span>";
+    newElement += "<span>&nbsp;&nbsp;</span><span onclick='removeBox(\"" + id + "\")' class='btn btn-danger' data-toggle='tooltip' title='حذف از لیست'><span class='glyphicon glyphicon-remove'></span></span></p>";
+
+    $("#boxes").append(newElement);
+}
+
+function removeBox(id) {
+
+    for(i = 0; i < boxes.length; i++) {
+        if(boxes[i].id == id) {
+            $("#addedBox_" + id).remove();
+            boxes.splice(i, 1);
+            for(j = 0; j < questions.length; j++) {
+                if(questions[j].boxIdx == i) {
+                    questions.splice(j, 1);
+                    return;
+                }
+            }
+        }
+    }
+}
+
+function openGrade(gradeId) {
+
+    selectedGrade = gradeId;
+    status = $("#grade_" + gradeId).attr('data-status');
+
+    $(".SubjectClass").addClass('hidden').attr('data-status', 'close');
+    $(".LessonClass").addClass('hidden').attr('data-status', 'close');
+    $(".addGradeText").removeClass('hidden');
+    $(".addLessonText").removeClass('hidden');
+    $(".addSubjectText").removeClass('hidden');
+
+    if(status == "open") {
+        $("#grade_" + gradeId).attr('data-status', 'close').addClass('hidden');
+        $("#add_" + gradeId).removeClass('hidden');
+        return;
+    }
+    else {
+
+        $("#grade_" + gradeId).removeClass('hidden').attr('data-status', 'open');
+        $("#add_" + gradeId).addClass('hidden');
+
+        if($("#grade_" + gradeId).attr('data-repeat') == "true")
+            return;
+
+        $("#grade_" + gradeId).attr('data-repeat', 'true');
+    }
+
+    $.ajax({
+        type: 'post',
+        url: getLessonsDir,
+        data: {
+            'gradeId': gradeId
+        },
+        success: function (response) {
+
+            newElement = "";
+
+            if(response.length != 0) {
+
+                response = JSON.parse(response);
+
+                if(response.length == 0)
+                    newElement += "<span>درسی موجود نیست</span><span class='addLessonText'><span>&nbsp;&nbsp;&nbsp;</span></span>";
+
+                for (i = 0; i < response.length; i++) {
+                    newElement += "<li><span onclick='openLesson(\"" + response[i].id + "\")'>" + response[i].name + "</span><span class='addLessonText' id='addL_" + response[i].id + "'><span>&nbsp;&nbsp;&nbsp;</span><span onclick='addLessonBox(\"" + response[i].id + "\", \"" + response[i].name + "\")' class='add'>افزودن به لیست</span></span>";
+                    newElement += "<ul class='SubjectClass' data-repeat='false' data-status='close' id='lesson_" + response[i].id + "'></ul></li>";
+                }
+            }
+            else
+                newElement += "<span>درسی موجود نیست</span><span class='addLessonText'><span>&nbsp;&nbsp;&nbsp;</span></span>";
+
+            $("#grade_" + gradeId).empty().append(newElement);
+        }
+    });
+}
+
+function openLesson(lessonId) {
+
+    selectedLesson = lessonId;
+    $(".SubjectClass").addClass('hidden').attr('data-status', 'close');
+    $(".add").attr('data-status', 'close');
+    $(".addLessonText").removeClass('hidden');
+    $(".addSubjectText").removeClass('hidden');
+
+    if($("#lesson_" + lessonId).attr('data-status') == "open") {
+        $("#lesson_" + lessonId).attr('data-status', 'close').addClass('hidden');
+        $("#addL_" + lessonId).removeClass('hidden');
+        return;
+    }
+    else {
+
+        $("#lesson_" + lessonId).removeClass('hidden').attr('data-status', 'open');
+        $("#addL_" + lessonId).addClass('hidden');
+
+        if($("#lesson_" + lessonId).attr('data-repeat') == "true")
+            return;
+
+        $("#lesson_" + lessonId).attr('data-repeat', 'true');
+    }
+
+    $.ajax({
+        type: 'post',
+        url: getSubjectsDir,
+        data: {
+            'lessonId': lessonId
+        },
+        success: function (response) {
+
+            newElement = "";
+
+            if(response.length != 0) {
+
+                response = JSON.parse(response);
+
+                if(response.length == 0)
+                    newElement += "<span>مبحثی موجود نیست</span><span class='addSubjectText'><span>&nbsp;&nbsp;&nbsp;</span></span>";
+
+                for (i = 0; i < response.length; i++) {
+                    newElement += "<span>" + response[i].name + "</span><span class='addSubjectText'><span>&nbsp;&nbsp;&nbsp;</span><span onclick='addSubjectBox(\"" + response[i].id + "\", \"" +response[i].name  + "\")' class='add'>افزودن به لیست</span></span>";
+                }
+            }
+            else
+                newElement += "<span>مبحثی موجود نیست</span><span class='addSubjectText'><span>&nbsp;&nbsp;&nbsp;</span></span>";
+
+            $("#lesson_" + lessonId).empty().append(newElement);
+        }
+    });
 }
 
 function goToPreTransaction() {
 
     qIds = [];
-    counter = 0;
+    price = 0;
 
     for(idx = 0; idx < boxes.length; idx++) {
-        for (i = 0; i < questions[idx].length; i++) {
-            qIds[counter++] = questions[idx][i].id;
+        price += boxes[idx].price;
+        for (i = 0; i < questions.length; i++) {
+            if(questions[i].boxIdx == idx) {
+                for(j = 0; j < questions[i].arr.length; j++)
+                    qIds[j] = questions[i].arr[j].id;
+                break;
+            }
         }
     }
 
@@ -222,7 +352,7 @@ function goToPreTransaction() {
         type: 'post',
         url: preTransactionDir,
         data: {
-            'toPay': totalTotalPrice,
+            'toPay': price,
             'qIds': qIds
         },
         success: function (response) {
@@ -235,44 +365,4 @@ function goToPreTransaction() {
             }
         }
     });
-}
-
-function removeBox(idx) {
-
-    if(idx > -1) {
-
-        total = 0;
-
-        for(i = 0; i < questions[idx].length; i++) {
-            total += questions[idx][i].price;
-        }
-
-        totalTotalPrice -= total;
-
-        questions.splice(idx, 1);
-        boxes.splice(idx, 1);
-
-
-        newElement = "";
-
-        for(i = 0; i < questions.length; i++) {
-
-            totalTmp = 0;
-            for(j = 0; j < questions[i].length; j++)
-                totalTmp += questions[i][j].price;
-
-            newElement += "<p><span>جعبه </span><span>" + (i + 1) + "</span><span>:&nbsp;</span><span>" + totalTmp + "</span></p>";
-        }
-
-        newElement += "<p><span>جمع کل:&nbsp;</span><span>" + totalTotalPrice + "</span></p>";
-
-        if(totalTotalPrice > 0) {
-            newElement += "<button onclick='goToPreTransaction()' class='btn btn-success'>پرداخت</button>";
-        }
-
-        $("#totalPrice").empty().append(newElement).persiaNumber();
-
-        showBoxes();
-    }
-
 }

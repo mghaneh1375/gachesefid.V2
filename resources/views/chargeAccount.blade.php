@@ -76,7 +76,7 @@
         function chargeWithGiftCard() {
 
             if($("#giftCode").val() == "")
-                return;
+                return doCharge("");
 
             $.ajax({
                 type: 'post',
@@ -89,8 +89,7 @@
                         doCharge($("#giftCode").val());
                     }
                     else if(response == "nok1") {
-                        $("#errMsg").empty();
-                        $("#errMsg").append('کد مورد نظر معتبر نمی باشد');
+                        $("#errMsg").empty().append('کد مورد نظر معتبر نمی باشد');
                     }
                 }
             });
