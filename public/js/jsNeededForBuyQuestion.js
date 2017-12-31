@@ -164,10 +164,21 @@ function getSuggest(idx, newVal) {
                 totalPrice += parseInt(response[i].price);
             }
 
-            questions[questions.length] = {
-                'boxIdx': idx,
-                'arr': tmpArr
-            };
+            allow = true;
+
+            for(i = 0; i < questions.length; i++) {
+                if(questions[i].boxIdx == idx) {
+                    questions[i].arr = tmpArr;
+                    allow = false;
+                }
+            }
+
+            if(allow) {
+                questions[questions.length] = {
+                    'boxIdx': idx,
+                    'arr': tmpArr
+                };
+            }
 
 
             boxes[idx].needed = newVal;
@@ -191,7 +202,7 @@ function changeLevel(id, newVal) {
     for(i = 0; i < boxes.length; i++) {
         if(boxes[i].id == id) {
             boxes[i].level = newVal;
-            return;
+            return getSuggest(i, boxes[i].needed);
         }
     }
 }
@@ -336,13 +347,14 @@ function goToPreTransaction() {
 
     qIds = [];
     price = 0;
+    counter = 0;
 
     for(idx = 0; idx < boxes.length; idx++) {
         price += boxes[idx].price;
         for (i = 0; i < questions.length; i++) {
             if(questions[i].boxIdx == idx) {
                 for(j = 0; j < questions[i].arr.length; j++)
-                    qIds[j] = questions[i].arr[j].id;
+                    qIds[counter++] = questions[i].arr[j].id;
                 break;
             }
         }
