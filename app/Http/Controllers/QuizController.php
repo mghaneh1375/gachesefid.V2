@@ -12,6 +12,12 @@ use App\models\Mellat;
 use App\models\OrderId;
 use App\models\Question;
 use App\models\ROQ;
+use App\models\ControllerActivity;
+use App\models\Taraz;
+use App\models\KindKarname;
+use App\models\RedundantInfo1;
+use App\models\State;
+use App\models\City;
 use App\models\Grade;
 use App\models\QuizRegistry;
 use App\models\UserCreatedQuiz;
@@ -244,10 +250,11 @@ class QuizController extends Controller {
         $uId = Auth::user()->id;
 
         $myQuiz = QuizRegistry::where('uId', '=', $uId)->get();
+        $regularQuizMode = getValueInfo('regularQuiz');
 
         foreach ($myQuiz as $itr) {
 
-            if($itr->quizMode == getValueInfo('regularQuiz')) {
+            if($itr->quizMode == $regularQuizMode) {
 
                 $itr->mode = "regular";
                 $itr->quiz = RegularQuiz::find($itr->qId);
@@ -261,7 +268,23 @@ class QuizController extends Controller {
                             ($itr->quiz->endDate == $date && $itr->quiz->endTime > $time)
                         )
                     )) {
-                    $itr->quizEntry = 1;
+
+                    $condition = ['qId' => $itr->quiz->id, 'uId' => $uId, 'quizMode' => $regularQuizMode];
+                    $quizRegistry = QuizRegistry::where($condition)->first();
+
+                    $timeLen = calcTimeLenQuiz($itr->quiz->id, 'regular');
+
+                    if($quizRegistry->timeEntry == "") {
+                        $itr->quizEntry = 1;
+                    }
+                    else {
+                        $timeEntry = $quizRegistry->timeEntry;
+                        $reminder = $timeLen * 60 - time() + $timeEntry;
+                        if($reminder <= 0)
+                            $itr->quizEntry = -2;
+                        else
+                            $itr->quizEntry = 1;
+                    }
                 }
                 else if($itr->quiz->startDate > $date ||
                     ($itr->quiz->startDate == $date && $itr->quiz->starTime > $time)) {
@@ -1205,32 +1228,6 @@ class QuizController extends Controller {
         return view('quizEntry', array('quizes' => $out, 'mode' => 'system'));
     }
 
-    public function regularQuizEntry() {
-
-        $today = getToday();
-        $date = $today["date"];
-        $time = $today["time"];
-        $uId = Auth::user()->id;
-
-        $quizes = DB::select('select regularQuiz.id, name, startDate, endDate, startTime, endTime, startReg, endReg from regularQuiz, quizRegistry WHERE regularQuiz.id = qId and uId = ' . $uId .
-            ' and ((startDate < ' . $date . ' and endDate > ' . $date . ') or (startDate = ' . $date . ' and startTime <= ' . $time . ' and ((startDate = endDate and endTime > ' . $time . ') or 
-            startDate <> endDate) or (endDate = ' . $date . ' and endTime > ' . $time . ')))');
-
-        $out = [];
-        $counter = 0;
-        foreach ($quizes as $quiz) {
-            $timeLen = calcTimeLenQuiz($quiz->id, 'regular');
-            $quiz->startDate = convertStringToDate($quiz->startDate);
-            $quiz->endDate = convertStringToDate($quiz->endDate);
-            $quiz->startTime = convertStringToTime($quiz->startTime);
-            $quiz->endTime = convertStringToTime($quiz->endTime);
-            $quiz->timeLen = $timeLen;
-            $out[$counter++] = $quiz;
-        }
-
-        return view('quizEntry', array('quizes' => $out, 'mode' => 'regular'));
-    }
-
     public function doQuiz($quizId) {
 
         $today = getToday();
@@ -1440,13 +1437,18 @@ class QuizController extends Controller {
         if($quizRegistry == null || count($quizRegistry) == 0)
             return Redirect::to('profile');
 
-        if($quiz->startDate > $date || $quiz->endDate < $date ||
-            ($quiz->startDate == $date && $time < $quiz->startTime) ||
-            ($quiz->endDate == $date && $time > $quiz->endTime)
-        )
+        if(!(($quiz->startDate < $date && $quiz->endDate > $date) ||
+            ($quiz->startDate < $date && $quiz->endDate >= $date && $quiz->endTime > $time) ||
+            ($quiz->startDate == $date && $quiz->starTime <= $time && (
+                    ($quiz->startDate == $quiz->endDate && $quiz->endTime > $time) ||
+                    ($quiz->startDate != $quiz->endDate) ||
+                    ($quiz->endDate == $date && $quiz->endTime > $time)
+                )
+            )))
             return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]));
 
         $timeLen = calcTimeLenQuiz($quiz->id, 'regular');
+
         if($quizRegistry->timeEntry == "") {
             $timeEntry = time();
             $quizRegistry->timeEntry = $timeEntry;
@@ -1457,6 +1459,7 @@ class QuizController extends Controller {
         }
 
         $reminder = $timeLen * 60 - time() + $timeEntry;
+
         if($reminder <= 0)
             return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]));
 

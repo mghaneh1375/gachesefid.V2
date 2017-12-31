@@ -103,7 +103,9 @@ Route::group(array('middleware' => ['auth', 'reportLevel']), function () {
 
 	Route::get('A2Excel/{quizId}', array('as' => 'A2Excel', 'uses' => 'ReportController@A2Excel'));
 
-	Route::get('A3/{quizId}/{uId?}/{backURL?}', array('as' => 'A3', 'uses' => 'ReportController@preA3'));
+	Route::get('A3/{quizId}', array('as' => 'preA3', 'uses' => 'ReportController@preA3'));
+
+	Route::get('A3/{quizId}/{uId}/{backURL?}', array('as' => 'A3', 'uses' => 'ReportController@A3'));
 
 	Route::get('printKarname/{quizId}/{uId}', array('as' => 'printKarnameMaster', 'uses' => 'ReportController@printKarname'));
 
@@ -362,8 +364,6 @@ Route::group(array('middleware' => ['auth', 'phone']), function () {
 	Route::get('quizEntry', array('as' => 'quizEntry', 'uses' => 'QuizController@quizEntry'));
 	
 	Route::get('myQuizes', array('as' => 'myQuizes', 'uses' => 'QuizController@myQuizes'));
-	
-	Route::get('regularQuizEntry', array('as' => 'regularQuizEntry', 'uses' => 'QuizController@regularQuizEntry'));
 	
 	Route::get('doQuizRegistry/{quizId}/{mode}', array('as' => 'doQuizRegistry', 'uses' => 'QuizController@doQuizRegistry'));
 

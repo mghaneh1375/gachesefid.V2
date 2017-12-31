@@ -253,7 +253,7 @@ if ($questions == null || $numQ == 0) {
         }
 
         function goToQuizEntry() {
-            document.location.href = '{{route('regularQuizEntry')}}';
+            document.location.href = '{{route('myQuizes')}}';
         }
 
         function showConfirmationPane() {

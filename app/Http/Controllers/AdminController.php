@@ -4,8 +4,16 @@ namespace App\Http\Controllers;
 
 use App\models\AnswerSheetTemplates;
 use App\models\AnswerAnswerSheetTemplates;
+use App\models\AnswerTemplate;
+use App\models\RegularQOQ;
 use App\models\RegularQuiz;
+use App\models\QuizRegistry;
+use App\models\RegularQuizQueue;
+use App\models\Transaction;
+use App\models\User;
+use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 
 class AdminController extends Controller {

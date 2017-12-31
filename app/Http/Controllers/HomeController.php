@@ -15,6 +15,7 @@ use App\models\City;
 use App\models\Grade;
 use App\models\SystemQuiz;
 use App\models\PointConfig;
+use App\models\Activation;
 use DOMDocument;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

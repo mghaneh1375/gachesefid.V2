@@ -948,6 +948,10 @@ class QuestionController extends Controller {
                     $err = "تعداد ستون های فایل شما معتبر نمی باشد";
                 } else {
                     for ($row = 1; $row <= $lastRow; $row++) {
+
+                        if($workSheet->getCell('A' . $row)->getValue() == "")
+                            break;
+
                         $questions[$row - 1][0] = $workSheet->getCell('A' . $row)->getValue();
                         $questions[$row - 1][1] = $workSheet->getCell('B' . $row)->getValue();
                         $questions[$row - 1][2] = $workSheet->getCell('C' . $row)->getValue();

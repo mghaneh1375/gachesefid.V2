@@ -9,15 +9,21 @@ use App\models\RegularQuiz;
 use App\models\ReportsAccess;
 use App\models\RedundantInfo1;
 use App\models\StudentAdviser;
+use App\models\SchoolStudent;
+use App\models\School;
+use App\models\Lesson;
 use App\models\Grade;
 use App\models\State;
 use App\models\City;
+use App\models\QuizStatus;
+use App\models\Taraz;
 use App\models\Transaction;
 use App\models\User;
 use App\models\ROQ;
 use App\models\QuizRegistry;
 use App\models\SystemQuiz;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 use PHPExcel;
 use PHPExcel_Cell_DataType;
 use PHPExcel_Writer_Excel2007;
@@ -2583,9 +2589,12 @@ class ReportController extends Controller {
         else {
             $level = Auth::user()->level;
             $currId = Auth::user()->id;
+
             $condition1 = ["sId" => $currId, 'uId' => $uId];
+
             if($level == getValueInfo('schoolLevel') && SchoolStudent::where($condition1)->count() == 0)
                 return Redirect::to(route('profile'));
+
             if($level == getValueInfo('namayandeLevel')) {
                 $tmp = DB::select('select count(*) as countNum from namayandeSchool nS, schoolStudent sS where nS.sId = sS.sId and nS.nId = ' . $currId .
                     ' and sS.uId = ' . $uId);
@@ -2593,7 +2602,8 @@ class ReportController extends Controller {
                     return Redirect::to(route('profile'));
                 }
             }
-            if($level != getValueInfo('adminLevel') && $level != getValueInfo('superAdminLevel'))
+            if($level != getValueInfo('adminLevel') && $level != getValueInfo('superAdminLevel') && $level == getValueInfo('namayandeLevel')
+                && $level == getValueInfo('schoolLevel'))
                 return Redirect::to(route('profile'));
         }
 
@@ -2630,7 +2640,7 @@ class ReportController extends Controller {
 
         $lessons = getLessonQuiz($quizId);
 
-        $taraz = Taraz::where('qEntryId', '=', $qEntryId->id)->get();
+        $taraz = Taraz::whereQEntryId($qEntryId->id)->get();
 
         $counter = 0;
         foreach ($lessons as $lesson) {
@@ -2768,7 +2778,7 @@ class ReportController extends Controller {
     }
 
     public function A3($quizId, $uId, $backURL = "") {
-        
+
         $condition = ['qId' => $quizId, 'quizMode' => getValueInfo('regularQuiz'), 'uId' => $uId];
         $qEntryId = QuizRegistry::where($condition)->first();
         

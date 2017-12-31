@@ -57,7 +57,7 @@
 
     <center style="margin-top: 10px">
         @if(empty($backURL))
-            <a href="{{route('A3', ['quizId' => $quizId])}}"><button class="btn btn-primary">بازگشت به مرحله قبل</button></a>
+            <a href="{{route('preA3', ['quizId' => $quizId])}}"><button class="btn btn-primary">بازگشت به مرحله قبل</button></a>
         @else
             <a href="{{route('A5', ['quizId' => $quizId])}}"><button class="btn btn-primary">بازگشت به مرحله قبل</button></a>
         @endif

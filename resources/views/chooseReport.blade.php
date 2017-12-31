@@ -25,7 +25,7 @@
         @else
             @foreach($reports as $report)
                 <div class="col-xs-12">
-                    <button style="margin-top: 10px; min-width: 200px" class="btn btn-primary" onclick="document.location.href = '{{route('A' . $report->reportNo, ['quizId' => $quizId])}}'">{{$reportsArr[$report->reportNo - 1]}}</button>
+                    <button style="margin-top: 10px; min-width: 200px" class="btn btn-primary" onclick="document.location.href = '{{($report->reportNo != '3') ? route('A' . $report->reportNo, ['quizId' => $quizId]) :  route('preA3', ['quizId' => $quizId])}}'">{{$reportsArr[$report->reportNo - 1]}}</button>
                 </div>
             @endforeach
         @endif

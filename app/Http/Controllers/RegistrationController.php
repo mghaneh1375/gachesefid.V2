@@ -11,12 +11,14 @@ use App\models\RegularQuizQueue;
 use App\models\School;
 use App\models\SchoolStudent;
 use App\models\Activation;
+use App\models\RegularQuiz;
 use App\models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
+use PHPExcel;
 use PHPExcel_IOFactory;
 use PHPExcel_Writer_Excel2007;
 
