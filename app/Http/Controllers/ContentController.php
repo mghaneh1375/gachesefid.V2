@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\models\Lesson;
 use App\models\Subject;
 use App\models\Grade;
+use PHPExcel_IOFactory;
 
 class ContentController extends Controller {
 
@@ -130,7 +131,7 @@ class ContentController extends Controller {
 
             if (empty($err)) {
                 upload($path, "lessons", "اکسل دروس");
-                include 'EXCEL/PHPExcel.php';
+                
                 $excelReader = PHPExcel_IOFactory::createReaderForFile($path);
                 $excelObj = $excelReader->load($path);
                 $workSheet = $excelObj->getSheet(0);

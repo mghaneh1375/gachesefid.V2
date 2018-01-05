@@ -63,9 +63,9 @@
                 <option value="-1_1">مهم نیست</option>
                 @foreach($quizes as $quiz)
                     @if($quiz['quizMode'] == getValueInfo('regularQuiz'))
-                        <option value="{{$quiz['id']}}_{{$quiz['quizMode']}}">{{$quiz['name']}} سنجش پای میز</option>
+                        <option value="{{$quiz['id']}}_{{$quiz['quizMode']}}">{{$quiz['name']}}</option>
                     @else
-                        <option value="{{$quiz['id']}}_{{$quiz['quizMode']}}">{{$quiz['name']}} سنجش پای تخته</option>
+                        <option value="{{$quiz['id']}}_{{$quiz['quizMode']}}">{{$quiz['name']}}</option>
                     @endif
                 @endforeach
             </select>

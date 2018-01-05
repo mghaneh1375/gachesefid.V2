@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\models\RegularQuiz;
+use App\models\SMSQueue;
+use App\models\SMSTemplate;
+use App\models\SystemQuiz;
+use App\models\User;
 use Illuminate\Support\Facades\DB;
 use App\models\State;
 use App\models\Grade;
