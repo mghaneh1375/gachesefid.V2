@@ -87,9 +87,6 @@ class RegistrationController extends Controller {
 
         if (isset($_POST["doRegistration"])) {
 
-            echo "SAdas";
-            return;
-
             $allow = 0;
 
             $username = makeValidInput($_POST["username"]);
@@ -240,8 +237,6 @@ class RegistrationController extends Controller {
             return view("registration", array("mode" => "pending", "phoneNum" => $phoneNum,
                 'uId' => $uId, 'reminder' => 300 - time() + $activation->sendTime));
         }
-
-        return "hello";
 
         return view('registration', array("mode" => "pass1", "msg" => $msg, "username" => $username,
             "phoneNum" => $phoneNum, "sex" => $sex, "firstName" => $firstName, "lastName" => $lastName,
