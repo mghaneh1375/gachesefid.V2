@@ -57,10 +57,10 @@ class SMSController extends Controller {
 
         if(isset($_POST["stateId"]) && isset($_POST["cityId"]) && isset($_POST["quiz"])
             && isset($_POST["level"]) && isset($_POST["sex"]) && isset($_POST["grade"])
-            && isset($_POST["text"]) && isset($_POST["templateId"])) {
+            && isset($_POST["text"]) && isset($_POST["templateId"]) && isset($_POST["sendToAll"])) {
 
             $quiz = makeValidInput($_POST["quiz"]);
-
+            $sendToAll = makeValidInput($_POST["sendToAll"]);
             $quiz = explode('_', $quiz);
 
             if(count($quiz) != 2) {
@@ -95,8 +95,10 @@ class SMSController extends Controller {
             $query = $this->queryBuilder($uIds);
 
             if(($level == 1 || $level == 2) && $quiz != -1) {
-                if($level == 1)
-                    $uIds = DB::select('select users.id from users, quizRegistry WHERE users.id IN ' . $query . ' and users.id = uId and quizMode = ' . $quizMode . ' and qId = ' . $quiz);
+                if($level == 1) {
+                    if($sendToAll == "false")
+                        $uIds = DB::select('select users.id from users, quizRegistry WHERE users.id IN ' . $query . ' and users.id = uId and quizMode = ' . $quizMode . ' and qId = ' . $quiz);
+                }
                 else
                     $uIds = DB::select('select DISTINCT users.id from users, quizRegistry, studentsAdviser WHERE users.id IN ' . $query . ' and studentId = uId and users.id = adviserId and quizMode = ' . $quizMode . ' and qId = ' . $quiz);
             }
@@ -127,6 +129,10 @@ class SMSController extends Controller {
 
             if($templateId == -1) {
                 foreach ($uIds as $itr) {
+
+                    if(empty($itr->phoneNum))
+                        continue;
+
                     $tmp = new SMSQueue();
                     $tmp->phoneNum = User::find($itr->id)->phoneNum;
                     $tmp->templateId = $template->id;
@@ -140,15 +146,20 @@ class SMSController extends Controller {
                     $quiz = SystemQuiz::find($quiz);
 
                 foreach ($uIds as $itr) {
-                    $tmp = new SMSQueue();
+
                     $user = User::find($itr->id);
+
+                    if(empty($user->phoneNum))
+                        continue;
+
+                    $tmp = new SMSQueue();
                     $tmp->phoneNum = $user->phoneNum;
                     $tmp->templateId = $template->id;
                     $tmp->extra1 = $user->firstName . '-' . $user->lastName;
                     $name = explode(' ', $quiz->name);
                     $quizName = "";
-                    foreach ($name as $itr)
-                        $quizName .= $itr . '-';
+                    foreach ($name as $itr2)
+                        $quizName .= $itr2 . '-';
                     $tmp->extra2 = $quizName;
                     if($templateId == 3)
                         $tmp->extra3 = $quiz->startDate;

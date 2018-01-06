@@ -114,6 +114,11 @@
         </div>
 
         <div class="col-xs-12">
+            <label for="sendToAll"><span>ارسال به همه</span></label>
+            <input type="checkbox" name="sendToAll" id="sendToAll">
+        </div>
+
+        <div class="col-xs-12">
             <input type="submit" onclick="sendSMS()" class="btn btn-success" value="ارسال">
         </div>
 

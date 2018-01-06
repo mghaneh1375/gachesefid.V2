@@ -47,7 +47,8 @@ function sendSMS() {
             'grade': $("#grade").val(),
             'point': $("#point").val(),
             'text': $("#text").val(),
-            'templateId': $("#templateId").val()
+            'templateId': $("#templateId").val(),
+            'sendToAll': $("#sendToAll").prop('checked')
         },
         success: function (response) {
             if(response == "nok")
