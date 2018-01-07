@@ -32,7 +32,7 @@
             <?php $sum1 = 0; $sum2 = 0; ?>
 
             @foreach($nonOnline as $itr)
-                <tr>
+                <tr style="cursor: pointer" onclick="document.location.href = '{{route('doublePartialQuizReport', ['quizId' => $quiz->id, 'sId' => $itr->id, 'online' => 0])}}'">
                     <td><center>{{$itr->name}}</center></td>
                     <td><center>{{$itr->countNum}}</center></td>
                     <?php $sum1 += $itr->countNum; ?>
@@ -42,22 +42,24 @@
                 </tr>
             @endforeach
 
-            <tr>
+            <tr style="cursor: pointer" onclick="document.location.href = '{{route('doublePartialQuizReport', ['quizId' => $quiz->id, 'sId' => -1, 'online' => 0])}}'">
                 <td><center>نامشخص</center></td>
                 <td><center>{{$totalNonOnline - $sum1}}</center></td>
                 <td><center>حضوری</center></td>
             </tr>
 
             @foreach($online as $itr)
-                <tr>
+                <tr style="cursor: pointer" onclick="document.location.href = '{{route('doublePartialQuizReport', ['quizId' => $quiz->id, 'sId' => $itr->id, 'online' => 1])}}'">
                     <td><center>{{$itr->name}}</center></td>
                     <td><center>{{$itr->countNum}}</center></td>
                     <?php $sum2 += $itr->countNum; ?>
                     <td><center>آنلاین</center></td>
+                    <td><center>{{$itr->cityName}}</center></td>
+                    <td><center>{{$itr->stateName}}</center></td>
                 </tr>
             @endforeach
 
-            <tr>
+            <tr style="cursor: pointer" onclick="document.location.href = '{{route('doublePartialQuizReport', ['quizId' => $quiz->id, 'sId' => -1, 'online' => 1])}}'">
                 <td><center>نامشخص</center></td>
                 <td><center>{{$totalOnline - $sum2}}</center></td>
                 <td><center>آنلاین</center></td>

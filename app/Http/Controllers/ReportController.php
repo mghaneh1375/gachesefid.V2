@@ -2824,10 +2824,10 @@ class ReportController extends Controller {
         if($quiz == null)
             return Redirect::to('quizReport');
 
-        $online = DB::select('select s.name, count(*) as countNum, ci.name as cityName, sa.name as stateName from quizRegistry qR, users u, schoolStudent sS, school s, city ci, state sa WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
+        $online = DB::select('select s.id, s.name, count(*) as countNum, ci.name as cityName, sa.name as stateName from quizRegistry qR, users u, schoolStudent sS, school s, city ci, state sa WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
             getValueInfo('regularQuiz') . ' and qR.online = 1 and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and ci.id = s.cityId and sa.id = ci.stateId group by(sS.sId)');
 
-        $nonOnline = DB::select('select s.name, count(*) as countNum, ci.name as cityName, sa.name as stateName from quizRegistry qR, users u, schoolStudent sS, school s, city ci, state sa WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
+        $nonOnline = DB::select('select s.id, s.name, count(*) as countNum, ci.name as cityName, sa.name as stateName from quizRegistry qR, users u, schoolStudent sS, school s, city ci, state sa WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
             getValueInfo('regularQuiz') . ' and qR.online = 0 and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and ci.id = s.cityId and sa.id = ci.stateId group by(sS.sId)');
 
         $totalOnline = DB::select('select count(*) as countNum from quizRegistry qR WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
@@ -2848,6 +2848,97 @@ class ReportController extends Controller {
 
         return view('Reports.partialQuizReport', array('online' => $online, 'nonOnline' => $nonOnline, 'totalOnline' => $totalOnline,
             'totalNonOnline' => $totalNonOnline, 'quiz' => $quiz));
+    }
+
+    public function doublePartialQuizReport($quizId, $sId, $online) {
+
+        if(RegularQuiz::find($quizId) == null || ($sId != -1 && School::find($sId) == null))
+            return Redirect::to(route('profile'));
+
+        $schoolName = "نامشخص";
+        $cityName = "نامشخص";
+        $quizName = RegularQuiz::find($quizId)->name;
+
+        if($sId != -1) {
+            $school = School::find($sId);
+            $schoolName = $school->name;
+            $cityName = City::find($school->cityId)->name;
+
+            $users = DB::select('select u.firstName, u.lastName, u.phoneNum, u.username from quizRegistry qR, users u, schoolStudent sS, school s WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
+                getValueInfo('regularQuiz') . ' and qR.online = ' . $online . ' and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and s.id = ' . $sId);
+        }
+
+        else {
+            $users = DB::select('select u.firstName, u.lastName, u.phoneNum, u.username from quizRegistry qR, users u WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
+                getValueInfo('regularQuiz') . ' and qR.online = ' . $online . ' and u.id = qR.uId and u.id not IN (select sS.uId from schoolStudent sS)');
+        }
+
+
+        return view('Reports.doublePartialQuizReport', array('online' => $online, 'schoolName' => $schoolName, 'users' => $users,
+            'quizName' => $quizName, 'cityName' => $cityName, 'quizId' => $quizId, 'sId' => $sId));
+    }
+
+    public function quizDoublePartialReportExcel($quizId, $sId, $online) {
+
+        if(RegularQuiz::find($quizId) == null || ($sId != -1 && School::find($sId) == null))
+            return Redirect::to(route('profile'));
+
+        if($sId != -1) {
+            $users = DB::select('select u.firstName, u.lastName, u.phoneNum, u.username from quizRegistry qR, users u, schoolStudent sS, school s WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
+                getValueInfo('regularQuiz') . ' and qR.online = ' . $online . ' and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and s.id = ' . $sId);
+        }
+
+        else {
+            $users = DB::select('select u.firstName, u.lastName, u.phoneNum, u.username from quizRegistry qR, users u WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
+                getValueInfo('regularQuiz') . ' and qR.online = ' . $online . ' and u.id = qR.uId and u.id not IN (select sS.uId from schoolStudent sS)');
+        }
+
+        $objPHPExcel = new PHPExcel();
+        $objPHPExcel->getProperties()->setCreator("Gachesefid");
+        $objPHPExcel->getProperties()->setLastModifiedBy("Gachesefid");
+        $objPHPExcel->getProperties()->setTitle("Office 2007 XLSX Test Document");
+        $objPHPExcel->getProperties()->setSubject("Office 2007 XLSX Test Document");
+        $objPHPExcel->getProperties()->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.");
+
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'شماره همراه');
+        $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'نام کاربری');
+        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'نام خانوادگی');
+        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'نام');
+
+        $counter = 2;
+
+        foreach ($users as $itr) {
+
+            $objPHPExcel->getActiveSheet()->SetCellValue('D' . ($counter), $itr->phoneNum);
+            $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($counter), $itr->username);
+            $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($counter), $itr->lastName);
+            $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($counter), $itr->firstName);
+            $counter++;
+        }
+
+        $fileName = __DIR__ . "/../../../public/registrations/doublePartialQuizReport.xlsx";
+
+        $objPHPExcel->getActiveSheet()->setTitle('گزارش گیری جزئی آزمون');
+
+        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save($fileName);
+
+
+        if (file_exists($fileName)) {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="'.basename($fileName).'"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($fileName));
+            readfile($fileName);
+            unlink($fileName);
+        }
+
+        return Redirect::to(route('quizPartialReportExcel', ['quizId' => $quizId, 'sId' => $sId, 'online' => $online]));
     }
 
     public function quizPartialReportExcel ($quizId) {

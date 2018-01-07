@@ -219,7 +219,11 @@ Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
 	Route::get('gradeReportExcel', array('as' => 'gradeReportExcel', 'uses' => 'ReportController@gradeReportExcel'));
 
 	Route::get('quizReport', array('as' => 'quizReport', 'uses' => 'ReportController@quizReport'));
+	
+	Route::get('doublePartialQuizReport/{quizId}/{sId}/{online}', array('as' => 'doublePartialQuizReport', 'uses' => 'ReportController@doublePartialQuizReport'));
 
+	Route::get('quizDoublePartialReportExcel/{quizId}/{sId}/{online}', array('as' => 'quizDoublePartialReportExcel', 'uses' => 'ReportController@quizDoublePartialReportExcel'));
+	
 	Route::get('quizPartialReportExcel/{quizId}', array('as' => 'quizPartialReportExcel', 'uses' => 'ReportController@quizPartialReportExcel'));
 
 	Route::get('quizReportExcel', array('as' => 'quizReportExcel', 'uses' => 'ReportController@quizReportExcel'));
