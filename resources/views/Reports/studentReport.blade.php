@@ -79,6 +79,10 @@
                                 <button onclick="showEdit('{{$user->id}}', '{{$user->firstName}}', '{{$user->lastName}}', '{{$user->username}}', '{{$user->phoneNum}}')" class="btn btn-primary" data-toggle="tooltip" title="ویرایش">
                                     <span class="glyphicon glyphicon-edit"></span>
                                 </button>
+
+                                <button onclick="showConfirmationPane('{{$user->id}}')" class="btn btn-danger" data-toggle="tooltip" title="حذف">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
                             </center>
                         </td>
                     </tr>
@@ -149,7 +153,33 @@
         </div>
     </span>
 
+    <span id="removeUser" class="hidden ui_overlay" style="position: fixed; left: 30%; width: 40%; right: auto; top: 174px; bottom: auto">
+        <div class="header_text">حذف کاربر</div>
+        <div onclick="$('.dark').addClass('hidden'); $('#removeUser').addClass('hidden')" class="ui_close_x"></div>
+        <div class="body_text">
+            <p>آیا از حذف کاربر مورد نظر اطمینان دارید؟</p>
+
+            <center style="margin-top: 10px">
+                <span onclick="doRemove()" class="btn btn-success">بله</span>
+            </center>
+        </div>
+    </span>
+
     <script>
+
+        function doRemove() {
+            $.ajax({
+                type: 'post',
+                url: '{{route('doRemoveUser')}}',
+                data: {
+                    'uId': selectedUser
+                },
+                success: function (response) {
+                    if(response == "ok")
+                        document.location.href = "{{route('studentReport')}}";
+                }
+            });
+        }
 
         function doEdit() {
             
@@ -187,6 +217,12 @@
                 }
             })
             
+        }
+
+        function showConfirmationPane(uId) {
+            selectedUser = uId;
+            $('.dark').removeClass('hidden');
+            $("#removeUser").removeClass('hidden');
         }
         
         function showEdit(uId, firstName, lastName, username, phone) {

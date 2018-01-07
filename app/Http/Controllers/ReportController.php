@@ -2878,6 +2878,15 @@ class ReportController extends Controller {
             'quizName' => $quizName, 'cityName' => $cityName, 'quizId' => $quizId, 'sId' => $sId));
     }
 
+    public function doRemoveUser() {
+
+        if(isset($_POST["uId"])) {
+            User::destroy(makeValidInput($_POST["uId"]));
+            echo "ok";
+        }
+
+    }
+
     public function quizDoublePartialReportExcel($quizId, $sId, $online) {
 
         if(RegularQuiz::find($quizId) == null || ($sId != -1 && School::find($sId) == null))

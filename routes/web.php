@@ -209,6 +209,8 @@ Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
 	Route::get('studentReport/{mode?}/{key?}/{page?}', array('as' => 'studentReport', 'uses' => 'ReportController@studentReport'));
 
 	Route::post('doEditUser', array('as' => 'doEditUser', 'uses' => 'ReportController@doEditUser'));
+	
+	Route::post('doRemoveUser', array('as' => 'doRemoveUser', 'uses' => 'ReportController@doRemoveUser'));
 
 	Route::get('studentReportPage/{page}', array('as' => 'studentReportPage', 'uses' => 'ReportController@studentReport'));
 
