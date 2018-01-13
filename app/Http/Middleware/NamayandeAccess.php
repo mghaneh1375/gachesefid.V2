@@ -22,7 +22,7 @@ class NamayandeAccess
         $level = Auth::user()->level;
 
         if($level == getValueInfo('adminLevel') || $level == getValueInfo('superAdminLevel') ||
-            $$level == getValueInfo("namayandeLevel"))
+            $level == getValueInfo("namayandeLevel"))
             return $next($request);
 
         return Redirect::to(route('profile'));
