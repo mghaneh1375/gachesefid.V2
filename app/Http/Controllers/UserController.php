@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\models\Grade;
+use App\models\State;
 use App\models\User;
 use App\models\School;
 use App\models\City;
@@ -10,6 +11,7 @@ use App\models\NamayandeSchool;
 use App\models\ControllerLevel;
 use App\models\Lesson;
 use App\models\RedundantInfo1;
+use Auth;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -439,7 +441,7 @@ class UserController extends Controller {
                 $msg = "لطفا جنسیت مدرسه را وارد نمایید";
             }
 
-            else if(User::where('username', '=', $username)->count() > 0) {
+            else if(User::whereUsername($username)->count() > 0) {
                 $msg = "نام کاربری وارد شده در سامانه موجود است";
             }
 
