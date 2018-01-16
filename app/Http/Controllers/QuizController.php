@@ -7,6 +7,7 @@ use App\models\QuizStatus;
 use App\models\RegularQOQ;
 use App\models\RegularQuiz;
 use App\models\SoldQuestion;
+use App\models\SystemQOQ;
 use App\models\User;
 use App\models\Mellat;
 use App\models\OrderId;
@@ -22,9 +23,11 @@ use App\models\Grade;
 use App\models\QuizRegistry;
 use App\models\UserCreatedQuiz;
 use App\models\SystemQuiz;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use PHPExcel_IOFactory;
 use soapclient;
 
 class QuizController extends Controller {
@@ -2366,14 +2369,14 @@ class QuizController extends Controller {
             $currQNo = $question->qNo;
 
             if($val > $currQNo) {
-                DB::Select('update regularQOQ set qNo = qNo - 1 WHERE quizId = ' . $quizId . " and 
+                DB::select('update regularQOQ set qNo = qNo - 1 WHERE quizId = ' . $quizId . " and 
                     qNo > " . $currQNo . " and qNo <= " . $val);
                 $question->qNo = $val;
                 $question->save();
                 echo "ok";
             }
             else if($val < $currQNo) {
-                DB::Select('update regularQOQ set qNo = qNo + 1 WHERE quizId = ' . $quizId . " and 
+                DB::select('update regularQOQ set qNo = qNo + 1 WHERE quizId = ' . $quizId . " and 
                     qNo >= " . $val . " and qNo < " . $currQNo);
                 $question->qNo = $val;
                 $question->save();
@@ -2403,14 +2406,14 @@ class QuizController extends Controller {
             $currQNo = $question->qNo;
 
             if($val > $currQNo) {
-                DB::Select('update systemQOQ set qNo = qNo - 1 WHERE quizId = ' . $quizId . " and 
+                DB::select('update systemQOQ set qNo = qNo - 1 WHERE quizId = ' . $quizId . " and 
                     qNo > " . $currQNo . " and qNo <= " . $val);
                 $question->qNo = $val;
                 $question->save();
                 echo "ok";
             }
             else if($val < $currQNo) {
-                DB::Select('update systemQOQ set qNo = qNo + 1 WHERE quizId = ' . $quizId . " and 
+                DB::select('update systemQOQ set qNo = qNo + 1 WHERE quizId = ' . $quizId . " and 
                     qNo >= " . $val . " and qNo < " . $currQNo);
                 $question->qNo = $val;
                 $question->save();

@@ -214,7 +214,7 @@ class ReportController extends Controller {
 
     public function moneyReport() {
 
-        $transactions = Transaction::where('amount', '<', 0)->orderBy('date', 'DESC')->paginate(20);
+        $transactions = Transaction::where('amount', '<', 0)->orderBy('date', 'DESC')->paginate(300);
 
         foreach ($transactions as $transaction) {
             switch ($transaction->kindTransactionId) {
