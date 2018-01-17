@@ -13,7 +13,7 @@
 
 @section('main')
     
-    <form method="post" action="{{route('changePas')}}">
+    <form method="post" action="{{route('doChangePas')}}">
         <center class="myRegister">
             <div class="data row">
                 <div class="col-xs-12">

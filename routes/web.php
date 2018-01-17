@@ -143,7 +143,7 @@ Route::group(array('middleware' => 'auth'), function () {
 
 	Route::get('changePassword', array('as' => 'changePas', 'uses' => 'HomeController@changePas'));
 
-	Route::post('changePassword', array('as' => 'changePas', 'uses' => 'HomeController@doChangePas'));
+	Route::post('doChangePassword', array('as' => 'doChangePas', 'uses' => 'HomeController@doChangePas'));
 });
 
 Route::group(array('middleware' => ['auth', 'phone']), function () {

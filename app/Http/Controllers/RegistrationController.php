@@ -446,9 +446,9 @@ class RegistrationController extends Controller {
         $rand = rand(1, 10000);
         $username = "g" . $rand;
 
-        while (User::where('username', '=', $username)->count() > 0) {
+        while (User::whereUsername($username)->count() > 0) {
             $rand = rand(1, 10000);
-            $username = "gachesefid_" . $rand;
+            $username = "g_" . $rand;
         }
 
         return $username;
