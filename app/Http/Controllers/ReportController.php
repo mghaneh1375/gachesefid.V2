@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\models\NamayandeSchool;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
