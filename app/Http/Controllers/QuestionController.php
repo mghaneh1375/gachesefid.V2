@@ -825,7 +825,7 @@ class QuestionController extends Controller {
                 $path = __DIR__ . '/../../../public/images/answers/system/' . $question[1];
                 if(file_exists($path))
                     unlink($path);
-                $errors[count($errors)] = $question[0];
+                $errors[count($errors)] = "err1: " . $question[0];
                 continue;
             }
 
@@ -900,12 +900,12 @@ class QuestionController extends Controller {
                         else {
                             unlink($path);
                             unlink($newPath);
-                            $errors[count($errors)] = $question[0];
+                            $errors[count($errors)] = "err2: " . $question[0];
                         }
                     }
                     else {
                         unlink($newPath);
-                        $errors[count($errors)] = $question[0];
+                        $errors[count($errors)] = "err3: " . $question[0];
                     }
                 }
                 else {
@@ -914,11 +914,11 @@ class QuestionController extends Controller {
                     if(file_exists($path))
                         unlink($path);
 
-                    $errors[count($errors)] = $question[0];
+                    $errors[count($errors)] = "err4: " . $question[0];
                 }
             }
             else
-                $errors[count($errors)] = $question[0];
+                $errors[count($errors)] = "err5: " . $question[0];
         }
         return $errors;
     }
@@ -971,10 +971,10 @@ class QuestionController extends Controller {
                     if (count($errors) == 0)
                         return Redirect::to(route('addQuestion'));
                     else {
-                        $err = "بجز سوالات زیر که در سامانه موجود است بقیه به درستی اضافه شدند" . "<br/>";
+                        $err = "بجز سوالات زیر که در سامانه موجود است بقیه به درستی اضافه شدند" . '<br/>';
                         $size = count($errors);
                         for ($i = 0; $i < $size; $i++)
-                            $err .= $errors[$i] . "<br/>";
+                            $err .= $errors[$i] . '<br/>';
                     }
                 }
             }
