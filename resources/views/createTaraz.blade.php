@@ -7,7 +7,7 @@
 
         var final = "{{$final}}";
         var quizId = "{{$quizId}}";
-        var qEntryIds = {{ json_encode($qEntryIds)}};
+        var qEntryIds = {!! json_encode($qEntryIds) !!};
         var percent = 0;
         var unit;
         var counter = 0;

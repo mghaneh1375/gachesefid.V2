@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\models\ControllerActivity;
 use App\models\Discussion;
 use App\models\DiscussionRate;
+use App\models\Lesson;
 use App\models\LOK;
 use App\models\OffCode;
 use App\models\OrderId;
@@ -985,6 +986,35 @@ class QuestionController extends Controller {
         return $this->addQuestion($err);
     }
 
+    public function getTotalQuestions() {
+
+        if(isset($_POST["lessonId"])) {
+
+            $lessonId = makeValidInput($_POST["lessonId"]);
+            if(empty($lessonId)) {
+                echo json_encode([]);
+                return;
+            }
+
+            $questions = DB::select('select question.id, question.choicesCount, users.level as authorLevel, question.questionFile, ' .
+                'question.ansFile, question.level, question.neededTime, question.telorance, question.choicesCount, ' .
+                'question.kindQ, question.ans from question, SOQ, subject, users where author = users.id and sId = subject.id and ' .
+                'lessonId = ' . $lessonId . ' and qId = question.id');
+
+            foreach ($questions as $question) {
+                if($question->authorLevel == getValueInfo('adminLevel') || $question->authorLevel == getValueInfo('superAdminLevel')) {
+                    $question->questionFile = URL::asset('images/questions/system/' . $question->questionFile);
+                    $question->ansFile = URL::asset('images/answers/system/' . $question->ansFile);
+                }
+                else {
+                    $question->questionFile = URL::asset('images/questions/students/' . $question->questionFile);
+                    $question->ansFile = URL::asset('images/answers/students/' . $question->ansFile);
+                }
+            }
+            echo json_encode($questions);
+        }
+    }
+
     public function unConfirmedQuestions() {
 
         $user = Auth::user();
@@ -994,6 +1024,31 @@ class QuestionController extends Controller {
             $grades = DB::Select('select DISTINCT(grade.id), grade.name from grade');
 
         return view('unConfirmedQuestions', array('grades' => $grades, 'err' => ""));
+    }
+
+    public function totalQuestions($qId = "") {
+
+        $grades = DB::Select('select DISTINCT(grade.id), grade.name from grade');
+
+        $lId = -1;
+        $gradeId = -1;
+        
+        if(!empty($qId)) {
+            if(Question::whereId($qId) == null)
+                $qId = "";
+            else {
+                $lId = DB::select("select subject.lessonId from SOQ, subject WHERE SOQ.qId = " . $qId . " and SOQ.sId = subject.id");
+                if($lId == null || count($lId) == 0) {
+                    $lId = -1;
+                }
+                else {
+                    $lId = $lId[0]->lessonId;
+                    $gradeId = Lesson::whereId($lId)->gradeId;
+                }
+            }
+        }
+        
+        return view('totalQuestions', array('grades' => $grades, 'err' => "", 'qId' => $qId, 'lId' => $lId, 'gradeId' => $gradeId));
     }
 
     public function getLessonsController() {
@@ -1053,7 +1108,7 @@ class QuestionController extends Controller {
 
     public function editDetailQuestion($qId) {
 
-        $question = Question::find($qId);
+        $question = Question::whereId($qId);
 
         if(isset($_POST["level"]) && isset($_POST["ans"]) && isset($_POST["neededTime"]) &&
             isset($_POST["kindQuestion"]) && isset($_POST["additional"]) && isset($_POST["subjects"])) {
@@ -1099,7 +1154,7 @@ class QuestionController extends Controller {
                 return "ok";
             }
             catch (Exception $x) {
-                return "مشکلی در انجام عملیات مورد نظر رخ داده است (خطای 105)";
+                return "مشکلی در انجام عملیات مورد نظر رخ داده است (خطای 105)" . $x->getMessage();
             }
         }
         return "مشکلی در انجام عملیات مورد نظر رخ داده است (خطای 106)";

@@ -4,6 +4,10 @@ Route::post('doRegistration', 'RegistrationController@doRegistration')->name('do
 
 Route::post('get_exam_answer_sheet_template/{exam_id}', array('as' => 'get_exam_answer_sheet_template', 'uses' => 'AdminController@get_exam_answer_sheet_template'));
 
+Route::get('test/{c}', array('as' => 'test', 'uses' => 'TestController@start'));
+
+Route::post('testMethod', array('as' => 'testMethod', 'uses' => 'TestController@methodTest'));
+
 Route::group(array('middleware' => 'notLogin'), function () {
 	
 	Route::get('login', 'HomeController@login')->name('login');
@@ -33,7 +37,7 @@ Route::group(array('middleware' => 'nothing'), function (){
 
 	Route::get('resetPassword', array('as' => 'resetPas', 'uses' => 'HomeController@resetPas'));
 
-	Route::post('resetPassword', array('as' => 'resetPas', 'uses' => 'HomeController@doResetPas'));
+	Route::post('doResetPassword', array('as' => 'doResetPas', 'uses' => 'HomeController@doResetPas'));
 
 	Route::get('registration', array('as' => 'registration', 'uses' => 'RegistrationController@registration'));
 	
@@ -511,6 +515,10 @@ Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
 Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
 
 	Route::get('addQuestion', array('as' => 'addQuestion', 'uses' => 'QuestionController@addQuestion'));
+
+	Route::get('totalQuestions/{qId?}', array('as' => 'totalQuestions', 'uses' => 'QuestionController@totalQuestions'));
+
+	Route::post('getTotalQuestions', array('as' => 'getTotalQuestions', 'uses' => 'QuestionController@getTotalQuestions'));
 
 	Route::post('doAddQuestionPic', array('as' => 'doAddQuestionPic', 'uses' => 'QuestionController@doAddQuestionPic'));
 	

@@ -17,4 +17,8 @@ class Question extends Model {
 //        return $this->hasMany('Subject', 'id', 'sId');
 //    }
 
+    public static function whereId($value) {
+        return Question::find($value);
+    }
+
 }

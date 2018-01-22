@@ -50,6 +50,7 @@
     <p>سوالات</p>
     <p class="sub-header" onclick="document.location.href = '{{route('addQuestion')}}'"><span> - </span><span>افزودن سوال جدید</span></p>
     <p class="sub-header" onclick="document.location.href = '{{route('unConfirmedQuestions')}}'"><span> - </span><span>سوالات تایید نشده</span></p>
+    <p class="sub-header" onclick="document.location.href = '{{route('totalQuestions')}}'"><span> - </span><span>تمام سوالات</span></p>
 </div>
 
 <div class="header">

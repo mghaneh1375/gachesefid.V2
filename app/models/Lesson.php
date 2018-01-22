@@ -16,4 +16,8 @@ class Lesson extends Model{
 //        return $this->hasMany('Subject', 'lId', 'id');
 //    }
 
+    public static function whereId($value) {
+        return Lesson::find($value);
+    }
+
 }

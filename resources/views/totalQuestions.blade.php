@@ -4,22 +4,29 @@
     @parent
     <link rel="stylesheet" href="{{URL::asset('css/form.css')}}">
     <script>
-        var getControllerLevelsDir = '{{route('getControllerLevelsDir')}}';
         var getLessonsDir = '{{route('getLessonsController')}}';
-        var getQuestionsDir = '{{route('getControllerQuestions')}}';
+        var getQuestionsDir = '{{route('getTotalQuestions')}}';
         var getQuestionSubjects = '{{route('getQuestionSubjects')}}';
         var getGradesDir = '{{route('getGrades')}}';
         var getLessonsDir2 = '{{route('getLessons')}}';
         var getSubjectsDir = '{{route('getSubjects')}}';
         var rejectQuestionDir = '{{route('rejectQuestion')}}';
         var acceptDir = '{{route('home')}}' + "/editDetailQuestion/";
+        var selectedLesson = -1;
+        var selectedQId = -1;
     </script>
-    <script src="{{URL::asset('js/jsNeededForControllers.js')}}"></script>
+    <script src="{{URL::asset('js/jsNeededForEditQuestions.js')}}"></script>
+
+    <style>
+        label {
+            float: right;
+            padding-left: 10px;
+        }
+    </style>
 @stop
 
-
 @section('caption')
-    <div class="title">سوالات تایید نشده
+    <div class="title">سوالات
     </div>
 @stop
 
@@ -36,7 +43,11 @@
                 <label for="gradeId">پایه ی تحصیلی</label>
                 <select class="mySelect" style="float: right" id="gradeId" onchange="getLessons()">
                     @foreach($grades as $grade)
-                        <option value="{{$grade->id}}">{{$grade->name}}</option>
+                        @if($grade->id == $gradeId)
+                            <option selected value="{{$grade->id}}">{{$grade->name}}</option>
+                        @else
+                            <option value="{{$grade->id}}">{{$grade->name}}</option>
+                        @endif
                     @endforeach
                 </select>
             </div>
@@ -182,6 +193,12 @@
 
         @if(!empty($err))
             showAddBatchPane();
+        @endif
+
+
+        @if(!empty($qId) && $lId != -1)
+            selectedLesson = '{{$lId}}';
+            selectedQId = '{{$qId}}';
         @endif
     </script>
 @stop

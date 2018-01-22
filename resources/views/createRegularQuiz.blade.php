@@ -35,6 +35,7 @@
         var deleteQFromQ = '{{route('deleteQFromQ')}}';
         var deleteDeletedQFromQ = '{{route('deleteDeletedQFromQ')}}';
         var changeRankingCountDir = '{{route('changeRankingCount')}}';
+        var homeDir = '{{route('home')}}';
 
         $(document).ready(function(){
 

@@ -36,6 +36,7 @@
                                 <ul class="subItem hidden questions">
                                     <li><a href="{{route('addQuestion')}}">افزودن سوال جدید</a></li>
                                     <li><a href="{{route('unConfirmedQuestions')}}">سوالات تایید نشده</a></li>
+                                    <li><a href="{{route('totalQuestions')}}">تمام سوالات</a></li>
                                 </ul>
                             </li>
 

@@ -404,13 +404,16 @@ function showQuestion() {
     else
         $("#nextQ").removeClass('hidden');
 
-    $("#questionPane").css('background', 'url("' + questions[currIdx].questionFile + '")');
-    $("#questionPane").css('background-repeat', 'no-repeat');
-    $("#questionPane").css('background-size', 'contain');
+    $("#questionPane").css('background', 'url("' + questions[currIdx].questionFile + '")')
+        .css('background-repeat', 'no-repeat')
+        .css('background-size', 'contain')
+        .click(function () {
+            window.open(homeDir + "/totalQuestions/" + questions[currIdx].id, "_blank");
+        });
 
-    $("#ansPane").css('background', 'url("' + questions[currIdx].ansFile + '")');
-    $("#ansPane").css('background-repeat', 'no-repeat');
-    $("#ansPane").css('background-size', 'contain');
+    $("#ansPane").css('background', 'url("' + questions[currIdx].ansFile + '")')
+        .css('background-repeat', 'no-repeat')
+        .css('background-size', 'contain');
 
 
     newElement = "<div class='col-xs-4'> زمان مورد نیاز: " + questions[currIdx].neededTime + " ثانیه</div>";

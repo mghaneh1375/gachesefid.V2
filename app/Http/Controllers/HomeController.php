@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
@@ -147,7 +148,7 @@ class HomeController extends Controller {
 					$user->password = Hash::make($newPas);
 					$user->save();
 
-					SendREST($val, "رمز جدید گچ سفید:" . "<br/>" . $newPas, null);
+					sendSMS($val, $newPas, 'resetPas');
 				}
 			}
 			echo "ok";
@@ -495,7 +496,6 @@ class HomeController extends Controller {
 		if(isset($_POST["oldPas"]) && isset($_POST["newPas"]) && isset($_POST["confirmPas"])) {
 
 			$user = Auth::user();
-
 
 			if(Hash::check(makeValidInput($_POST["oldPas"]), $user->password)) {
 
