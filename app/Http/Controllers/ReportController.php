@@ -3252,7 +3252,7 @@ class ReportController extends Controller {
 
         return view('A2', array('cities' => $cities, 'quizId' => $quizId));
     }
-
+    
     public function A2Excel($quizId) {
 
         $user = Auth::user();

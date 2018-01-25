@@ -2302,10 +2302,10 @@ class QuizController extends Controller {
             $quiz = RegularQuiz::find($quizId);
             $today = getToday();
 
-            if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
+            /*if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
                 echo "timeOut";
                 return;
-            }
+            }*/
 
             $questions = DB::select('select regularQOQ.qNo as qNo, questionFile, ans, users.level as authorLevel, ansFile, question.level,
                 neededTime, question.id from question, regularQOQ, users WHERE users.id = author and

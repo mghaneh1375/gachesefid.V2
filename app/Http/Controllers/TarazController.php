@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\models\Enheraf;
+use App\models\QuizRegistry;
 use App\models\ROQ;
 use App\models\Question;
 use App\models\Taraz;
 use App\models\SubjectsPercent;
 use App\models\RegularQuiz;
+use App\models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
@@ -178,12 +180,13 @@ class TarazController extends Controller {
             
             $quiz = RegularQuiz::find($quizId);
             $date = getToday();
+            $regularQuizMode = getValueInfo('regularQuiz');
 
             if($quiz == null || $quiz->endDate > $date["date"] || ($quiz->endDate == $date["date"] &&
                 $quiz->endTime > $date["time"]))
                 return Redirect::to('createTarazTable');
 
-            $qEntryIds = DB::select('select qR.id, qR.uId from quizRegistry qR WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' . getValueInfo('regularQuiz') .
+            $qEntryIds = DB::select('select qR.id, qR.uId from quizRegistry qR WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' . $regularQuizMode .
                         ' and (select count(*) from ROQ r where r.uId = qR.uId and r.quizMode = qR.quizMode and r.quizId = qR.qId) > 0'
             );
 
@@ -191,6 +194,20 @@ class TarazController extends Controller {
                 if(Taraz::where('qEntryId', '=', $qEntryIds[0]->id)->count() > 0)
                     return Redirect::to(route('createTarazTable2', ['mode' => 'err']));
             }
+
+            foreach ($qEntryIds as $itr) {
+                $tmp = User::whereId($itr->uId);
+                $tmp = $tmp->firstName . $tmp->lastName;
+                if(DB::select("select count(*) as countNum from quizRegistry qR, users u WHERE concat(u.firstName, u.lastName) LIKE '" . $tmp . "' and u.id = qR.uId and qR.quizMode = " . $regularQuizMode)[0]->countNum > 1) {
+                    QuizRegistry::destroy($itr->id);
+                    $condition = ['quizId' => $quizId, 'uId' => $itr->uId, 'quizMode' => $regularQuizMode];
+                    ROQ::where($condition)->delete();
+                }
+            }
+
+            $qEntryIds = DB::select('select qR.id, qR.uId from quizRegistry qR WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' . getValueInfo('regularQuiz') .
+                ' and (select count(*) from ROQ r where r.uId = qR.uId and r.quizMode = qR.quizMode and r.quizId = qR.qId) > 0'
+            );
 
             Enheraf::where('qId', '=', $quizId)->delete();
 
