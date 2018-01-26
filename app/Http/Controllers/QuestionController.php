@@ -996,7 +996,7 @@ class QuestionController extends Controller {
                 return;
             }
 
-            $questions = DB::select('select question.id, question.choicesCount, users.level as authorLevel, question.questionFile, ' .
+            $questions = DB::select('select question.id, question.organizationId, question.choicesCount, users.level as authorLevel, question.questionFile, ' .
                 'question.ansFile, question.level, question.neededTime, question.telorance, question.choicesCount, ' .
                 'question.kindQ, question.ans from question, SOQ, subject, users where author = users.id and sId = subject.id and ' .
                 'lessonId = ' . $lessonId . ' and qId = question.id');

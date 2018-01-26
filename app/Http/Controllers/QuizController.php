@@ -2307,7 +2307,7 @@ class QuizController extends Controller {
                 return;
             }*/
 
-            $questions = DB::select('select regularQOQ.qNo as qNo, questionFile, ans, users.level as authorLevel, ansFile, question.level,
+            $questions = DB::select('select regularQOQ.qNo as qNo, organizationId, questionFile, ans, users.level as authorLevel, ansFile, question.level,
                 neededTime, question.id from question, regularQOQ, users WHERE users.id = author and
                 quizId = ' .$quizId . ' and questionId = question.id order By regularQOQ.qNo ASC');
 

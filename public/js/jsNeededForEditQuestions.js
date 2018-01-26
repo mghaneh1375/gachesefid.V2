@@ -74,6 +74,19 @@ function getQuestions() {
 
 }
 
+function jumpToSpecificQuestion() {
+
+    var jumpVal = $("#jumpVal").val();
+
+    for (i = 0; i < questions.length; i++) {
+        if(jumpVal == questions[i].organizationId)
+            currIdx = i;
+    }
+
+    showQuestion();
+
+}
+
 function prevQ() {
     currIdx--;
     showQuestion();

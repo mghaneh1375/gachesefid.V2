@@ -101,11 +101,18 @@
 
         <div class="col-xs-12" style="margin-top: 20px">
             <div class="col-xs-12">
-                <div class="col-xs-12" id="teloranceDiv">
+
+                <div class="col-xs-6">
+                    <label for="jumpVal">پرش به سوال </label>
+                    <input style="margin-top: -7px; float: right" placeholder="کد سازمانی سوال" type="text" id="jumpVal">
+                    <span class="btn btn-danger" onclick="jumpToSpecificQuestion()">بپر</span>
+                </div>
+
+                <div class="col-xs-6" id="teloranceDiv">
                     <label for="telorance">میزان خطا</label>
                     <input style="margin-top: -7px; float: right" type="number" max="100" min="0" value="0" id="telorance">
                 </div>
-                <div class="col-xs-12" id="choice">
+                <div class="col-xs-6" id="choice">
                     <label for="choicesNum">تعداد گزینه</label>
                     <input onchange="changeChoicesCount()" style="margin-top: -7px; float: right" type="number" max="10" min="2" value="4" id="choicesNum">
                 </div>

@@ -2,6 +2,10 @@
 
 @section('head')
     @parent
+@stop
+
+@section('caption')
+
     <style>
         td {
             padding: 10px;
@@ -15,10 +19,6 @@
         var quizName = "{{$quizName}}";
 
     </script>
-
-@stop
-
-@section('caption')
     <div class="title">رتبه بندی (تا این لحظه)</div>
 @stop
 

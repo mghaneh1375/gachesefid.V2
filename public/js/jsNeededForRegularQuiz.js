@@ -384,7 +384,6 @@ function getSubjectQuestions (sId) {
 
 function showQuestion() {
 
-    $("#qInfo").empty();
     $("#msg").empty();
 
     if(currIdx < 0 || currIdx >= questions.length) {
@@ -404,11 +403,17 @@ function showQuestion() {
     else
         $("#nextQ").removeClass('hidden');
 
+    allow = true;
+
     $("#questionPane").css('background', 'url("' + questions[currIdx].questionFile + '")')
         .css('background-repeat', 'no-repeat')
         .css('background-size', 'contain')
+		.css('cursor', 'pointer')
         .click(function () {
-            window.open(homeDir + "/totalQuestions/" + questions[currIdx].id, "_blank");
+            if(allow) {
+                window.open(homeDir + "/totalQuestions/" + questions[currIdx].id, "_blank");
+                allow = false;
+            }
         });
 
     $("#ansPane").css('background', 'url("' + questions[currIdx].ansFile + '")')
@@ -433,7 +438,12 @@ function showQuestion() {
     newElement += "<div class='col-xs-4'> پاسخ " + questions[currIdx].ans + "</div>";
     newElement += "<div class='col-xs-6'><center><button class='btn btn-danger' onclick='removeQFromQ(\"" + questions[currIdx].id + "\")' data-toggle='tooltip' title='حذف سوال از آزمون'><span class='glyphicon glyphicon-remove'></span></button></center></div>";
     newElement += "<div class='col-xs-6'><center> شماره سوال <input style='max-width: 100px' type='number' value='" + questions[currIdx].qNo + "' onchange='changeQNo(\"" + questions[currIdx].id + "\", this.value)'></center></div>";
-    $("#qInfo").append(newElement);
+
+    newElement += '<div class="col-xs-12">';
+    newElement += '<input placeholder="کد سازمانی سوال" type="text" id="jumpVal">';
+    newElement += '<span style="margin-right: 10px" class="btn btn-danger" onclick="jumpToSpecificQuestion()">بپر</span></div>';
+
+    $("#qInfo").empty().append(newElement);
 }
 
 function changeQNo(qId, val) {
@@ -477,7 +487,6 @@ function hideAddQuestion() {
 
 function showSubQuestion() {
 
-    $("#subQInfo").empty();
     $("#subMsg").empty();
 
     if(subCurrIdx < 0 || subCurrIdx >= subQuestions.length) {
@@ -497,15 +506,15 @@ function showSubQuestion() {
     else
         $("#subNextQ").removeClass('hidden');
 
-    $("#subQuestionPane").css('background', 'url("' + subQuestions[subCurrIdx].questionFile + '")');
-    $("#subQuestionPane").css('background-repeat', 'no-repeat');
-    $("#subQuestionPane").css('background-size', '100% 100%');
+    $("#subQuestionPane").css('background', 'url("' + subQuestions[subCurrIdx].questionFile + '")')
+        .css('background-repeat', 'no-repeat')
+        .css('background-size', '100% 100%');
 
-    $("#subAnsPane").css('background', 'url("' + subQuestions[subCurrIdx].ansFile + '")');
-    $("#subAnsPane").css('background-repeat', 'no-repeat');
-    $("#subAnsPane").css('background-size', '100% 100%');
+    $("#subAnsPane").css('background', 'url("' + subQuestions[subCurrIdx].ansFile + '")')
+        .css('background-repeat', 'no-repeat')
+        .css('background-size', '100% 100%');
 
-    newElement = "<div class='col-xs-4'> زمان مورد نیاز: " + subQuestions[subCurrIdx].neededTime + " ثانیه</div>";
+    newElement = "<div class='col-xs-12'><div class='col-xs-4'> زمان مورد نیاز: " + subQuestions[subCurrIdx].neededTime + " ثانیه</div>";
     switch (subQuestions[subCurrIdx].level) {
         case 1:
         default:
@@ -519,9 +528,23 @@ function showSubQuestion() {
             break;
     }
     newElement += "<div class='col-xs-4'>سطح سختی " + level + "</div>";
-    newElement += "<div class='col-xs-4'> پاسخ " + subQuestions[subCurrIdx].ans + "</div>";
+    newElement += "<div class='col-xs-4'> پاسخ " + subQuestions[subCurrIdx].ans + "</div></div>";
+    newElement += "<div class='col-xs-12'>";
 
-    $("#subQInfo").append(newElement);
+    $("#subQInfo").empty().append(newElement);
+}
+
+function jumpToSpecificQuestion() {
+
+    var jumpVal = $("#jumpVal").val();
+
+    for (i = 0; i < questions.length; i++) {
+        if(jumpVal == questions[i].organizationId)
+            currIdx = i;
+    }
+
+    showQuestion();
+
 }
 
 function doAddQuiz() {
@@ -531,8 +554,7 @@ function doAddQuiz() {
         $("#sTime").val() == "" || $("#eTime").val() == "" || $("#date_input_reg").val() == "" ||
         $("#date_input_reg_end").val() == "") {
 
-        $("#errMsg").empty();
-        $("#errMsg").append('لطفا تمام موارد را پر نمایید');
+        $("#errMsg").empty().append('لطفا تمام موارد را پر نمایید');
         return;
     }
 
@@ -560,8 +582,7 @@ function doAddQuiz() {
                 document.location.href = quizDir;
 
             else {
-                $("#errMsg").empty();
-                $("#errMsg").append(response);
+                $("#errMsg").empty().append(response);
             }
         }
     });
