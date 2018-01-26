@@ -15,8 +15,6 @@ Route::group(array('middleware' => ['nothing', 'notLogin']), function () {
 
 Route::group(array('middleware' => 'nothing'), function (){
 
-	Route::get('test/{c}', array('as' => 'test', 'uses' => 'TestController@start'));
-
 	Route::get('aboutUs', array('as' => 'aboutUs', 'uses' => 'HomeController@aboutUs'));
 
 	Route::get('schoolsList', array('as' => 'schoolsList', 'uses' => 'UserController@schoolsList'));
@@ -244,6 +242,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
+	Route::get('test/{c}', array('as' => 'test', 'uses' => 'TestController@start'));
+	
 	Route::get('calenderManagement', array('as' => 'calenderManagement', 'uses' => 'CalenderController@calender'));
 
 	Route::post('addEvent', array('as' => 'addEvent', 'uses' => 'CalenderController@addEvent'));
