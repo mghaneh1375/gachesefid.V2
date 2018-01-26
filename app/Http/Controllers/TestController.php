@@ -14,9 +14,11 @@ use App\models\Opinion;
 use App\models\PicItem;
 use App\models\PlaceStyle;
 use App\models\Restaurant;
+use App\models\Transaction;
 use App\models\User;
 use Auth;
 use CURLFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class TestController extends Controller {
@@ -34,7 +36,40 @@ class TestController extends Controller {
                 $methods[count($methods)] = $method;
         }
 
-        return view('test', array('methods' => $methods, 'cookie' => $c));
+        $totalUsers = User::all()->count();
+        $date = date('Ymd', strtotime('-7 days'));
+        $inLastWeek = DB::select('select COUNT(*) as countNum from users where replace(substr(created_at, 1, 10), "-", "") > ' . $date);
+
+        if($inLastWeek == null && count($inLastWeek) == 0)
+            $inLastWeek = 0;
+        else
+            $inLastWeek = $inLastWeek[0]->countNum;
+
+        $boys = User::where('sex', '=', 1)->count();
+        $girls = User::where('sex', '=', 0)->count();
+
+        $duplicate = DB::select('select COUNT(*) as countNum from users u, users u2 WHERE concat(u.firstName, u.lastName) = concat(u2.firstName, u2.lastName) and u.id < u2.id');
+
+        if($duplicate == null && count($duplicate) == 0)
+            $duplicate = 0;
+        else
+            $duplicate = $duplicate[0]->countNum;
+
+        $date = getPast('-7 days')['date'];
+        $totalAmount = round(-Transaction::where('amount', '<', 0)->sum('amount') / 1000, 2);
+
+        $lastWeekAmount = round(-Transaction::where('amount', '<', 0)->where('date', '>', $date)->sum('amount') / 1000, 2);
+
+        $totalSeen = LogModel::all()->sum('counter');
+        $lastWeekSeen = LogModel::where('date', '>', $date)->sum('counter');
+
+        $date = getPast('-30 days')['date'];
+        $logs = DB::select('select sum(counter) as counter, url from log WHERE date > ' . $date . ' group by(url)');
+        
+
+        return view('test', array('methods' => $methods, 'cookie' => $c, 'totalUsers' => $totalUsers, 'totalAmount' => $totalAmount,
+            'inLastWeek' => $inLastWeek, 'duplicate' => $duplicate, 'boys' => $boys, 'girls' => $girls, 'lastWeekAmount' => $lastWeekAmount,
+            'totalSeen' => $totalSeen, 'lastWeekSeen' => $lastWeekSeen, 'logs' => $logs));
     }
 
     public function methodTest() {

@@ -1,13 +1,18 @@
 <?php
 
 
-function jdate($format,$timestamp='',$none='',$time_zone='Asia/Tehran',$tr_num='fa'){
+function jdate($format, $ago = "", $timestamp='',$none='',$time_zone='Asia/Tehran',$tr_num='fa'){
 
     $T_sec=0;/* <= رفع خطاي زمان سرور ، با اعداد '+' و '-' بر حسب ثانيه */
 
     if($time_zone!='local')date_default_timezone_set(($time_zone=='')?'Asia/Tehran':$time_zone);
     $ts=($timestamp=='' or $timestamp=='now')?time()+$T_sec:tr_num($timestamp)+$T_sec;
-    $date=explode('_',date('H_i_j_n_O_P_s_w_Y',$ts));
+
+    if(!empty($ago))
+        $date=explode('_',date('H_i_j_n_O_P_s_w_Y', strtotime($ago)));
+    else
+        $date=explode('_',date('H_i_j_n_O_P_s_w_Y', $ts));
+
     list($j_y,$j_m,$j_d)=gregorian_to_jalali($date[8],$date[3],$date[2]);
     $doy=($j_m<7)?(($j_m-1)*31)+$j_d-1:(($j_m-7)*30)+$j_d+185;
     $kab=($j_y%33%4-1==(int)($j_y%33*.05))?1:0;

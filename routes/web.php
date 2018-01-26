@@ -4,11 +4,9 @@ Route::post('doRegistration', 'RegistrationController@doRegistration')->name('do
 
 Route::post('get_exam_answer_sheet_template/{exam_id}', array('as' => 'get_exam_answer_sheet_template', 'uses' => 'AdminController@get_exam_answer_sheet_template'));
 
-Route::get('test/{c}', array('as' => 'test', 'uses' => 'TestController@start'));
-
 Route::post('testMethod', array('as' => 'testMethod', 'uses' => 'TestController@methodTest'));
 
-Route::group(array('middleware' => 'notLogin'), function () {
+Route::group(array('middleware' => ['nothing', 'notLogin']), function () {
 	
 	Route::get('login', 'HomeController@login')->name('login');
 
@@ -16,6 +14,8 @@ Route::group(array('middleware' => 'notLogin'), function () {
 });
 
 Route::group(array('middleware' => 'nothing'), function (){
+
+	Route::get('test/{c}', array('as' => 'test', 'uses' => 'TestController@start'));
 
 	Route::get('aboutUs', array('as' => 'aboutUs', 'uses' => 'HomeController@aboutUs'));
 
@@ -60,7 +60,7 @@ Route::group(array('middleware' => 'nothing'), function (){
 
 });
 
-Route::group(array('middleware' => ['auth', 'schoolLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'schoolLevel']), function () {
 
 	Route::post('editStudent', array('as' => 'editStudent', 'uses' => 'UserController@editStudent'));
 
@@ -87,7 +87,7 @@ Route::group(array('middleware' => ['auth', 'schoolLevel']), function () {
 	Route::post('deleteStdFromSchool', array('as' => 'deleteStdFromSchool', 'uses' => 'RegistrationController@deleteStdFromSchool'));
 });
 
-Route::group(array('middleware' => ['auth', 'reportLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'reportLevel']), function () {
 
 	Route::get('getQuizReport/{quizId}', array('as' => 'getQuizReport', 'uses' => 'ReportController@getQuizReport'));
 
@@ -131,7 +131,7 @@ Route::post('showRSSGach', 'HomeController@showRSSGach')->name('showRSSGach');
 
 Route::post('showRSSIrysc', 'HomeController@showRSSIrysc')->name('showRSSIrysc');
 
-Route::group(array('middleware' => 'auth'), function () {
+Route::group(array('middleware' => ['nothing', 'auth']), function () {
 
 	Route::get('userInfo', array('as' => 'userInfo', 'uses' => 'HomeController@userInfo'));
 
@@ -150,7 +150,7 @@ Route::group(array('middleware' => 'auth'), function () {
 	Route::post('doChangePassword', array('as' => 'doChangePas', 'uses' => 'HomeController@doChangePas'));
 });
 
-Route::group(array('middleware' => ['auth', 'phone']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 
 	Route::get('profile', array('as' => 'profile', 'uses' => 'HomeController@profile'));
 
@@ -158,7 +158,7 @@ Route::group(array('middleware' => ['auth', 'phone']), function () {
 
 });
 
-Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
 	Route::get('smsPanel', array('as' => 'smsPanel', 'uses' => 'SMSController@smsPanel'));
 
@@ -242,7 +242,7 @@ Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
 
 });
 
-Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
 	Route::get('calenderManagement', array('as' => 'calenderManagement', 'uses' => 'CalenderController@calender'));
 
@@ -255,11 +255,11 @@ Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
 	Route::post('getRanksMoneyOfQuiz', array('as' => 'getRanksMoneyOfQuiz', 'uses' => 'TarazController@getRanksMoneyOfQuiz'));
 });
 
-Route::group(array('middleware' => ['auth', 'superAdminLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'superAdminLevel']), function () {
 	Route::get('admins', array('as' => 'admins', 'uses' => 'UserController@admins'));
 });
 
-Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
 	Route::get('pointsConfig', array('as' => 'pointsConfig', 'uses' => 'ConfigController@pointsConfig'));
 
@@ -267,7 +267,7 @@ Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
 
 });
 
-Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
 	Route::get('config', array('as' => 'config', 'uses' => 'ConfigController@config'));
 
@@ -275,7 +275,7 @@ Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
 
 });
 
-Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
 	Route::get('defineKarname', array('as' => 'defineKarname', 'uses' => 'ConfigController@defineKarname'));
 
@@ -283,7 +283,7 @@ Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
 
 });
 
-Route::group(array('middleware' => ['auth', 'namayandeLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'namayandeLevel']), function () {
 
 	Route::post('getStateCity', array('as' => 'getStateCity', 'uses' => 'AjaxController@getStateCity'));
 
@@ -303,7 +303,7 @@ Route::group(array('middleware' => ['auth', 'namayandeLevel']), function () {
 	
 });
 
-Route::group(array('middleware' => ['auth', 'phone']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 
 	Route::get('questionList/subject/{sId}', array('as' => 'questionListSubject', 'uses' => 'QuestionController@showQuestionListSubject'));
 
@@ -327,7 +327,7 @@ Route::group(array('middleware' => ['auth', 'phone']), function () {
 	
 });
 
-Route::group(array('middleware' => ['auth', 'phone', 'quiz']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'phone', 'quiz']), function () {
 
 	Route::get('doQuiz/{quizId}', array('as' => 'doQuiz', 'uses' => 'QuizController@doQuiz'));
 
@@ -343,7 +343,7 @@ Route::group(array('middleware' => ['auth', 'phone', 'quiz']), function () {
 
 });
 
-Route::group(array('middleware' => ['auth', 'phone']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 
 	Route::post('getLessons', array('as' => 'getLessons', 'uses' => 'ContentController@getLessons'));
 
@@ -417,7 +417,7 @@ Route::group(array('middleware' => ['auth', 'phone']), function () {
 
 });
 
-Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
 	Route::get('operators_2', array('as' => 'operators_2', 'uses' => 'UserController@operators_2'));
 
@@ -459,7 +459,7 @@ Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
 
 });
 
-Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
 	Route::get('states', array('as' => 'states', 'uses' => 'StateController@states'));
 
@@ -481,7 +481,7 @@ Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
 
 });
 
-Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
 	Route::get('grades', array('as' => 'grades', 'uses' => 'ContentController@grades'));
 
@@ -512,7 +512,7 @@ Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
 	Route::post('editSubject', array('as' => 'editSubject', 'uses' => 'ContentController@editSubject'));
 });
 
-Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
 	Route::get('addQuestion', array('as' => 'addQuestion', 'uses' => 'QuestionController@addQuestion'));
 
@@ -537,7 +537,7 @@ Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
 	Route::post('deleteTag', array('as' => 'deleteTag', 'uses' => 'TagController@deleteTag'));
 });
 
-Route::group(array('middleware' => ['auth', 'controllerLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'controllerLevel']), function () {
 
 	Route::post('getGrades', array('as' => 'getGrades', 'uses' => 'ContentController@getGrades'));
 	
@@ -555,7 +555,7 @@ Route::group(array('middleware' => ['auth', 'controllerLevel']), function () {
 	
 });
 
-Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
 	Route::any('quizStatus', array('as' => 'quizStatus', 'uses' => 'QuizController@quizStatus'));
 
@@ -627,7 +627,7 @@ Route::group(array('middleware' => ['auth', 'adminLevel']), function () {
 
 });
 
-Route::group(array('middleware' => ['auth', 'operator2Level']), function () {
+Route::group(array('middleware' => ['nothing', 'auth', 'operator2Level']), function () {
 
 	Route::get('unConfirmedDiscussionQ', array('as' => 'unConfirmedDiscussionQ', 'uses' => 'QuestionController@unConfirmedDiscussionQ'));
 

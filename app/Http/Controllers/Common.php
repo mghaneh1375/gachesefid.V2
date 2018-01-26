@@ -373,6 +373,25 @@ function getToday() {
     return ["date" => $day, "time" => $time];
 }
 
+function getPast($past) {
+
+    include_once 'jdate.php';
+    
+    $jalali_date = jdate("c", $past);
+
+    $date_time = explode('-', $jalali_date);
+
+    $subStr = explode('/', $date_time[0]);
+
+    $day = $subStr[0] . $subStr[1] . $subStr[2];
+
+    $time = explode(':', $date_time[1]);
+
+    $time = $time[0] . $time[1];
+
+    return ["date" => $day, "time" => $time];
+}
+
 function convertStringToTime($time) {
     return $time[0] . $time[1] . ":" . $time[2] . $time[3];
 }
