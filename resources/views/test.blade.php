@@ -691,7 +691,7 @@
                                     </div>
                                     <div class="w_center w_55">
                                         <div class="progress">
-                                            <div style="width: {{round($log->counter * 100 / $totalSeen, 2)}}%; color: {{'#' . rand(100000, 999999)}}" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+                                            <div style="width: {{round($log->counter * 100 / $totalSeen, 2)}}%; background-color: {{'#' . rand(100000, 999999)}}" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
                                                 <span class="sr-only">60% Complete</span>
                                             </div>
                                         </div>

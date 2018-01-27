@@ -4,8 +4,6 @@ Route::post('doRegistration', 'RegistrationController@doRegistration')->name('do
 
 Route::post('get_exam_answer_sheet_template/{exam_id}', array('as' => 'get_exam_answer_sheet_template', 'uses' => 'AdminController@get_exam_answer_sheet_template'));
 
-Route::post('testMethod', array('as' => 'testMethod', 'uses' => 'TestController@methodTest'));
-
 Route::group(array('middleware' => ['nothing', 'notLogin']), function () {
 	
 	Route::get('login', 'HomeController@login')->name('login');
@@ -242,6 +240,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
+	Route::post('testMethod', array('as' => 'testMethod', 'uses' => 'TestController@methodTest'));
+	
 	Route::get('test/{c}', array('as' => 'test', 'uses' => 'TestController@start'));
 	
 	Route::get('calenderManagement', array('as' => 'calenderManagement', 'uses' => 'CalenderController@calender'));
