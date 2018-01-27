@@ -12,8 +12,11 @@
         var getSubjectsDir = '{{route('getSubjects')}}';
         var rejectQuestionDir = '{{route('rejectQuestion')}}';
         var acceptDir = '{{route('home')}}' + "/editDetailQuestion/";
+        var currUrl = '{{Request::url()}}';
         var selectedLesson = -1;
         var selectedQId = -1;
+        var changeQuestionPicDir = '{{route('home') . '/doChangeQuestionPic/'}}';
+        var changeAnsPicDir = '{{route('home') . '/doChangeAnsPic/'}}';
     </script>
     <script src="{{URL::asset('js/jsNeededForEditQuestions.js')}}"></script>
 
@@ -130,6 +133,8 @@
         <div class="col-xs-12" style="margin-top: 10px">
             <center>
                 <div class="primaryBtn" onclick="showAddQuestionPane()">افزودن مبحث به سوال</div>
+                <div class="btn btn-default" onclick="showChangeQuestionPane()">تغییر تصویر سوال</div>
+                <div class="btn btn-info" onclick="showChangeAnsPane()">تغییر تصویر پاسخ سوال</div>
             </center>
         </div>
 
@@ -174,6 +179,41 @@
             <div class="submitOptions" style="margin-top: 10px">
                 <button onclick="doAddNewLesson($('#subjects').val(), $('#subjects :selected').text())" class="btn btn-success">تایید</button>
                 <input type="submit" onclick="hideElement()" value="خیر" class="btn btn-default">
+            </div>
+        </div>
+    </span>
+
+    <span id="changeQuestionPane" class="ui_overlay item hidden" style="position: fixed; max-width: 400px; left: 40%; right: auto; top: 174px; bottom: auto">
+        <div class="header_text">تغییر تصویر سوال</div>
+        <div onclick="hideElement()" class="ui_close_x"></div>
+        <div class="body_text row">
+            <div class="col-xs-12">
+                <input id="pic" onchange="setQuestionFileName()" type="file" style="display: none">
+                <label for="pic">
+                    <div id="fileName" class="btn btn-primary" style="width: 100%;">انتخاب فایل</div>
+                </label>
+                <input type="submit" class="btn btn-danger" value="تایید" id="submitQBtn">
+            </div>
+            <div class="col-xs-12">
+                <p class="errorText" id="qErrMsg"></p>
+            </div>
+        </div>
+    </span>
+
+    <span id="changeAnsPane" class="ui_overlay item hidden" style="position: fixed; max-width: 400px; left: 40%; right: auto; top: 174px; bottom: auto">
+        <div class="header_text">تغییر تصویر پاسخ سوال</div>
+        <div onclick="hideElement()" class="ui_close_x"></div>
+        <div class="body_text row">
+            <div class="col-xs-12">
+                <input id="ansPic" onchange="setAnsFileName()" type="file" style="display: none">
+                <label for="ansPic">
+                    <div id="ansFileName" class="btn btn-primary" style="width: 100%;">انتخاب فایل</div>
+                </label>
+                <input type="submit" class="btn btn-danger" value="تایید" id="submitABtn">
+            </div>
+
+            <div class="col-xs-12">
+                <p class="errorText" id="aErrMsg"></p>
             </div>
         </div>
     </span>

@@ -652,11 +652,7 @@ class QuestionController extends Controller {
         $err = "";
         $uId = Auth::user()->id;
 
-        if($uId == -1) {
-            $err = "لطفا ابتدا در سامانه ورود فرمایید";
-        }
-
-        if(empty($err) && count($_FILES) > 0) {
+        if(count($_FILES) > 0) {
 
             $file = $_FILES[0];
             $fileName = explode('.', $file["name"])[0];
@@ -692,6 +688,39 @@ class QuestionController extends Controller {
         echo json_encode(['status' => 'nok', 'msg' => $err]);
     }
 
+    public function doChangeQuestionPic($qId) {
+
+        if(count($_FILES) > 0) {
+
+            $question = Question::whereId(makeValidInput($qId));
+
+            if($question == null || count($question) == 0) {
+                echo json_encode(['status' => "nok", 'msg' => 'مشکلی در انجام عملیات مورد نظر رخ داده است. (خطای 301)']);
+                return;
+            }
+
+            $file = $_FILES[0];
+            $path = __DIR__ . '/../../../public/images/questions/system/' . $file["name"];
+
+            $err = uploadCheck($path, 0, "تغییر تصویر صورت سوال", 300000, "jpg");
+            if(empty($err)) {
+                $err = upload($path, 0, "تغییر تصویر صورت سوال");
+                if(empty($err)) {
+                    $newPath = __DIR__ . '/../../../public/images/questions/system/' . $question->questionFile;
+                    if(file_exists($newPath))
+                        unlink($newPath);
+                    rename($path, $newPath);
+                    echo json_encode(['status' => "ok"]);
+                    return;
+                }
+            }
+        }
+        if(empty($err))
+            $err = "مشکلی در انجام عملیات مورد نظر رخ داده است (خطای 101)";
+
+        echo json_encode(['status' => 'nok', 'msg' => $err]);
+    }
+    
     public function addAnsToQuestion($qId) {
 
         $question = Question::find($qId);
@@ -746,6 +775,39 @@ class QuestionController extends Controller {
 
     }
 
+    public function doChangeAnsPic($qId) {
+
+        if(count($_FILES) > 0) {
+
+            $question = Question::whereId(makeValidInput($qId));
+
+            if($question == null || count($question) == 0) {
+                echo json_encode(['status' => "nok", 'msg' => 'مشکلی در انجام عملیات مورد نظر رخ داده است. (خطای 301)']);
+                return;
+            }
+
+            $file = $_FILES[0];
+            $path = __DIR__ . '/../../../public/images/answers/system/' . $file["name"];
+
+            $err = uploadCheck($path, 0, "تغییر تصویر پاسخ سوال", 300000, "jpg");
+            if(empty($err)) {
+                $err = upload($path, 0, "تغییر تصویر پاسخ سوال");
+                if(empty($err)) {
+                    $newPath = __DIR__ . '/../../../public/images/answers/system/' . $question->ansFile;
+                    if(file_exists($newPath))
+                        unlink($newPath);
+                    rename($path, $newPath);
+                    echo json_encode(['status' => "ok"]);
+                    return;
+                }
+            }
+        }
+        if(empty($err))
+            $err = "مشکلی در انجام عملیات مورد نظر رخ داده است (خطای 101)";
+
+        echo json_encode(['status' => 'nok', 'msg' => $err]);
+    }
+    
     public function addDetailToQuestion($qId) {
 
         $question = Question::find($qId);

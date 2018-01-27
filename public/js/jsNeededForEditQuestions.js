@@ -3,6 +3,13 @@ var currIdx = 0;
 var lessons = [];
 
 $(document).ready(function () {
+
+    $("input:file[id='pic']").on('change', prepareUpload);
+    $("input:file[id='ansPic']").on('change', prepareUpload2);
+
+    $('#submitQBtn').on('click', submitQuestion);
+    $('#submitABtn').on('click', submitAns);
+    
     getLessons();
 });
 
@@ -151,7 +158,96 @@ function removeLesson(lessonId) {
     }
 }
 
+function setQuestionFileName() {
+    $("#questionFileName").empty().append($("#pic").val());
+}
+
+function setAnsFileName() {
+    $("#ansFileName").empty().append($("#ansPic").val());
+}
+
+function prepareUpload(event)  {
+    file = event.target.files;
+}
+
+function prepareUpload2(event)  {
+    ansFile = event.target.files;
+}
+
+function submitQuestion(event) {
+
+    if($("#pic").val() == "") {
+        $("#qErrMsg").empty().append('لطفا عکسی را به عنوان صورت سوال مشخص کنید');
+        return;
+    }
+
+    event.stopPropagation();
+    event.preventDefault();
+
+    var data = new FormData();
+    $.each(file, function(key, value) {
+        data.append(key, value);
+    });
+
+    $.ajax({
+        type: 'POST',
+        url: changeQuestionPicDir + questions[currIdx].id,
+        data: data,
+        cache: false,
+        processData: false, // Don't process the files
+        contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+        success: function(response) {
+
+            response = JSON.parse(response);
+
+            if(response.status == "ok") {
+                document.location.href = currUrl;
+            }
+            else {
+                $("#qErrMsg").empty().append(response.status);
+            }
+        }
+    });
+}
+
+function submitAns(event) {
+
+    if($("#ansPic").val() == "") {
+        $("#aErrMsg").empty().append('لطفا عکسی را به عنوان صورت سوال مشخص کنید');
+        return;
+    }
+
+    event.stopPropagation();
+    event.preventDefault();
+
+    var data = new FormData();
+    $.each(ansFile, function(key, value) {
+        data.append(key, value);
+    });
+
+    $.ajax({
+        type: 'POST',
+        url: changeAnsPicDir + questions[currIdx].id,
+        data: data,
+        cache: false,
+        processData: false, // Don't process the files
+        contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+        success: function(response) {
+
+            response = JSON.parse(response);
+
+            if(response.status == "ok") {
+                document.location.href = currUrl;
+            }
+            else {
+                $("#aErrMsg").empty().append(response.msg);
+            }
+        }
+    });
+}
+
 function hideElement() {
+    $(".dark").addClass('hidden');
     $(".item").addClass('hidden');
 }
 
@@ -268,8 +364,21 @@ function getSubjects(lessonId) {
 
 function showAddQuestionPane() {
     hideElement();
+    $(".dark").removeClass('hidden');
     getGrades();
     $("#addNewSubjectPane").removeClass('hidden');
+}
+
+function showChangeQuestionPane() {
+    hideElement();
+    $(".dark").removeClass('hidden');
+    $("#changeQuestionPane").removeClass('hidden');
+}
+
+function showChangeAnsPane() {
+    hideElement();
+    $(".dark").removeClass('hidden');
+    $("#changeAnsPane").removeClass('hidden');
 }
 
 function showQuestion() {
@@ -369,43 +478,6 @@ function showQuestion() {
     $("#ansPane").css('background', 'url("' + questions[currIdx].ansFile + '")');
     $("#ansPane").css('background-repeat', 'no-repeat');
     $("#ansPane").css('background-size', 'contain');
-}
-
-function submitQuestion() {
-
-    $("#errMsg").empty();
-
-    if($("#kindQ").val() == 1) {
-        ans = $("#ans").val();
-        additional = $("#choicesNum").val();
-    }
-    else {
-        ans = $("#shortAns").val();
-        additional = $("#telorance").val();
-    }
-
-    $.ajax({
-        type: 'post',
-        url: acceptDir + questions[currIdx].id,
-        data: {
-            'level': $("#level").val(),
-            'kindQuestion': $("#kindQ").val(),
-            'neededTime': $("#neededTime").val(),
-            'ans': ans,
-            'additional': additional,
-            'subjects': lessons
-        },
-        success: function (response) {
-
-            if(response == "ok") {
-                questions.splice(currIdx, 1);
-                currIdx--;
-                showQuestion();
-            }
-            else
-                $("#errMsg").append(response);
-        }
-    });
 }
 
 function rejectQuestion() {

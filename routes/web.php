@@ -521,9 +521,13 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 	Route::post('getTotalQuestions', array('as' => 'getTotalQuestions', 'uses' => 'QuestionController@getTotalQuestions'));
 
 	Route::post('doAddQuestionPic', array('as' => 'doAddQuestionPic', 'uses' => 'QuestionController@doAddQuestionPic'));
+
+	Route::post('doChangeQuestionPic/{qId}', array('as' => 'doChangeQuestionPic', 'uses' => 'QuestionController@doChangeQuestionPic'));
 	
 	Route::post('addAnsToQuestion/{qId}', array('as' => 'addAnsToQuestion', 'uses' => 'QuestionController@addAnsToQuestion'));
-	
+
+	Route::post('doChangeAnsPic/{qId}', array('as' => 'doChangeAnsPic', 'uses' => 'QuestionController@doChangeAnsPic'));
+
 	Route::post('addDetailToQuestion/{qId}', array('as' => 'addDetailToQuestion', 'uses' => 'QuestionController@addDetailToQuestion'));
 	
 	Route::post('addQuestionBatch', array('as' => 'addQuestionBatch', 'uses' => 'QuestionController@addQuestionBatch'));

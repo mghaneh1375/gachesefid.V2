@@ -58,8 +58,6 @@ function changeChoicesCount() {
     newElement = "";
     selected = $("#ans").attr('data-val');
 
-    $("#ansUL").empty();
-
     for(i = 1; i <= limit; i++) {
         newElement += "<li><a onclick='changeAns(\"" + i + "\")'>" + "گزینه&nbsp;" + i + "</a></li>";
     }
@@ -69,13 +67,11 @@ function changeChoicesCount() {
     else
         changeAns(1);
 
-    $("#ansUL").append(newElement);
+    $("#ansUL").empty().append(newElement);
 }
 
 function changeAns(val) {
-    $("#ans").attr('data-val', val);
-    $("#ans").empty();
-    $("#ans").append('گزینه&nbsp;' + val);
+    $("#ans").attr('data-val', val).empty().append('گزینه&nbsp;' + val);
 }
 
 function showAddBatchPane() {
