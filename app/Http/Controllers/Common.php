@@ -113,6 +113,10 @@ function calcRank($quizId, $uId) {
     for($i = 0; $i < count($ranks); $i++) {
 
         if($ranks[$i]->uId == $uId) {
+
+            if($i == 0)
+                dd($ranks[$i]->uId . " " . $ranks[$i]->weighted_avg);
+
             $r = $i + 1;
 
             $currTaraz = $ranks[$i]->weighted_avg;

@@ -17,7 +17,8 @@
         "phpunit/phpunit": "~5.7",
         "larabook/gateway": "^3.2",
         "kavenegar/php": "^1.2",
-        "phpexcel/phpexcel": "dev-master"
+        "phpexcel/phpexcel": "dev-master",
+        "irazasyed/telegram-bot-sdk": "^2.0"
     },
     "autoload": {
         "classmap": [

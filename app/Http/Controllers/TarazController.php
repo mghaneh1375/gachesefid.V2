@@ -195,16 +195,21 @@ class TarazController extends Controller {
                     return Redirect::to(route('createTarazTable2', ['mode' => 'err']));
             }
 
-            foreach ($qEntryIds as $itr) {
-                $tmp = User::whereId($itr->uId);
-                $tmp = $tmp->firstName . $tmp->lastName;
-                if(DB::select("select count(*) as countNum from quizRegistry qR, users u WHERE concat(u.firstName, u.lastName) LIKE '" . $tmp . "' and u.id = qR.uId and qR.quizMode = " . $regularQuizMode)[0]->countNum > 1) {
-                    QuizRegistry::destroy($itr->id);
-                    $condition = ['quizId' => $quizId, 'uId' => $itr->uId, 'quizMode' => $regularQuizMode];
-                    ROQ::where($condition)->delete();
-                }
-            }
+            $deleteItems = DB::select('select qR1.id from quizRegistry qR1, quizRegistry qR2 WHERE qR1.qId = qR2.qId and qR1.qId = ' . $quizId . ' and qR1.quizMode = qR2.quizMode and qR1.quizMode = ' . $regularQuizMode . ' and qR1.id < qR2.id and qR1.uId = qR2.uId');
 
+            foreach ($deleteItems as $itr)
+                QuizRegistry::destroy($itr->id);
+
+//            foreach ($qEntryIds as $itr) {
+//                $tmp = User::whereId($itr->uId);
+//                $tmp = $tmp->firstName . $tmp->lastName;
+//                if(DB::select("select count(*) as countNum from quizRegistry qR, users u WHERE concat(u.firstName, u.lastName) LIKE '" . $tmp . "' and u.id = qR.uId and qR.quizMode = " . $regularQuizMode)[0]->countNum > 1) {
+//                    QuizRegistry::destroy($itr->id);
+//                    $condition = ['quizId' => $quizId, 'uId' => $itr->uId, 'quizMode' => $regularQuizMode];
+//                    ROQ::where($condition)->delete();
+//                }
+//            }
+//
             $qEntryIds = DB::select('select qR.id, qR.uId from quizRegistry qR WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' . getValueInfo('regularQuiz') .
                 ' and (select count(*) from ROQ r where r.uId = qR.uId and r.quizMode = qR.quizMode and r.quizId = qR.qId) > 0'
             );

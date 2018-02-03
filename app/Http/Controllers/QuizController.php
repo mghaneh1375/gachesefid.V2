@@ -201,6 +201,7 @@ class QuizController extends Controller {
                         foreach ($value as $k=>$v){
 
                             if(count($quizQuestions) != strlen($v)) {
+                                $qErrs[count($qErrs)] = "-404";
                                 $stdErrs[count($stdErrs)] = $k;
                                 continue;
                             }
@@ -210,6 +211,7 @@ class QuizController extends Controller {
                                 'qId' => $key
                             ];
                             if(QuizRegistry::where($condition)->count() == 0) {
+                                $qErrs[count($qErrs)] = "-405 " . $key . " " . $k . " " . $regularQuizMode;
                                 $stdErrs[count($stdErrs)] = $k;
                                 continue;
                             }
