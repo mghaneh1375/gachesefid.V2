@@ -19,4 +19,8 @@ class City extends Model {
     protected $table = 'city';
     public $timestamps = false;
 
+    public static function whereId($target) {
+        return City::find($target);
+    }
+
 }

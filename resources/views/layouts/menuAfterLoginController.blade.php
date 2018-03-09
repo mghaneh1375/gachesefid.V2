@@ -10,6 +10,13 @@
                             <li class="menuItem home"><a href="{{route('home')}}"><span>خانه</span></a></li>
                             <li class="menuItem nb-medical"><a href="{{route('unConfirmedQuestions')}}"> <span>سوالات تایید نشده</span></a></li>
                             <li class="menuItem schools"><a href="{{route('schoolsList')}}"><span>لیست مدارس</span></a></li>
+                            <li class="menuItem nb-art"><a href='{{route('message')}}'> <span>صندوق پیام ها</span></a></li>
+                            <li data-val="profile" class="menuItem profile"><a href="{{route('profile')}}"> <span>پروفایل</span></a>
+                                <ul class="subItem hidden profile">
+                                    <li><a href="{{route('userInfo')}}">تغییر اطلاعات کاربری</a></li>
+                                    <li><a href="{{route('changePas')}}">تغییر رمزعبور</a></li>
+                                </ul>
+                            </li>
                             <li data-val="quiz" class="menuItem exit"><a href="{{route('logout')}}"><span>خروج</span></a></li>
                         </ul>
                     </div>
@@ -19,42 +26,4 @@
     </div>
 </div>
 
-<script>
-    $(".menuItem").mouseenter(function () {
-        val = $(this).attr('data-val');
-        $(".subItem").addClass('hidden');
-        $(".subSubItem").addClass('hidden');
-        $("." + val).removeClass('hidden');
-    });
-
-    $(".sub_item").mouseenter(function () {
-        val = $(this).attr('data-val');
-        $(".subSubItem").addClass('hidden');
-        $("." + val).removeClass('hidden');
-    });
-
-    $(".subItem").mouseleave(function () {
-        $(".subItem").addClass('hidden');
-    });
-
-    $(".subSubItem").mouseleave(function () {
-        $(".subItem").addClass('hidden');
-        $(".subSubItem").addClass('hidden');
-    });
-</script>
-
-<?php /*
-<nav class="w3-bar-block w3-small w3-hide-small w3-center" id="NAV">
-<!-- Avatar image in top left corner -->
-
-<?php
-include_once __DIR__ . '/../../controllers/MoneyController.php';
-$money1 = getMoneyKind1();
-$total = getTotalMoney();
-?>
-
-<center><h4> پول نوع اول {{$money1}}</h4></center>
-<center><h4> پول قابل خرج {{$total}}</h4></center>
-</nav>
-
- */ ?>
+<script src="{{URL::asset('js/menu.js')}}"></script>

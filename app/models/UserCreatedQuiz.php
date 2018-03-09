@@ -3,6 +3,20 @@
 namespace App\models;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * An Eloquent Model: 'UserCreatedQuiz'
+ *
+ * @property integer $id
+ * @property integer $uId
+ * @property integer $toPay
+ * @property boolean $statue
+ * @property string $timeEntry
+ * @property string $created
+ *
+ * @mixin \Eloquent
+ * @method static \Illuminate\Database\Query\Builder|\App\models\UserCreatedQuiz whereUId($value)
+ */
+
 class UserCreatedQuiz extends Model {
 
     protected $table = 'userCreatedQuiz';
@@ -20,6 +34,10 @@ class UserCreatedQuiz extends Model {
 
         return $result[0]->countNum;
 
+    }
+
+    public static function whereId($target) {
+        return UserCreatedQuiz::find($target);
     }
 
 }

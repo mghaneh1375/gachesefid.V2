@@ -5,6 +5,7 @@
 
     <script>
 
+        var likeQuestionDir = '{{route('likeQuestion')}}';
         var mode = "{{$mode}}";
 
         @if($mode == "normal")
@@ -104,8 +105,8 @@
                 $("#nxtQ").removeAttr('disabled');
 
             var newNode = "<img alt='در حال بارگذاری تصویر' style='max-width: 100%' src='{{URL::asset('images/questions/system')}}/" + questionArr[qIdx].questionFile + "'></span><br/>";
-            $("#BQ").empty();
-            $("#BQ").append(newNode);
+
+            $("#BQ").empty().append(newNode);
 
             if(questionArr[qIdx].kindQ == "1") {
                 newNode = "<center style='margin-top: 20px;'><span style='font-size: 20px; color: #ff0000'>پاسخ : </span><select class='mySelect' style='width: 60px; font-size: 14px' id='choices' onchange='submitC(this.value)'>";
@@ -129,12 +130,80 @@
             else {
                 newNode = "<center style='margin-top: 20px'><label for='yourAns'>پاسخ شما:</label><input style='max-width: 100px' onchange='submitC(this.value)' type='text' value='" + answer[qIdx].result + "'></center>";
             }
+
+            $("#likesNo").empty().append(questionArr[qIdx].likeNo);
+            $("#correctNo").empty().append(questionArr[qIdx].correct);
+            $("#incorrectNo").empty().append(questionArr[qIdx].incorrect);
+            $("#whiteNo").empty().append(questionArr[qIdx].white);
+            $("#percentQ").empty().append(Math.round((questionArr[qIdx].correct * 100) / (questionArr[qIdx].correct + questionArr[qIdx].incorrect + questionArr[qIdx].white)));
+            $("#qLevel").empty().append(questionArr[qIdx].level);
+            $("#totalAns").empty().append(questionArr[qIdx].correct + questionArr[qIdx].incorrect + questionArr[qIdx].white);
+            $("#discussion").attr('data-val', questionArr[qIdx].discussion);
+
+            if(questionArr[qIdx].hasLike)
+                $('#likeDiv').empty().append('<i onclick="likeQuestion()" data-val="selected" onmouseleave="likeMouseLeaveEvent(this)" onmouseenter="likeMouseEnterEvent(this)" style="cursor: pointer; font-size: 20px" class="fa fa-heart" aria-hidden="true"></i>');
+            else
+                $('#likeDiv').empty().append('<i onclick="likeQuestion()" data-val="unselected" onmouseleave="likeMouseLeaveEvent(this)" onmouseenter="likeMouseEnterEvent(this)" style="cursor: pointer; font-size: 20px" class="fa fa-heart-o" aria-hidden="true"></i>');
+
             $("#BQ").append(newNode);
 
             if(mode == "special") {
                 newNode = "<span><img alt='در حال بارگذاری تصویر' style='max-width: 100%' src='{{URL::asset('images/answers/system')}}/" + questionArr[qIdx].ansFile + "'></span><br/>";
-                $("#BA").empty();
-                $("#BA").append(newNode);
+                $("#BA").empty().append(newNode);
+            }
+        }
+
+        function goToDiscussionRoom() {
+
+            if(qIdx < 0 || qIdx >= questionArr.length)
+                return;
+
+            document.location.href = $("#discussion").attr('data-val');
+        }
+
+        function likeQuestion() {
+
+            if(qIdx < 0 || qIdx >= questionArr.length)
+                return;
+
+            $.ajax({
+                type: 'post',
+                url: likeQuestionDir,
+                data: {
+                    'qId': questionArr[qIdx].id
+                },
+                success: function(response) {
+                    if(response == "select") {
+                        $('#likeDiv').empty().append('<i onclick="likeQuestion()" data-val="selected" onmouseleave="likeMouseLeaveEvent(this)" onmouseenter="likeMouseEnterEvent(this)" style="cursor: pointer; font-size: 20px" class="fa fa-heart" aria-hidden="true"></i>');
+                        questionArr[qIdx].hasLike = true;
+                    }
+                    else {
+                        questionArr[qIdx].hasLike = false;
+                        $('#likeDiv').empty().append('<i onclick="likeQuestion()" data-val="unselected" onmouseleave="likeMouseLeaveEvent(this)" onmouseenter="likeMouseEnterEvent(this)" style="cursor: pointer; font-size: 20px" class="fa fa-heart-o" aria-hidden="true"></i>');
+                    }
+                }
+            })
+        }
+
+        function likeMouseEnterEvent(val) {
+            if($(val).attr('data-val') == "unselected") {
+                $(val).removeClass('fa-heart-o');
+                $(val).addClass('fa-heart');
+            }
+            else {
+                $(val).addClass('fa-heart-o');
+                $(val).removeClass('fa-heart');
+            }
+        }
+
+        function likeMouseLeaveEvent(val) {
+            if($(val).attr('data-val') == "unselected") {
+                $(val).addClass('fa-heart-o');
+                $(val).removeClass('fa-heart');
+            }
+            else {
+                $(val).removeClass('fa-heart-o');
+                $(val).addClass('fa-heart');
             }
         }
 
@@ -200,19 +269,41 @@ if ($roqs == null || $numQ == 0) {
             </div>
         </div>
 
-        <div class='col-xs-12 well well-sm' style="margin-top: 10px; border: 3px solid black; background-color: #ffffff">
+        <div class="col-xs-1" id="likeDiv"></div>
+
+        <div class='col-xs-8 well well-sm' style="margin-top: 10px; border: 3px solid black; background-color: #ffffff">
             <div id="BQ" style='height: auto; width: auto; max-width: 100%'></div>
         </div>
 
+        <div class="col-xs-3" style="margin-top: 50px">
+            <div class="col-xs-12">
+                <p><span id="likesNo"></span><span>&nbsp;&nbsp;&nbsp;<i class="fa fa-thumbs-up" aria-hidden="true"></i></span></p>
+                <p><span>تعداد پاسخ گویی:&nbsp;&nbsp;</span><span id="totalAns"></span></p>
+                <p><span>تعداد جواب صحیح:&nbsp;&nbsp;</span><span id="correctNo"></span></p>
+                <p><span>تعداد جواب ناصحیح:&nbsp;&nbsp;</span><span id="incorrectNo"></span></p>
+                <p><span>تعداد جواب بدون پاسخ:&nbsp;&nbsp;</span><span id="whiteNo"></span></p>
+                <p><span>درصد پاسخ گویی:&nbsp;&nbsp;</span><span id="percentQ"></span></p>
+                <p><span>سطح سختی:&nbsp;&nbsp;</span><span id="qLevel"></span></p>
+                {{--<p><span>ناظر:&nbsp;&nbsp;</span><span id="controller"></span></p>--}}
+                {{--<p><span>طراح:&nbsp;&nbsp;</span><span id="author"></span></p>--}}
+            </div>
+        </div>
+
         @if($mode == "special")
-            <div class='col-xs-12 well well-sm' style="margin-top: 10px; border: 3px solid black; background-color: #ffffff">
+
+            <div class="col-xs-1"></div>
+
+            <div class='col-xs-8 well well-sm' style="margin-top: 10px; border: 3px solid black; background-color: #ffffff">
                 <div id="BA" style='height: auto; width: auto; max-width: 100%'></div>
             </div>
+
+            <div class="col-xs-3"></div>
         @endif
 
         <div class="col-xs-12">
-            <div style='margin-top: 5px;'>
+            <div style='margin-top: 5px; padding: 10px'>
                 <center>
+                    <button class="btn btn-default" id="discussion" data-val="" onclick="goToDiscussionRoom()">ورود به تالار گفتمان</button>
                     <button id="backQ" class="btn btn-default" onclick="decQ()">سوال قبلی</button>
                     <button id="nxtQ" class="btn btn-default" onclick="incQ()">سوال بعدی</button>
                     <button class="btn btn-primary" onclick="showConfirmationPaneEnd()">اتمام ارزیابی</button>

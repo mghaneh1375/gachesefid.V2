@@ -12,4 +12,8 @@ class Grade extends Model {
         return $this->hasMany('Lesson', 'did', 'id');
     }
 
+    public static function whereId($target) {
+        return Grade::find($target);
+    }
+
 }

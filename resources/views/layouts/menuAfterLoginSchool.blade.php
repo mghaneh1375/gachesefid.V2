@@ -26,7 +26,7 @@
                             </li>
 
                             <li class="menuItem schools"><a href="{{route('schoolsList')}}"><span>لیست مدارس</span></a></li>
-
+                            <li class="menuItem nb-art"><a href='{{route('message')}}'> <span>صندوق پیام ها</span></a></li>
                             <li data-val="profile" class="menuItem profile"><a href="{{route('profile')}}"> <span>پروفایل</span></a>
                                 <ul class="subItem hidden profile">
                                     <li><a href="{{route('userInfo')}}">تغییر اطلاعات کاربری</a></li>

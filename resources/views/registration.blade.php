@@ -84,7 +84,7 @@
         </div>
     </div>
 
-    <form method="post" action="{{URL('doRegistration')}}">
+    <form method="post" action="{{route('doRegistration')}}">
         <center class="myRegister">
             <div class="row data">
 
@@ -140,6 +140,16 @@
                         <div class="col-xs-5">
                         <span><span  class="help" data-toggle="tooltip" data-placement="top" title="شماره موبایل شما برای دریافت کد فعالسازی و ارتباط با سامانه نیاز است."><img
                                         src="{{URL::asset('images/help.png')}}" alt="PhoneNumber"></span> شماره موبایل <span class="required">*</span></span>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12">
+                        <div class="col-xs-7">
+                            <input type="text" onkeypress="validate(event)" name="NID" value="{{(isset($NID) ? $NID : '')}}" maxlength="40" required>
+                        </div>
+                        <div class="col-xs-5">
+                        <span><span  class="help" data-toggle="tooltip" data-placement="top" title="کد ملی خود را وارد کنید."><img
+                                        src="{{URL::asset('images/help.png')}}" alt="NationalID"></span> کد ملی <span class="required">*</span></span>
                         </div>
                     </div>
 

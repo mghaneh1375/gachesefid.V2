@@ -23,6 +23,8 @@
         var getGradesDir = '{{route('getGrades')}}';
         var getLessonsDir = '{{route('getLessons')}}';
         var deleteQuizDir = '{{route('deleteQuiz')}}';
+        var deleteQFromQ = '{{route('deleteQFromQ')}}';
+        var elseQuizDir = '{{route('elseSystemQuiz')}}';
         var getSubjectsDir = '{{route('getSubjects')}}';
         var getSubjectQuestionsDir = '{{route('getSubjectQuestions')}}';
         var doAddQuestionToQuizDir = '{{route('doAddQuestionToQuiz')}}';
@@ -32,6 +34,7 @@
         var fetchQuestionByOrganizationId = '{{route('fetchQuestionByOrganizationId')}}';
         var changeMarkQDir = '{{route('changeMarkQ')}}';
         var changeQNoDir = '{{route('changeQNo')}}';
+        var deleteDeletedQFromQ = '{{route('deleteDeletedQFromSystemQ')}}';
 
         $(document).ready(function(){
 
@@ -81,6 +84,9 @@
                 @foreach($quizes as $quiz)
                     <div class="col-xs-12" style="margin-top: 10px;">
                         <div class="col-xs-3" style="text-align: right">
+                            <button class="btn btn-primary" onclick="elseQuiz('{{$quiz->id}}')" data-toggle="tooltip" title="حواشی آزمون">
+                                <span class="glyphicon glyphicon-cog"></span>
+                            </button>
                             <button class="btn btn-danger" onclick="deleteQuiz('{{$quiz->id}}')" data-toggle="tooltip" title="حذف آزمون">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>
@@ -212,6 +218,12 @@
                 </center>
             </div>
         </div>
+    </span>
+
+    <span id="elseQuiz" class="ui_overlay item hidden" style="position: fixed; left: 20%; right: 20%; top: 60px; bottom: auto">
+        <div class="header_text">حواشی آزمون</div>
+        <div onclick="hideElement(); $('#elseQuiz').addClass('hidden')" class="ui_close_x"></div>
+        <center class="body_text" id="body_elseQuiz"></center>
     </span>
 
     <span id="addQuestion" class="ui_overlay item hidden" style="position: fixed; left: 20%; right: 20%; top: 60px; bottom: auto">

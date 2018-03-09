@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\models\LOK;
 use App\models\OffCode;
 use App\models\QuizStatus;
 use App\models\RegularQOQ;
@@ -37,7 +38,7 @@ class QuizController extends Controller {
         if(isset($_POST["quizId"])) {
 
             $quizId = makeValidInput($_POST["quizId"]);
-            $regularQuiz = RegularQuiz::find($quizId);
+            $regularQuiz = RegularQuiz::whereId($quizId);
 
             if($regularQuiz == null) {
                 echo "nok";
@@ -57,11 +58,35 @@ class QuizController extends Controller {
 
     }
 
+    public function elseSystemQuiz() {
+
+        if(isset($_POST["quizId"])) {
+
+            $quizId = makeValidInput($_POST["quizId"]);
+            $systemQuiz = SystemQuiz::whereId($quizId);
+
+            if($systemQuiz == null) {
+                echo "nok";
+                return;
+            }
+
+            $condition = ['quizId' => $quizId, 'mark' => 0];
+            $systemQOQ = SystemQOQ::where($condition)->select('qNo')->get();
+
+            echo json_encode(['deleteQ' => json_encode($systemQOQ)]);
+
+            return;
+        }
+
+        echo "nok";
+
+    }
+
     public function changeRankingCount() {
         
         if(isset($_POST["val"]) && isset($_POST["quizId"])) {
             $quizId = makeValidInput($_POST["quizId"]);
-            $regularQuiz = RegularQuiz::find($quizId);
+            $regularQuiz = RegularQuiz::whereId($quizId);
 
             $regularQuiz->ranking = makeValidInput($_POST["val"]);
             $regularQuiz->save();
@@ -79,7 +104,7 @@ class QuizController extends Controller {
                 $condition = ['quizId' => makeValidInput($_POST["quizId"]),
                     'qNo' => makeValidInput($_POST["questionId"])];
                 $tmp = RegularQOQ::where($condition)->first();
-                if ($tmp == null || count($tmp) == 0) {
+                if ($tmp == null) {
                     echo "nok";
                     return;
                 }
@@ -89,6 +114,24 @@ class QuizController extends Controller {
                 echo "ok";
                 return;
             }
+
+            else if(makeValidInput($_POST["quizMode"]) == "systemQuiz") {
+
+                $condition = ['quizId' => makeValidInput($_POST["quizId"]),
+                    'qNo' => makeValidInput($_POST["questionId"])];
+
+                $tmp = SystemQOQ::where($condition)->first();
+                if ($tmp == null) {
+                    echo "nok";
+                    return;
+                }
+
+                $tmp->mark = 0;
+                $tmp->save();
+                echo "ok";
+                return;
+            }
+
             echo "nok";
         }
     }
@@ -100,7 +143,7 @@ class QuizController extends Controller {
             $condition = ['quizId' => makeValidInput($_POST["quizId"]),
                 'qNo' => makeValidInput($_POST["questionId"])];
             $tmp = RegularQOQ::where($condition)->first();
-            if($tmp == null || count($tmp) == 0) {
+            if($tmp == null) {
                 echo "nok";
                 return;
             }
@@ -114,9 +157,31 @@ class QuizController extends Controller {
 
     }
 
+    public function deleteDeletedQFromSystemQ() {
+
+        if(isset($_POST["quizId"]) && isset($_POST["questionId"])) {
+
+            $condition = ['quizId' => makeValidInput($_POST["quizId"]),
+                'qNo' => makeValidInput($_POST["questionId"])];
+            $tmp = SystemQOQ::where($condition)->first();
+
+            if($tmp == null) {
+                echo "nok";
+                return;
+            }
+
+            $tmp->mark = 10;
+            $tmp->save();
+            echo "ok";
+            return;
+        }
+        echo "nok";
+
+    }
+
     public function ranking($quizId) {
 
-        $const = RegularQuiz::find($quizId);
+        $const = RegularQuiz::whereId($quizId);
 
         if($const == null || $const->ranking == 0)
             return Redirect::to('profile');
@@ -133,7 +198,7 @@ class QuizController extends Controller {
 
             $user->lessons = $tmp;
 
-            $target = User::find($user->uId);
+            $target = User::whereId($user->uId);
             $user->name = $target->firstName . " " . $target->lastName;
 
             $cityAndState = getStdCityAndState($user->uId);
@@ -155,7 +220,7 @@ class QuizController extends Controller {
         $limit = (count($users) > $const) ? $const : count($users);
         $users = array_splice($users, 0, $limit);
 
-        return view('ranking', array('users' => $users, 'quizName' => RegularQuiz::find($quizId)->name));
+        return view('ranking', array('users' => $users, 'quizName' => RegularQuiz::whereId($quizId)->name));
 
     }
 
@@ -178,8 +243,8 @@ class QuizController extends Controller {
             $username = makeValidInput($_POST['username']);
             $password = makeValidInput($_POST['password']);
 
-            if(User::where('username', '=', $username)->count() == 0 ||
-                User::where('username', '=', $username)->first()->status != 1) {
+            if(User::whereUsername($username)->count() == 0 ||
+                User::whereUsername($username)->first()->status != 1) {
                 return -1;
             }
 
@@ -191,7 +256,7 @@ class QuizController extends Controller {
                     $qErrs = [];
                     $stdErrs = [];
                     foreach ($decoded as $key=>$value){
-                        if(RegularQuiz::find($key) == null) {
+                        if(RegularQuiz::whereId($key) == null) {
                             $qErrs[count($qErrs)] = $key;
                             continue;
                         }
@@ -254,7 +319,7 @@ class QuizController extends Controller {
         $time = $today["time"];
         $uId = Auth::user()->id;
 
-        $myQuiz = QuizRegistry::where('uId', '=', $uId)->get();
+        $myQuiz = QuizRegistry::whereUId($uId)->get();
         $regularQuizMode = getValueInfo('regularQuiz');
 
         foreach ($myQuiz as $itr) {
@@ -262,7 +327,7 @@ class QuizController extends Controller {
             if($itr->quizMode == $regularQuizMode) {
 
                 $itr->mode = "regular";
-                $itr->quiz = RegularQuiz::find($itr->qId);
+                $itr->quiz = RegularQuiz::whereId($itr->qId);
                 $itr->quiz->timeLen = calcTimeLenQuiz($itr->quiz->id, 'regular');
 
                 if(($itr->quiz->startDate < $date && $itr->quiz->endDate > $date) ||
@@ -308,7 +373,7 @@ class QuizController extends Controller {
             else {
 
                 $itr->mode = "system";
-                $itr->quiz = SystemQuiz::find($itr->qId);
+                $itr->quiz = SystemQuiz::whereId($itr->qId);
                 $itr->quiz->timeLen = calcTimeLenQuiz($itr->quiz->id, 'system');
 
                 if(($itr->quiz->startDate == $date && $itr->quiz->startTime <= $time)) {
@@ -394,7 +459,7 @@ class QuizController extends Controller {
                 $conditions = ['uId' => $uId, 'qId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')];
                 $qEntryId = QuizRegistry::where($conditions)->select('id')->first();
 
-                $tmp = Taraz::where('qEntryId', '=', $qEntryId->id)->count();
+                $tmp = Taraz::whereQEntryId($qEntryId->id)->count();
 
                 if ($tmp == null || $tmp == 0)
                     $msg = "صفحه ی نمایش کارنامه برای این آزمون هنوز باز نشده است";
@@ -432,10 +497,10 @@ class QuizController extends Controller {
         $status = array();
         $avgs = array();
 
-        $cityId = RedundantInfo1::where('uId', '=', $uId)->first()->cityId;
+        $cityId = RedundantInfo1::whereUId($uId)->first()->cityId;
 
         if($kindKarname->subjectStatus)
-            $status = QuizStatus::where('level', '=', 2)->get();
+            $status = QuizStatus::whereLevel(2)->get();
 
         if($kindKarname->subjectAvg &&  $kindKarname->subjectMaxPercent) {
             if($kindKarname->subjectMinPercent)
@@ -466,7 +531,7 @@ class QuizController extends Controller {
 
         if($kindKarname->subjectStateRank) {
             $counter = 0;
-            $stateId = State::find(City::find($cityId)->stateId)->id;
+            $stateId = State::whereId(City::whereId($cityId)->stateId)->id;
             foreach ($subjects as $subject) {
                 $tmp = DB::select('SELECT subjectsPercent.uId, subjectsPercent.percent as taraz from redundantInfo1 rd, city ci, subjectsPercent WHERE rd.uId = subjectsPercent.uId and rd.cityId = ci.id and ci.stateId = ' . $stateId . ' and subjectsPercent.qId = ' . $quizId . ' and subjectsPercent.sId = ' . $subject->id . ' ORDER by subjectsPercent.percent DESC');
                 $stateRank[$counter++] = $this->getRank($tmp, $uId);
@@ -555,7 +620,7 @@ class QuizController extends Controller {
 
         $status = array();
         if($kindKarname->lessonStatus)
-            $status = QuizStatus::where('level', '=', 1)->get();
+            $status = QuizStatus::whereLevel(1)->get();
 
         $rank = calcRank($quizId, $uId);
 
@@ -567,7 +632,7 @@ class QuizController extends Controller {
         $rankInLessonCity = array();
         $rankInLessonState = array();
 
-        $cityId = RedundantInfo1::where('uId', '=', $uId)->first();
+        $cityId = RedundantInfo1::whereUId($uId)->first();
 
         if(count($cityId) == 0)
             $cityId = City::first()->id;
@@ -578,7 +643,7 @@ class QuizController extends Controller {
             $cityRank = calcRankInCity($quizId, $uId, $cityId);
 
         if($kindKarname->lessonStateRank) {
-            $stateId = State::find(City::find($cityId)->stateId)->id;
+            $stateId = State::whereId(City::whereId($cityId)->stateId)->id;
             $stateRank = calcRankInState($quizId, $uId, $stateId);
         }
 
@@ -603,7 +668,7 @@ class QuizController extends Controller {
 
         $lessons = getLessonQuiz($quizId);
 
-        $taraz = Taraz::where('qEntryId', '=', $qEntryId->id)->get();
+        $taraz = Taraz::whereQEntryId($qEntryId->id)->get();
 
         if($kindKarname->lessonCountryRank) {
             $counter = 0;
@@ -728,9 +793,9 @@ class QuizController extends Controller {
         else if(isset($_POST["removeStatus"])) {
 
             $quizStatusId = makeValidInput($_POST["removeStatus"]);
-            $quizStatus = QuizStatus::find($quizStatusId);
+            $quizStatus = QuizStatus::whereId($quizStatusId);
 
-            if($quizStatus != null && count($quizStatus) != 0) {
+            if($quizStatus != null) {
 
                 if($quizStatus->pic && file_exists(__DIR__ .  "/../../../public/status/" . $quizStatus->status)) {
                     $targetFile = __DIR__ .  "/../../../public/status/" . $quizStatus->status;
@@ -779,15 +844,15 @@ class QuizController extends Controller {
     public function doQuizRegistry($quizId, $mode, $status = "nop") {
 
         if($mode == "system")
-            $quiz = SystemQuiz::find($quizId);
+            $quiz = SystemQuiz::whereId($quizId);
         else if($mode == "regular")
-            $quiz = RegularQuiz::find($quizId);
+            $quiz = RegularQuiz::whereId($quizId);
         else
             return Redirect::to('profile');
 
         $today = getToday();
 
-        if($quiz == null || count($quiz) == 0 || $quiz->startReg > $today["date"] ||
+        if($quiz == null || $quiz->startReg > $today["date"] ||
             $quiz->endReg < $today["date"])
             return Redirect::to('profile');
 
@@ -797,8 +862,8 @@ class QuizController extends Controller {
             return view('preTransaction', array('quizId' => $quizId, 'url' => route('regularQuizRegistry'), 'backURL' => route('regularQuizRegistry'), 'status' => $status,
                 'total' => getTotalMoney(), 'toPay' => $quiz->price, 'payURL' => route('doQuizRegistryFromAccount', ['mode' => $mode]), 'payURL2' => route('paymentQuiz', ['mode' => $mode])));
 
-        return view('preTransaction', array('quizId' => $quizId, 'url' => route('quizRegistry'), 'backURL' => route('quizRegistry'),
-            'total' => getTotalMoney(), 'toPay' => $quiz->price, 'payURL' => route('doQuizRegistryFromAccount', ['mode' => $mode]), 'payURL2' => route('payment')));
+        return view('preTransaction', array('quizId' => $quizId, 'url' => route('quizRegistry'), 'backURL' => route('quizRegistry'), 'status' => $status,
+            'total' => getTotalMoney(), 'toPay' => $quiz->price, 'payURL' => route('doQuizRegistryFromAccount', ['mode' => $mode]), 'payURL2' => route('paymentQuiz', ['mode' => $mode])));
     }
 
     public function doChargeAccount() {
@@ -994,15 +1059,15 @@ class QuizController extends Controller {
             $uId = Auth::user()->id;
 
             if($mode == "system")
-                $quiz = SystemQuiz::find($quizId);
+                $quiz = SystemQuiz::whereId($quizId);
             else if($mode == "regular")
-                $quiz = RegularQuiz::find($quizId);
+                $quiz = RegularQuiz::whereId($quizId);
             else {
                 echo json_encode(['status' => 'nok1']);
                 return;
             }
 
-            if($quiz == null || count($quiz) == 0) {
+            if($quiz == null) {
                 echo json_encode(['status' => 'nok1']);
                 return;
             }
@@ -1012,7 +1077,7 @@ class QuizController extends Controller {
 
             $giftCode = makeValidInput($_POST["giftCode"]);
             if(checkOffCodeValidation($giftCode)) {
-                $code = OffCode::where('code', '=', $giftCode)->first();
+                $code = OffCode::whereCode($giftCode)->first();
 
                 if($code->type == getValueInfo('staticOffCode'))
                     $toPay -= $code->amount;
@@ -1040,6 +1105,9 @@ class QuizController extends Controller {
                 $callBackUrl = route('paymentPostQuiz', ['quizId' => $quizId, 'mode' => $mode]);
 
                 $res = payment(($toPay - getTotalMoney()) * 10, $callBackUrl, $useGift);
+
+                echo json_encode(['status' => 'nok', 'refId' => $res]);
+                return;
 
                 if($res != -1)
                     echo json_encode(['status' => 'ok', 'refId' => $res]);
@@ -1240,13 +1308,13 @@ class QuizController extends Controller {
         $time = $today["time"];
         $uId = Auth::user()->id;
 
-        $quiz = SystemQuiz::find($quizId);
-        if($quiz == null || count($quiz) == 0)
+        $quiz = SystemQuiz::whereId($quizId);
+        if($quiz == null)
             return Redirect::to('profile');
         
         $condition = ['qId' => $quizId, 'uId' => $uId, 'quizMode' => getValueInfo('systemQuiz')];
         $quizRegistry = QuizRegistry::where($condition)->first();
-        if($quizRegistry == null || count($quizRegistry) == 0)
+        if($quizRegistry == null)
             return Redirect::to('profile');
 
         if($quiz->startDate != $date)
@@ -1284,8 +1352,8 @@ class QuizController extends Controller {
 
     public function doSelfQuiz($quizId) {
 
-        $quiz = UserCreatedQuiz::find($quizId);
-        if($quiz == null || count($quiz) == 0)
+        $quiz = UserCreatedQuiz::whereId($quizId);
+        if($quiz == null)
             return Redirect::to('profile');
 
         $timeLen = calcTimeLenQuiz($quiz->id, 'self') * 60;
@@ -1325,9 +1393,9 @@ class QuizController extends Controller {
 
         if($quizMode == getValueInfo('regularQuiz')) {
 
-            $quiz = RegularQuiz::find($quizId);
+            $quiz = RegularQuiz::whereId($quizId);
 
-            if ($quiz == null || count($quiz) == 0)
+            if ($quiz == null)
                 return Redirect::to('profile');
 
 
@@ -1344,7 +1412,7 @@ class QuizController extends Controller {
             $condition = ['qId' => $quizId, 'uId' => $uId, 'quizMode' => getValueInfo('regularQuiz')];
             $quizRegistry = QuizRegistry::where($condition)->first();
 
-            if($quizRegistry == null || count($quizRegistry) == 0)
+            if($quizRegistry == null)
                 return Redirect::to('profile');
 
             $roqs = DB::select('select ROQ.result, question.ans as status from ROQ, question where quizId = ' . $quizId . " and uId = " . $uId . " and 
@@ -1364,7 +1432,26 @@ class QuizController extends Controller {
                     $roq->status = 0;
             }
 
-            $questions = DB::select('select ansFile, choicesCount, question.id, question.questionFile, question.kindQ, question.neededTime as qoqId from question, regularQOQ WHERE questionId = question.id and quizId = ' . $quizId . ' order by regularQOQ.qNo ASC');
+            $questions = DB::select('select ans, ansFile, choicesCount, question.id, question.questionFile, question.kindQ, question.neededTime as qoqId ' .
+                'from question, regularQOQ WHERE questionId = question.id and quizId = ' . $quizId . ' order by regularQOQ.qNo ASC');
+
+            foreach ($questions as $question) {
+
+                $condition = ['questionId' => $question->id, 'result' => $question->ans];
+                $question->correct = ROQ::where($condition)->count();
+                $question->incorrect = DB::select('select count(*) as countNum from ROQ WHERE questionId = ' . $question->id . ' and result <> ' . $question->ans
+                    . " and result <> 0")[0]->countNum;
+                $condition = ['questionId' => $question->id, 'result' => 0];
+                $question->white = ROQ::where($condition)->count();
+
+                $condition = ['uId' => $uId, 'questionId' => $question->id];
+                $question->hasLike = (LOK::where($condition)->count() == 1) ? true : false;
+                $question->level = getQuestionLevel($question->id);
+
+                $question->likeNo = LOK::whereQuestionId($question->id)->count();
+
+                $question->discussion = route('discussion', ['qId' => $question->id]);
+            }
 
             return view('showQuizWithOutTime', array('quiz' => $quiz, 'questions' => $questions,
                 'roqs' => $roqs, 'quizMode' => $quizMode));
@@ -1372,9 +1459,9 @@ class QuizController extends Controller {
 
         else if($quizMode == getValueInfo('questionQuiz')) {
 
-            $quiz = UserCreatedQuiz::find($quizId);
+            $quiz = UserCreatedQuiz::whereId($quizId);
 
-            if ($quiz == null || count($quiz) == 0)
+            if ($quiz == null)
                 return Redirect::to('profile');
 
             $roqs = DB::select('select ansFile, s.result, question.ans as status, choicesCount, question.id, question.questionFile, question.kindQ from soldQuestion s, question where quizId = ' . $quizId . " and question.id = s.qId order by s.id ASC");
@@ -1387,19 +1474,34 @@ class QuizController extends Controller {
                     $roq->status = 1;
                 else
                     $roq->status = 0;
+
+                $condition = ['questionId' => $roq->id, 'result' => $roq->status];
+                $roq->correct = ROQ::where($condition)->count();
+                $roq->incorrect = DB::select('select count(*) as countNum from ROQ WHERE questionId = ' . $roq->id . ' and result <> ' . $roq->status
+                    . " and result <> 0")[0]->countNum;
+                $condition = ['questionId' => $roq->id, 'result' => 0];
+                $roq->white = ROQ::where($condition)->count();
+
+                $condition = ['uId' => $uId, 'questionId' => $roq->id];
+                $roq->hasLike = (LOK::where($condition)->count() == 1) ? true : false;
+                $roq->level = getQuestionLevel($roq->id);
+
+                $roq->likeNo = LOK::whereQuestionId($roq->id)->count();
+
+                $roq->discussion = route('discussion', ['qId' => $roq->id]);
             }
 
             return view('selfQuiz', array('quiz' => $quiz, 'mode' => 'special',
                 'roqs' => $roqs));
         }
 
-        $quiz = SystemQuiz::find($quizId);
-        if($quiz == null || count($quiz) == 0)
+        $quiz = SystemQuiz::whereId($quizId);
+        if($quiz == null)
             return Redirect::to('profile');
 
         $condition = ['qId' => $quizId, 'uId' => $uId, 'quizMode' => getValueInfo('systemQuiz')];
         $quizRegistry = QuizRegistry::where($condition)->first();
-        if($quizRegistry == null || count($quizRegistry) == 0)
+        if($quizRegistry == null)
             return Redirect::to('profile');
 
 
@@ -1432,14 +1534,14 @@ class QuizController extends Controller {
         $time = $today["time"];
         $uId = Auth::user()->id;
 
-        $quiz = RegularQuiz::find($quizId);
-        if($quiz == null || count($quiz) == 0)
+        $quiz = RegularQuiz::whereId($quizId);
+        if($quiz == null)
             return Redirect::to('profile');
 
         $condition = ['qId' => $quizId, 'uId' => $uId, 'quizMode' => getValueInfo('regularQuiz')];
         $quizRegistry = QuizRegistry::where($condition)->first();
 
-        if($quizRegistry == null || count($quizRegistry) == 0)
+        if($quizRegistry == null)
             return Redirect::to('profile');
 
         if(!(($quiz->startDate < $date && $quiz->endDate > $date) ||
@@ -1509,7 +1611,7 @@ class QuizController extends Controller {
                     $tmp[$counter++] = $itr->point;
                 }
                 $uId->roq = $tmp;
-                $uId->name = User::find($uId->name)->username;
+                $uId->name = User::whereId($uId->name)->username;
             }
 
             echo json_encode($uIds);
@@ -1521,10 +1623,10 @@ class QuizController extends Controller {
         if(isset($_POST["questionId"]) && isset($_POST["quizId"]) && isset($_POST["newVal"])) {
 
             $questionId = makeValidInput($_POST["questionId"]);
-            $question = Question::find($questionId);
+            $question = Question::whereId($questionId);
             $quizId = makeValidInput($_POST["quizId"]);
 
-            if($question == null || count($question) == 0) {
+            if($question == null) {
                 echo "nok";
                 return;
             }
@@ -1534,13 +1636,13 @@ class QuizController extends Controller {
 
             $roq = ROQ::where($condition)->first();
 
-            if($roq != null && count($roq) > 0) {
+            if($roq != null) {
 
                 $newVal = makeValidInput($_POST["newVal"]);
 
                 if($roq->status == 0 && $roq->result == 0) {
                     $roq->result = $newVal;
-                    $quiz = SystemQuiz::find($quizId);
+                    $quiz = SystemQuiz::whereId($quizId);
                     $condition = ['questionId' => $question->id, 'quizId' => $quizId];
                     $mark = SystemQOQ::where($condition)->first()->mark;
                     $timeLen = calcTimeLenQuiz($quizId, 'system');
@@ -1552,7 +1654,7 @@ class QuizController extends Controller {
                             $roq->point = $mark * $reminder / 60;
                             echo "correct";
                         } else {
-                            $roq->point = -1 * $mark * $reminder / (60 * $question->choicesCount);
+                            $roq->point = -1 * $mark / ($question->choicesCount + 1);
                             echo "incorrect";
                         }
                     }
@@ -1562,7 +1664,7 @@ class QuizController extends Controller {
                             echo "correct";
                         }
                         else {
-                            $roq->point = -1 * $mark * $reminder / 180;
+                            $roq->point = -1 * $mark / 3;
                             echo "incorrect";
                         }
                     }
@@ -1583,7 +1685,7 @@ class QuizController extends Controller {
         if(isset($_POST["questionId"]) && isset($_POST["quizId"]) && isset($_POST["newVal"])) {
 
             $questionId = makeValidInput($_POST["questionId"]);
-            $question = Question::find($questionId);
+            $question = Question::whereId($questionId);
             $quizId = makeValidInput($_POST["quizId"]);
 
             if($question == null) {
@@ -1596,7 +1698,7 @@ class QuizController extends Controller {
 
             $roq = ROQ::where($condition)->first();
 
-            if($roq != null && count($roq) > 0) {
+            if($roq != null) {
 
                 $newVal = makeValidInput($_POST["newVal"]);
 
@@ -1625,7 +1727,7 @@ class QuizController extends Controller {
         if(isset($_POST["questionId"]) && isset($_POST["quizId"]) && isset($_POST["newVal"])) {
 
             $questionId = makeValidInput($_POST["questionId"]);
-            $question = Question::find($questionId);
+            $question = Question::whereId($questionId);
             $quizId = makeValidInput($_POST["quizId"]);
 
             if($question == null) {
@@ -1637,7 +1739,7 @@ class QuizController extends Controller {
 
             $roq = SoldQuestion::where($condition)->first();
 
-            if($roq != null && count($roq) > 0) {
+            if($roq != null) {
 
                 $newVal = makeValidInput($_POST["newVal"]);
 
@@ -1694,9 +1796,9 @@ class QuizController extends Controller {
 
         if(isset($_POST["quizId"])) {
 
-            $quiz = SystemQuiz::find(makeValidInput($_POST["quizId"]));
+            $quiz = SystemQuiz::whereId(makeValidInput($_POST["quizId"]));
 
-            if($quiz == null || count($quiz) == 0)
+            if($quiz == null)
                 return;
 
             $today = getToday();
@@ -1726,7 +1828,7 @@ class QuizController extends Controller {
 
         foreach ($qoqs as $qoq) {
 
-            $questionTmp = Question::find($qoq->questionId);
+            $questionTmp = Question::whereId($qoq->questionId);
 
             $tmp = new ROQ();
             $tmp->questionId = $qoq->questionId;
@@ -1752,7 +1854,7 @@ class QuizController extends Controller {
 
         foreach ($qoqs as $qoq) {
 
-            $questionTmp = Question::find($qoq->questionId);
+            $questionTmp = Question::whereId($qoq->questionId);
 
             $tmp = new ROQ();
             $tmp->questionId = $qoq->questionId;
@@ -1779,7 +1881,7 @@ class QuizController extends Controller {
             if(checkOffCodeValidation($giftCode)) {
 
                 $total = makeValidInput($_POST["total"]);
-                $code = OffCode::where('code', '=', $giftCode)->first();
+                $code = OffCode::whereCode($giftCode)->first();
 
                 if($code->type == getValueInfo('staticOffCode'))
                     $total -= $code->amount;
@@ -1849,15 +1951,15 @@ class QuizController extends Controller {
             $uId = Auth::user()->id;
 
             if($mode == "system")
-                $quiz = SystemQuiz::find($quizId);
+                $quiz = SystemQuiz::whereId($quizId);
             else if($mode == "regular")
-                $quiz = RegularQuiz::find($quizId);
+                $quiz = RegularQuiz::whereId($quizId);
             else {
                 echo "nok1";
                 return;
             }
 
-            if($quiz == null || count($quiz) == 0) {
+            if($quiz == null) {
                 echo "nok1";
                 return;
             }
@@ -1867,7 +1969,7 @@ class QuizController extends Controller {
             
             $giftCode = makeValidInput($_POST["giftCode"]);
             if(checkOffCodeValidation($giftCode)) {
-                $code = OffCode::where('code', '=', $giftCode)->first();
+                $code = OffCode::whereCode($giftCode)->first();
 
                 if($code->type == getValueInfo('staticOffCode'))
                     $toPay -= $code->amount;
@@ -1900,7 +2002,12 @@ class QuizController extends Controller {
             else
                 quizRegistry(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id,
                     getValueInfo('money2'), $quizId, $useGift);
+
+            echo "ok";
+            return;
         }
+
+        echo "nok3";
 
     }
 
@@ -1934,7 +2041,7 @@ class QuizController extends Controller {
                 return;
             }
 
-            $quiz = SystemQuiz::find(makeValidInput($_POST["quizId"]));
+            $quiz = SystemQuiz::whereId(makeValidInput($_POST["quizId"]));
             $quiz->name = makeValidInput($_POST["name"]);
             $quiz->startDate = $sDate;
             $quiz->startReg = $sDateReg;
@@ -1996,7 +2103,7 @@ class QuizController extends Controller {
                 return;
             }
 
-            $quiz = RegularQuiz::find(makeValidInput($_POST["quizId"]));
+            $quiz = RegularQuiz::whereId(makeValidInput($_POST["quizId"]));
             $quiz->name = makeValidInput($_POST["name"]);
             $quiz->startDate = $sDate;
             $quiz->endDate = $eDate;
@@ -2135,7 +2242,7 @@ class QuizController extends Controller {
             $condition = ['quizId' => $quizId, 'questionId' => makeValidInput($_POST["questionId"])];
 
             $qoq = SystemQOQ::where($condition)->first();
-            if($qoq != null && count($qoq) > 0) {
+            if($qoq != null) {
 
                 try {
                     DB::select('update systemQOQ set qNo = qNo - 1 WHERE quizId = ' . $quizId . ' and qNo > ' . $qoq->qNo);
@@ -2155,7 +2262,7 @@ class QuizController extends Controller {
 
             $quizId = makeValidInput($_POST["quizId"]);
 
-            if(RegularQuiz::find($quizId) == null)
+            if(RegularQuiz::whereId($quizId) == null)
                 return Redirect::to(route('profile'));
 
             if(isset($_FILES["batchQ"])) {
@@ -2206,7 +2313,7 @@ class QuizController extends Controller {
         foreach ($questions as $question) {
 
             $tmp = Question::where('organizationId', '=', $question)->first();
-            if($tmp == null || count($tmp) == 0) {
+            if($tmp == null) {
                 $errs .= $question . ', ';
                 continue;
             }
@@ -2217,7 +2324,7 @@ class QuizController extends Controller {
 
             $lastQ = RegularQOQ::where('quizId', '=', $quizId)->orderBy('qNo', 'DESC')->first();
 
-            if($lastQ != null && count($lastQ) > 0)
+            if($lastQ != null)
                 $qNo = $lastQ->qNo + 1;
             else
                 $qNo = 1;
@@ -2244,7 +2351,7 @@ class QuizController extends Controller {
             $condition = ['quizId' => $quizId, 'questionId' => makeValidInput($_POST["questionId"])];
             $qoq = RegularQOQ::where($condition)->first();
 
-            if($qoq != null && count($qoq) > 0) {
+            if($qoq != null) {
 
                 try {
                     DB::update('update regularQOQ set qNo = qNo - 1 WHERE quizId = ' . $quizId . ' and qNo > ' . $qoq->qNo);
@@ -2265,7 +2372,7 @@ class QuizController extends Controller {
         if(isset($_POST["quizId"])) {
 
             $quizId = makeValidInput($_POST["quizId"]);
-            $quiz = SystemQuiz::find($quizId);
+            $quiz = SystemQuiz::whereId($quizId);
             $today = getToday();
 
             if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
@@ -2301,7 +2408,7 @@ class QuizController extends Controller {
         if(isset($_POST["quizId"])) {
 
             $quizId = makeValidInput($_POST["quizId"]);
-            $quiz = RegularQuiz::find($quizId);
+            $quiz = RegularQuiz::whereId($quizId);
             $today = getToday();
 
             /*if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
@@ -2341,7 +2448,7 @@ class QuizController extends Controller {
 
             $qoq = SystemQOQ::where($condition)->first();
 
-            if($qoq != null && count($qoq) > 0) {
+            if($qoq != null) {
                 $qoq->mark = makeValidInput($_POST["val"]);
                 $qoq->save();
                 echo "ok";
@@ -2365,7 +2472,7 @@ class QuizController extends Controller {
                 'questionId' => makeValidInput($_POST["questionId"])];
 
             $question = RegularQOQ::where($condition)->first();
-            if($question == null || count($question) == 0)
+            if($question == null)
                 return;
 
             $currQNo = $question->qNo;
@@ -2402,7 +2509,7 @@ class QuizController extends Controller {
                 'questionId' => makeValidInput($_POST["questionId"])];
 
             $question = SystemQOQ::where($condition)->first();
-            if($question == null || count($question) == 0)
+            if($question == null)
                 return;
 
             $currQNo = $question->qNo;
@@ -2429,7 +2536,7 @@ class QuizController extends Controller {
         if(isset($_POST["quizId"])) {
 
             $quizId = makeValidInput($_POST["quizId"]);
-            $quiz = SystemQuiz::find($quizId);
+            $quiz = SystemQuiz::whereId($quizId);
             $today = getToday();
 
             if($quiz->startReg <= $today["date"]) {
@@ -2452,7 +2559,7 @@ class QuizController extends Controller {
         if(isset($_POST["quizId"])) {
 
             $quizId = makeValidInput($_POST["quizId"]);
-            $quiz = RegularQuiz::find($quizId);
+            $quiz = RegularQuiz::whereId($quizId);
             $today = getToday();
 
             if($quiz->startReg <= $today["date"]) {
@@ -2527,7 +2634,7 @@ class QuizController extends Controller {
         if(isset($_POST["quizId"]) && isset($_POST["questionId"])) {
 
             $quizId = makeValidInput($_POST["quizId"]);
-            $quiz = SystemQuiz::find($quizId);
+            $quiz = SystemQuiz::whereId($quizId);
             $today = getToday();
             $questionId = makeValidInput($_POST["questionId"]);
 
@@ -2547,7 +2654,7 @@ class QuizController extends Controller {
             $systemQOQ->questionId = $questionId;
             $lastQ = SystemQOQ::where('quizId', '=', $quizId)->orderBy('qNo', 'DESC')->first();
             
-            if($lastQ != null && count($lastQ) > 0)
+            if($lastQ != null)
                 $qNo = $lastQ->qNo + 1;
             else
                 $qNo = 1;
@@ -2570,7 +2677,7 @@ class QuizController extends Controller {
         if(isset($_POST["quizId"]) && isset($_POST["questionId"])) {
 
             $quizId = makeValidInput($_POST["quizId"]);
-            $quiz = RegularQuiz::find($quizId);
+            $quiz = RegularQuiz::whereId($quizId);
             $today = getToday();
             $questionId = makeValidInput($_POST["questionId"]);
 
@@ -2589,7 +2696,7 @@ class QuizController extends Controller {
             $qoq->questionId = $questionId;
             $lastQ = RegularQOQ::where('quizId', '=', $quizId)->orderBy('qNo', 'DESC')->first();
 
-            if($lastQ != null && count($lastQ) > 0)
+            if($lastQ != null)
                 $qNo = $lastQ->qNo + 1;
             else
                 $qNo = 1;
@@ -2612,7 +2719,7 @@ class QuizController extends Controller {
         if(isset($_POST["quizId"])) {
 
             $quizId = makeValidInput($_POST["quizId"]);
-            $quiz = SystemQuiz::find($quizId);
+            $quiz = SystemQuiz::whereId($quizId);
             $today = getToday();
 
             if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
@@ -2634,7 +2741,7 @@ class QuizController extends Controller {
         if(isset($_POST["quizId"])) {
 
             $quizId = makeValidInput($_POST["quizId"]);
-            $quiz = RegularQuiz::find($quizId);
+            $quiz = RegularQuiz::whereId($quizId);
             $today = getToday();
 
 

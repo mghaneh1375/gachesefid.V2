@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $email
  * @property string $schoolName
  * @property string $fatherName
- * @property string $NID
  * @method static \Illuminate\Database\Query\Builder|\App\models\RedundantInfo1 whereUId($value)
  * @mixin \Eloquent
  */

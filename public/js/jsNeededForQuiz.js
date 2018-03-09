@@ -247,6 +247,100 @@ function deleteQuiz(quizId) {
     
 }
 
+function hideElement() {
+    currQuiz = -1;
+    $(".dark").addClass('hidden');
+    $(".item").addClass('hidden');
+}
+
+function elseQuiz(quizId) {
+
+    $.ajax({
+        type: 'post',
+        url: elseQuizDir,
+        data: {
+            'quizId': quizId
+        },
+        success: function (response) {
+
+            response = JSON.parse(response);
+
+            newElement = "<div class='col-xs-12' style='margin-top: 10px'><h4>سوالات حذف شده از آزمون</h4>";
+
+            deleteQ = JSON.parse(response.deleteQ);
+
+            if(deleteQ.length == 0)
+                newElement += "<div class='col-xs-12' style='margin-top: 10px'>سوالی موجود نیست</div>";
+
+            for(i = 0; i < deleteQ.length; i++) {
+                newElement += "<div class='col-xs-12' style='margin-top: 10px'><label><span>سوال " + deleteQ[i].qNo + "</span>";
+                newElement += "<button onclick='deleteDeletedQ(\"" + quizId + "\", \"" + deleteQ[i].qNo + "\")' class='btn btn-danger'><span class='glyphicon glyphicon-remove'></span></button>";
+                newElement += "</label></div>";
+            }
+
+            newElement += "<div class='col-xs-12' style='margin-top: 10px'>";
+            newElement += "<label><span>حذف سوال از آزمون</span><input id='deleteQuestionFromQuizInput' style='margin-right: 10px' type='number'></label>";
+            newElement += "</div>";
+
+            newElement += "<div class='col-xs-12'><p style='cursor: pointer; width: 200px' onclick='deleteQuestionFromQuiz(\"" + quizId + "\")' class=' btn btn-primary'>حذف کن</p></div>";
+
+            newElement += "<div class='col-xs-12'><p id='msgDeleteQFromQ' class='errorText'></p></div>";
+
+            $("#body_elseQuiz").empty().append(newElement);
+        }
+
+    });
+
+    hideElement();
+    $(".dark").removeClass('hidden');
+    $("#elseQuiz").removeClass('hidden');
+
+}
+
+
+function deleteQuestionFromQuiz(quizId) {
+    
+    questionId = $("#deleteQuestionFromQuizInput").val();
+
+    if(questionId == "")
+        return;
+
+    $.ajax({
+        type: 'post',
+        url: deleteQFromQ,
+        data: {
+            'quizId': quizId,
+            'questionId': questionId,
+            'quizMode': 'systemQuiz'
+        },
+        success: function (response) {
+            if (response == "ok")
+                elseQuiz(quizId);
+            else
+                $("#msgDeleteQFromQ").empty().append('سوال مورد نظر در آزمون وجود ندارد');
+        }
+    });
+
+}
+
+function deleteDeletedQ(quizId, questionId) {
+
+    $.ajax({
+        type: 'post',
+        url: deleteDeletedQFromQ,
+        data: {
+            'quizId': quizId,
+            'questionId': questionId
+        },
+        success: function (response) {
+            if (response == "ok")
+                elseQuiz(quizId);
+            else
+                $("#msgDeleteQFromQ").empty().append('مشکلی در انجام عملیات مورد نظر رخ داده است');
+        }
+    });
+}
+
 function getSubjectQuestions (sId) {
 
     $("#subPrevQ").addClass('hidden');

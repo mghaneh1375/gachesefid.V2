@@ -48,13 +48,18 @@
                                     {{--</li>--}}
                                 {{--</ul>--}}
                             {{--</li>--}}
-                            {{--<li data-val="ranking" class="menuItem ranking"><a href="#"> <span>رتبه بندی</span></a>--}}
-                                {{--<ul class="subItem hidden ranking">--}}
-                                    {{--<li><a>دانش آموزان</a></li>--}}
-                                    {{--<li><a>مشاوران</a></li>--}}
-                                {{--</ul>--}}
-                            {{--</li>--}}
-                            {{--<li class="menuItem nb-art"><a href="#"> <span>صندوق پیام ها</span></a></li>--}}
+                            <li data-val="ranking" class="menuItem ranking"><a> <span>رتبه بندی</span></a>
+                                <ul class="subItem hidden ranking">
+                                    <li><a href="{{route('studentsRanking')}}">دانش آموزان</a></li>
+                                    <li><a href="{{route('advisersList')}}">مشاوران</a></li>
+                                </ul>
+                            </li>
+                            <li data-val="adviser" class="menuItem adviser"><a><span>مشاور</span></a>
+                                <ul class="subItem hidden adviser">
+                                    <li><a href="{{route('myAdviser')}}">مشاور من</a></li>
+                                </ul>
+                            </li>
+                            <li class="menuItem nb-art"><a href='{{route('message')}}'> <span>صندوق پیام ها</span></a></li>
                             <li data-val="profile" class="menuItem profile"><a href="{{route('profile')}}"> <span>پروفایل</span></a>
                                 <ul class="subItem hidden profile">
                                     <li><a href="{{route('userInfo')}}">تغییر اطلاعات کاربری</a></li>
@@ -64,7 +69,7 @@
                             <li data-val="wallet" class="menuItem money"><a><span>کیف پول</span></a>
                                 <ul class="subItem hidden wallet">
                                     <li><a href="{{route('chargeAccount')}}">شارژ حساب</a></li>
-                                    {{--<li><a href="{{route('chargeAccount')}}">فعالیت های من</a></li>--}}
+                                    <li><a href="{{route('myActivities')}}">فعالیت های من</a></li>
                                 </ul>
                             </li>
                             <li class="menuItem exit"><a href="{{route('logout')}}"><span>خروج</span></a>

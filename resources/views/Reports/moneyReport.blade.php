@@ -24,20 +24,30 @@
         function doFilter() {
 
             var sum = 0;
+            var counter = 0;
+
+            var startDate = $("#date_input").val();
+            var endDate = $("#end_date_input").val();
+            var groupRegistryStatus = ($("#groupRegistry").is(":checked")) ? true : false;
+            var regularRegistryStatus = ($("#regularRegistry").is(":checked")) ? true : false;
+            var systemRegistryStatus = ($("#systemRegistry").is(":checked")) ? true : false;
+            var chargeStatus = ($("#charge").is(":checked")) ? true : false;
 
             $(".transaction").addClass('hidden');
 
-            if($("#end_date_input").val() != "" && $("#date_input").val() != "") {
-                $(".transaction").each(function () {
-                   if($(this).attr('data-date') >= $("#date_input").val() && $(this).attr('data-date') <= $("#end_date_input").val()) {
+            if(endDate != "" && startDate != "") {
 
-                       if(($("#groupRegistry").is(":checked") &&
+                $(".transaction").each(function () {
+
+                   if($(this).attr('data-date') >= startDate && $(this).attr('data-date') <= endDate) {
+
+                       if((groupRegistryStatus &&
                            $(this).attr('data-category') == groupRegistry) ||
-                           ($("#regularRegistry").is(":checked") &&
+                           (regularRegistryStatus &&
                            $(this).attr('data-category') == regularRegistry) ||
-                           ($("#systemRegistry").is(":checked") &&
+                           (systemRegistryStatus &&
                            $(this).attr('data-category') == systemRegistry) ||
-                           ($("#charge").is(":checked") &&
+                           (chargeStatus &&
                            $(this).attr('data-category') == charge)
                        ) {
                            sum += parseInt($(this).attr('data-amount'));

@@ -32,8 +32,10 @@
 <div class="header">
     <p>کیف پول</p>
     <p class="sub-header" onclick="document.location.href = '{{route('chargeAccount')}}'"><span> - </span><span>شارژ حساب</span></p>
-
+    <p class="sub-header" onclick="document.location.href = '{{route('myActivities')}}'"><span> - </span><span>فعالیت های من</span></p>
 </div>
+
+<p class="header" onclick="document.location.href = '{{route('message')}}'"><span> - </span><span>صندوق پیام ها</span></p>
 
 <div class="header">
     <p>پروفایل</p>

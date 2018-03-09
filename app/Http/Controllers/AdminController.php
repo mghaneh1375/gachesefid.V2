@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\models\AdviserQuestion;
 use App\models\AnswerSheetTemplates;
 use App\models\AnswerAnswerSheetTemplates;
 use App\models\AnswerTemplate;
@@ -115,7 +116,7 @@ class AdminController extends Controller {
     public function delete_answer_template($answer_template) {
 
         $tmp = AnswerAnswerSheetTemplates::where('answer_template_id', '=', $answer_template)->first();
-        if($tmp == null || count($tmp) == 0)
+        if($tmp == null)
             return Redirect::to(route('answer_sheet_templates'));
         
         AnswerTemplate::destroy($answer_template);
@@ -161,8 +162,8 @@ class AdminController extends Controller {
 
         if(isset($_POST["username"]) && isset($_POST["password"])) {
 
-            $user = User::where('username', '=', makeValidInput($_POST["username"]))->first();
-            if($user == null && count($user) == 0) {
+            $user = User::whereUsername(makeValidInput($_POST["username"]))->first();
+            if($user == null) {
                 echo "loginFailed";
                 return;
             }
@@ -218,12 +219,72 @@ class AdminController extends Controller {
 
     public function groupQuizRegistrationController($qId) {
 
-        $quiz = RegularQuiz::find($qId);
+        $quiz = RegularQuiz::whereId($qId);
 
         if($quiz == null)
             return Redirect::to(route('profile'));
 
         return view('groupQuizRegistrationController', array('quiz' => $quiz, 'advisers' => DB::select("select DISTINCT u.id, u.firstName, u.lastName, u.phoneNum from regularQuizQueue rQ, namayandeSchool nS, users u, schoolStudent sS WHERE u.id = nS.nId and nS.sId = sS.sId and sS.uId = rQ.studentId and rQ.qId = " . $qId)));
+    }
+
+    public function adviserQuestions() {
+
+        return view('adviserQuestions', ['adviserQuestions' => AdviserQuestion::all()]);
+
+    }
+
+    public function addAdviserQuestion() {
+
+        if(isset($_POST["question"])) {
+
+            try {
+                $tmp = new AdviserQuestion();
+                $tmp->name = makeValidInput($_POST["question"]);
+                $tmp->save();
+                echo "ok";
+                return;
+            }
+            catch (Exception $x) {}
+        }
+
+        echo "nok";
+    }
+
+    public function deleteAdviserQuestion() {
+
+        if(isset($_POST["deleteId"])) {
+
+            $id = makeValidInput($_POST["deleteId"]);
+
+            try {
+                AdviserQuestion::destroy($id);
+            }
+            catch (Exception $x) {}
+        }
+
+        return Redirect::route('adviserQuestions');
+    }
+
+    public function editAdviserQuestion() {
+        
+        if(isset($_POST["question"]) && isset($_POST["qId"])) {
+
+            $question = AdviserQuestion::whereId(makeValidInput($_POST["qId"]));
+
+            if($question == null)
+                return "nok1";
+
+            try {
+                $question->name = makeValidInput($_POST["question"]);
+                $question->save();
+                echo "ok";
+                return;
+            }
+            catch (Exception $x) {}
+        }
+
+        echo "nok";
+
     }
 
     public function studentsOfAdviserInQuiz() {

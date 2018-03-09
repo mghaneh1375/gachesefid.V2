@@ -56,7 +56,6 @@ var Preview2 = {
 
         Preview2.timeout = null;
         if (this.mjRunning) return;
-        alert(this.src.length);
         for(i = 0; i < this.src.length; i++) {
             alert(document.getElementById(this.src[i]).value);
             var text = document.getElementById(this.src[i]).value;
@@ -220,13 +219,12 @@ function sendAns(logId) {
             'text': $("#answerTextArea_" + logId).val()
         },
         success: function (response) {
-            $(".errors").empty();
 
             if(response == "ok") {
-                $(".errors").append('جواب شما اضافه گردید و پس از تایید به نمایش در می آید');
+                $(".errors").empty().append('جواب شما اضافه گردید و پس از تایید به نمایش در می آید');
             }
             else {
-                $(".errors").append('مشکلی در انجام عملیات مورد نظر رخ داده است');
+                $(".errors").empty().append('مشکلی در انجام عملیات مورد نظر رخ داده است');
             }
 
             $(".errors").removeClass('hidden');
@@ -265,14 +263,14 @@ function likeAns(logId) {
         },
         success: function (response) {
             if(response == "1") {
-                $("#score_" + logId).empty();
-                $("#score_" + logId).attr('data-val', parseInt($("#score_" + logId).attr('data-val')) + 1);
-                $("#score_" + logId).append($("#score_" + logId).attr('data-val'));
+                $("#score_" + logId).empty()
+                    .attr('data-val', parseInt($("#score_" + logId).attr('data-val')) + 1)
+                    .append($("#score_" + logId).attr('data-val'));
             }
             else if(response == "2") {
-                $("#score_" + logId).empty();
-                $("#score_" + logId).attr('data-val', parseInt($("#score_" + logId).attr('data-val')) + 2);
-                $("#score_" + logId).append($("#score_" + logId).attr('data-val'));
+                $("#score_" + logId).empty()
+                    .attr('data-val', parseInt($("#score_" + logId).attr('data-val')) + 2)
+                    .append($("#score_" + logId).attr('data-val'));
             }
         }
     });
@@ -289,14 +287,14 @@ function dislikeAns(logId) {
         },
         success: function (response) {
             if(response == "1") {
-                $("#score_" + logId).empty();
-                $("#score_" + logId).attr('data-val', parseInt($("#score_" + logId).attr('data-val')) - 1);
-                $("#score_" + logId).append($("#score_" + logId).attr('data-val'));
+                $("#score_" + logId).empty()
+                    .attr('data-val', parseInt($("#score_" + logId).attr('data-val')) - 1)
+                    .append($("#score_" + logId).attr('data-val'));
             }
             else if(response == "2") {
-                $("#score_" + logId).empty();
-                $("#score_" + logId).attr('data-val', parseInt($("#score_" + logId).attr('data-val')) - 2);
-                $("#score_" + logId).append($("#score_" + logId).attr('data-val'));
+                $("#score_" + logId).empty()
+                    .attr('data-val', parseInt($("#score_" + logId).attr('data-val')) - 2)
+                    .append($("#score_" + logId).attr('data-val'));
             }
         }
     });
@@ -318,7 +316,6 @@ function showAllAns(logId) {
             $("#showAll_" + logId).addClass('hidden');
 
             response = JSON.parse(response);
-            $("#response_" + logId).empty();
 
             srcIds = [];
             destIds = [];
@@ -355,7 +352,7 @@ function showAllAns(logId) {
             Preview2.Init(srcIds, destIds);
             Preview2.Update();
 
-            $("#response_" + logId).removeClass('hidden');
+            $("#response_" + logId).empty().removeClass('hidden');
         }
     });
 }
@@ -374,13 +371,12 @@ function askQuestion() {
         },
         success: function (response) {
 
-            $("#msgText").empty();
             if(response == "ok") {
-                $("#msgText").append('سوال شما به سامانه اضافه گردید و پس از تایید به سوالات اضافه می گردد');
+                $("#msgText").empty().append('سوال شما به سامانه اضافه گردید و پس از تایید به سوالات اضافه می گردد');
                 hideAskQuestion();
             }
             else {
-                $("#msgText").append('اشکالی در اضافه نمودن سوال مورد نظر به وجود آمده است');
+                $("#msgText").empty().append('اشکالی در اضافه نمودن سوال مورد نظر به وجود آمده است');
             }
         }
     })

@@ -67,13 +67,13 @@ class QuestionController extends Controller {
 
     public function preTransactionBuyQuestion($quizId, $status = "nop") {
 
-        if(UserCreatedQuiz::find($quizId) == null)
+        if(UserCreatedQuiz::whereId($quizId) == null)
             return Redirect::to(route('profile'));
 
         include_once 'MoneyController.php';
 
         return view('preTransactionQuestion', array('url' => route('createCustomQuiz'), 'backURL' => route('createCustomQuiz'), 'status' => $status, 'quizId' => $quizId,
-            'total' => getTotalMoney(), 'toPay' => UserCreatedQuiz::find($quizId)->toPay, 'payURL' => route('doCreateCustomQuizFromAccount'), 'payURL2' => route('doCreateCustomQuizOnline')));
+            'total' => getTotalMoney(), 'toPay' => UserCreatedQuiz::whereId($quizId)->toPay, 'payURL' => route('doCreateCustomQuizFromAccount'), 'payURL2' => route('doCreateCustomQuizOnline')));
     }
 
     public function doCreateCustomQuizFromAccount() {
@@ -85,9 +85,9 @@ class QuestionController extends Controller {
             $total = getTotalMoney();
             $quizId = makeValidInput($_POST["quizId"]);
 
-            $quiz = UserCreatedQuiz::find($quizId);
+            $quiz = UserCreatedQuiz::whereId($quizId);
 
-            if($quiz == null || count($quiz) == 0) {
+            if($quiz == null) {
                 echo "nok1";
                 return;
             }
@@ -97,7 +97,7 @@ class QuestionController extends Controller {
 
             $giftCode = makeValidInput($_POST["giftCode"]);
             if(checkOffCodeValidation($giftCode)) {
-                $code = OffCode::where('code', '=', $giftCode)->first();
+                $code = OffCode::whereCode($giftCode)->first();
 
                 if($code->type == getValueInfo('staticOffCode'))
                     $toPay -= $code->amount;
@@ -132,9 +132,9 @@ class QuestionController extends Controller {
 
             $quizId = makeValidInput($_POST["quizId"]);
 
-            $quiz = UserCreatedQuiz::find($quizId);
+            $quiz = UserCreatedQuiz::whereId($quizId);
 
-            if($quiz == null || count($quiz) == 0) {
+            if($quiz == null) {
                 echo json_encode(['status' => 'nok1']);
                 return;
             }
@@ -339,8 +339,8 @@ class QuestionController extends Controller {
             $questions = DB::select('select * from discussion WHERE id = relatedTo and qId = ' . $qId . ' and status = 1 limit ' . $page . ', 5');
 
             foreach ($questions as $question) {
-                $user = User::find($question->uId);
-                if($user != null && count($user) > 0) {
+                $user = User::whereId($question->uId);
+                if($user != null) {
                     $question->uId = $user->username;
                 }
                 else {
@@ -370,15 +370,15 @@ class QuestionController extends Controller {
         if(isset($_POST["qId"]) && isset($_POST["text"])) {
 
             $qId = makeValidInput($_POST["qId"]);
-            $discussion = Discussion::find($qId);
+            $discussion = Discussion::whereId($qId);
 
-            if($discussion == null || count($discussion) == 0) {
+            if($discussion == null) {
                 echo "nok1";
                 return;
             }
 
-            $question = Question::find($discussion->qId);
-            if($question == null || count($question) == 0) {
+            $question = Question::whereId($discussion->qId);
+            if($question == null) {
                 echo "nok2";
                 return;
             }
@@ -415,8 +415,8 @@ class QuestionController extends Controller {
             $questions = DB::select('select * from discussion WHERE id <> relatedTo and relatedTo = ' . makeValidInput($_POST["logId"]) . ' and status = 1');
 
             foreach ($questions as $question) {
-                $user = User::find($question->uId);
-                if($user != null && count($user) > 0) {
+                $user = User::whereId($question->uId);
+                if($user != null) {
                     $question->uId = $user->username;
                 }
                 else {
@@ -456,19 +456,19 @@ class QuestionController extends Controller {
             $condition = ['questionId' => $qId, 'uId' => $uId, 'status' => 1];
             $roq = ROQ::where($condition)->orderBy('id', 'DESC')->first();
 
-            if($roq == null || count($roq) == 0) {
+            if($roq == null) {
                 echo "nok";
                 return;
             }
 
-            $question = Question::find($qId);
-            if($question == null || count($question) == 0) {
+            $question = Question::whereId($qId);
+            if($question == null) {
                 echo "nok";
                 return;
             }
 
-            if($question->author == User::where('level', '=', getValueInfo('adminLevel'))->first()->id ||
-                $question->author == User::where('level', '=', getValueInfo('superAdminLevel'))->first()->id)
+            if($question->author == User::whereLevel(getValueInfo('adminLevel'))->first()->id ||
+                $question->author == User::whereLevel(getValueInfo('superAdminLevel'))->first()->id)
                 $question->questionFile = URL::asset('images/questions/system/' . $question->questionFile);
             else
                 $question->questionFile = URL::asset('images/questions/student/' . $question->questionFile);
@@ -488,8 +488,8 @@ class QuestionController extends Controller {
             $question->yourAns = $roq->result;
             $question->discussion = route('discussion', ['qId' => $qId]);
 
-            $question->controller = User::find(ControllerActivity::where('qId', '=', $qId)->first()->uId)->username;
-            $question->author = User::find($question->author)->username;
+            $question->controller = User::whereId(ControllerActivity::where('qId', '=', $qId)->first()->uId)->username;
+            $question->author = User::whereId($question->author)->username;
 
             echo json_encode($question);
             return;
@@ -527,7 +527,7 @@ class QuestionController extends Controller {
         $condition = ['qId' => $logId, 'uId' => $uId, 'point' => -1];
 
         $rate = DiscussionRate::where($condition)->first();
-        if ($rate != null && count($rate) != 0) {
+        if ($rate != null) {
             $out = 2;
         }
         else {
@@ -554,7 +554,7 @@ class QuestionController extends Controller {
         $condition = ['qId' => $logId, 'uId' => $uId, 'point' => 1];
 
         $rate = DiscussionRate::where($condition)->first();
-        if ($rate != null && count($rate) != 0) {
+        if ($rate != null) {
             $out = 2;
         }
         else {
@@ -570,12 +570,20 @@ class QuestionController extends Controller {
 
     public function discussion($qId) {
 
-        $question = Question::find($qId);
-        if($question == null || count($question) == 0)
+        $question = Question::whereId($qId);
+        if($question == null)
             return Redirect::to('profile');
 
-        $condition = ['uId' => Auth::user()->id, 'questionId' => $qId, 'status' => 1];
-        if(ROQ::where($condition)->count() > 0) {
+        $uId = Auth::user()->id;
+        $condition = ['uId' => $uId, 'questionId' => $qId];
+
+        $tmp = DB::select('select count(*) as countNum from userCreatedQuiz u, soldQuestion s WHERE u.uId = ' . $uId . ' and u.id = s.quizId and s.qId = ' . $qId);
+        if($tmp == null || count($tmp) == 0 || $tmp[0]->countNum == 0)
+            $tmp = 0;
+        else
+            $tmp = 1;
+
+        if(ROQ::where($condition)->count() > 0 || $tmp == 1) {
             return view('discussion', array('qId' => $qId));
         }
         return Redirect::to('profile');
@@ -586,15 +594,22 @@ class QuestionController extends Controller {
         if(isset($_POST["qId"]) && isset($_POST["text"])) {
 
             $qId = makeValidInput($_POST["qId"]);
-            $question = Question::find($qId);
-            if($question == null || count($question) == 0) {
+            $question = Question::whereId($qId);
+            if($question == null) {
                 echo "nok2";
                 return;
             }
 
             $uId = Auth::user()->id;
-            $condition = ['uId' => $uId, 'questionId' => $qId, 'status' => 1];
-            if(ROQ::where($condition)->count() > 0) {
+            $condition = ['uId' => $uId, 'questionId' => $qId];
+
+            $tmp = DB::select('select count(*) as countNum from userCreatedQuiz u, soldQuestion s WHERE u.uId = ' . $uId . ' and u.id = s.quizId and s.qId = ' . $qId);
+            if($tmp == null || count($tmp) == 0 || $tmp[0]->countNum == 0)
+                $tmp = 0;
+            else
+                $tmp = 1;
+
+            if(ROQ::where($condition)->count() > 0 || $tmp == 1) {
                 $discussion = new Discussion();
                 $discussion->qId = $qId;
                 $discussion->uId = $uId;
@@ -626,7 +641,7 @@ class QuestionController extends Controller {
             $condition = ['uId' => $uId, 'questionId' => $qId];
             if(ROQ::where($condition)->count() > 0) {
                 $lok = LOK::where($condition)->first();
-                if($lok == null || count($lok) == 0) {
+                if($lok == null) {
                     $lok = new LOK();
                     $lok->uId = $uId;
                     $lok->questionId = $qId;
@@ -694,7 +709,7 @@ class QuestionController extends Controller {
 
             $question = Question::whereId(makeValidInput($qId));
 
-            if($question == null || count($question) == 0) {
+            if($question == null) {
                 echo json_encode(['status' => "nok", 'msg' => 'مشکلی در انجام عملیات مورد نظر رخ داده است. (خطای 301)']);
                 return;
             }
@@ -723,7 +738,7 @@ class QuestionController extends Controller {
     
     public function addAnsToQuestion($qId) {
 
-        $question = Question::find($qId);
+        $question = Question::whereId($qId);
         $err = "";
 
         if($question == null)
@@ -781,7 +796,7 @@ class QuestionController extends Controller {
 
             $question = Question::whereId(makeValidInput($qId));
 
-            if($question == null || count($question) == 0) {
+            if($question == null) {
                 echo json_encode(['status' => "nok", 'msg' => 'مشکلی در انجام عملیات مورد نظر رخ داده است. (خطای 301)']);
                 return;
             }
@@ -810,7 +825,7 @@ class QuestionController extends Controller {
     
     public function addDetailToQuestion($qId) {
 
-        $question = Question::find($qId);
+        $question = Question::whereId($qId);
 
         if(isset($_POST["level"]) && isset($_POST["ans"]) && isset($_POST["neededTime"]) && isset($_POST["organizationId"]) &&
             isset($_POST["kindQuestion"]) && isset($_POST["additional"]) && isset($_POST["subjects"])) {
@@ -1227,7 +1242,7 @@ class QuestionController extends Controller {
         if(isset($_POST["qId"]) && isset($_POST['desc'])) {
 
             $qId = makeValidInput($_POST["qId"]);
-            $tmp = Question::find($qId);
+            $tmp = Question::whereId($qId);
 
             if($tmp == null) {
                 echo "nok";
@@ -1278,8 +1293,8 @@ class QuestionController extends Controller {
                     $question->totalCount = DB::select('select count(*) as countNum from discussion WHERE id = relatedTo and status = 0')[0]->countNum;
                     $allow = false;
                 }
-                $user = User::find($question->uId);
-                if($user != null && count($user) > 0) {
+                $user = User::whereId($question->uId);
+                if($user != null) {
                     $question->uId = $user->username;
                 }
                 else {
@@ -1287,7 +1302,7 @@ class QuestionController extends Controller {
                 }
                 $question->date = convertStringToDate($question->date);
                 
-                $tmp = Question::find($question->qId);
+                $tmp = Question::whereId($question->qId);
                 if($tmp == null)
                     continue;
                 $level = User::where('id', '=', $tmp->author)->select('level')->first()->level;
@@ -1315,8 +1330,8 @@ class QuestionController extends Controller {
                     $allow = false;
                 }
 
-                $user = User::find($question->uId);
-                if($user != null && count($user) > 0) {
+                $user = User::whereId($question->uId);
+                if($user != null) {
                     $question->uId = $user->username;
                 }
                 else {
@@ -1324,7 +1339,7 @@ class QuestionController extends Controller {
                 }
                 $question->date = convertStringToDate($question->date);
 
-                $tmp = Question::find($question->qId);
+                $tmp = Question::whereId($question->qId);
                 if($tmp == null)
                     continue;
                 $level = User::where('id', '=', $tmp->author)->select('level')->first()->level;
@@ -1352,15 +1367,15 @@ class QuestionController extends Controller {
                     $question->totalCount = DB::select('select count(*) as countNum from discussion WHERE id = relatedTo')[0]->countNum;
                     $allow = false;
                 }
-                $user = User::find($question->uId);
-                if ($user != null && count($user) > 0) {
+                $user = User::whereId($question->uId);
+                if ($user != null) {
                     $question->uId = $user->username;
                 } else {
                     $question->uId = "نامشخص";
                 }
                 $question->date = convertStringToDate($question->date);
 
-                $tmp = Question::find($question->qId);
+                $tmp = Question::whereId($question->qId);
                 if($tmp == null)
                     continue;
                 $level = User::where('id', '=', $tmp->author)->select('level')->first()->level;
@@ -1378,7 +1393,7 @@ class QuestionController extends Controller {
         if(isset($_POST["qId"]) && isset($_POST["status"])) {
 
             $qId = makeValidInput($_POST["qId"]);
-            $question = Discussion::find($qId);
+            $question = Discussion::whereId($qId);
 
             if($question == null) {
                 echo "nok";
@@ -1413,17 +1428,17 @@ class QuestionController extends Controller {
                     $question->totalCount = DB::select('select count(*) as countNum from discussion WHERE id <> relatedTo and status = 0')[0]->countNum;
                     $allow = false;
                 }
-                $user = User::find($question->uId);
-                if($user != null && count($user) > 0) {
+                $user = User::whereId($question->uId);
+                if($user != null) {
                     $question->uId = $user->username;
                 }
                 else {
                     $question->uId = "نامشخص";
                 }
                 $question->date = convertStringToDate($question->date);
-                $question->question = Discussion::find($question->relatedTo)->description;
+                $question->question = Discussion::whereId($question->relatedTo)->description;
 
-                $tmp = Question::find($question->qId);
+                $tmp = Question::whereId($question->qId);
                 if($tmp == null)
                     continue;
                 $level = User::where('id', '=', $tmp->author)->select('level')->first()->level;
@@ -1450,17 +1465,17 @@ class QuestionController extends Controller {
                     $question->totalCount = DB::select('select count(*) as countNum from discussion WHERE id <> relatedTo and status = 1')[0]->countNum;
                     $allow = false;
                 }
-                $user = User::find($question->uId);
-                if($user != null && count($user) > 0) {
+                $user = User::whereId($question->uId);
+                if($user != null) {
                     $question->uId = $user->username;
                 }
                 else {
                     $question->uId = "نامشخص";
                 }
                 $question->date = convertStringToDate($question->date);
-                $question->question = Discussion::find($question->relatedTo)->description;
+                $question->question = Discussion::whereId($question->relatedTo)->description;
 
-                $tmp = Question::find($question->qId);
+                $tmp = Question::whereId($question->qId);
                 if($tmp == null)
                     continue;
                 $level = User::where('id', '=', $tmp->author)->select('level')->first()->level;
@@ -1487,17 +1502,17 @@ class QuestionController extends Controller {
                     $question->totalCount = DB::select('select count(*) as countNum from discussion WHERE id <> relatedTo')[0]->countNum;
                     $allow = false;
                 }
-                $user = User::find($question->uId);
-                if($user != null && count($user) > 0) {
+                $user = User::whereId($question->uId);
+                if($user != null) {
                     $question->uId = $user->username;
                 }
                 else {
                     $question->uId = "نامشخص";
                 }
                 $question->date = convertStringToDate($question->date);
-                $question->question = Discussion::find($question->relatedTo)->description;
+                $question->question = Discussion::whereId($question->relatedTo)->description;
 
-                $tmp = Question::find($question->qId);
+                $tmp = Question::whereId($question->qId);
                 if($tmp == null)
                     continue;
                 $level = User::where('id', '=', $tmp->author)->select('level')->first()->level;

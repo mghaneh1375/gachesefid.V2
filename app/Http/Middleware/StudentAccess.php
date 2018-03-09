@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 
-class Operator2Access
+class StudentAccess
 {
     /**
      * Handle an incoming request.
@@ -21,8 +21,7 @@ class Operator2Access
 
         $level = Auth::user()->level;
 
-        if($level == getValueInfo('adminLevel') || $level == getValueInfo('superAdminLevel') ||
-            $level == getValueInfo("operator2Level"))
+        if($level == getValueInfo('studentLevel'))
             return $next($request);
 
         return Redirect::to(route('profile'));

@@ -107,22 +107,16 @@
 
             val = $("input[name='fromWhere']:checked").val();
             if(val == "online") {
-                $("#onlineDiv").css('background-color', '#fafef5');
-                $("#onlineDiv").css('border-color', '#7ed321');
-                $("#myAccountDiv").css('background-color', '#ccc');
-                $("#myAccountDiv").css('border-color', 'black');
+                $("#onlineDiv").css('background-color', '#fafef5').css('border-color', '#7ed321');
+                $("#myAccountDiv").css('background-color', '#ccc').css('border-color', 'black');
                 $("#offCode1").empty();
-                $("#offCode2").empty();
-                $("#offCode2").append(offCode);
+                $("#offCode2").empty().append(offCode);
             }
             else {
-                $("#myAccountDiv").css('background-color', '#fafef5');
-                $("#myAccountDiv").css('border-color', '#7ed321');
-                $("#onlineDiv").css('background-color', '#ccc');
-                $("#onlineDiv").css('border-color', 'black');
+                $("#myAccountDiv").css('background-color', '#fafef5').css('border-color', '#7ed321');
+                $("#onlineDiv").css('background-color', '#ccc').css('border-color', 'black');
                 $("#offCode2").empty();
-                $("#offCode1").empty();
-                $("#offCode1").append(offCode);
+                $("#offCode1").empty().append(offCode);
             }
         }
 
@@ -155,15 +149,16 @@
                     success: function (response) {
                         if(response == "ok") {
                             hideElement();
+                            $(".dark").removeClass('hidden');
                             $("#confirmationPane").removeClass('hidden');
                         }
                         else if(response == "nok1") {
-                            $("#errMsg").empty();
-                            $("#errMsg").append("موجودی شما کافی نیست");
+                            $(".dark").removeClass('hidden');
+                            $("#errMsg").empty().append("موجودی شما کافی نیست");
                         }
                         else if(response == "nok2") {
-                            $("#errMsg").empty();
-                            $("#errMsg").append("شما قبلا در این آزمون ثبت نام کرده اید");
+                            $(".dark").removeClass('hidden');
+                            $("#errMsg").empty().append("شما قبلا در این آزمون ثبت نام کرده اید");
                         }
                     }
                 });

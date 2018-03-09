@@ -1,6 +1,8 @@
 <?php
 
-Route::get('salam', array('as' => 'getUpdates', 'uses' => 'TelegramController@getUpdates'));
+Route::get('salam', array('as' => 'getUpdates', 'uses' => 'HomeController@salam'));
+
+Route::any('{token}/webhook', array('as' => 'webhook', 'uses' => 'TelegramController@getUpdates'));
 
 Route::get('salam2', array('as' => 'getUpdates', 'uses' => 'TelegramController@postSendMessage'));
 
@@ -16,6 +18,10 @@ Route::group(array('middleware' => ['nothing', 'notLogin']), function () {
 });
 
 Route::group(array('middleware' => 'nothing'), function (){
+
+	Route::get('advisersList', array('as' => 'advisersList', 'uses' => 'ReportController@advisersList'));
+
+	Route::get('studentsRanking/{page?}', array('as' => 'studentsRanking', 'uses' => 'ReportController@studentsRanking'));
 
 	Route::get('aboutUs', array('as' => 'aboutUs', 'uses' => 'HomeController@aboutUs'));
 
@@ -46,9 +52,11 @@ Route::group(array('middleware' => 'nothing'), function (){
 	Route::post('getActivation', array('as' => 'getActivation', 'uses' => 'RegistrationController@doGetActivation'));
 });
 
-Route::group(array('middleware' => 'nothing'), function (){
+Route::group(array('middleware' => ['nothing', 'auth']), function (){
 
 	Route::get('messages', array('as' => 'message', 'uses' => 'MessageController@showMessages'));
+
+	Route::get('sendMessage/{dest}', array('as' => 'sendMessage', 'uses' => 'MessageController@sendMessage'));
 
 	Route::post('getListOfMsgs', array('as' => 'getListOfMsgs', 'uses' => 'MessageController@getListOfMsgs'));
 
@@ -269,6 +277,14 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 	Route::post('pointsConfig', array('as' => 'pointsConfig', 'uses' => 'ConfigController@doPointsConfig'));
 
+	Route::get('adviserQuestions', array('as' => 'adviserQuestions', 'uses' => 'AdminController@adviserQuestions'));
+
+	Route::post('deleteAdviserQuestion', array('as' => 'deleteAdviserQuestion', 'uses' => 'AdminController@deleteAdviserQuestion'));
+
+	Route::post('addAdviserQuestion', array('as' => 'addAdviserQuestion', 'uses' => 'AdminController@addAdviserQuestion'));
+
+	Route::post('editAdviserQuestion', array('as' => 'editAdviserQuestion', 'uses' => 'AdminController@editAdviserQuestion'));
+
 });
 
 Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
@@ -305,6 +321,20 @@ Route::group(array('middleware' => ['nothing', 'auth', 'namayandeLevel']), funct
 
 	Route::post('changeSchoolCode', array('as' => 'changeSchoolCode', 'uses' => 'UserController@changeSchoolCode'));
 	
+});
+
+Route::group(array('middleware' => ['nothing', 'auth', 'phone', 'studentLevel']), function () {
+
+	Route::get('myAdviser', array('as' => 'myAdviser', 'uses' => 'UserController@myAdviser'));
+	
+	Route::post('setAsMyAdviser', array('as' => 'setAsMyAdviser', 'uses' => 'UserController@setAsMyAdviser'));
+
+	Route::post('submitRate', array('as' => 'submitRate', 'uses' => 'UserController@submitRate'));
+
+	Route::get('showInboxSpecificMsgs/{selectedUser}', array('as' => 'showInboxSpecificMsgs', 'uses' => 'MessageController@showInboxSpecificMsgs'));
+
+	Route::get('showOutboxSpecificMsgs/{selectedUser}', array('as' => 'showOutboxSpecificMsgs', 'uses' => 'MessageController@showOutboxSpecificMsgs'));
+
 });
 
 Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
@@ -418,6 +448,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 	Route::post('doCreateCustomQuizOnline', array('as' => 'doCreateCustomQuizOnline', 'uses' => 'QuestionController@doCreateCustomQuizOnline'));
 
 	Route::post('getSuggestionQuestionsCount', array('as' => 'getSuggestionQuestionsCount', 'uses' => 'QuizController@getSuggestionQuestionsCount'));
+
+	Route::get('myActivities', array('as' => 'myActivities', 'uses' => 'ReportController@myActivities'));
 
 });
 
@@ -573,9 +605,13 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 	Route::post('elseQuiz', array('as' => 'elseQuiz', 'uses' => 'QuizController@elseQuiz'));
 
+	Route::post('elseSystemQuiz', array('as' => 'elseSystemQuiz', 'uses' => 'QuizController@elseSystemQuiz'));
+
 	Route::post('deleteQFromQ', array('as' => 'deleteQFromQ', 'uses' => 'QuizController@deleteQFromQ'));
 
 	Route::post('deleteDeletedQFromQ', array('as' => 'deleteDeletedQFromQ', 'uses' => 'QuizController@deleteDeletedQFromQ'));
+
+	Route::post('deleteDeletedQFromSystemQ', array('as' => 'deleteDeletedQFromSystemQ', 'uses' => 'QuizController@deleteDeletedQFromSystemQ'));
 
 	Route::post('changeRankingCount', array('as' => 'changeRankingCount', 'uses' => 'QuizController@changeRankingCount'));
 
@@ -654,6 +690,18 @@ Route::group(array('middleware' => ['nothing', 'auth', 'operator2Level']), funct
 	Route::post('getConfirmedAndUnConfirmedAnses', array('as' => 'getConfirmedAndUnConfirmedAnses', 'uses' => 'QuestionController@getConfirmedAndUnConfirmedAnses'));
 
 	Route::post('changeQuestionStatus', array('as' => 'changeQuestionStatus', 'uses' => 'QuestionController@changeQuestionStatus'));
+
+	Route::get('controlMsg', array('as' => 'controlMsg', 'uses' => 'MessageController@controlMsg'));
+
+	Route::post('acceptedMsgs', array('as' => 'acceptedMsgs', 'uses' => 'MessageController@acceptedMsgs'));
+
+	Route::post('rejectedMsgs', array('as' => 'rejectedMsgs', 'uses' => 'MessageController@rejectedMsgs'));
+
+	Route::post('pendingMsgs', array('as' => 'pendingMsgs', 'uses' => 'MessageController@pendingMsgs'));
+
+	Route::post('acceptMsgs', array('as' => 'acceptMsgs', 'uses' => 'MessageController@acceptMsgs'));
+
+	Route::post('rejectMsgs', array('as' => 'rejectMsgs', 'uses' => 'MessageController@rejectMsgs'));
 	
 });
 

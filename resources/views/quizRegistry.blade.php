@@ -23,8 +23,7 @@
             <div class="col-xs-12">
                 <center>آزمونی برای ثبت نام وجود ندارد</center>
             </div>
-        @endif
-        @if($mode == 'system')
+        @elseif($mode == 'system')
             <table>
                 <tr>
                     <td><center>نام آزمون:</center></td>
@@ -93,17 +92,14 @@
         $(".quiz").mouseenter(function () {
             val = $(this).attr('data-val');
 
-            $(".quiz").css('background-color', '#ccc');
-            $(".quiz").css('border-color', 'black');
+            $(".quiz").css('background-color', '#ccc').css('border-color', 'black');
 
-            $("#" + val).css('background-color', '#fafef5');
-            $("#" + val).css('border-color', '#7ed321');
+            $("#" + val).css('background-color', '#fafef5').css('border-color', '#7ed321');
 
         });
 
         $(".quiz").mouseleave(function () {
-            $(".quiz").css('background-color', '#ccc');
-            $(".quiz").css('border-color', 'black');
+            $(".quiz").css('background-color', '#ccc').css('border-color', 'black');
         });
     </script>
 @stop

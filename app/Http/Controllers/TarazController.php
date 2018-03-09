@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\models\ConfigModel;
 use App\models\Enheraf;
+use App\models\PointConfig;
 use App\models\QuizRegistry;
 use App\models\ROQ;
 use App\models\Question;
@@ -40,7 +42,7 @@ class TarazController extends Controller {
                         if (($correct * 1.0) / $count > 0.3)
                             $level = 2; // average
 
-                        $q = Question::find($questionIds[$j]->id);
+                        $q = Question::whereId($questionIds[$j]->id);
                         $q->level = $level;
                         $q->save();
                     }
@@ -50,7 +52,7 @@ class TarazController extends Controller {
                     'quizId' => $qId, 'quizMode' => $regularQuizMode];
 
                 $stdAns = ROQ::where($conditions)->first();
-                if($stdAns != null && count($stdAns) > 0) {
+                if($stdAns != null) {
 
                     if($questionIds[$j]->kindQ == 1 && ($stdAns->result > $questionIds[$j]->choicesCount || $stdAns->result < 0)) {
                         $percent -= (1 / ($questionIds[$j]->choicesCount - 1));
@@ -178,7 +180,7 @@ class TarazController extends Controller {
 
             $quizId = makeValidInput($_POST["quizId"]);
             
-            $quiz = RegularQuiz::find($quizId);
+            $quiz = RegularQuiz::whereId($quizId);
             $date = getToday();
             $regularQuizMode = getValueInfo('regularQuiz');
 
@@ -191,7 +193,7 @@ class TarazController extends Controller {
             );
 
             if(count($qEntryIds) > 0) {
-                if(Taraz::where('qEntryId', '=', $qEntryIds[0]->id)->count() > 0)
+                if(Taraz::whereQEntryId($qEntryIds[0]->id)->count() > 0)
                     return Redirect::to(route('createTarazTable2', ['mode' => 'err']));
             }
 
@@ -214,7 +216,7 @@ class TarazController extends Controller {
                 ' and (select count(*) from ROQ r where r.uId = qR.uId and r.quizMode = qR.quizMode and r.quizId = qR.qId) > 0'
             );
 
-            Enheraf::where('qId', '=', $quizId)->delete();
+            Enheraf::whereQId($quizId)->delete();
 
             $avgs = $this->getAverageLessons($quizId, $qEntryIds);
 
@@ -241,7 +243,7 @@ class TarazController extends Controller {
 
             $quizId = makeValidInput($_POST["quizId"]);
 
-            if(RegularQuiz::find($quizId) == null) {
+            if(RegularQuiz::whereId($quizId) == null) {
                 echo "nok";
                 return;
             }
@@ -256,7 +258,7 @@ class TarazController extends Controller {
             $amount = PointConfig::first()->rankInQuizPoint;
 
             foreach ($users as $user) {
-                charge($amount, $user->uId, getValueInfo('quizRankTransaction'), getValueInfo('money2'));
+                charge($amount, $user->uId, getValueInfo('quizRankTransaction'), getValueInfo('money1'));
             }
 
             echo "ok";

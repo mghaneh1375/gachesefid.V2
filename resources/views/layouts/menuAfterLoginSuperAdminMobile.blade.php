@@ -38,6 +38,7 @@
     <p class="sub-header" onclick="document.location.href = '{{route('tags')}}'"><span> - </span><span>تگ های به رد سوالات</span></p>
     <p class="sub-header" onclick="document.location.href = '{{route('reportsAccess')}}'"><span> - </span><span>مدیریت سطح دسترسی گزارشات</span></p>
     <p class="sub-header" onclick="document.location.href = '{{route('answer_sheet_templates')}}'"><span> - </span><span>قالب های پاسخ نامه</span></p>
+    <p class="sub-header" onclick="document.location.href = '{{route('adviserQuestions')}}'"><span> - </span><span>سوالات نظرسنجی مشاوران</span></p>
 </div>
 
 <div class="header">

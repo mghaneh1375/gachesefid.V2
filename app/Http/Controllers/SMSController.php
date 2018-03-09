@@ -74,7 +74,7 @@ class SMSController extends Controller {
 
             $level = makeValidInput($_POST["level"]);
             if($sex == -1)
-                $uIds = User::where('level', '=', $level)->select('id')->get();
+                $uIds = User::whereLevel($level)->select('id')->get();
             else {
                 $condition = ['sex' => $sex, 'level' => $level];
                 $uIds = User::where($condition)->select('id')->get();
@@ -134,20 +134,20 @@ class SMSController extends Controller {
                         continue;
 
                     $tmp = new SMSQueue();
-                    $tmp->phoneNum = User::find($itr->id)->phoneNum;
+                    $tmp->phoneNum = User::whereId($itr->id)->phoneNum;
                     $tmp->templateId = $template->id;
                     $tmp->save();
                 }
             }
             else{
                 if($quizMode == getValueInfo('regularQuiz'))
-                    $quiz = RegularQuiz::find($quiz);
+                    $quiz = RegularQuiz::whereId($quiz);
                 else
-                    $quiz = SystemQuiz::find($quiz);
+                    $quiz = SystemQuiz::whereId($quiz);
 
                 foreach ($uIds as $itr) {
 
-                    $user = User::find($itr->id);
+                    $user = User::whereId($itr->id);
 
                     if(empty($user->phoneNum))
                         continue;
@@ -184,7 +184,7 @@ class SMSController extends Controller {
 
             $sms = SMSQueue::where('templateId', '=', $tmp->id)->first();
 
-            if($sms == null || count($sms) == 0)
+            if($sms == null)
                 return "nok";
 
             if(strlen($tmp->text) == 1) {

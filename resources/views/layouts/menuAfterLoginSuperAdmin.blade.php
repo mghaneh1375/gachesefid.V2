@@ -24,6 +24,7 @@
                                     <li><a href="{{route('tags')}}">تگ های به رد سوالات</a></li>
                                     <li><a href="{{route('reportsAccess')}}">مدیریت سطح دسترسی گزارشات</a></li>
                                     <li><a href="{{route('answer_sheet_templates')}}">قالب های پاسخ نامه</a></li>
+                                    <li><a href="{{route('adviserQuestions')}}">سوالات نظرسنجی مشاوران</a></li>
                                 </ul>
                             </li>
                             <li data-val="showSetting" class="menuItem nb-sport"><a><span>تنظیمات نمایشی</span></a>
@@ -101,7 +102,14 @@
                                     <li class="sub_item"><a href="{{route('smsPanel')}}">سامانه پیام رسانی</a>
                                 </ul>
                             </li>
-                            <li class="menuItem nb-sport"><a href="{{route('message')}}"><span>صندوق پیام ها</span></a></li>
+
+                            <li data-val="msgs" class="menuItem profile"><a><span>پیام ها</span></a>
+                                <ul class="subItem hidden msgs">
+                                    <li><a href="{{route('message')}}">صندوق پیام ها</a></li>
+                                    <li><a href="{{route('controlMsg')}}">نظارت بر پیام ها</a></li>
+                                </ul>
+                            </li>
+
                             <li data-val="profile" class="menuItem profile"><a href="{{route('profile')}}"> <span>پروفایل</span></a>
                                 <ul class="subItem hidden profile">
                                     <li><a href="{{route('userInfo')}}">تغییر اطلاعات کاربری</a></li>

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property integer $sId
  * @mixin \Eloquent
  * @method static \Illuminate\Database\Query\Builder|\App\models\SchoolStudent whereUId($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\models\SchoolStudent whereSId($value)
  */
 
 class SchoolStudent extends Model{

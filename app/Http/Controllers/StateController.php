@@ -106,7 +106,7 @@ class StateController extends Controller {
         $cities = City::paginate(20);
 
         foreach ($cities as $city) {
-            $city->stateId = State::find($city->stateId)->name;
+            $city->stateId = State::whereId($city->stateId)->name;
         }
 
         return view('cities', array('err' => $err, 'cities' => $cities));
@@ -195,7 +195,7 @@ class StateController extends Controller {
 
         for($i = 0; $i < count($cities); $i++) {
             $state = State::whereStateName($cities[$i]["stateName"])->first();
-            if($state != null && count($state) != 0) {
+            if($state != null) {
 
                 try {
                     $city = new City();

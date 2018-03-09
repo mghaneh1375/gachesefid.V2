@@ -22,7 +22,6 @@
                     <div>
                         <ul class="categories" id="categories">
                             <li class="menuItem home active"><a href="{{route('home')}}"><span>خانه</span></a></li>
-                            <li class="menuItem nb-medical"><a href="#messages"> <span>صندوق پیام ها</span></a></li>
                             <li class="menuItem nb-medical">
                                 <a href="{{route('unConfirmedDiscussionQ')}}">
                                     <span>سوالات تایید نشده</span>
@@ -40,6 +39,21 @@
                                     <span>)</span>
                                 </a>
                             </li>
+
+                            <li data-val="msgs" class="menuItem profile"><a><span>پیام ها</span></a>
+                                <ul class="subItem hidden msgs">
+                                    <li><a href="{{route('message')}}">صندوق پیام ها</a></li>
+                                    <li><a href="{{route('controlMsg')}}">نظارت بر پیام ها</a></li>
+                                </ul>
+                            </li>
+
+                            <li data-val="profile" class="menuItem profile"><a href="{{route('profile')}}"> <span>پروفایل</span></a>
+                                <ul class="subItem hidden profile">
+                                    <li><a href="{{route('userInfo')}}">تغییر اطلاعات کاربری</a></li>
+                                    <li><a href="{{route('changePas')}}">تغییر رمزعبور</a></li>
+                                </ul>
+                            </li>
+
                             <li data-val="quiz" class="item exit"><a href="{{route('logout')}}"><span>خروج</span></a></li>
                         </ul>
                     </div>

@@ -277,14 +277,6 @@
                     </form>
 
                     <form id="editInfo2" class="content hidden" method="post" action="{{route('editRedundantInfo1')}}">
-                        <div class="col-xs-12" style="padding: 10px">
-                            <div class="col-xs-7">
-                                <input style="min-width: 200px" type="text" onkeypress="validate(event)" name="NID" value="{{(isset($redundant1) && !empty($redundant1->NID)) ? $redundant1->NID : ''}}" required>
-                            </div>
-                            <div class="col-xs-5">
-                                <span>کد ملی</span>
-                            </div>
-                        </div>
 
                         <div class="col-xs-12">
                             <div class="col-xs-7">

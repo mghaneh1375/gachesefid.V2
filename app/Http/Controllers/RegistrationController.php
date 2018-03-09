@@ -47,7 +47,7 @@ class RegistrationController extends Controller {
                     return;
             }
 
-            SchoolStudent::where('uId', '=', $uId)->delete();
+            SchoolStudent::whereUId($uId)->delete();
             echo "ok";
             return;
 
@@ -61,13 +61,13 @@ class RegistrationController extends Controller {
 
             $phoneNum = makeValidInput($_POST["phoneNum"]);
 
-            $activation = Activation::where('phoneNum', '=', $phoneNum)->first();
+            $activation = Activation::wherePhoneNum( $phoneNum)->first();
 
-            if($activation == null || count($activation) == 0)
+            if($activation == null)
                 return $this->getActivation('شماره وارد شده در سیستم وجود ندارد');
 
             $user = User::where('phoneNum', '=', $phoneNum)->first();
-            if($user == null || count($user) == 0)
+            if($user == null)
                 return $this->getActivation('شماره وارد شده در سیستم وجود ندارد');
 
             return view("registration", array("mode" => "pending", "phoneNum" => $phoneNum,
@@ -83,7 +83,7 @@ class RegistrationController extends Controller {
 
     public function doRegistration() {
 
-        $msg = $username = $password = $sex = $level = $firstName = $lastName = $phoneNum = $invitationCode = "";
+        $msg = $NID = $username = $password = $sex = $level = $firstName = $lastName = $phoneNum = $invitationCode = "";
 
         if (isset($_POST["doRegistration"])) {
 
@@ -95,6 +95,7 @@ class RegistrationController extends Controller {
             $lastName = makeValidInput($_POST["lastName"]);
             $phoneNum = makeValidInput($_POST["phoneNum"]);
             $level = makeValidInput($_POST["level"]);
+            $NID = makeValidInput($_POST["NID"]);
             $sex = makeValidInput($_POST["sex"]);
 
             if($sex == "none") {
@@ -109,6 +110,14 @@ class RegistrationController extends Controller {
                 $msg = "نام کاربری وارد شده در سامانه موجود است";
             }
 
+            else if(User::whereNID($NID)->count() > 0) {
+                $msg = "کد ملی وارد شده در سامانه موجود است";
+            }
+
+            else if(!_custom_check_national_code($NID)) {
+                $msg = "کد ملی وارد شده معتبر نمی باشد";
+            }
+
             else {
 
                 if (isset($_POST["invitationCode"]) && !empty($_POST["invitationCode"])) {
@@ -117,7 +126,7 @@ class RegistrationController extends Controller {
 
                     $user = User::whereInvitationCode($invitationCode)->select("id", "level")->first();
 
-                    if ($user == null || count($user) == 0) {
+                    if ($user == null) {
                         $msg = "کد معرف اشتباه است";
                         $allow = -1;
                     }
@@ -136,6 +145,7 @@ class RegistrationController extends Controller {
                     $user->username = $username;
                     $user->firstName = $firstName;
                     $user->lastName = $lastName;
+                    $user->NID = $NID;
                     $user->password = Hash::make($password);
                     $user->phoneNum = $phoneNum;
                     
@@ -177,17 +187,17 @@ class RegistrationController extends Controller {
             if(strlen($phoneNum) == 10)
                 $phoneNum = '0' . $phoneNum;
 
-            $activation = Activation::where('phoneNum', '=', $phoneNum)->first();
+            $activation = Activation::wherePhoneNum( $phoneNum)->first();
 
-            if($activation != null && count($activation) != 0 && $activationCode == $activation->code) {
-                $user = User::find($uId);
+            if($activation != null && $activationCode == $activation->code) {
+                $user = User::whereId($uId);
                 include_once 'MoneyController.php';
-                if($user != null && count($user) != 0 &&
+                if($user != null &&
                     $user->introducer != null && !empty($user->introducer)) {
 
                     $invitationAmount = PointConfig::first()->invitationPoint;
 
-                    charge($invitationAmount, User::where('invitationCode', '=', $user->introducer)->first()->id, getValueInfo("invitationTransaction"), getValueInfo("money2"));
+                    charge($invitationAmount, User::whereInvitationCode($user->introducer)->first()->id, getValueInfo("invitationTransaction"), getValueInfo("money2"));
                     charge($invitationAmount, $uId, getValueInfo("invitationTransaction"), getValueInfo("money2"));
                 }
 
@@ -198,12 +208,12 @@ class RegistrationController extends Controller {
                 $user->save();
                 charge(PointConfig::first()->init, $user->id, getValueInfo('initTransaction'), getValueInfo('money2'));
 
-                Activation::where('phoneNum', '=', $user->phoneNum)->delete();
+                Activation::wherePhoneNum( $user->phoneNum)->delete();
 
                 return Redirect::to('login');
             }
 
-            if($activation != null && count($activation) != 0)
+            if($activation != null)
                 $reminder = 300 - time() + $activation->sendTime;
             else
                 $reminder = 0;
@@ -217,7 +227,7 @@ class RegistrationController extends Controller {
         else if(isset($_POST["resendActivation"])) {
 
             $phoneNum = makeValidInput($_POST["phoneNum"]);
-            $activation = Activation::where('phoneNum', '=', $phoneNum)->first();
+            $activation = Activation::wherePhoneNum( $phoneNum)->first();
 
             if($activation->sendTime >= time() - 300)
                 return view("registration", array("mode" => "pending", "phoneNum" => $phoneNum, 
@@ -225,12 +235,7 @@ class RegistrationController extends Controller {
 
             $uId = makeValidInput($_POST["uId"]);
 
-            $activationCode = Activation::where('userId', '=', $uId)->first();
-            $activationCode = $activationCode->code;
-
-            $phoneNum = User::find($uId)->phoneNum;
-
-            sendSMS($phoneNum, $activationCode, "activationCode");
+            sendSMS($phoneNum, $activation->code, "activationCode");
 
             $activation->sendTime = time();
             $activation->save();
@@ -238,7 +243,7 @@ class RegistrationController extends Controller {
                 'uId' => $uId, 'reminder' => 300 - time() + $activation->sendTime));
         }
 
-        return view('registration', array("mode" => "pass1", "msg" => $msg, "username" => $username,
+        return view('registration', array("mode" => "pass1", "msg" => $msg, "username" => $username, 'NID' => $NID,
             "phoneNum" => $phoneNum, "sex" => $sex, "firstName" => $firstName, "lastName" => $lastName,
             'invitationCode' => $invitationCode, 'level' => $level));
 
@@ -290,14 +295,14 @@ class RegistrationController extends Controller {
             foreach ($stds as $std) {
                 $condition = ['uId' => $std->id, 'qId' => $qId, 'quizMode' => $regularQuizMode];
                 $tmp = QuizRegistry::where($condition)->first();
-                if($tmp != null && count($tmp) > 0) {
+                if($tmp != null) {
                     $std->status = 3;
                     $std->online = ($tmp->online == 1) ? 'آنلاین' : 'حضوری';
                 }
                 else {
                     $condition = ['studentId' => $std->id, 'qId' => $qId];
                     $tmp = RegularQuizQueue::where($condition)->first();
-                    if($tmp != null && count($tmp) > 0) {
+                    if($tmp != null) {
                         $std->status = 2;
                         $std->online = ($tmp->online == 1) ? 'آنلاین' : 'حضوری';
                     }
@@ -316,7 +321,7 @@ class RegistrationController extends Controller {
         if(isset($_POST["qId"]) && isset($_POST["stds"]) && isset($_POST["mode"])) {
 
             $qId = makeValidInput($_POST["qId"]);
-            if(RegularQuiz::find($qId) == null)
+            if(RegularQuiz::whereId($qId) == null)
                 return;
 
             $mode = makeValidInput($_POST["mode"]);
@@ -367,7 +372,7 @@ class RegistrationController extends Controller {
         if(isset($_POST["qId"]) && isset($_POST["stds"])) {
 
             $qId = makeValidInput($_POST["qId"]);
-            if(RegularQuiz::find($qId) == null)
+            if(RegularQuiz::whereId($qId) == null)
                 return;
 
             $level = Auth::user()->level;
@@ -468,10 +473,10 @@ class RegistrationController extends Controller {
 
         $objPHPExcel->setActiveSheetIndex(0);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'رمز عبور');
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'نام کاربری');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'نام خانوادگی');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'نام');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'رمز عبور');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'نام کاربری');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'نام خانوادگی');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام');
         include_once 'MoneyController.php';
 
         if($currUser->level == getValueInfo('namayandeLevel') || $currUser->level == getValueInfo('adminLevel') ||
@@ -479,23 +484,26 @@ class RegistrationController extends Controller {
 
             foreach ($users as $user) {
 
-                if(count($user) != 4)
+                if(count($user) != 5)
                     continue;
 
                 $condition = ['level' => getValueInfo('schoolLevel'),
                     'invitationCode' => $user[3]];
 
                 $school = User::where($condition)->first();
-                if($school == null || count($school) == 0)
+                if($school == null)
                     continue;
 
-                $schoolCity = School::where('uId', '=', $school->id)->first()->cityId;
+                $schoolCity = School::whereUId($school->id)->first()->cityId;
 
                 if($currUser->level == getValueInfo('namayandeLevel')) {
                     $condition = ['nId' => $currUser->id, 'sId' => $school->id];
                     if (NamayandeSchool::where($condition)->count() == 0)
                         continue;
                 }
+
+                if(User::whereNID($user[4])->count() > 0 || !_custom_check_national_code($user[4]))
+                    continue;
 
                 switch ($user[2]) {
                     case 7:
@@ -519,7 +527,7 @@ class RegistrationController extends Controller {
                 }
 
                 $gradeTmp = Grade::where('name', '=', $target)->first();
-                if($gradeTmp == null || count($gradeTmp) == 0)
+                if($gradeTmp == null)
                     continue;
 
                 $tmp = new User();
@@ -551,10 +559,10 @@ class RegistrationController extends Controller {
                     $namayande->sId = $school->id;
                     $namayande->save();
 
-                    $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($counter), $user[0]);
-                    $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($counter), $user[1]);
-                    $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($counter), $username);
-                    $objPHPExcel->getActiveSheet()->SetCellValue('D' . ($counter), $pas);
+                    $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter), $user[0]);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $user[1]);
+                    $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), $username);
+                    $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter), $pas);
                     $counter++;
                 }
                 catch (Exception $x) {
@@ -569,11 +577,14 @@ class RegistrationController extends Controller {
             $uId = Auth::user()->id;
             $masterSex = Auth::user()->sex;
 
-            $schoolCity = School::where('uId', '=', $uId)->first()->cityId;
+            $schoolCity = School::whereUId($uId)->first()->cityId;
 
             foreach ($users as $user) {
 
-                if(count($user) != 3)
+                if(count($user) != 4)
+                    continue;
+
+                if(User::whereNID($user[3])->count() > 0 || !_custom_check_national_code($user[3]))
                     continue;
 
                 switch ($user[2]) {
@@ -598,7 +609,7 @@ class RegistrationController extends Controller {
                 }
 
                 $gradeTmp = Grade::where('name', '=', $target)->first();
-                if($gradeTmp == null || count($gradeTmp) == 0)
+                if($gradeTmp == null)
                     continue;
 
                 $tmp = new User();
@@ -630,10 +641,10 @@ class RegistrationController extends Controller {
                     $namayande->sId = $uId;
                     $namayande->save();
 
-                    $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($counter), $user[0]);
-                    $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($counter), $user[1]);
-                    $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($counter), $username);
-                    $objPHPExcel->getActiveSheet()->SetCellValue('D' . ($counter), $pas);
+                    $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter), $user[0]);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $user[1]);
+                    $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), $username);
+                    $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter), $pas);
                     $counter++;
                 }
                 catch (Exception $x) {
@@ -680,6 +691,27 @@ class RegistrationController extends Controller {
 
                     if($level == getValueInfo('namayandeLevel') || $level == getValueInfo('adminLevel') ||
                         $level == getValueInfo('superAdminLevel')) {
+                        if (count($cols) < 'F') {
+                            unlink($path);
+                            $err = "تعداد ستون های فایل شما معتبر نمی باشد";
+                        } else {
+                            for ($row = 2; $row <= $lastRow; $row++) {
+
+                                if($workSheet->getCell('B' . $row)->getValue() == "")
+                                    break;
+
+                                $users[$row - 2][0] = $workSheet->getCell('B' . $row)->getValue();
+                                $users[$row - 2][1] = $workSheet->getCell('C' . $row)->getValue();
+                                $users[$row - 2][2] = $workSheet->getCell('D' . $row)->getValue();
+                                $users[$row - 2][3] = $workSheet->getCell('E' . $row)->getValue();
+                                $users[$row - 2][4] = $workSheet->getCell('F' . $row)->getValue();
+                            }
+                            unlink($path);
+                            $this->addUsers($users);
+                            $err = "getFile";
+                        }
+                    }
+                    else {
                         if (count($cols) < 'E') {
                             unlink($path);
                             $err = "تعداد ستون های فایل شما معتبر نمی باشد";
@@ -693,25 +725,6 @@ class RegistrationController extends Controller {
                                 $users[$row - 2][1] = $workSheet->getCell('C' . $row)->getValue();
                                 $users[$row - 2][2] = $workSheet->getCell('D' . $row)->getValue();
                                 $users[$row - 2][3] = $workSheet->getCell('E' . $row)->getValue();
-                            }
-                            unlink($path);
-                            $this->addUsers($users);
-                            $err = "getFile";
-                        }
-                    }
-                    else {
-                        if (count($cols) < 'D') {
-                            unlink($path);
-                            $err = "تعداد ستون های فایل شما معتبر نمی باشد";
-                        } else {
-                            for ($row = 2; $row <= $lastRow; $row++) {
-
-                                if($workSheet->getCell('B' . $row)->getValue() == "")
-                                    break;
-
-                                $users[$row - 2][0] = $workSheet->getCell('B' . $row)->getValue();
-                                $users[$row - 2][1] = $workSheet->getCell('C' . $row)->getValue();
-                                $users[$row - 2][2] = $workSheet->getCell('D' . $row)->getValue();
                             }
                             unlink($path);
                             $this->addUsers($users);

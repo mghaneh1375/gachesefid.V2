@@ -3,6 +3,17 @@
 namespace App\models;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * An Eloquent Model: 'Lesson'
+ *
+ * @property integer $id
+ * @property string $name
+ * @property integer $gradeId
+ * @property integer $coherenece
+ * @mixin \Eloquent
+ * @method static \Illuminate\Database\Query\Builder|\App\models\Lesson whereGradeId($value)
+ */
+
 class Lesson extends Model{
 
     protected $table = 'lesson';

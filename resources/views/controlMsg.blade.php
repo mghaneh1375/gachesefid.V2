@@ -4,30 +4,27 @@
 
     @parent
 
-    <script src="{{URL::asset('js/jsNeededForMsg.js')}}"></script>
-
     <link rel="stylesheet" href="{{URL::asset('css/MsgCSS.css')}}">
+
 
     <script>
 
-        var getListOfMsgs = '{{route('getListOfMsgs')}}';
-        var messageDir = '{{route('message')}}';
-        var deleteMsgDir = '{{route('opOnMsgs')}}';
-        var selectedUser = '{{(isset($selectedUser) && !empty($selectedUser)) ? $selectedUser : '-1'}}';
+        var getAccpetedMsgs = '{{route('acceptedMsgs')}}';
+        var getRejectedMsgs = '{{route('rejectedMsgs')}}';
+        var getPendingMsgs = '{{route('pendingMsgs')}}';
+        var selfPage = '{{route('controlMsg')}}';
+        var acceptMsgDir = '{{route('acceptMsgs')}}';
+        var rejectMsgDir = '{{route('rejectMsgs')}}';
 
         $(document).ready(function () {
 
-            err = "{{(isset($err) && !empty($err)) ? ($err != 'outbox') ? "err" : 'outbox' : ""}}";
+            pendingMode();
 
-            if(err == "")
-                inboxMode('inboxFolder', 'inbox', 'tableId', 'outbox', 'sendMsgDiv', 'showMsgContainer');
-            else if(err == "outbox")
-                outboxMode('outboxFolder', 'inbox', 'tableId', 'sendMsgDiv', 'showMsgContainer');
-            else
-                sendMode('sendFolder', 'inbox', 'sendMsgDiv', 'showMsgContainer');
         });
 
     </script>
+
+    <script src="{{URL::asset('js/jsNeededForControlMsg.js')}}"></script>
 
 @stop
 
@@ -37,40 +34,45 @@
         <div class="subMain">
             <div class="wrpHeader">
             </div>
-            <h1 class="wrap">پیام های من</h1>
+            <h1 class="wrap">پیام ها</h1>
 
             <div class="main_content">
                 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="mb_12">
                     <tr>
-                        <td style="position: absolute">
+                        <td>
                             <div class="floatRight">
                                 <div class="saveLeftNav">
                                     <div>
-                                        <div id="inboxFolder" onclick="inboxMode('inboxFolder', 'inbox', 'tableId', 'outbox', 'sendMsgDiv', 'showMsgContainer')" class="menu_bar">
+                                        <div id="pendingFolder" onclick="pendingMode()"  class="menu_bar">
                                             <strong>
-                                                <span>صندوق ورودی </span>
+                                                <span>پیام های بررسی نشده </span>
                                                 <span>(</span>
-                                                <span>{{$inMsgCount}}</span>
+                                                <span>{{$pendingCount}}</span>
                                                 <span>)</span>
                                             </strong>
                                         </div>
                                     </div>
-                                    <div id="outboxFolder" onclick="outboxMode('outboxFolder', 'inbox', 'tableId', 'sendMsgDiv', 'showMsgContainer')" class="menu_bar">
+                                    <div id="acceptedFolder" onclick="acceptMode()" class="menu_bar">
                                         <div class="displayFolder">
                                             <a onclick="" class="saveLink">
                                                 <strong>
-                                                    <span>صندوق خروجی </span>
+                                                    <span>پیام های تایید شده </span>
                                                     <span>(</span>
-                                                    <span>{{$outMsgCount}}</span>
+                                                    <span>{{$acceptedCount}}</span>
                                                     <span>)</span>
                                                 </strong>
                                             </a>
                                         </div>
                                     </div>
-                                    <div id="sendFolder" onclick="sendMode('sendFolder', 'inbox', 'sendMsgDiv', 'showMsgContainer')" class="menu_bar">
+                                    <div id="rejectedFolder" onclick="rejectMode()" class="menu_bar">
                                         <div class="displayFolder">
                                             <a class="saveLink">
-                                                <strong>ارسال پیام</strong>
+                                                <strong>
+                                                    <span>پیام های تایید نشده </span>
+                                                    <span>(</span>
+                                                    <span>{{$rejectedCount}}</span>
+                                                    <span>)</span>
+                                                </strong>
                                             </a>
                                         </div>
                                     </div>
@@ -108,6 +110,32 @@
                                         </a>
                                     </div>
 
+                                    <div class="messagingButton operationButton hidden" id="acceptBtn">
+                                        <a class="buttonLink">
+                                            <div class="m2m_link">
+                                                <div>
+                                                    <div onclick="accept()" class="m2m_copy">
+                                                        <img src="{{URL::asset('images') . '/deleteIcon.gif'}}" border="0" alt="Delete" align="absmiddle" style="margin-left:8px;"/>
+                                                        <span>تایید</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+
+                                    <div class="messagingButton operationButton hidden" id="rejectBtn">
+                                        <a class="buttonLink">
+                                            <div class="m2m_link">
+                                                <div>
+                                                    <div onclick="reject()" class="m2m_copy">
+                                                        <img src="{{URL::asset('images') . '/deleteIcon.gif'}}" border="0" alt="Delete" align="absmiddle" style="margin-left:8px;"/>
+                                                        <span>رد</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+
                                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="clear" style="margin-top: 5px; height: 30px">
 
                                         <tr>
@@ -126,7 +154,8 @@
                                         </tr>
                                     </table>
 
-                                    <table id="tableId" width="100%" border="0" cellspacing="0" cellpadding="0" class="clear" style="margin-top: 5px"></table>
+                                    <table id="tableId" width="100%" border="0" cellspacing="0" cellpadding="0" class="clear" style="margin-top: 5px">
+                                    </table>
                                 </div>
                             </div>
                         </td>
@@ -140,46 +169,9 @@
                 }
             </style>
 
-            <center id="sendMsgDiv" style="visibility: hidden; position: absolute; top: 80px">
-                <div class="row">
-                    <form method="post" action="{{route('sendMsg')}}">
-                        <table id="sendMsgTable">
-                            <tr>
-                                <td>نام کاربری مقصد</td>
-                                <td><input type="text" value="{{(isset($dest) && !empty($dest)) ? $dest : ""}}" name="destUser" id="destUserSendMsg" required maxlength="40"></td>
-                            </tr>
-                            <tr>
-                                <td>موضوع</td>
-                                <td>
-                                @if(isset($subject) && !empty($subject))
-                                    <input type="text" name="subject" id="subjectSendMsg" value="{{$subject}}" required maxlength="40">
-                                @else
-                                    <input type="text" name="subject" id="subjectSendMsg" required maxlength="40">
-                                @endif
-                                </td>
-                            </tr>
-                        </table>
-                        <div class="col-xs-12">
-                            <p style="margin-top: 20px">پیام</p>
-                            @if(isset($currMsg) && !empty($currMsg))
-                                <textarea name="msg" style="width: 800px; height: 200px" maxlength="1000" placeholder="حداکثر 1000 کاراکتر">{{$currMsg}}</textarea>
-                            @else
-                                <textarea name="msg" style="width: 800px; height: 200px" maxlength="1000" placeholder="حداکثر 1000 کاراکتر"></textarea>
-                            @endif
-                        </div>
-                        <div class="col-xs-12">
-                            <input type="submit" value="ارسال" name="sendMsg" class="btn btn-success">
-                            @if(isset($err) && !empty($err) && $err != 'outbox')
-                                <p style="color: red; margin-top: 20px">{{$err}}</p>
-                            @endif
-                        </div>
-                    </form>
-                </div>
-            </center>
+            <span id="showMsgContainer" class="ui_overlay subMsgItems hidden" style="position: fixed; left: 40%; right: auto; top: 174px; bottom: auto"></span>
 
-            <span id="showMsgContainer" class="ui_overlay" style="visibility: hidden; position: fixed; left: 40%; right: auto; top: 174px; bottom: auto"></span>
-
-            <span class="ui_overlay ui_modal editTags" id="deleteMsg" style="visibility:hidden; position: fixed; left: 37%; right: auto; top: 29%; bottom: auto;width: 26%;">
+            <span class="ui_overlay ui_modal editTags subMsgItems hidden" id="deleteMsg" style="position: fixed; left: 37%; right: auto; top: 29%; bottom: auto;width: 26%;">
                 <p>آیا از پاک کردن پیام اطمینان دارید ؟</p>
                 <br><br>
                 <div class="body_text">

@@ -38,7 +38,7 @@ class ReportController extends Controller {
 
         foreach ($schools as $school) {
 
-            $school->schoolCity = City::find($school->cityId)->name;
+            $school->schoolCity = City::whereId($school->cityId)->name;
 
             $school->schoolKindId = $school->schoolKind;
 
@@ -76,6 +76,124 @@ class ReportController extends Controller {
         return view('Reports.namayandeSchool', array('schools' => $schools, 'states' => State::all()));
     }
 
+    public function advisersList() {
+
+        $advisers = DB::select('select u.id, u.firstName, u.lastName, u.invitationCode, (select avg(aR.rate) from adviserRate aR WHERE aR.adviserId = u.id group by(aR.adviserId)) as rate, '.
+            '(select count(*) from studentsAdviser sA WHERE sA.status = 1 and sA.adviserId = u.id) as studentsNo from ' .
+            'users u where u.status = 1 and u.level = ' . getValueInfo('adviserLevel') .
+            ' order by rate DESC');
+
+        foreach ($advisers as $adviser) {
+            if(empty($adviser->rate))
+                $adviser->rate = 'بدون امتیاز';
+        }
+
+        $myAdviser = null;
+
+        if(Auth::check())
+            $myAdviser = StudentAdviser::whereStudentId(Auth::user()->id)->first();
+
+        return view('Reports.advisers', array('advisers' => $advisers, 'myAdviser' => $myAdviser));
+
+    }
+
+    public function studentsRanking($page = 1) {
+
+        $users = DB::select('select users.id, firstName, lastName, sum(q.level) * 5 as totalSum from users, roq, question q'.
+            ' where users.id = uId and q.id = questionId and q.ans = result and users.level = ' . getValueInfo('studentLevel') .
+            ' group by(uId) order by totalSum DESC limit ' . (($page - 1) * 10) . ', 10');
+
+        $k = 0;
+
+        if(count($users) > 0) {
+            $k = count(DB::select('select sum(q.level) * 5 as totalSum from users, roq, question q'.
+                ' where users.id = uId and q.id = questionId and q.ans = result and users.level = ' . getValueInfo('studentLevel') .
+                ' group by(uId) having totalSum > ' . $users[0]->totalSum));
+        }
+
+        foreach ($users as $user) {
+            $user->cityName = getStdCityAndState($user->id)['city'];
+            $user->schoolName = getStdSchoolName($user->id);
+            $tmp = RedundantInfo1::whereUId($user->id)->first();
+            if($tmp != null)
+                $user->grade = Grade::whereId($tmp->gradeId)->name;
+            else
+                $user->grade = "نامشخص";
+        }
+
+        $myRank = -2;
+
+        if(Auth::check()) {
+            $uId = Auth::user()->id;
+
+            $amount = DB::select('select sum(q.level) * 5 as totalSum from roq, question q'.
+                ' where uId = ' . $uId . ' and q.id = questionId and q.ans = result');
+
+            if($amount == null || count($amount) == 0 || $amount[0]->totalSum == 0)
+                $myRank = -1;
+
+            else
+                $myRank = count(DB::select('select sum(q.level) * 5 as totalSum from users, roq, question q'.
+                    ' where users.id = uId and q.id = questionId and q.ans = result and users.level = ' . getValueInfo('studentLevel') .
+                    ' group by(uId) having totalSum > ' . $amount[0]->totalSum));
+
+        }
+
+        return view('Reports.studentRanking', array('users' => $users, 'myRank' => $myRank, 'page' => $page, 'k' => $k,
+            'total' => DB::select('select count(*) as countNum from users, transaction where users.id = userId and kindMoney = ' . getValueInfo('money1') . ' and level = ' . getValueInfo('studentLevel'))[0]->countNum));
+
+    }
+
+    public function myActivities() {
+
+        $transactions = Transaction::whereUserId(Auth::user()->id)->orderBy('date', 'DESC')->get();
+        $redundant1Transaction = getValueInfo('redundant1Transaction');
+        $redundant2Transaction = getValueInfo('redundant2Transaction');
+        $initTransaction = getValueInfo('initTransaction');
+        $invitationTransaction = getValueInfo('invitationTransaction');
+        $chargeTransaction = getValueInfo('chargeTransaction');
+        $quizRankTransaction = getValueInfo('quizRankTransaction');
+        $systemQuizTransaction = getValueInfo('systemQuizTransaction');
+        $regularQuizTransaction = getValueInfo('regularQuizTransaction');
+        $questionBuyTransaction = getValueInfo('questionBuyTransaction');
+
+        foreach ($transactions as $transaction) {
+            $transaction->date = convertStringToDate($transaction->date);
+            switch ($transaction->kindTransactionId) {
+                case $redundant1Transaction:
+                    $transaction->kindTransactionId = "تکمیل اطلاعات اختیاری فاز 1";
+                    break;
+                case $redundant2Transaction:
+                    $transaction->kindTransactionId = "تکمیل اطلاعات اختیاری فاز 2";
+                    break;
+                case $initTransaction:
+                    $transaction->kindTransactionId = "اعتبار اولیه";
+                    break;
+                case $invitationTransaction:
+                    $transaction->kindTransactionId = "دعوت از دوستان";
+                    break;
+                case $chargeTransaction:
+                    $transaction->kindTransactionId = "شارژ حساب";
+                    break;
+                case $quizRankTransaction:
+                    $transaction->kindTransactionId = "رتبه برتر در آزمون";
+                    break;
+                case $systemQuizTransaction:
+                    $transaction->kindTransactionId = "ثبت نام در آزمون پای تخته";
+                    break;
+                case $regularQuizTransaction:
+                    $transaction->kindTransactionId = "ثبت نام در آزمون پشت میز";
+                    break;
+                case $questionBuyTransaction:
+                    $transaction->kindTransactionId = "ساخت آزمون دست ساز";
+                    break;
+            }
+        }
+
+        return view('Reports.myActivities', ['transactions' => $transactions]);
+
+    }
+    
     public function namayandeStudent() {
 
         $user = Auth::user();
@@ -88,7 +206,7 @@ class ReportController extends Controller {
     
     public function schoolStudent($sId) {
 
-        if(User::find($sId) == null)
+        if(User::whereId($sId) == null)
             return Redirect::to('profile');
 
         $user = Auth::user();
@@ -134,9 +252,9 @@ class ReportController extends Controller {
 
         $objPHPExcel->setActiveSheetIndex(0);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'تعداد دانش آموزان');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'تعداد سوالات');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'نام پایه');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'تعداد دانش آموزان');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'تعداد سوالات');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام پایه');
 
         $counter = 2;
 
@@ -151,9 +269,9 @@ class ReportController extends Controller {
 
             $grade->studentNo = RedundantInfo1::where('gradeId', '=', $grade->id)->count();
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($counter), $grade->studentNo);
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($counter), $grade->qNo);
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($counter), $grade->name);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), $grade->studentNo);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $grade->qNo);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter), $grade->name);
 
             $counter++;
         }
@@ -234,8 +352,7 @@ class ReportController extends Controller {
                 default:
                     $transaction->kindTransaction = "نامشخص";
             }
-
-            $user = User::find($transaction->userId);
+            $user = User::whereId($transaction->userId);
             $transaction->userId = $user->firstName . " " . $user->lastName;
             $transaction->date = convertStringToDate($transaction->date);
         }
@@ -254,12 +371,12 @@ class ReportController extends Controller {
 
         $objPHPExcel->setActiveSheetIndex(0);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('F1', 'ساعت برگزاری');
-        $objPHPExcel->getActiveSheet()->SetCellValue('E1', 'تاریخ برگزاری');
-        $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'تعداد ثبت نام');
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'نوع آزمون');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'آی دی آزمون');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'نام آزمون');
+        $objPHPExcel->getActiveSheet()->setCellValue('F1', 'ساعت برگزاری');
+        $objPHPExcel->getActiveSheet()->setCellValue('E1', 'تاریخ برگزاری');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'تعداد ثبت نام');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'نوع آزمون');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'آی دی آزمون');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام آزمون');
 
         $counter = 2;
 
@@ -279,12 +396,12 @@ class ReportController extends Controller {
             $condition = ['qId' => $itr->id, 'quizMode' => $regularQuizMode, 'online' => 0];
             $itr->nonOnlineRegistered = QuizRegistry::where($condition)->count();
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('F' . ($counter), 'شروع : ' . $itr->startTime . ' - اتمام : ' . $itr->endTime);
-            $objPHPExcel->getActiveSheet()->SetCellValue('E' . ($counter), 'شروع : ' . $itr->startDate . ' - اتمام : ' . $itr->endDate);
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . ($counter), 'حضوری: ' . $itr->onlineRegistered . ' - غیر حضوری : ' . $itr->nonOnlineRegistered);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($counter), 'پشت میز');
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($counter), $itr->id);
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($counter), $itr->name);
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . ($counter), 'شروع : ' . $itr->startTime . ' - اتمام : ' . $itr->endTime);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . ($counter), 'شروع : ' . $itr->startDate . ' - اتمام : ' . $itr->endDate);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter), 'حضوری: ' . $itr->onlineRegistered . ' - غیر حضوری : ' . $itr->nonOnlineRegistered);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), 'پشت میز');
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $itr->id);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter), $itr->name);
 
             $counter++;
         }
@@ -296,12 +413,12 @@ class ReportController extends Controller {
             $condition = ['qId' => $itr->id, 'quizMode' => $systemQuizMode];
             $itr->registered = QuizRegistry::where($condition)->count();
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('F' . ($counter), 'شروع : ' . $itr->startTime);
-            $objPHPExcel->getActiveSheet()->SetCellValue('E' . ($counter), 'شروع : ' . $itr->startDate);
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . ($counter), $itr->registered);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($counter), 'پای تخته');
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($counter), $itr->id);
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($counter), $itr->name);
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . ($counter), 'شروع : ' . $itr->startTime);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . ($counter), 'شروع : ' . $itr->startDate);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter), $itr->registered);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), 'پای تخته');
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $itr->id);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter), $itr->name);
 
             $counter++;
         }
@@ -346,23 +463,23 @@ class ReportController extends Controller {
         }
 
         else {
-            $users = User::where('level', '=', getValueInfo('studentLevel'))->skip($start)->take(20)->get();
-            $total = User::where('level', '=', getValueInfo('studentLevel'))->count();
+            $users = User::whereLevel(getValueInfo('studentLevel'))->skip($start)->take(20)->get();
+            $total = User::whereLevel(getValueInfo('studentLevel'))->count();
         }
 
         foreach ($users as $user) {
 
-            $tmp = RedundantInfo1::where('uId', '=', $user->id)->first();
-            if($tmp == null || count($tmp) == 0)
+            $tmp = RedundantInfo1::whereUId($user->id)->first();
+            if($tmp == null)
                 $user->grade = "تعریف نشده";
             else
-                $user->grade = Grade::find($tmp->gradeId)->name;
+                $user->grade = Grade::whereId($tmp->gradeId)->name;
 
-            $tmp = StudentAdviser::where('studentId', '=', $user->id)->first();
-            if($tmp == null || count($tmp) == 0)
+            $tmp = StudentAdviser::whereStudentId($user->id)->first();
+            if($tmp == null)
                 $user->adviser = "تعریف نشده";
             else {
-                $tmp = User::find($tmp->adviserId);
+                $tmp = User::whereId($tmp->adviserId);
                 $user->adviser = $tmp->firstName . " " . $tmp->lastName;
             }
 
@@ -380,7 +497,7 @@ class ReportController extends Controller {
             isset($_POST["username"]) && isset($_POST["uId"])
         ) {
 
-            $user = User::find(makeValidInput($_POST["uId"]));
+            $user = User::whereId(makeValidInput($_POST["uId"]));
 
             if($user == null) {
                 echo "nok";
@@ -428,45 +545,45 @@ class ReportController extends Controller {
 
         $objPHPExcel->setActiveSheetIndex(0);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('H1', 'مدرسه');
-        $objPHPExcel->getActiveSheet()->SetCellValue('G1', 'شهر');
-        $objPHPExcel->getActiveSheet()->SetCellValue('F1', 'مشاور');
-        $objPHPExcel->getActiveSheet()->SetCellValue('E1', 'پایه تحصیلی');
-        $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'شماره تماس');
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'نام کاربری');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'نام خانوادگی');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'نام');
+        $objPHPExcel->getActiveSheet()->setCellValue('H1', 'مدرسه');
+        $objPHPExcel->getActiveSheet()->setCellValue('G1', 'شهر');
+        $objPHPExcel->getActiveSheet()->setCellValue('F1', 'مشاور');
+        $objPHPExcel->getActiveSheet()->setCellValue('E1', 'پایه تحصیلی');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'شماره تماس');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'نام کاربری');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'نام خانوادگی');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام');
 
-        $users = User::where('level', '=', getValueInfo('studentLevel'))->get();
+        $users = User::whereLevel(getValueInfo('studentLevel'))->get();
         $counter = 2;
 
         foreach ($users as $user) {
 
-            $tmp = RedundantInfo1::where('uId', '=', $user->id)->first();
-            if($tmp == null || count($tmp) == 0)
+            $tmp = RedundantInfo1::whereUId($user->id)->first();
+            if($tmp == null)
                 $user->grade = "تعریف نشده";
             else
-                $user->grade = Grade::find($tmp->gradeId)->name;
+                $user->grade = Grade::whereId($tmp->gradeId)->name;
 
-            $tmp = StudentAdviser::where('studentId', '=', $user->id)->first();
-            if($tmp == null || count($tmp) == 0)
+            $tmp = StudentAdviser::whereStudentId($user->id)->first();
+            if($tmp == null)
                 $user->adviser = "تعریف نشده";
             else {
-                $tmp = User::find($tmp->adviserId);
+                $tmp = User::whereId($tmp->adviserId);
                 $user->adviser = $tmp->firstName . " " . $tmp->lastName;
             }
 
             $user->city = getStdCityAndState($user->id)["city"];
             $user->school = getStdSchoolName($user->id);
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($counter), $user->firstName);
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($counter), $user->lastName);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($counter), $user->username);
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . ($counter), $user->phoneNum);
-            $objPHPExcel->getActiveSheet()->SetCellValue('E' . ($counter), $user->grade);
-            $objPHPExcel->getActiveSheet()->SetCellValue('F' . ($counter), $user->adviser);
-            $objPHPExcel->getActiveSheet()->SetCellValue('G' . ($counter), $user->city);
-            $objPHPExcel->getActiveSheet()->SetCellValue('H' . ($counter), $user->school);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter), $user->firstName);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $user->lastName);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), $user->username);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter), $user->phoneNum);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . ($counter), $user->grade);
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . ($counter), $user->adviser);
+            $objPHPExcel->getActiveSheet()->setCellValue('G' . ($counter), $user->city);
+            $objPHPExcel->getActiveSheet()->setCellValue('H' . ($counter), $user->school);
 
             $counter++;
         }
@@ -509,20 +626,20 @@ class ReportController extends Controller {
 
         $objPHPExcel->setActiveSheetIndex(0);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('K1', 'استان');
-        $objPHPExcel->getActiveSheet()->SetCellValue('J1', 'شهر');
-        $objPHPExcel->getActiveSheet()->SetCellValue('I1', 'بارکد');
-        $objPHPExcel->getActiveSheet()->SetCellValue('H1', 'کد نمایندگی');
-        $objPHPExcel->getActiveSheet()->SetCellValue('G1', 'نام نمایندگی');
-        $objPHPExcel->getActiveSheet()->SetCellValue('F1', 'کد مدرسه');
-        $objPHPExcel->getActiveSheet()->SetCellValue('E1', 'نام مدرسه');
-        $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'نام آزمون');
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'پایه');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'نام خانوادگی');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'نام');
+        $objPHPExcel->getActiveSheet()->setCellValue('K1', 'استان');
+        $objPHPExcel->getActiveSheet()->setCellValue('J1', 'شهر');
+        $objPHPExcel->getActiveSheet()->setCellValue('I1', 'بارکد');
+        $objPHPExcel->getActiveSheet()->setCellValue('H1', 'کد نمایندگی');
+        $objPHPExcel->getActiveSheet()->setCellValue('G1', 'نام نمایندگی');
+        $objPHPExcel->getActiveSheet()->setCellValue('F1', 'کد مدرسه');
+        $objPHPExcel->getActiveSheet()->setCellValue('E1', 'نام مدرسه');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'نام آزمون');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'پایه');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'نام خانوادگی');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام');
 
 
-        $quizName = RegularQuiz::find($quizId)->name;
+        $quizName = RegularQuiz::whereId($quizId)->name;
 
         $users = DB::select('select users.id, firstName, lastName, g.name as gradeId, ci.name as schoolCity, sa.name as stateName, s.name as schoolName, (SELECT u5.invitationCode from users u5 WHERE u5.id = sS.sId) as schoolCode, (SELECT concat(u3.firstName, " ", u3.lastName) from users u3 WHERE u3.id = nS.nId) as namayandeName, (SELECT u4.invitationCode from users u4 WHERE u4.id = nS.nId) as namayandeCode from schoolStudent sS, namayandeSchool nS, quizRegistry qR, users, redundantInfo1 rd, grade g, city ci, state sa, school s WHERE s.uId = sS.sId and ci.id = s.cityId and ci.stateId = sa.id and rd.gradeId = g.id and nS.sId = sS.sId and sS.uId = users.id and rd.uId = users.id and quizMode = ' . getValueInfo('regularQuiz') . ' and online = 0 and qR.qId = ' . $quizId . ' and users.id = qR.uId');
         $counter = 2;
@@ -609,20 +726,20 @@ class ReportController extends Controller {
 
         $objPHPExcel->setActiveSheetIndex(0);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'نام مقطع تحصیلی');
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'نام درس');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'نام مبحث');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'آی دی مبحث');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'نام مقطع تحصیلی');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'نام درس');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'نام مبحث');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'آی دی مبحث');
 
         $subjects = DB::select('select subject.id, subject.name, lesson.name as lessonName, grade.name as gradeName from subject, lesson, grade WHERE grade.id = lesson.gradeId and lessonId = lesson.id order by subject.id ASC');
         $counter = 2;
 
         foreach ($subjects as $subject) {
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . ($counter), $subject->gradeName);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($counter), $subject->lessonName);
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($counter), $subject->name);
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($counter), $subject->id);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter), $subject->gradeName);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), $subject->lessonName);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $subject->name);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter), $subject->id);
 
             $counter++;
         }
@@ -721,15 +838,15 @@ class ReportController extends Controller {
 
             $user->lessons = $tmp;
 
-            $target = User::find($user->uId);
+            $target = User::whereId($user->uId);
             $user->name = $target->firstName . " " . $target->lastName;
             $user->uId = $target->id;
 
             $user->schoolName = "نامشخص";
-            $schTmp = SchoolStudent::where('uId', '=', $target->id)->first();
-            if($schTmp != null && count($schTmp) > 0) {
-                $schTmp = School::where('uId', '=', $schTmp->sId)->first();
-                if($schTmp != null || count($schTmp) > 0)
+            $schTmp = SchoolStudent::whereUId($target->id)->first();
+            if($schTmp != null) {
+                $schTmp = School::whereUId($schTmp->sId)->first();
+                if($schTmp != null)
                     $user->schoolName = $schTmp->name;
             }
 
@@ -812,15 +929,15 @@ class ReportController extends Controller {
 
             $user->lessons = $tmp;
 
-            $target = User::find($user->uId);
+            $target = User::whereId($user->uId);
             $user->name = $target->firstName . " " . $target->lastName;
             $user->uId = $target->id;
 
             $user->schoolName = "نامشخص";
-            $schTmp = SchoolStudent::where('uId', '=', $target->id)->first();
-            if($schTmp != null && count($schTmp) > 0) {
-                $schTmp = School::where('uId', '=', $schTmp->sId)->first();
-                if($schTmp != null || count($schTmp) > 0)
+            $schTmp = SchoolStudent::whereUId($target->id)->first();
+            if($schTmp != null) {
+                $schTmp = School::whereUId($schTmp->sId)->first();
+                if($schTmp != null)
                     $user->schoolName = $schTmp->name;
             }
 
@@ -838,26 +955,26 @@ class ReportController extends Controller {
             return $a->rank - $b->rank;
         });
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'مدرسه');
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'استان');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'شهر');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'نام و نام خانوادگی');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'مدرسه');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'استان');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'شهر');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام و نام خانوادگی');
 
         $j = 'E';
 
         if(count($users) > 0) {
             foreach($users[0]->lessons as $itr) {
-                $objPHPExcel->getActiveSheet()->SetCellValue(($j++) . '1', $itr->name);
+                $objPHPExcel->getActiveSheet()->setCellValue(($j++) . '1', $itr->name);
 
             }
         }
 
 
-        $objPHPExcel->getActiveSheet()->SetCellValue(($j++) . '1', 'میانگین');
-        $objPHPExcel->getActiveSheet()->SetCellValue(($j++) . '1', 'تراز کل');
-        $objPHPExcel->getActiveSheet()->SetCellValue(($j++) . '1', 'رتبه در شهر');
-        $objPHPExcel->getActiveSheet()->SetCellValue(($j++) . '1', 'رتبه در استان');
-        $objPHPExcel->getActiveSheet()->SetCellValue(($j) . '1', 'رتبه در کشور');
+        $objPHPExcel->getActiveSheet()->setCellValue(($j++) . '1', 'میانگین');
+        $objPHPExcel->getActiveSheet()->setCellValue(($j++) . '1', 'تراز کل');
+        $objPHPExcel->getActiveSheet()->setCellValue(($j++) . '1', 'رتبه در شهر');
+        $objPHPExcel->getActiveSheet()->setCellValue(($j++) . '1', 'رتبه در استان');
+        $objPHPExcel->getActiveSheet()->setCellValue(($j) . '1', 'رتبه در کشور');
 
         $i = 2;
 
@@ -867,10 +984,10 @@ class ReportController extends Controller {
             $sumLesson = 0;
             $sumCoherence = 0;
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $i, $user->name);
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $i, $user->city);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $i, $user->state);
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $i, $user->schoolName);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $user->name);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . $i, $user->city);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, $user->state);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, $user->schoolName);
 
             $j = 'E';
 
@@ -885,19 +1002,19 @@ class ReportController extends Controller {
                     $sumLesson += $itr->percent * $itr->coherence;
                     $sumCoherence += $itr->coherence;
                 }
-                $objPHPExcel->getActiveSheet()->SetCellValue($j++ . $i, $itr->percent);
+                $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, $itr->percent);
             }
             if($sumCoherence != 0) {
-                $objPHPExcel->getActiveSheet()->SetCellValue($j++ . $i, round(($sumLesson / $sumCoherence), 0));
-                $objPHPExcel->getActiveSheet()->SetCellValue($j++ . $i, round(($sumTaraz / $sumCoherence), 0));
+                $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, round(($sumLesson / $sumCoherence), 0));
+                $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, round(($sumTaraz / $sumCoherence), 0));
             }
             else {
-                $objPHPExcel->getActiveSheet()->SetCellValue($j++ . $i, round(($sumLesson), 0));
-                $objPHPExcel->getActiveSheet()->SetCellValue($j++ . $i, round(($sumTaraz), 0));
+                $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, round(($sumLesson), 0));
+                $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, round(($sumTaraz), 0));
             }
-            $objPHPExcel->getActiveSheet()->SetCellValue($j++ . $i, $user->cityRank);
-            $objPHPExcel->getActiveSheet()->SetCellValue($j++ . $i, $user->stateRank);
-            $objPHPExcel->getActiveSheet()->SetCellValue($j . $i, $user->rank);
+            $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, $user->cityRank);
+            $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, $user->stateRank);
+            $objPHPExcel->getActiveSheet()->setCellValue($j . $i, $user->rank);
             $i++;
         }
 
@@ -1125,37 +1242,37 @@ class ReportController extends Controller {
 
         $objPHPExcel->setActiveSheetIndex(0);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('H1', 'وضعیت دشواری');
-        $objPHPExcel->getActiveSheet()->SetCellValue('G1', 'درصد بدون پاسخ');
-        $objPHPExcel->getActiveSheet()->SetCellValue('F1', 'درصد پاسخ نادرست');
-        $objPHPExcel->getActiveSheet()->SetCellValue('E1', 'درصد پاسخ درست');
-        $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'درس');
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'مبحث');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'گزینه صحیح');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'شماره سوال');
+        $objPHPExcel->getActiveSheet()->setCellValue('H1', 'وضعیت دشواری');
+        $objPHPExcel->getActiveSheet()->setCellValue('G1', 'درصد بدون پاسخ');
+        $objPHPExcel->getActiveSheet()->setCellValue('F1', 'درصد پاسخ نادرست');
+        $objPHPExcel->getActiveSheet()->setCellValue('E1', 'درصد پاسخ درست');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'درس');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'مبحث');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'گزینه صحیح');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'شماره سوال');
 
         $i = 1;
         foreach($qInfos as $qInfo) {
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($i + 1), $i);
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($i + 1), $qInfo->ans);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($i + 1), $i);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . ($i + 1), $qInfo->ans);
             $j = 'C';
             foreach($qInfo->subjects as $itr)
-                $objPHPExcel->getActiveSheet()->SetCellValue($j++ . ($i + 1), $itr);
+                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), $itr);
 
             foreach($qInfo->lessons as $itr)
-                $objPHPExcel->getActiveSheet()->SetCellValue($j++ . ($i + 1), $itr);
+                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), $itr);
 
             if($total != 0) {
-                $objPHPExcel->getActiveSheet()->SetCellValue($j++ . ($i + 1), round($qInfo->correct * 100 / $total, 0));
-                $objPHPExcel->getActiveSheet()->SetCellValue($j++ . ($i + 1), round((($total - $qInfo->correct - $qInfo->white) * 100 / $total), 0));
-                $objPHPExcel->getActiveSheet()->SetCellValue($j++ . ($i + 1), round(($qInfo->white * 100 / $total), 0));
+                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), round($qInfo->correct * 100 / $total, 0));
+                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), round((($total - $qInfo->correct - $qInfo->white) * 100 / $total), 0));
+                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), round(($qInfo->white * 100 / $total), 0));
             }
             else {
-                $objPHPExcel->getActiveSheet()->SetCellValue($j++ . ($i + 1), 0);
-                $objPHPExcel->getActiveSheet()->SetCellValue($j++ . ($i + 1), 0);
-                $objPHPExcel->getActiveSheet()->SetCellValue($j++ . ($i + 1), 0);
+                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), 0);
+                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), 0);
+                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), 0);
             }
-            $objPHPExcel->getActiveSheet()->SetCellValue($j . ($i + 1), $qInfo->level);
+            $objPHPExcel->getActiveSheet()->setCellValue($j . ($i + 1), $qInfo->level);
             $i++;
         }
 
@@ -1752,22 +1869,22 @@ class ReportController extends Controller {
 
         $objPHPExcel->setActiveSheetIndex(0);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('F1', 'بین 76 تا 100');
-        $objPHPExcel->getActiveSheet()->SetCellValue('E1', 'بین 51 تا 75');
-        $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'بین 31 تا 50');
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'بین 11 تا 30');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'بین -33 تا 10');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'نام درس');
+        $objPHPExcel->getActiveSheet()->setCellValue('F1', 'بین 76 تا 100');
+        $objPHPExcel->getActiveSheet()->setCellValue('E1', 'بین 51 تا 75');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'بین 31 تا 50');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'بین 11 تا 30');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'بین -33 تا 10');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام درس');
 
         $i = 0;
 
         foreach($lessons as $lesson) {
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($i + 2), $lesson->name);
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($i + 2), $lesson->group_0);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($i + 2), $lesson->group_1);
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . ($i + 2), $lesson->group_2);
-            $objPHPExcel->getActiveSheet()->SetCellValue('E' . ($i + 2), $lesson->group_3);
-            $objPHPExcel->getActiveSheet()->SetCellValue('F' . ($i + 2), $lesson->group_4);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($i + 2), $lesson->name);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . ($i + 2), $lesson->group_0);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($i + 2), $lesson->group_1);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . ($i + 2), $lesson->group_2);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . ($i + 2), $lesson->group_3);
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . ($i + 2), $lesson->group_4);
 
             $i++;
         }
@@ -1824,7 +1941,7 @@ class ReportController extends Controller {
                 else
                     $sId->white = $tmp[0]->countNum;
 
-                $sId->lessonName = Lesson::find($sId->lessonId)->name;
+                $sId->lessonName = Lesson::whereId($sId->lessonId)->name;
             }
         }
         else if($user->level == getValueInfo('namayandeLevel')) {
@@ -1850,7 +1967,7 @@ class ReportController extends Controller {
                 else
                     $sId->white = $tmp[0]->countNum;
 
-                $sId->lessonName = Lesson::find($sId->lessonId)->name;
+                $sId->lessonName = Lesson::whereId($sId->lessonId)->name;
             }
         }
         else if($user->level == getValueInfo('schoolLevel')) {
@@ -1876,7 +1993,7 @@ class ReportController extends Controller {
                 else
                     $sId->white = $tmp[0]->countNum;
 
-                $sId->lessonName = Lesson::find($sId->lessonId)->name;
+                $sId->lessonName = Lesson::whereId($sId->lessonId)->name;
             }
         }
         else {
@@ -1903,7 +2020,7 @@ class ReportController extends Controller {
                 else
                     $sId->white = $tmp[0]->countNum;
 
-                $sId->lessonName = Lesson::find($sId->lessonId)->name;
+                $sId->lessonName = Lesson::whereId($sId->lessonId)->name;
             }
         }
 
@@ -1940,7 +2057,7 @@ class ReportController extends Controller {
                 else
                     $sId->white = $tmp[0]->countNum;
 
-                $sId->lessonName = Lesson::find($sId->lessonId)->name;
+                $sId->lessonName = Lesson::whereId($sId->lessonId)->name;
             }
         }
         else if($user->level == getValueInfo('namayandeLevel')) {
@@ -1966,7 +2083,7 @@ class ReportController extends Controller {
                 else
                     $sId->white = $tmp[0]->countNum;
 
-                $sId->lessonName = Lesson::find($sId->lessonId)->name;
+                $sId->lessonName = Lesson::whereId($sId->lessonId)->name;
             }
         }
         else if($user->level == getValueInfo('schoolLevel')) {
@@ -1992,7 +2109,7 @@ class ReportController extends Controller {
                 else
                     $sId->white = $tmp[0]->countNum;
 
-                $sId->lessonName = Lesson::find($sId->lessonId)->name;
+                $sId->lessonName = Lesson::whereId($sId->lessonId)->name;
             }
         }
         else {
@@ -2019,7 +2136,7 @@ class ReportController extends Controller {
                 else
                     $sId->white = $tmp[0]->countNum;
 
-                $sId->lessonName = Lesson::find($sId->lessonId)->name;
+                $sId->lessonName = Lesson::whereId($sId->lessonId)->name;
             }
         }
 
@@ -2032,24 +2149,24 @@ class ReportController extends Controller {
 
         $objPHPExcel->setActiveSheetIndex(0);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('F1', 'درصد');
-        $objPHPExcel->getActiveSheet()->SetCellValue('E1', 'بدون پاسخ');
-        $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'نادرست');
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'درست');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'نام مبحث');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'نام درس');
+        $objPHPExcel->getActiveSheet()->setCellValue('F1', 'درصد');
+        $objPHPExcel->getActiveSheet()->setCellValue('E1', 'بدون پاسخ');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'نادرست');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'درست');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'نام مبحث');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام درس');
 
         $i = 0;
         foreach($subjects as $subject) {
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($i + 2), $subject->lessonName);
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($i + 2), $subject->name);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($i + 2), $subject->correct);
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . ($i + 2), $subject->inCorrect);
-            $objPHPExcel->getActiveSheet()->SetCellValue('E' . ($i + 2), $subject->white);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($i + 2), $subject->lessonName);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . ($i + 2), $subject->name);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($i + 2), $subject->correct);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . ($i + 2), $subject->inCorrect);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . ($i + 2), $subject->white);
             if($subject->correct + $subject->inCorrect + $subject->white != 0)
-                $objPHPExcel->getActiveSheet()->SetCellValue('F' . ($i + 2), round($subject->correct * 100 / ($subject->correct + $subject->inCorrect + $subject->white), 0));
+                $objPHPExcel->getActiveSheet()->setCellValue('F' . ($i + 2), round($subject->correct * 100 / ($subject->correct + $subject->inCorrect + $subject->white), 0));
             else
-                $objPHPExcel->getActiveSheet()->SetCellValue('F' . 0);
+                $objPHPExcel->getActiveSheet()->setCellValue('F' . 0);
             $i++;
         }
 
@@ -2508,22 +2625,22 @@ class ReportController extends Controller {
 
         $objPHPExcel->setActiveSheetIndex(0);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('F1', 'بین 76 تا 100');
-        $objPHPExcel->getActiveSheet()->SetCellValue('E1', 'بین 51 تا 75');
-        $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'بین 31 تا 50');
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'بین 11 تا 30');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'بین -33 تا 10');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'شهر');
+        $objPHPExcel->getActiveSheet()->setCellValue('F1', 'بین 76 تا 100');
+        $objPHPExcel->getActiveSheet()->setCellValue('E1', 'بین 51 تا 75');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'بین 31 تا 50');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'بین 11 تا 30');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'بین -33 تا 10');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'شهر');
 
 
         $i = 2;
         foreach($cities as $city) {
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $i, $city->name);
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $i, $city->group_0);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $i, $city->group_1);
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $i, $city->group_2);
-            $objPHPExcel->getActiveSheet()->SetCellValue('E' . $i, $city->group_3);
-            $objPHPExcel->getActiveSheet()->SetCellValue('F' . $i, $city->group_4);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $city->name);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . $i, $city->group_0);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, $city->group_1);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, $city->group_2);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $city->group_3);
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . $i, $city->group_4);
             $i++;
         }
 
@@ -2608,7 +2725,7 @@ class ReportController extends Controller {
                 return Redirect::to(route('profile'));
         }
 
-        $status = QuizStatus::where('level', '=', 1)->get();
+        $status = QuizStatus::whereLevel(1)->get();
         $rank = calcRank($quizId, $uId);
 
         $condition = ['qId' => $quizId, 'quizMode' => getValueInfo('regularQuiz'), 'uId' => $uId];
@@ -2618,16 +2735,16 @@ class ReportController extends Controller {
         $rankInLessonCity = array();
         $rankInLessonState = array();
 
-        $cityId = RedundantInfo1::where('uId', '=', $uId)->first();
+        $cityId = RedundantInfo1::whereUId($uId)->first();
 
-        if(count($cityId) == 0)
+        if($cityId == null)
             $cityId = City::first()->id;
         else
             $cityId = $cityId->cityId;
 
         $cityRank = calcRankInCity($quizId, $uId, $cityId);
 
-        $stateId = State::find(City::find($cityId)->stateId)->id;
+        $stateId = State::whereId(City::whereId($cityId)->stateId)->id;
         $stateRank = calcRankInState($quizId, $uId, $stateId);
 
         $avgs = DB::select('select SUM(percent) / count(*) as avg, MAX(percent) as maxPercent, MIN(percent) as minPercent FROM taraz, quizRegistry WHERE quizRegistry.qId = ' . $quizId . ' and quizRegistry.id  = taraz.qEntryId GROUP by(taraz.lId)');
@@ -2662,7 +2779,7 @@ class ReportController extends Controller {
         }
 
         $totalMark = 20;
-        $user = User::find($uId);
+        $user = User::whereId($uId);
 
         $regularQuizMode = getValueInfo('regularQuiz');
 
@@ -2749,15 +2866,15 @@ class ReportController extends Controller {
 
             $user->lessons = $tmp;
 
-            $target = User::find($user->uId);
+            $target = User::whereId($user->uId);
             $user->name = $target->firstName . " " . $target->lastName;
             $user->uId = $target->id;
 
             $user->schoolName = "نامشخص";
-            $schTmp = SchoolStudent::where('uId', '=', $target->id)->first();
-            if($schTmp != null && count($schTmp) > 0) {
-                $schTmp = School::where('uId', '=', $schTmp->sId)->first();
-                if($schTmp != null || count($schTmp) > 0)
+            $schTmp = SchoolStudent::whereUId($target->id)->first();
+            if($schTmp != null) {
+                $schTmp = School::whereUId($schTmp->sId)->first();
+                if($schTmp != null)
                     $user->schoolName = $schTmp->name;
             }
 
@@ -2783,7 +2900,7 @@ class ReportController extends Controller {
         $condition = ['qId' => $quizId, 'quizMode' => getValueInfo('regularQuiz'), 'uId' => $uId];
         $qEntryId = QuizRegistry::where($condition)->first();
         
-        if($qEntryId == null || count($qEntryId) == 0  || ($qEntryId->online == 1 && empty($qEntryId->timeEntry))) {
+        if($qEntryId == null || ($qEntryId->online == 1 && empty($qEntryId->timeEntry))) {
 
             if(empty($backURL))
                 return $this->preA3($quizId, 'فرد مورد نظر در آزمون شرکت نکرده است');
@@ -2820,7 +2937,7 @@ class ReportController extends Controller {
 
     public static function partialQuizReport($quizId) {
 
-        $quiz = RegularQuiz::find($quizId);
+        $quiz = RegularQuiz::whereId($quizId);
 
         if($quiz == null)
             return Redirect::to('quizReport');
@@ -2853,17 +2970,17 @@ class ReportController extends Controller {
 
     public function doublePartialQuizReport($quizId, $sId, $online) {
 
-        if(RegularQuiz::find($quizId) == null || ($sId != -1 && School::find($sId) == null))
+        if(RegularQuiz::whereId($quizId) == null || ($sId != -1 && School::find($sId) == null))
             return Redirect::to(route('profile'));
 
         $schoolName = "نامشخص";
         $cityName = "نامشخص";
-        $quizName = RegularQuiz::find($quizId)->name;
+        $quizName = RegularQuiz::whereId($quizId)->name;
 
         if($sId != -1) {
             $school = School::find($sId);
             $schoolName = $school->name;
-            $cityName = City::find($school->cityId)->name;
+            $cityName = City::whereId($school->cityId)->name;
 
             $users = DB::select('select u.firstName, u.lastName, u.phoneNum, u.username from quizRegistry qR, users u, schoolStudent sS, school s WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
                 getValueInfo('regularQuiz') . ' and qR.online = ' . $online . ' and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and s.id = ' . $sId);
@@ -2890,7 +3007,7 @@ class ReportController extends Controller {
 
     public function quizDoublePartialReportExcel($quizId, $sId, $online) {
 
-        if(RegularQuiz::find($quizId) == null || ($sId != -1 && School::find($sId) == null))
+        if(RegularQuiz::whereId($quizId) == null || ($sId != -1 && School::find($sId) == null))
             return Redirect::to(route('profile'));
 
         if($sId != -1) {
@@ -2912,19 +3029,19 @@ class ReportController extends Controller {
 
         $objPHPExcel->setActiveSheetIndex(0);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'شماره همراه');
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'نام کاربری');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'نام خانوادگی');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'نام');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'شماره همراه');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'نام کاربری');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'نام خانوادگی');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام');
 
         $counter = 2;
 
         foreach ($users as $itr) {
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . ($counter), $itr->phoneNum);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($counter), $itr->username);
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($counter), $itr->lastName);
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($counter), $itr->firstName);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter), $itr->phoneNum);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), $itr->username);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $itr->lastName);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter), $itr->firstName);
             $counter++;
         }
 
@@ -2953,7 +3070,7 @@ class ReportController extends Controller {
 
     public function quizPartialReportExcel ($quizId) {
 
-        $quiz = RegularQuiz::find($quizId);
+        $quiz = RegularQuiz::whereId($quizId);
 
         if($quiz == null)
             return Redirect::to('quizReport');
@@ -2968,9 +3085,9 @@ class ReportController extends Controller {
 
         $objPHPExcel->setActiveSheetIndex(0);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'نوع ثبت نام');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'تعداد دانش آموزان');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'نام مدرسه');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'نوع ثبت نام');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'تعداد دانش آموزان');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام مدرسه');
 
         $online = DB::select('select s.name, count(*) as countNum, ci.name as cityName, sa.name as stateName from quizRegistry qR, users u, schoolStudent sS, school s, city ci, state sa WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
             getValueInfo('regularQuiz') . ' and qR.online = 1 and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and ci.id = s.cityId and sa.id = ci.stateId group by(sS.sId)');
@@ -2997,31 +3114,31 @@ class ReportController extends Controller {
 
         foreach ($nonOnline as $itr) {
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('E' . ($counter), $itr->stateName);
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . ($counter), $itr->cityName);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($counter), 'حضوری');
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($counter), $itr->countNum);
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($counter), $itr->name);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . ($counter), $itr->stateName);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter), $itr->cityName);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), 'حضوری');
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $itr->countNum);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter), $itr->name);
             $counter++;
         }
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($counter), 'حضوری');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($counter), $totalNonOnline);
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($counter++), 'نامشخص');
+        $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), 'حضوری');
+        $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $totalNonOnline);
+        $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter++), 'نامشخص');
 
         foreach ($online as $itr) {
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('E' . ($counter), $itr->stateName);
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . ($counter), $itr->cityName);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($counter), 'آنلاین');
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($counter), $itr->countNum);
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($counter), $itr->name);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . ($counter), $itr->stateName);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter), $itr->cityName);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), 'آنلاین');
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $itr->countNum);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter), $itr->name);
             $counter++;
         }
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('C' . ($counter), 'آنلاین');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($counter), $totalOnline);
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($counter), 'نامشخص');
+        $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), 'آنلاین');
+        $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $totalOnline);
+        $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter), 'نامشخص');
 
         $fileName = __DIR__ . "/../../../public/registrations/subjectReport.xlsx";
 
@@ -3071,25 +3188,25 @@ class ReportController extends Controller {
 
     private function showGeneralKarname($uId, $quizId, $qEntryId, $backURL = "") {
 
-        $status = QuizStatus::where('level', '=', 1)->get();
+        $status = QuizStatus::whereLevel(1)->get();
         $rank = calcRank($quizId, $uId);
 
-        $user = User::find($uId);
+        $user = User::whereId($uId);
 
         $rankInLesson = array();
         $rankInLessonCity = array();
         $rankInLessonState = array();
 
-        $cityId = RedundantInfo1::where('uId', '=', $uId)->first();
+        $cityId = RedundantInfo1::whereUId($uId)->first();
 
-        if(count($cityId) == 0)
+        if($cityId == null)
             $cityId = City::first()->id;
         else
             $cityId = $cityId->cityId;
 
         $cityRank = calcRankInCity($quizId, $uId, $cityId);
 
-        $stateId = State::find(City::find($cityId)->stateId)->id;
+        $stateId = State::whereId(City::whereId($cityId)->stateId)->id;
         $stateRank = calcRankInState($quizId, $uId, $stateId);
 
         $avgs = DB::select('select SUM(percent) / count(*) as avg, MAX(percent) as maxPercent, MIN(percent) as minPercent FROM taraz, quizRegistry WHERE quizRegistry.qId = ' . $quizId . ' and quizRegistry.id  = taraz.qEntryId GROUP by(taraz.lId)');
@@ -3103,7 +3220,7 @@ class ReportController extends Controller {
 
         $lessons = getLessonQuiz($quizId);
 
-        $taraz = Taraz::where('qEntryId', '=', $qEntryId->id)->get();
+        $taraz = Taraz::whereQEntryId($qEntryId->id)->get();
 
         if($taraz == null || count($taraz) == 0) {
 
@@ -3309,25 +3426,25 @@ class ReportController extends Controller {
 
         $objPHPExcel->setActiveSheetIndex(0);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'تعداد حاضرین');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'شهر');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'تعداد حاضرین');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'شهر');
 
 
         if(count($cities) > 0) {
 
             $j = 'C';
             foreach ($cities[0]->lessons as $itr)
-                $objPHPExcel->getActiveSheet()->SetCellValue(($j++) . '1', $itr->name);
+                $objPHPExcel->getActiveSheet()->setCellValue(($j++) . '1', $itr->name);
         }
 
         $i = 0;
 
         foreach($cities as $city) {
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . ($i + 2), $city->name);
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . ($i + 2), $city->total);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($i + 2), $city->name);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . ($i + 2), $city->total);
             $j = 'C';
             foreach($cities[$i]->lessons as $itr) {
-                $objPHPExcel->getActiveSheet()->SetCellValue(($j++) . ($i + 2), round($itr->avgPercent, 0));
+                $objPHPExcel->getActiveSheet()->setCellValue(($j++) . ($i + 2), round($itr->avgPercent, 0));
             }
             $i++;
         }

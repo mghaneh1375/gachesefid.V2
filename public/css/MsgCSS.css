@@ -133,7 +133,7 @@
     cursor: pointer;
 }
 
-.subItem > a {
+.subItemTable > a {
     text-align: center;
     color: #000;
     text-decoration: none !important;

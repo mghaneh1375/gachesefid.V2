@@ -79,8 +79,37 @@ function outboxMode(outboxFolder, inbox, table, msgContainer, showMsgContainer) 
     showTable(table, false);
 }
 
+function confirmationBeforeSubmit() {
+    $(".dark").removeClass('hidden');
+    $("#deleteMsg").css('visibility', 'visible');
+}
+
+function hideConfirmationPane() {
+    $("#deleteMsg").css('visibility', 'hidden');
+    $(".dark").addClass('hidden');
+}
+
+function showConfirmationForDelete() {
+
+    var checkedValues = $("input:checkbox[name='selectedMsg[]']:checked").map(function() {
+        return this.value;
+    }).get();
+
+    if(checkedValues.length > 0)
+        confirmationBeforeSubmit();
+}
+
 function showMsg(id, element, mode) {
+
+    if(!$("#" + element).hasClass('hidden')) {
+        $("#" + element).empty().addClass('hidden');
+        return;
+    }
+
+    $('.messageTR').empty().addClass('hidden');
+
     $("#" + element).empty();
+    var newElement = "";
 
     $.ajax({
 
@@ -91,18 +120,17 @@ function showMsg(id, element, mode) {
         },
         success: function (response) {
             response = JSON.parse(response);
+            newElement += "<td style='width: 20%; text-align: center; color: #963019'> وضعیت پیام  :  " + ((response.status == 1) ? "تایید شده" : "تایید نشده") + "</td>";
+            newElement += "<td style='width: 60%; text-align: center'> متن پیام: " + response.message + "</td>";
+            newElement += "<td style='width: 20%; text-align: center'>";
+            if(mode) {
+                newElement += "<button onclick='$(\"#destUserSendMsg\").val(\"" + response.senderId + "\"); $(\"#subjectSendMsg\").val(\"" + response.subject + "\"); sendMode(\"sendFolder\", \"inbox\", \"sendMsgDiv\", \"showMsgContainer\");' class='btn btn-warning'><span>ارسال پیام به </span><span>" + response.senderId + "</span></button></td>";
+            }
+            else {
+                newElement += "<button onclick='$(\"#destUserSendMsg\").val(\"" + response.receiverId + "\"); $(\"#subjectSendMsg\").val(\"" + response.subject + "\"); sendMode(\"sendFolder\", \"inbox\", \"sendMsgDiv\", \"showMsgContainer\");' class='btn btn-warning'><span>ارسال پیام به </span><span>" + response.receiverId + "</span></button></td>";
+            }
 
-            newElement = "<div onclick='closePrompt(\"" + element + "\")' class='ui_close_x'></div>";
-            newElement += "<div class='header_text'> موضوع :  " + response.subject + "</div>";
-            if(mode)
-                newElement += "<div class='header_text'> ارسال شده از طرف  :  " + response.senderId + "</div>";
-            else
-                newElement += "<div class='header_text'> ارسال شده به  :  " + response.recieverId + "</div>";
-            newElement += "<div class='header_text'> تاریخ ارسال  :  " + response.date + "</div>";
-            newElement += "<div class='subheader_text'>" + response.message + "</div>";
-
-            $("#" + element).append(newElement);
-            $("#" + element).css("visibility", 'visible');
+            $("#" + element).empty().append(newElement).removeClass('hidden');
         }
 
     });
@@ -110,7 +138,7 @@ function showMsg(id, element, mode) {
 
 function showTable(element, mode) {
 
-    $("#" + element).empty();
+    var newElement = "";
 
     $.ajax({
 
@@ -118,7 +146,8 @@ function showTable(element, mode) {
         url: getListOfMsgs,
         data: {
             'mode': mode,
-            'sortMode' : sortMode
+            'sortMode' : sortMode,
+            'selectedUser': selectedUser
         },
         success: function (response) {
 
@@ -129,19 +158,19 @@ function showTable(element, mode) {
                 newElement += "<td align='right' class='p5' colspan='4'>";
                 newElement += "هیچ پیامی موجود نیست";
                 newElement += "</td></tr>";
-                $("#" + element).append(newElement);
+                $("#" + element).empty().append(newElement);
             }
 
             else {
                 for(i = 0; i < response.length; i++) {
-                    newElement = '<tr class="bottomNav">';
-                    newElement += '<td style="width: 15%; text-align: center">' + response[i].target + '</td>';
-                    newElement += "<td onclick='showMsg(" + response[i].id + ", \"showMsgContainer\", " + mode + ")' style='cursor: pointer; width: 55%; text-align: center'>" + response[i].subject + "</td>";
+                    newElement += "<tr onclick='showMsg(" + response[i].id + ", \"row_" + i + "\", " + mode + ")' style='cursor: pointer' class='bottomNav'>";
+                    newElement += "<td style='width: 15%; text-align: center'>" + response[i].target + '</td>';
+                    newElement += "<td style='width: 55%; text-align: center'>" + response[i].subject + "</td>";
                     newElement += "<td style='width: 15%; text-align: center'>" + response[i].date + "</td>";
-                    newElement += "<td style='text-align: center'>";
-                    newElement += "<input name='selectedMsg[]' value='" + response[i].id + "' type='checkbox'></td></tr>";
-                    $("#" + element).append(newElement);
+                    newElement += "<td style='width: 15%; text-align: center'>";
+                    newElement += "<input name='selectedMsg[]' value='" + response[i].id + "' type='checkbox'></td></tr><tr class='messageTR hidden' style='height: 200px; background-color: white; overflow: auto' id='row_" + i + "'></tr>";
                 }
+                $("#" + element).empty().append(newElement);
             }
         }
     });

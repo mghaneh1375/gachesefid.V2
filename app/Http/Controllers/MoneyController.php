@@ -24,7 +24,7 @@ function charge($amount, $uId, $kindTransactionId, $kindMoney) {
             $transaction->date = getToday()["date"];
             $transaction->save();
 
-            $user = User::find($uId);
+            $user = User::whereId($uId);
             $user->money = $user->money + $amount;
             $user->save();
         });
@@ -48,7 +48,7 @@ function chargeOnline($amount, $uId, $kindTransactionId, $kindMoney, $gift, $add
             $transaction->date = getToday()["date"];
             $transaction->save();
 
-            $user = User::find($uId);
+            $user = User::whereId($uId);
             $user->money = $user->money + $additional;
             $user->save();
 
@@ -75,7 +75,7 @@ function chargeWithGift($code, $uId, $kindTransactionId, $kindMoney) {
             $transaction->date = getToday()["date"];
             $transaction->save();
 
-            $user = User::find($uId);
+            $user = User::whereId($uId);
             $user->money = $user->money + $offCode->amount;
             $user->save();
 
@@ -98,7 +98,7 @@ function checkOffCodeValidation($code) {
 
     $offCode = OffCode::whereCode($code)->first();
 
-    if($offCode == null || count($offCode) == 0)
+    if($offCode == null)
         return false;
 
     return ($offCode->expireTime >= date("Y-m-d"));
@@ -118,7 +118,7 @@ function quizRegistry($kindTransactionId, $quizMode, $amount, $uId, $kindMoney, 
             $transaction->date = getToday()["date"];
             $transaction->save();
 
-            $user = User::find($uId);
+            $user = User::whereId($uId);
             $user->money = $user->money - $amount;
             $user->save();
 
@@ -130,7 +130,7 @@ function quizRegistry($kindTransactionId, $quizMode, $amount, $uId, $kindMoney, 
                 $quizRegistry->save();
             }
             else {
-                $tmp = UserCreatedQuiz::find($quizId);
+                $tmp = UserCreatedQuiz::whereId($quizId);
                 $tmp->status = 1;
                 $tmp->save();
             }
@@ -157,7 +157,7 @@ function quizRegistryOnline($kindTransactionId, $quizMode, $amount, $uId, $kindM
             $transaction->date = getToday()["date"];
             $transaction->save();
 
-            $user = User::find($uId);
+            $user = User::whereId($uId);
             $user->money = 0;
             $user->save();
 
@@ -169,7 +169,7 @@ function quizRegistryOnline($kindTransactionId, $quizMode, $amount, $uId, $kindM
                 $quizRegistry->save();
             }
             else {
-                $tmp = UserCreatedQuiz::find($quizId);
+                $tmp = UserCreatedQuiz::whereId($quizId);
                 $tmp->status = 1;
                 $tmp->save();
             }
@@ -187,7 +187,7 @@ function checkOffCodeType($code, $mode) {
 
     $offCode = OffCode::whereCode($code)->first();
 
-    if($offCode == null || count($offCode) == 0)
+    if($offCode == null)
         return false;
 
     return ($offCode->type == $mode);

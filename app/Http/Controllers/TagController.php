@@ -33,7 +33,7 @@ class TagController extends Controller {
         if(isset($_POST["tagId"]) && isset($_POST["newName"])) {
 
             $tag = Tag::find(makeValidInput($_POST["tagId"]));
-            if($tag != null && count($tag) != 0) {
+            if($tag != null) {
                 $tag->name = makeValidInput($_POST["newName"]);
                 try {
                     $tag->save();

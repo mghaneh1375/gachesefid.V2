@@ -3,8 +3,8 @@
 
     var timeVal1, timeVal2, timeVal3, timeVal4, timeVal5, timeVal6;
     var money = '{{$money}}';
-    var regularQuizNo = '{{$regularQuizNo}}';
-    var systemQuizNo = '{{$systemQuizNo}}';
+    var myQuizNo = '{{$myQuizNo}}';
+    var nextQuizNo = '{{$nextQuizNo}}';
     var questionNo = '{{$questionNo}}';
     var rate = '{{$rate}}';
     var rank = '{{$rank}}';
@@ -12,14 +12,14 @@
 
     $(document).ready(function () {
 
-        timeVal1 = Math.floor(1000 / money);
+        timeVal1 = Math.floor(money / 100);
         countMoney(-1);
 
-        timeVal2 = Math.floor(1000 / regularQuizNo);
-        countRegularQuizNo(-1);
+        timeVal2 = Math.floor(1000 / myQuizNo);
+        countMyQuizNo(-1);
 
-        timeVal4 = Math.floor(1000 / systemQuizNo);
-        countSystemQuizNo(-1);
+        timeVal4 = Math.floor(1000 / nextQuizNo);
+        countNextQuizNo(-1);
 
         timeVal3 = Math.floor(1000 / questionNo);
         countQuestionNo(-1);
@@ -68,8 +68,11 @@
 
     function countRank(idx) {
 
-        if(idx == rank)
+        if(idx == rank) {
+            if(idx == -1)
+                $("#rank").css('font-size', '12px').empty().append("<span>شما امتیازی در این</span><br/><span>بخش کسب نکرده اید.</span>");
             return;
+        }
 
         if(idx + 10 < rank) {
             idx += 10;
@@ -89,47 +92,47 @@
             return;
         }
 
-        if(idx + 10 < money) {
-            idx += 10;
+        if(idx + timeVal1 < money) {
+            idx += timeVal1;
         }
         else
             idx++;
 
         $("#money").empty().append(idx).persiaNumber();
 
-        setTimeout("countMoney(" + idx + ")", timeVal1);
+        setTimeout("countMoney(" + idx + ")", 10);
     }
 
-    function countRegularQuizNo(idx) {
+    function countMyQuizNo(idx) {
 
-        if(idx == regularQuizNo)
+        if(idx == myQuizNo)
             return;
 
-        if(idx + 10 < regularQuizNo) {
+        if(idx + 10 < myQuizNo) {
             idx += 10;
         }
         else
             idx++;
 
-        $("#regularQuizNo").empty().append(idx).persiaNumber();
+        $("#myQuizNo").empty().append(idx).persiaNumber();
 
-        setTimeout("countRegularQuizNo(" + idx + ")", timeVal2);
+        setTimeout("countMyQuizNo(" + idx + ")", timeVal2);
     }
 
-    function countSystemQuizNo(idx) {
+    function countNextQuizNo(idx) {
 
-        if(idx == systemQuizNo)
+        if(idx == nextQuizNo)
             return;
 
-        if(idx + 10 < systemQuizNo) {
+        if(idx + 10 < nextQuizNo) {
             idx += 10;
         }
         else
             idx++;
 
-        $("#systemQuizNo").empty().append(idx).persiaNumber();
+        $("#nextQuizNo").empty().append(idx).persiaNumber();
 
-        setTimeout("countSystemQuizNo(" + idx + ")", timeVal4);
+        setTimeout("countNextQuizNo(" + idx + ")", timeVal4);
     }
 
 </script>
@@ -160,15 +163,15 @@
     <div class="col-xs-12" style="margin-top: 100px">
         <div class="col-md-4 col-xs-12">
             <img style="width: 200px" src="{{URL::asset('images/u-future-exam.png')}}">
-            <center class="textOfPhoto" id="systemQuizNo"></center>
+            <center class="textOfPhoto" id="nextQuizNo"></center>
         </div>
-        <div class="col-md-4 col-xs-12">
+        <div class="col-md-4 col-xs-12" style="cursor:pointer;" onclick="document.location.href = '{{route('chargeAccount')}}';">
             <img style="width: 200px" src="{{URL::asset('images/u-money.png')}}">
             <center class="textOfPhoto" id="money"></center>
         </div>
-        <div class="col-md-4 col-xs-12">
+        <div class="col-md-4 col-xs-12" style="cursor:pointer;" onclick="document.location.href = '{{route('myQuizes')}}';">
             <img style="width: 200px" src="{{URL::asset('images/u-past-exam.png')}}">
-            <center class="textOfPhoto" id="regularQuizNo"></center>
+            <center class="textOfPhoto" id="myQuizNo"></center>
         </div>
     </div>
     <div class="col-xs-12">
@@ -180,7 +183,7 @@
             <img style="width: 200px" src="{{URL::asset('images/u-rank.png')}}">
             <center class="textOfPhoto" id="rate"></center>
         </div>
-        <div class="col-md-4 col-xs-12">
+        <div class="col-md-4 col-xs-12" style="cursor:pointer;" onclick="document.location.href = '{{route('studentsRanking', ['k' => 1, 'page' => 1])}}';">
             <img style="width: 200px" src="{{URL::asset('images/u-ranking.png')}}">
             <center class="textOfPhoto" id="rank"></center>
         </div>

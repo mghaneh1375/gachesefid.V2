@@ -25,8 +25,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string $password
  * @property string $firstName
  * @property string $phoneNum
+ * @property string $NID
  * @property string $lastName
  * @method static \Illuminate\Database\Query\Builder|\App\models\User whereUsername($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\models\User whereNID($value)
  * @method static \Illuminate\Database\Query\Builder|\App\models\User whereLevel($value)
  * @method static \Illuminate\Database\Query\Builder|\App\models\User whereInvitationCode($value)
  * @property \Carbon\Carbon $created_at

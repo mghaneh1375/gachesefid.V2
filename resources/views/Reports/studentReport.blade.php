@@ -2,7 +2,6 @@
 
 @section('head')
     @parent
-    <link rel="stylesheet" href="{{URL::asset('css/paging.css')}}">
 @stop
 
 

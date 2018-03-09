@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\models\AdviserRate;
 use App\models\Grade;
+use App\models\SchoolStudent;
 use App\models\State;
+use App\models\StudentAdviser;
 use App\models\User;
 use App\models\School;
 use App\models\City;
@@ -30,10 +33,10 @@ class UserController extends Controller {
 
             $tmp2 = School::whereUId(makeValidInput($_POST["uId"]))->first();
 
-            if($tmp2 == null || count($tmp2) == 0)
+            if($tmp2 == null)
                 return;
 
-            $user = User::find(makeValidInput($_POST["uId"]));
+            $user = User::whereId(makeValidInput($_POST["uId"]));
             $user->firstName = makeValidInput($_POST["firstName"]);
             $user->lastName = makeValidInput($_POST["lastName"]);
             $user->phoneNum = makeValidInput($_POST["phone"]);
@@ -59,16 +62,16 @@ class UserController extends Controller {
 
             $uId = makeValidInput($_POST["uId"]);
 
-            if(User::find($uId) != null) {
+            if(User::whereId($uId) != null) {
 
                 $newCode = makeValidInput($_POST["newCode"]);
 
                 $condition = ['invitationCode' => $newCode, 'level' => getValueInfo('schoolLevel')];
                 $user = User::where($condition)->first();
 
-                if ($user != null && count($user) > 0) {
+                if ($user != null) {
 
-                    SchoolStudent::where('uId', '=', $uId)->delete();
+                    SchoolStudent::whereUId($uId)->delete();
 
                     $tmp = new SchoolStudent();
                     $tmp->sId = $user->id;
@@ -92,7 +95,7 @@ class UserController extends Controller {
     public function operators_2() {
 
         $val = getValueInfo('operator2Level');
-        return view('users', array('mode' => $val, 'users' => User::where('level', '=', $val)->get()));
+        return view('users', array('mode' => $val, 'users' => User::whereLevel($val)->get()));
     }
 
     public function addOperator2() {
@@ -117,7 +120,7 @@ class UserController extends Controller {
                 $msg = "لطفا جنسیت خود را وارد نمایید";
             }
 
-            else if(User::where('username', '=', $username)->count() > 0) {
+            else if(User::whereUsername($username)->count() > 0) {
                 $msg = "نام کاربری وارد شده در سامانه موجود است";
             }
 
@@ -146,7 +149,7 @@ class UserController extends Controller {
     public function operators_1() {
 
         $val = getValueInfo('operator1Level');
-        return view('users', array('mode' => $val, 'users' => User::where('level', '=', $val)->get()));
+        return view('users', array('mode' => $val, 'users' => User::where($val)->get()));
     }
 
     public function addOperator1() {
@@ -170,7 +173,7 @@ class UserController extends Controller {
                 $msg = "لطفا جنسیت خود را وارد نمایید";
             }
 
-            else if(User::where('username', '=', $username)->count() > 0) {
+            else if(User::whereUsername($username)->count() > 0) {
                 $msg = "نام کاربری وارد شده در سامانه موجود است";
             }
 
@@ -198,19 +201,19 @@ class UserController extends Controller {
 
     public function controllers() {
         $val = getValueInfo('controllerLevel');
-        return view('users', array('mode' => $val, 'users' => User::where('level', '=', $val)->get()));
+        return view('users', array('mode' => $val, 'users' => User::whereLevel($val)->get()));
     }
 
     public function namayandeha() {
         $val = getValueInfo('namayandeLevel');
-        $users = User::where('level', '=', $val)->get();
+        $users = User::whereLevel($val)->get();
         foreach ($users as $user) {
-            $tmp = RedundantInfo1::where('uId', '=', $user->id)->first();
-            if($tmp == null || count($tmp) == 0) {
+            $tmp = RedundantInfo1::whereUId($user->id)->first();
+            if($tmp == null) {
                 return Redirect::to('profile');
             }
 
-            $city = City::find($tmp->cityId);
+            $city = City::whereId($tmp->cityId);
             if($city == null)
                 return Redirect::to('profile');
             $user->city = $city->name;
@@ -236,7 +239,7 @@ class UserController extends Controller {
             $phoneNum = makeValidInput($_POST["phoneNum"]);
             $city = makeValidInput($_POST["city"]);
 
-            if(User::where('username', '=', $username)->count() > 0) {
+            if(User::whereUsername($username)->count() > 0) {
                 $msg = "نام کاربری وارد شده در سامانه موجود است";
             }
 
@@ -285,8 +288,8 @@ class UserController extends Controller {
         $users = User::schools()->get();
         foreach ($users as $user) {
 
-            $tmp = School::where('uId', '=', $user->id)->first();
-            if($tmp == null || count($tmp) == 0)
+            $tmp = School::whereUId($user->id)->first();
+            if($tmp == null)
                 return Redirect::to('profile');
 
             $user->schoolName = $tmp->name;
@@ -314,10 +317,10 @@ class UserController extends Controller {
 
             $user->schoolLevel = ($tmp->level == getValueInfo('motevaseteAval')) ? 'متوسطه اول' : 'متوسطه دوم';
 
-            $user->schoolCity = City::find($tmp->cityId)->name;
+            $user->schoolCity = City::whereId($tmp->cityId)->name;
             
             $tmp = NamayandeSchool::where('sId', '=', $user->id)->first();
-            if($tmp == null || count($tmp) == 0)
+            if($tmp == null)
                 return Redirect::to('profile');
 
         }
@@ -328,7 +331,7 @@ class UserController extends Controller {
         if(isset($_POST["uId"])) {
 
             $uId = makeValidInput($_POST["uId"]);
-            $level = User::find($uId)->level;
+            $level = User::whereId($uId)->level;
             if($level == getValueInfo('schoolLevel'))
                 User::destroy($uId);
         }
@@ -343,7 +346,7 @@ class UserController extends Controller {
         foreach ($users as $user) {
 
             $tmp = School::whereUId($user->id)->first();
-            if($tmp == null || count($tmp) == 0)
+            if($tmp == null)
                 return Redirect::to('profile');
 
             $user->schoolName = $tmp->name;
@@ -375,13 +378,13 @@ class UserController extends Controller {
             $user->schoolLevel = ($tmp->level == getValueInfo('motevaseteAval')) ? 'متوسطه اول' :
                 ($tmp->level == getValueInfo('motevaseteDovom')) ? 'متوسطه دوم' : 'دبستان';
 
-            $user->schoolCity = City::find($tmp->cityId)->name;
+            $user->schoolCity = City::whereId($tmp->cityId)->name;
 
             $tmp = NamayandeSchool::whereSId($user->id)->first();
-            if($tmp == null || count($tmp) == 0)
+            if($tmp == null)
                 return Redirect::to('profile');
 
-            $user->schoolNamayande = User::find($tmp->nId)->username;
+            $user->schoolNamayande = User::whereId($tmp->nId)->username;
         }
         
         return view('users', array('mode' => $val, 'users' => $users));
@@ -391,7 +394,7 @@ class UserController extends Controller {
 
         if(isset($_POST["firstName"]) && isset($_POST["lastName"]) && isset($_POST["sex"]) && isset($_POST["uId"])) {
 
-            $user = User::find(makeValidInput($_POST["uId"]));
+            $user = User::whereId(makeValidInput($_POST["uId"]));
 
             if($user != null) {
 
@@ -450,7 +453,7 @@ class UserController extends Controller {
                     'invitationCode' => $namayandeCode];
 
                 $namayande = User::where($condition)->first();
-                if($namayande == null || count($namayande) == 0)
+                if($namayande == null)
                     $msg = "کد نمایندگی وارد شده ناصحیح است";
 
                 else {
@@ -555,7 +558,7 @@ class UserController extends Controller {
         if(isset($_POST["uId"])) {
 
             $uId = makeValidInput($_POST["uId"]);
-            $level = User::find($uId)->level;
+            $level = User::whereId($uId)->level;
 
             if(!($level == getValueInfo('superAdminLevel') ||
             ($level == getValueInfo('adminLevel') && Auth::user()->level != getValueInfo('superAdminLevel')))) {
@@ -580,7 +583,7 @@ class UserController extends Controller {
 
     public function assignControllers() {
         
-        return view('assignControllers', array('controllers' => User::where('level', '=', getValueInfo('controllerLevel'))->get(),
+        return view('assignControllers', array('controllers' => User::whereLevel(getValueInfo('controllerLevel'))->get(),
             'grades' => Grade::all()));
     }
 
@@ -612,7 +615,7 @@ class UserController extends Controller {
 
             $levels = ControllerLevel::where('controllerId', '=', makeValidInput($_POST["controllerId"]))->get();
             foreach ($levels as $level)
-                $level->lessonName = Lesson::find($level->lessonId)->name;
+                $level->lessonName = Lesson::whereId($level->lessonId)->name;
             echo json_encode($levels);
 
         }
@@ -622,7 +625,7 @@ class UserController extends Controller {
         
         if(isset($_POST["uId"])) {
 
-            $user = User::find(makeValidInput($_POST["uId"]));
+            $user = User::whereId(makeValidInput($_POST["uId"]));
 
             if($user == null || $user->status != 2 || $user->level != getValueInfo('adviserLevel'))
                 return Redirect::to('advisers');
@@ -640,5 +643,106 @@ class UserController extends Controller {
 
         return view('users', array('users' => DB::select('select * from users WHERE level = ' . getValueInfo('adviserLevel') . ' and status <> 0'),
             'mode' => $val));
+    }
+
+    public function myAdviser() {
+
+        $uId = Auth::user()->id;
+
+        $myAdviser = StudentAdviser::whereStudentId($uId)->first();
+
+        if($myAdviser != null) {
+
+            $rate = -2;
+
+            if($myAdviser->status == true) {
+                $rate = AdviserRate::whereUId($uId)->first();
+                if ($rate == null)
+                    $rate = -1;
+                else
+                    $rate = $rate->rate;
+            }
+
+            $user = User::whereId($myAdviser->adviserId);
+            if($user == null)
+                return Redirect::route('profile');
+
+            $avgRate = AdviserRate::whereAdviserId($myAdviser->adviserId)->avg('rate');
+            if(empty($avgRate))
+                $avgRate = "بدون امتیاز";
+            $totalStudents = StudentAdviser::whereAdviserId($myAdviser->adviserId)->whereStatus(true)->count();
+
+            return view('myAdviser', array('myAdviser' => $user, 'rate' => $rate, 'avgRate' => $avgRate,
+                'totalStudents' => $totalStudents));
+        }
+
+        return view('myAdviser', array('myAdviser' => $myAdviser));
+    }
+
+    public function submitRate() {
+
+        if(isset($_POST["rate"])) {
+
+            $rate = makeValidInput($_POST["rate"]);
+            $adviserId = makeValidInput($_POST["adviserId"]);
+            $studentId = makeValidInput($_POST["studentId"]);
+
+            $condition = ['adviserId' => $adviserId, 'studentId' => $studentId, 'status' => 1];
+
+            if(StudentAdviser::where($condition)->count() > 0) {
+
+                $condition = ['adviserId' => $adviserId, 'uId' => $studentId];
+
+                AdviserRate::where($condition)->delete();
+
+                $tmp = new AdviserRate();
+                $tmp->adviserId = $adviserId;
+                $tmp->uId = $studentId;
+                $tmp->rate = $rate;
+
+                $tmp->save();
+
+                echo "ok";
+                return;
+            }
+
+            echo "nok2";
+            return;
+        }
+
+        echo "nok";
+    }
+
+    public function setAsMyAdviser() {
+
+        if(isset($_POST["adviserId"])) {
+
+            $uId = Auth::user()->id;
+            $adviserId = makeValidInput($_POST["adviserId"]);
+
+            if(User::whereId($adviserId) == null) {
+                echo "nok1";
+                return;
+            }
+
+            StudentAdviser::whereStudentId($uId)->delete();
+            AdviserRate::whereUId($uId)->delete();
+
+            $tmp = new StudentAdviser();
+            $tmp->studentId = $uId;
+            $tmp->adviserId = $adviserId;
+            $tmp->status = false;
+
+            try {
+                $tmp->save();
+                echo "ok";
+            }
+            catch (Exception $x) {
+                echo "nok3";
+            }
+            return;
+        }
+
+        echo "nok1";
     }
 }

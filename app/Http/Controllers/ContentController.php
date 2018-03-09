@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\models\Lesson;
 use App\models\Subject;
 use App\models\Grade;
+use Exception;
 use PHPExcel_IOFactory;
 
 class ContentController extends Controller {
@@ -44,7 +45,7 @@ class ContentController extends Controller {
 
         if(isset($_POST["gradeName"]) && isset($_POST["gradeId"])) {
 
-            $grade = Grade::find(makeValidInput($_POST['gradeId']));
+            $grade = Grade::whereId(makeValidInput($_POST['gradeId']));
             $grade->name = makeValidInput($_POST["gradeName"]);
 
             try {
@@ -69,7 +70,7 @@ class ContentController extends Controller {
 
     public function getLessons() {
         if(isset($_POST["gradeId"])) {
-            echo json_encode(Lesson::where('gradeId', '=', makeValidInput($_POST["gradeId"]))->get());
+            echo json_encode(Lesson::whereGradeId(makeValidInput($_POST["gradeId"]))->get());
         }
     }
 
@@ -170,7 +171,7 @@ class ContentController extends Controller {
 
         if(isset($_POST["lessonName"]) && isset($_POST["lessonId"])) {
 
-            $lesson = Lesson::find(makeValidInput($_POST['lessonId']));
+            $lesson = Lesson::whereId(makeValidInput($_POST['lessonId']));
             $lesson->name = makeValidInput($_POST["lessonName"]);
 
             try {

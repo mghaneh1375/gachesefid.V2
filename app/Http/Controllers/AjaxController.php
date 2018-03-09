@@ -13,7 +13,7 @@ class AjaxController extends Controller {
     public function getStateCity() {
 
         if(isset($_POST["cityId"])) {
-            echo State::find(City::find(makeValidInput($_POST["cityId"]))->stateId)->id;
+            echo State::whereId(City::whereId(makeValidInput($_POST["cityId"]))->stateId)->id;
         }
 
     }
@@ -23,7 +23,7 @@ class AjaxController extends Controller {
         if (isset($_POST["qEntryId"])) {
 
             $qEntryId = makeValidInput($_POST["qEntryId"]);
-            $quizId = QuizRegistry::find($qEntryId);
+            $quizId = QuizRegistry::whereId($qEntryId);
 
             if($quizId == null) {
                 echo "nok";
@@ -31,7 +31,7 @@ class AjaxController extends Controller {
             }
 
             $quizId = $quizId->qId;
-            $enherafMeyars = Enheraf::where('qId', '=', $quizId)->get();
+            $enherafMeyars = Enheraf::whereQId($quizId)->get();
             if($enherafMeyars == null || count($enherafMeyars) == 0) {
                 echo "nok";
                 return;

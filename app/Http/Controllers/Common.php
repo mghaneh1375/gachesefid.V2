@@ -21,43 +21,35 @@ function makeValidInput($input) {
 
 function getStdCityAndState($uId) {
 
-//    $tmp = SchoolStudent::where('uId', '=', $uId)->first();
-//    if($tmp == null || count($tmp) == 0) {
-        $tmp = RedundantInfo1::whereUId($uId)->first();
+    $tmp = RedundantInfo1::whereUId($uId)->first();
 
-        if($tmp == null || count($tmp) == 0) {
-            return ["city" => City::first()->name, "state" => State::find(City::first()->stateId)->name,
-            'cityId' => City::first()->id, 'stateId' => State::find(City::first()->stateId)->id];
-        }
+    if($tmp == null) {
+        $cityTmp = City::first();
+        return ["city" => $cityTmp->name, "state" => State::whereId($cityTmp->stateId)->name,
+            'cityId' => $cityTmp->id, 'stateId' => State::whereId($cityTmp->stateId)->id];
+    }
 
-        $cityId = $tmp->cityId;
-//    }
-//    else {
-//        $tmp = School::where('uId', '=', $tmp->sId)->first();
-//        if($tmp == null || count($tmp) == 0) {
-//            return ["city" => City::first()->name, "state" => State::find(City::first()->stateId)->name,
-//                'cityId' => City::first()->id, 'stateId' => State::find(City::first()->stateId)->id];
-//        }
-//        $cityId = $tmp->cityId;
-//    }
+    $cityId = $tmp->cityId;
 
-    $city = City::find($cityId);
-    if($city == null)
-        return ["city" => City::first()->name, "state" => State::find(City::first()->stateId)->name,
-            'cityId' => City::first()->id, 'stateId' => State::find(City::first()->stateId)->id];
+    $city = City::whereId($cityId);
+    if($city == null) {
+        $cityTmp = City::first();
+        return ["city" => $cityTmp->name, "state" => State::whereId($cityTmp->stateId)->name,
+            'cityId' => $cityTmp->id, 'stateId' => State::whereId($cityTmp->stateId)->id];
+    }
 
-    return ["city" => $city->name, "state" => State::find(City::find($cityId)->stateId)->name,
-        'cityId' => $cityId, 'stateId' => State::find(City::find($cityId)->stateId)->id];
+    return ["city" => $city->name, "state" => State::whereId(City::whereId($cityId)->stateId)->name,
+        'cityId' => $cityId, 'stateId' => State::whereId(City::whereId($cityId)->stateId)->id];
 
 }
 
 function getStdSchoolName($uId) {
 
     $tmp = SchoolStudent::whereUId($uId)->first();
-    if($tmp == null || count($tmp) == 0) {
+    if($tmp == null) {
         $tmp = RedundantInfo1::whereUId($uId)->first();
 
-        if($tmp == null || count($tmp) == 0) {
+        if($tmp == null) {
             return "";
         }
 
@@ -65,7 +57,7 @@ function getStdSchoolName($uId) {
     }
     else {
         $tmp = School::whereUId($tmp->sId)->first();
-        if($tmp == null || count($tmp) == 0) {
+        if($tmp == null) {
             return "";
         }
         return $tmp->name;
@@ -75,8 +67,8 @@ function getStdSchoolName($uId) {
 
 function getQuestionLevel($qId) { // strategies should be taken
 
-    $question = Question::find($qId);
-    if($question == null || count($question) == 0)
+    $question = Question::whereId($qId);
+    if($question == null)
         return "متوسط";
 
     switch ($question->level) {
@@ -91,6 +83,16 @@ function getQuestionLevel($qId) { // strategies should be taken
             return "دشوار"; // hard
             break;
     }
+}
+
+function checkUserAndNamayandeRelation($nId, $uId) {
+
+    $tmp = DB::select('select count(*) as countNum from namayandeSchool nS, schoolStudent sS WHERE nS.sId = sS.sId and nS.nId ' . $nId
+        . ' and sS.uId = ' . $uId);
+
+    if($tmp == null || count($tmp) == 0 || $tmp[0]->countNum == 0)
+        return false;
+    return true;
 }
 
 function calcRank($quizId, $uId) {
@@ -252,6 +254,23 @@ function msgStatus($username, $password, $msgId) {
     }
 }
 
+function _custom_check_national_code($code) {
+
+    if(!preg_match('/^[0-9]{10}$/',$code))
+        return false;
+
+    for($i=0;$i<10;$i++)
+        if(preg_match('/^'.$i.'{10}$/',$code))
+            return false;
+    for($i=0,$sum=0;$i<9;$i++)
+        $sum+=((10-$i)*intval(substr($code, $i,1)));
+    $ret=$sum%11;
+    $parity=intval(substr($code, 9,1));
+    if(($ret<2 && $ret==$parity) || ($ret>=2 && $ret==11-$parity))
+        return true;
+    return false;
+}
+
 function getValueInfo($key) {
 
     $values = ["money1" => 1, "money2" => 2, "invitationTransaction" => 1, 'redundant1Transaction' => 2, 'initTransaction' => 8,
@@ -259,7 +278,8 @@ function getValueInfo($key) {
         'operator2Level' => 4, 'adminLevel' => 5, "superAdminLevel" => 6, 'controllerLevel' => 7, 'namayandeLevel' => 8,
         'sampadSch' => 1, 'gheyrSch' => 2, 'nemoneSch' => 3, 'shahedSch' => 4, 'sayerSch' => 5, 'HeyatSch' => 6, 'dolatiSch' => 7,
         'staticOffCode' => 1, 'dynamicOffCode' => 2, 'chargeTransaction' => 4, 'systemQuiz' => 1, 'motevaseteAval' => 0, 'motevaseteDovom' => 1, 'dabestan' => 2, 'quizRankTransaction' => 9,
-        'regularQuiz' => 2, 'questionQuiz' => 3, 'systemQuizTransaction' => 5, 'regularQuizTransaction' => 6, 'regularQuizGroupTransaction' => 7, 'questionBuyTransaction' => 10
+        'regularQuiz' => 2, 'questionQuiz' => 3, 'systemQuizTransaction' => 5, 'regularQuizTransaction' => 6, 'regularQuizGroupTransaction' => 7, 'questionBuyTransaction' => 10,
+        'konkurAdvise' => 1, 'olympiadAdvise' => 2, 'doore1Advice' => 3, 'doore2Advice' => 4, 'baliniAdvice' => 5
     ];
 
     return $values[$key];
@@ -631,7 +651,7 @@ function payment($amount, $callBackUrl, $useGift) {
 
     require_once("lib/nusoap.php");
 
-    $client = new soapclient('https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl');
+    $client = new nusoap_client('https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl');
     $namespace = 'http://interfaces.core.sw.bps.com/';
 
     $terminalId = 909350;
@@ -648,7 +668,7 @@ function payment($amount, $callBackUrl, $useGift) {
     $tmp = new OrderId();
     $orderId = rand(1, 1000000000);
 
-    while (OrderId::where('code', '=', $orderId)->count() > 0)
+    while (OrderId::whereCode($orderId)->count() > 0)
         $orderId = rand(1, 1000000000);
 
     $tmp->code = $orderId;
@@ -712,28 +732,5 @@ function payment($amount, $callBackUrl, $useGift) {
 
         return $res[1];
     }
-    return -1;
-}
-
-function getTotalRate($uId, $amount) {
-
-    $users = DB::select('select userId as uId, sum(amount) as sumAmount from transaction WHERE kindMoney = ' . getValueInfo('money1') . ' group by(uId) order by sumAmount DESC');
-
-    if($users == null || count($users) == 0)
-        return 0;
-
-    $k = 1;
-
-    foreach ($users as $user) {
-
-        if($user->sumAmount != $amount)
-            $k++;
-
-        if($user->uId == $uId) {
-            return $k;
-        }
-
-    }
-
-    return $k;
+    return $ResCode;
 }

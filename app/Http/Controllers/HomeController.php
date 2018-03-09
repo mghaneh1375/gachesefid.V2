@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\models\Question;
 use App\models\QuizRegistry;
+use App\models\Transaction;
 use App\models\User;
 use App\models\SlideBar;
 use App\models\RegularQuiz;
@@ -17,6 +18,7 @@ use App\models\SystemQuiz;
 use App\models\PointConfig;
 use App\models\Activation;
 use DOMDocument;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -27,6 +29,10 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 
 class HomeController extends Controller {
+
+	public function salam() {
+		require_once 'getUpdatesCLI.php';
+	}
 
 	public function aboutUs() {
 		return View('aboutUs');
@@ -62,12 +68,12 @@ class HomeController extends Controller {
 			$username = makeValidInput($_POST['username']);
 			$password = makeValidInput($_POST['password']);
 
-			if(User::where('username', '=', $username)->count() == 0) {
+			if(User::whereUsername($username)->count() == 0) {
 				echo "false1";
 				return;
 			}
 
-			if(User::where('username', '=', $username)->first()->status != 1) {
+			if(User::whereUsername($username)->first()->status != 1) {
 				echo "false3";
 				return;
 			}
@@ -86,10 +92,12 @@ class HomeController extends Controller {
 	public function doLogin() {
 
 		$username = makeValidInput(Input::get('username'));
+		$phone = makeValidInput(Input::get('phone'));
+		$email = makeValidInput(Input::get('email'));
 		$password = makeValidInput(Input::get('password'));
 
-		if(Auth::attempt(['username' => $username, 'password' => $password], true)) {
-
+		if(Auth::attempt(['username' => $username, 'password' => $password], true) ||
+			Auth::attempt(['phoneNum' => $phone, 'password' => $password], true)) {
 			if(Auth::user()->status != 1) {
 				$msg = "حساب کاربری شما هنوز فعال نشده است";
 				Auth::logout();
@@ -118,13 +126,13 @@ class HomeController extends Controller {
 			$username = makeValidInput($_POST["username"]);
 			$val = makeValidInput($_POST["val"]);
 			$mode = makeValidInput($_POST["mode"]); // 1 : email - 2 : phone
-			$user = User::where('username', '=', $username)->first();
+			$user = User::whereUsername($username)->first();
 			if ($user == null || empty($user)) {
 				echo "نام کاربری وارد شده معتبر نمی باشد";
 				return;
 			}
 			if ($mode == 1) {
-				if (RedundantInfo1::where('uId', '=', $user->id)->first()->email != $val) {
+				if (RedundantInfo1::whereUId($user->id)->first()->email != $val) {
 					echo "ایمیل وارد شده صحیح نمی باشد";
 					return;
 				}
@@ -222,24 +230,51 @@ class HomeController extends Controller {
 		if(Auth::user()->level == getValueInfo('studentLevel')) {
 
 			$uId = Auth::user()->id;
+			$today = getToday();
 
-			$totalQuizes = SystemQuiz::all()->count() + RegularQuiz::all()->count();
+			$tmp1 = DB::select('select count(*) as countNum from systemQuiz sQ WHERE endReg >= '. $today["date"] .
+					' and not exists(select * from quizRegistry qR where qR.uId = ' . $uId . ' and qR.qId = sQ.id and qR.quizMode = ' . getValueInfo('systemQuiz') . ')');
+
+			if($tmp1 == null || count($tmp1) == 0 || $tmp1[0]->countNum == 0)
+				$tmp1 = 0;
+			else
+				$tmp1 = $tmp1[0]->countNum;
+
+			$tmp2 = DB::select('select count(*) as countNum from regularQuiz rQ WHERE endReg >= '. $today["date"] .
+				' and not exists(select * from quizRegistry qR where qR.uId = ' . $uId . ' and qR.qId = rQ.id and qR.quizMode = ' . getValueInfo('regularQuiz') . ')');
+
+			if($tmp2 == null || count($tmp2) == 0 || $tmp2[0]->countNum == 0)
+				$tmp2 = 0;
+			else
+				$tmp2 = $tmp2[0]->countNum;
+
+			$totalQuizes = $tmp1 + $tmp2;
 
 			$regularCondition = ['uId' => $uId, 'quizMode' => getValueInfo('regularQuiz')];
 			$systemCondition = ['uId' => $uId, 'quizMode' => getValueInfo('systemQuiz')];
 
-			$rate = DB::select('select SUM(amount) as sumAmount from transaction WHERE userId = ' . $uId . ' and kindMoney = ' . getValueInfo('money1'));
-			if($rate != null && count($rate) > 0 && !empty($rate[0]->sumAmount))
-				$rate = $rate[0]->sumAmount;
-			else
-				$rate = 0;
-
 			$tmp = QuizRegistry::where($regularCondition)->count() + QuizRegistry::where($systemCondition)->count();
 
+			$amount = DB::select('select sum(q.level) * 5 as totalSum from roq, question q'.
+				' where uId = ' . $uId . ' and q.id = questionId and q.ans = result');
+
+			if($amount == null || count($amount) == 0 || $amount[0]->totalSum == 0) {
+				$rate = -1;
+				$amount = -1;
+			}
+
+			else {
+				$amount = $amount[0]->totalSum;
+				$rate = count(DB::select('select sum(q.level) * 5 as totalSum from users, roq, question q' .
+					' where users.id = uId and q.id = questionId and q.ans = result and users.level = ' . getValueInfo('studentLevel') .
+					' group by(uId) having totalSum > ' . $amount));
+			}
+
+
 			return view('profile', array('money' => Auth::user()->money,
-				'regularQuizNo' => $tmp,
-				'systemQuizNo' => $totalQuizes - $tmp,
-				'rate' => $rate, 'rank' => getTotalRate($uId, $rate),
+				'myQuizNo' => $tmp,
+				'nextQuizNo' => $totalQuizes,
+				'rate' => $amount, 'rank' => $rate,
 				'questionNo' => 0));
 
 //			UserCreatedQuiz->totalQuestions($uId)
@@ -253,20 +288,20 @@ class HomeController extends Controller {
 		$uId = Auth::user()->id;
 		$stateId = -1;
 
-		if(RedundantInfo1::where('uId', '=', $uId)->count() > 0) {
-			$stateId = City::find(RedundantInfo1::where('uId', '=', $uId)->first()->cityId)->stateId;
+		if(RedundantInfo1::whereUId($uId)->count() > 0) {
+			$stateId = City::whereId(RedundantInfo1::whereUId($uId)->first()->cityId)->stateId;
 		}
 
-		$namayande = SchoolStudent::where('sId', '=', $uId)->first();
-		if($namayande == null || count($namayande) == 0)
+		$namayande = SchoolStudent::whereSId($uId)->first();
+		if($namayande == null)
 			$namayande = "";
 		else {
-			$namayande = User::find($namayande->uId)->invitationCode;
+			$namayande = User::whereId($namayande->uId)->invitationCode;
 		}
 
-		return view('userInfo', array('user' => User::find($uId),
-			'redundant1' => RedundantInfo1::where('uId', '=', $uId)->first(),
-			'redundant2' => RedundantInfo2::where('uId', '=', $uId)->first(),
+		return view('userInfo', array('user' => User::whereId($uId),
+			'redundant1' => RedundantInfo1::whereUId($uId)->first(),
+			'redundant2' => RedundantInfo2::whereUId($uId)->first(),
 			'states' => State::all(), 'stateId' => $stateId, 'reminder' => $reminder,
 			'selectedPart' => 'necessary', 'namayande' => $namayande, 'phoneNum' => $phoneNum,
 			'grades' => Grade::orderBy('id', 'ASC')->get(), 'msg' => $msg, 'mode' => $mode));
@@ -277,20 +312,20 @@ class HomeController extends Controller {
 		$uId = Auth::user()->id;
 		$stateId = -1;
 
-		if(RedundantInfo1::where('uId', '=', $uId)->count() > 0) {
-			$stateId = City::find(RedundantInfo1::where('uId', '=', $uId)->first()->cityId)->stateId;
+		if(RedundantInfo1::whereUId($uId)->count() > 0) {
+			$stateId = City::whereId(RedundantInfo1::whereUId($uId)->first()->cityId)->stateId;
 		}
 
-		$namayande = SchoolStudent::where('sId', '=', $uId)->first();
-		if($namayande == null || count($namayande) == 0)
+		$namayande = SchoolStudent::whereSId($uId)->first();
+		if($namayande == null)
 			$namayande = "";
 		else {
-			$namayande = User::find($namayande->uId)->invitationCode;
+			$namayande = User::whereId($namayande->uId)->invitationCode;
 		}
 
-		return view('userInfo', array('user' => User::find($uId),
-			'redundant1' => RedundantInfo1::where('uId', '=', $uId)->first(),
-			'redundant2' => RedundantInfo2::where('uId', '=', $uId)->first(),
+		return view('userInfo', array('user' => User::whereId($uId),
+			'redundant1' => RedundantInfo1::whereUId($uId)->first(),
+			'redundant2' => RedundantInfo2::whereUId($uId)->first(),
 			'states' => State::all(), 'stateId' => $stateId, 'reminder' => '',
 			'selectedPart' => $selectedPart, 'namayande' => $namayande,
 			'grades' => Grade::all(), 'msg' => 'برای ورود به آزمون باید این قسمت را تکمیل نمایید', 'mode' => 'editRedundant1'));
@@ -304,8 +339,8 @@ class HomeController extends Controller {
 
 			$user = Auth::user();
 			$phoneNum = makeValidInput($_POST["phoneNum"]);
-			$activation = Activation::where('phoneNum', '=', $phoneNum)->first();
-			if($activation == null || count($activation) == 0 || $activation->code != $activationCode)
+			$activation = Activation::wherePhoneNum( $phoneNum)->first();
+			if($activation == null || $activation->code != $activationCode)
 				return $this->userInfo('pendingErr', 'editInfo', 300 - time() + $activation->sendTime, $phoneNum);
 
 			$user->phoneNum = $phoneNum;
@@ -324,8 +359,8 @@ class HomeController extends Controller {
 
 			$phoneNum = makeValidInput($_POST["phoneNum"]);
 
-			$activation = Activation::where('phoneNum', '=', $phoneNum)->first();
-			if($activation == null || count($activation) == 0)
+			$activation = Activation::wherePhoneNum( $phoneNum)->first();
+			if($activation == null)
 				return $this->userInfo('pendingErrTime', 'editInfo', 300, $phoneNum);
 
 			if(time() - $activation->startTime < 300)
@@ -346,7 +381,7 @@ class HomeController extends Controller {
 
 			$username = makeValidInput($_POST["username"]);
 
-			if($user->username != $username && User::where('username', '=', $username)->count() > 0) {
+			if($user->username != $username && User::whereUsername($username)->count() > 0) {
 				$msg = "نام کاربری وارد شده در سیستم موجود است";
 			}
 			else {
@@ -359,8 +394,8 @@ class HomeController extends Controller {
 
 				if(!empty($namayandeCode)) {
 					$namayande = User::where('invitationCode', '=', $namayandeCode)->first();
-					if($namayande != null && count($namayande) > 0) {
-						SchoolStudent::where('sId', '=', $user->id)->delete();
+					if($namayande != null) {
+						SchoolStudent::whereSId($user->id)->delete();
 						$tmp = new SchoolStudent();
 						$tmp->sId = $user->id;
 						$tmp->uId = $namayande->id;
@@ -384,9 +419,9 @@ class HomeController extends Controller {
 					}
 					else {
 
-						$activation = Activation::where('phoneNum', '=', $phoneNum)->first();
+						$activation = Activation::wherePhoneNum( $phoneNum)->first();
 
-						if ($activation == null || count($activation) == 0) {
+						if ($activation == null) {
 							$activation = new Activation();
 							$activation->phoneNum = $phoneNum;
 						} else {
@@ -421,20 +456,19 @@ class HomeController extends Controller {
 
 	public function editRedundantInfo1() {
 
-		if(isset($_POST['NID']) && isset($_POST['fatherName']) && isset($_POST['cityId']) &&
+		if(isset($_POST['fatherName']) && isset($_POST['cityId']) &&
 			isset($_POST['schoolName']) && isset($_POST["gradeId"]) && isset($_POST["email"])) {
 
 			$uId = Auth::user()->id;
-			$redundant1 = RedundantInfo1::where('uId', '=', $uId)->first();
+			$redundant1 = RedundantInfo1::whereUId($uId)->first();
 
-			if($redundant1 == null || count($redundant1) == 0) {
+			if($redundant1 == null) {
 				$redundant1 = new RedundantInfo1();
 				include_once 'MoneyController.php';
 				$redundant1->uId = $uId;
 				charge(PointConfig::first()->infoPass2Point, $uId, getValueInfo('redundant1Transaction'), 2);
 			}
-
-			$redundant1->NID = makeValidInput($_POST["NID"]);
+			
 			$redundant1->fatherName = makeValidInput($_POST["fatherName"]);
 			$redundant1->cityId = makeValidInput($_POST["cityId"]);
 			$redundant1->gradeId = makeValidInput($_POST["gradeId"]);
@@ -459,9 +493,9 @@ class HomeController extends Controller {
 			isset($_POST['motherPhone']) && isset($_POST["homePostCode"]) && isset($_POST["kindSchool"])) {
 
 			$uId = Auth::user()->id;
-			$redundant2 = RedundantInfo2::where('uId', '=', $uId)->first();
+			$redundant2 = RedundantInfo2::whereUId($uId)->first();
 
-			if($redundant2 == null || count($redundant2) == 0) {
+			if($redundant2 == null) {
 				$redundant2 = new RedundantInfo2();
 				include_once 'MoneyController.php';
 				$redundant2->uId = $uId;

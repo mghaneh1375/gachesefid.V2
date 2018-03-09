@@ -19,7 +19,7 @@ class GetExamAnswerSheetTest extends TestCase {
     public function testNotExist() {
 
         $rand = rand(1, 100000);
-        while (RegularQuiz::find($rand) != null)
+        while (RegularQuiz::whereId($rand) != null)
             $rand = rand(1, 100000);
 
         $response = $this->post(route('get_exam_answer_sheet_template', ['exam_id' => $rand]));

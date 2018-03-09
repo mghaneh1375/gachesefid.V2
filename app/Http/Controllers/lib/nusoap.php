@@ -54,6 +54,7 @@ http://www.nusphere.com
 /* load classes
 
 // necessary classes
+
 require_once('class.soapclient.php');
 require_once('class.soap_val.php');
 require_once('class.soap_parser.php');
@@ -71,6 +72,7 @@ require_once('class.soap_server.php');*/
 
 // class variable emulation
 // cf. http://www.webkreator.com/php/techniques/php-static-class-variables.html
+
 $GLOBALS['_transient']['static']['nusoap_base']['globalDebugLevel'] = 9;
 
 /**

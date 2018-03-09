@@ -23,6 +23,14 @@
                             <li class="menuItem profile"><a href="{{route('profile')}}"><span>صفحه کاربری</span></a></li>
                             <li class="menuItem quizRanking"><a href="{{route('ranking1')}}"><span>رتبه بندی آزمون ها</span></a></li>
                             <li class="menuItem schools"><a href="{{route('schoolsList')}}"><span>لیست مدارس</span></a></li>
+
+                            <li data-val="ranking" class="menuItem ranking"><a> <span>رتبه بندی</span></a>
+                                <ul class="subItem hidden ranking">
+                                    <li><a href="{{route('studentsRanking')}}">دانش آموزان</a></li>
+                                    <li><a href="{{route('advisersList')}}">مشاوران</a></li>
+                                </ul>
+                            </li>
+
                             {{--<li class="menuItem"><a href="{{route('schoolsList')}}"><span>لیست مدارس</span></a></li>--}}
                         </ul>
                     </div>
