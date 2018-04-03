@@ -258,7 +258,7 @@ class HomeController extends Controller {
 
 			$tmp = QuizRegistry::where($regularCondition)->count() + QuizRegistry::where($systemCondition)->count();
 
-			$amount = DB::select('select sum(q.level) * 5 as totalSum from roq, question q'.
+			$amount = DB::select('select sum(q.level) * 5 as totalSum from ROQ, question q'.
 				' where uId = ' . $uId . ' and q.id = questionId and q.ans = result');
 
 			if($amount == null || count($amount) == 0 || $amount[0]->totalSum == 0) {
@@ -268,7 +268,7 @@ class HomeController extends Controller {
 
 			else {
 				$amount = $amount[0]->totalSum;
-				$rate = count(DB::select('select sum(q.level) * 5 as totalSum from users, roq, question q' .
+				$rate = count(DB::select('select sum(q.level) * 5 as totalSum from users, ROQ, question q' .
 					' where users.id = uId and q.id = questionId and q.ans = result and users.level = ' . getValueInfo('studentLevel') .
 					' group by(uId) having totalSum > ' . $amount));
 			}

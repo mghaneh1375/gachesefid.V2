@@ -161,14 +161,14 @@ class ReportController extends Controller {
 
     public function studentsRanking($page = 1) {
 
-        $users = DB::select('select users.id, firstName, lastName, sum(q.level) * 5 as totalSum from users, roq, question q'.
+        $users = DB::select('select users.id, firstName, lastName, sum(q.level) * 5 as totalSum from users, ROQ, question q'.
             ' where users.id = uId and q.id = questionId and q.ans = result and users.level = ' . getValueInfo('studentLevel') .
             ' group by(uId) order by totalSum DESC limit ' . (($page - 1) * 10) . ', 10');
 
         $k = 0;
 
         if(count($users) > 0) {
-            $k = count(DB::select('select sum(q.level) * 5 as totalSum from users, roq, question q'.
+            $k = count(DB::select('select sum(q.level) * 5 as totalSum from users, ROQ, question q'.
                 ' where users.id = uId and q.id = questionId and q.ans = result and users.level = ' . getValueInfo('studentLevel') .
                 ' group by(uId) having totalSum > ' . $users[0]->totalSum));
         }
@@ -188,14 +188,14 @@ class ReportController extends Controller {
         if(Auth::check()) {
             $uId = Auth::user()->id;
 
-            $amount = DB::select('select sum(q.level) * 5 as totalSum from roq, question q'.
+            $amount = DB::select('select sum(q.level) * 5 as totalSum from ROQ, question q'.
                 ' where uId = ' . $uId . ' and q.id = questionId and q.ans = result');
 
             if($amount == null || count($amount) == 0 || $amount[0]->totalSum == 0)
                 $myRank = -1;
 
             else
-                $myRank = count(DB::select('select sum(q.level) * 5 as totalSum from users, roq, question q'.
+                $myRank = count(DB::select('select sum(q.level) * 5 as totalSum from users, ROQ, question q'.
                     ' where users.id = uId and q.id = questionId and q.ans = result and users.level = ' . getValueInfo('studentLevel') .
                     ' group by(uId) having totalSum > ' . $amount[0]->totalSum));
 
