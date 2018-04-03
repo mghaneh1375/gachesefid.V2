@@ -153,9 +153,7 @@
                                     <input type="text" name="firstName" value="{{$user->firstName}}" maxlength="40" required autofocus>
                                 </div>
                                 <div class="col-xs-5">
-                        <span>
-                             نام <span class="required">*</span>
-                        </span>
+                                    <span>نام<span class="required">*</span></span>
                                 </div>
                             </div>
 
@@ -164,8 +162,7 @@
                                     <input type="text" name="lastName" value="{{$user->lastName}}" maxlength="40" required>
                                 </div>
                                 <div class="col-xs-5">
-                        <span>
-                         نام خانوادگی <span class="required">*</span></span>
+                                    <span>نام خانوادگی<span class="required">*</span></span>
                                 </div>
                             </div>
 
@@ -174,8 +171,7 @@
                                     <input type="text" name="username" value="{{$user->username}}" maxlength="40" required>
                                 </div>
                                 <div class="col-xs-5">
-                        <span>
-                                         نام کاربری <span class="required">*</span></span>
+                                    <span>نام کاربری<span class="required">*</span></span>
                                 </div>
                             </div>
 
@@ -184,8 +180,7 @@
                                     <input type="text" onkeypress="validate(event)" name="phoneNum" value="{{$user->phoneNum}}" maxlength="40" required>
                                 </div>
                                 <div class="col-xs-5">
-                        <span>
-                                        شماره تلفن <span class="required">*</span></span>
+                                    <span>شماره تلفن<span class="required">*</span></span>
                                 </div>
                             </div>
 
@@ -194,9 +189,9 @@
                                     <input type="text" readonly value="{{$user->invitationCode}}" required>
                                 </div>
                                 <div class="col-xs-5">
-                            <span  class="help" data-toggle="tooltip" data-placement="top" title="کد معرفیِ دیگران">
-                                <img src="{{URL::asset('images/help.png')}}" alt="FirstName">
-                            </span>
+                                    <span  class="help" data-toggle="tooltip" data-placement="top" title="کد معرفیِ دیگران">
+                                        <img src="{{URL::asset('images/help.png')}}" alt="FirstName">
+                                    </span>
                                     <span>کد معرفیِ دیگران</span>
                                 </div>
                             </div>
@@ -500,9 +495,7 @@
                                         <input type="text" name="firstName" value="{{$user->firstName}}" maxlength="40" required autofocus>
                                     </div>
                                     <div class="col-xs-5">
-                        <span>
-                             نام <span class="required">*</span>
-                        </span>
+                                        <span>نام<span class="required">*</span></span>
                                     </div>
                                 </div>
 
@@ -511,8 +504,7 @@
                                         <input type="text" name="lastName" value="{{$user->lastName}}" maxlength="40" required>
                                     </div>
                                     <div class="col-xs-5">
-                        <span>
-                         نام خانوادگی <span class="required">*</span></span>
+                                        <span>نام خانوادگی<span class="required">*</span></span>
                                     </div>
                                 </div>
 
@@ -521,8 +513,7 @@
                                         <input type="text" name="username" value="{{$user->username}}" maxlength="40" required>
                                     </div>
                                     <div class="col-xs-5">
-                        <span>
-                                         نام کاربری <span class="required">*</span></span>
+                                        <span>نام کاربری<span class="required">*</span></span>
                                     </div>
                                 </div>
 
@@ -531,8 +522,7 @@
                                         <input type="text" onkeypress="validate(event)" name="phoneNum" value="{{$user->phoneNum}}" maxlength="40" required>
                                     </div>
                                     <div class="col-xs-5">
-                        <span>
-                                        شماره تلفن <span class="required">*</span></span>
+                                        <span>شماره تلفن<span class="required">*</span></span>
                                     </div>
                                 </div>
 
@@ -541,9 +531,9 @@
                                         <input type="text" readonly value="{{$user->invitationCode}}" required>
                                     </div>
                                     <div class="col-xs-5">
-                            <span  class="help" data-toggle="tooltip" data-placement="top" title="کد معرفیِ دیگران">
-                                <img src="{{URL::asset('images/help.png')}}" alt="FirstName">
-                            </span>
+                                        <span  class="help" data-toggle="tooltip" data-placement="top" title="کد مدرسه">
+                                            <img src="{{URL::asset('images/help.png')}}" alt="FirstName">
+                                        </span>
                                         <span>کد مدرسه</span>
                                     </div>
                                 </div>

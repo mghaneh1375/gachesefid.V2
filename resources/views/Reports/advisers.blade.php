@@ -30,17 +30,22 @@
             @if(Auth::check())
                 @foreach($advisers as $itr)
                     <tr>
-                        <td><center>{{$itr->firstName . ' ' . $itr->lastName}}</center></td>
+                        <td onclick="document.location.href = '{{route('adviserInfo', ['adviserId' => $itr->id])}}'" style="cursor: pointer"><center>{{$itr->firstName . ' ' . $itr->lastName}}</center></td>
                         <td><center style="direction: ltr">{{$itr->rate}}</center></td>
                         <td><center>{{$itr->studentsNo}}</center></td>
                         <td><center>{{$itr->invitationCode}}</center></td>
-                        @if($myAdviser != null && $itr->id == $myAdviser->adviserId)
-                            @if($myAdviser->status == 1)
-                                <td><center onclick="document.location.href = '{{route('myAdviser')}}';" style="cursor: pointer; color: #00AF87">مشاور فعلی من</center></td>
-                            @else
-                                <td><center onclick="document.location.href = '{{route('myAdviser')}}';" style="cursor: pointer; color: #00AF87">مشاور آینده من</center></td>
+                        <?php $allow = true; ?>
+                        @foreach($myAdvisers as $myAdviser)
+                            @if($itr->id == $myAdviser->adviserId)
+                                <?php $allow = false; ?>
+                                @if($myAdviser->status == 1)
+                                    <td><center onclick="document.location.href = '{{route('myAdviser')}}';" style="cursor: pointer; color: #00AF87">مشاور فعلی من</center></td>
+                                @else
+                                    <td><center onclick="document.location.href = '{{route('myAdviser')}}';" style="cursor: pointer; color: #00AF87">مشاور آینده من</center></td>
+                                @endif
                             @endif
-                        @else
+                        @endforeach
+                        @if($allow)
                             <td><center><button onclick="setAsMyAdviser('{{$itr->id}}')" class="btn btn-primary">انتخاب به عنوان مشاور من</button></center></td>
                         @endif
                     </tr>
@@ -48,7 +53,7 @@
             @else
                 @foreach($advisers as $itr)
                     <tr>
-                        <td><center>{{$itr->firstName . ' ' . $itr->lastName}}</center></td>
+                        <td onclick="document.location.href = '{{route('adviserInfo', ['adviserId' => $itr->id])}}'" style="cursor: pointer"><center>{{$itr->firstName . ' ' . $itr->lastName}}</center></td>
                         <td><center style="direction: ltr">{{$itr->rate}}</center></td>
                         <td><center>{{$itr->studentsNo}}</center></td>
                         <td><center>{{$itr->invitationCode}}</center></td>

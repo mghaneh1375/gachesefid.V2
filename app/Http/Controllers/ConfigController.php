@@ -46,7 +46,7 @@ class ConfigController extends Controller {
 
         if(isset($_POST["advisorPercent"]) && isset($_POST["makeQuestionMin"]) &&
             isset($_POST["rankInQuiz"]) && isset($_POST["moneyMin"]) && isset($_POST["questionMin"]) &&
-            isset($_POST["likeMin"])) {
+            isset($_POST["likeMin"]) && isset($_POST["percentOfPackage"])) {
 
             $config = ConfigModel::first();
             $config->advisorPercent = makeValidInput($_POST["advisorPercent"]);
@@ -55,6 +55,7 @@ class ConfigController extends Controller {
             $config->moneyMin = makeValidInput($_POST["moneyMin"]);
             $config->questionMin = makeValidInput($_POST["questionMin"]);
             $config->likeMin = makeValidInput($_POST["likeMin"]);
+            $config->percentOfPackage = makeValidInput($_POST["percentOfPackage"]);
 
             $config->save();
 

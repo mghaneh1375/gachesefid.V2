@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\models\AdviserFields;
+use App\models\AdviserInfo;
 use App\models\Question;
 use App\models\QuizRegistry;
+use App\models\StudentAdviser;
 use App\models\Transaction;
 use App\models\User;
 use App\models\SlideBar;
@@ -92,12 +95,12 @@ class HomeController extends Controller {
 	public function doLogin() {
 
 		$username = makeValidInput(Input::get('username'));
-		$phone = makeValidInput(Input::get('phone'));
-		$email = makeValidInput(Input::get('email'));
 		$password = makeValidInput(Input::get('password'));
 
 		if(Auth::attempt(['username' => $username, 'password' => $password], true) ||
-			Auth::attempt(['phoneNum' => $phone, 'password' => $password], true)) {
+			Auth::attempt(['phoneNum' => $username, 'password' => $password], true) ||
+			Auth::attempt(['NID' => $username, 'password' => $password], true)
+		) {
 			if(Auth::user()->status != 1) {
 				$msg = "حساب کاربری شما هنوز فعال نشده است";
 				Auth::logout();
@@ -283,21 +286,157 @@ class HomeController extends Controller {
 		return view('profile');
 	}
 
+	public function doEditAdviserInfo() {
+
+		if (isset($_POST["editInfo"])) {
+
+			$username = makeValidInput($_POST["username"]);
+			$firstName = makeValidInput($_POST["firstName"]);
+			$lastName = makeValidInput($_POST["lastName"]);
+			$phoneNum = makeValidInput($_POST["phoneNum"]);
+			$honors = makeValidInput($_POST["honors"]);
+			$essay = makeValidInput($_POST["essay"]);
+			$schools = makeValidInput($_POST["schools"]);
+			$workYears = makeValidInput($_POST["workYears"]);
+			$lastCertificate = makeValidInput($_POST["lastCertificate"]);
+			$grades = $_POST["grades"];
+			$field = makeValidInput($_POST["field"]);
+			$cityId = makeValidInput($_POST["cityId"]);
+			$birthDay = makeValidInput($_POST["birthDay"]);
+
+			if($username != Auth::user()->username) {
+				if (User::whereUsername($username)->count() > 0 ||
+					User::wherePhoneNum($username)->count() > 0 ||
+					User::whereNID($username)->count() > 0
+				) {
+					return Redirect::route('editAdviserInfo', ['msg' => "err"]);
+				}
+			}
+
+			else {
+
+				$user = Auth::user();
+
+				$user->username = $username;
+				$user->firstName = $firstName;
+				$user->lastName = $lastName;
+				$user->phoneNum = $phoneNum;
+
+				$user->save();
+
+				$adviserInfo = AdviserInfo::whereUID($user->id)->first();
+				$adviserInfo->cityId = $cityId;
+				$adviserInfo->field = $field;
+				$adviserInfo->lastCertificate = $lastCertificate;
+				$adviserInfo->honors = $honors;
+				$adviserInfo->essay = $essay;
+				$adviserInfo->schools = $schools;
+				$adviserInfo->workYears = $workYears;
+				$adviserInfo->birthDay = $birthDay;
+
+				try {
+					$adviserInfo->save();
+					AdviserFields::whereUID($user->id)->delete();
+
+					foreach ($grades as $grade) {
+						$adviserFields = new AdviserFields();
+						$adviserFields->uId = $user->id;
+						$adviserFields->gradeId = makeValidInput($grade);
+						$adviserFields->save();
+					}
+				}
+				catch (Exception $x) {}
+			}
+
+		}
+
+		return Redirect::route('editAdviserInfo');
+	}
+
+	public function adviserQueue() {
+		$uId = Auth::user()->id;
+		$students = StudentAdviser::whereAdviserId($uId)->whereStatus(false)->get();
+		foreach ($students as $student) {
+			$tmp = RedundantInfo1::whereUId($student->studentId)->first();
+
+			if($tmp == null) {
+				$student->city = 'نامشخص';
+				$student->grade = 'نامشخص';
+			}
+			else {
+				$student->city = City::whereId($tmp->cityId)->name;
+				$student->grade = Grade::whereId($tmp->gradeId)->name;
+			}
+
+			$student->user = User::whereId($student->studentId);
+		}
+		return view('adviserQueue', ['students' => $students]);
+	}
+
+	public function rejectStudent() {
+
+		if(isset($_POST["uId"])) {
+
+			$userId = makeValidInput($_POST["uId"]);
+			$uId = Auth::user()->id;
+
+			$user = StudentAdviser::whereAdviserId($uId)->whereStudentId($userId)->first();
+			if($user != null) {
+				$user->delete();
+				echo "ok";
+			}
+		}
+	}
+
+	public function acceptStudent() {
+
+		if(isset($_POST["uId"])) {
+
+			$userId = makeValidInput($_POST["uId"]);
+			$uId = Auth::user()->id;
+
+			$user = StudentAdviser::whereAdviserId($uId)->whereStudentId($userId)->first();
+			if($user != null) {
+				$user->status = true;
+				$user->save();
+				echo "ok";
+			}
+		}
+
+	}
+
+	public function editAdviserInfo($msg = "") {
+
+		$user = Auth::user();
+		$adviserFields = AdviserFields::whereUID($user->id)->select('gradeId')->get();
+
+		$adviserInfo = AdviserInfo::whereUID($user->id)->first();
+
+		if($adviserInfo == null)
+			return Redirect::route('home');
+
+		$city = City::whereId($adviserInfo->cityId);
+
+		return view('editAdviserInfo', ['adviserFields' => $adviserFields, 'adviserInfo' => $adviserInfo, 'user' => $user,
+			'city' => $city, 'msg' => $msg]);
+	}
+
 	public function userInfo($msg = "", $mode = "", $reminder = "", $phoneNum = "") {
 
+		if(Auth::user()->level == getValueInfo('adviserLevel'))
+			return $this->editAdviserInfo();
+		
 		$uId = Auth::user()->id;
 		$stateId = -1;
 
-		if(RedundantInfo1::whereUId($uId)->count() > 0) {
+		if(RedundantInfo1::whereUId($uId)->count() > 0)
 			$stateId = City::whereId(RedundantInfo1::whereUId($uId)->first()->cityId)->stateId;
-		}
 
 		$namayande = SchoolStudent::whereSId($uId)->first();
 		if($namayande == null)
 			$namayande = "";
-		else {
+		else
 			$namayande = User::whereId($namayande->uId)->invitationCode;
-		}
 
 		return view('userInfo', array('user' => User::whereId($uId),
 			'redundant1' => RedundantInfo1::whereUId($uId)->first(),
@@ -393,7 +532,7 @@ class HomeController extends Controller {
 					$namayandeCode = makeValidInput($_POST["namayandeCode"]);
 
 				if(!empty($namayandeCode)) {
-					$namayande = User::where('invitationCode', '=', $namayandeCode)->first();
+					$namayande = User::whereInvitationCode($namayandeCode)->first();
 					if($namayande != null) {
 						SchoolStudent::whereSId($user->id)->delete();
 						$tmp = new SchoolStudent();
@@ -414,7 +553,7 @@ class HomeController extends Controller {
 //					$user->save();
 //					return Redirect::to('profile');
 
-					if(User::where('phoneNum', '=', $phoneNum)->count() > 0) {
+					if(User::wherePhoneNum($phoneNum)->count() > 0) {
 						$msg = "شماره همراه وارد شده در سیستم موجود است";
 					}
 					else {

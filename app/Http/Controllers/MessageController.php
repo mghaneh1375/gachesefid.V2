@@ -22,8 +22,8 @@ class MessageController extends Controller {
         $user = Auth::user();
 
         return view('message', array('user' => $user, "err" => $err, "currMsg" => $currMsg, 'dest' => $dest,
-            'subject' => $subject, 'inMsgCount' => Message::whereReceiverId($user->id)->whereStatus(true)->count(),
-            'outMsgCount' => Message::whereSenderId($user->id)->whereStatus(true)->count()));
+            'subject' => $subject, 'inMsgCount' => Message::whereReceiverId($user->id)->count(),
+            'outMsgCount' => Message::whereSenderId($user->id)->count()));
 
     }
 

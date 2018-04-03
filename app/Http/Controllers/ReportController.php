@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\models\AdviserFields;
+use App\models\AdviserInfo;
 use App\models\NamayandeSchool;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -88,13 +90,73 @@ class ReportController extends Controller {
                 $adviser->rate = 'بدون امتیاز';
         }
 
-        $myAdviser = null;
+        $myAdvisers = [];
 
         if(Auth::check())
-            $myAdviser = StudentAdviser::whereStudentId(Auth::user()->id)->first();
+            $myAdvisers = StudentAdviser::whereStudentId(Auth::user()->id)->get();
 
-        return view('Reports.advisers', array('advisers' => $advisers, 'myAdviser' => $myAdviser));
+        return view('Reports.advisers', array('advisers' => $advisers, 'myAdvisers' => $myAdvisers));
 
+    }
+
+    public function adviserInfo($adviserId) {
+
+        $adviser = User::whereId($adviserId);
+        
+        if($adviser == null || $adviser->level != getValueInfo('adviserLevel')) {
+            return Redirect::route('home');
+        }
+        
+        $adviserFields = AdviserFields::whereUID($adviserId)->get();
+
+        foreach ($adviserFields as $adviserField) {
+            $adviserField->gradeId = Grade::whereId($adviserField->gradeId)->name;
+        }
+
+        $adviserInfo = AdviserInfo::whereUID($adviserId)->first();
+
+        if($adviserInfo == null)
+            return Redirect::route('home');
+
+        $adviserInfo->cityId = City::whereId($adviserInfo->cityId)->name;
+
+        switch ($adviserInfo->field) {
+            case getValueInfo('konkurAdvise'):
+                $adviserInfo->field = "مشاور کنکور";
+                break;
+            case getValueInfo('olympiadAdvise'):
+                $adviserInfo->field = "مشاور المپیاد";
+                break;
+            case getValueInfo('doore1Advice'):
+                $adviserInfo->field = "مشاور متوسطه اول";
+                break;
+            case getValueInfo('doore2Advice'):
+                $adviserInfo->field = "مشاور متوسطه دوم";
+                break;
+            case getValueInfo('baliniAdvice'):
+                $adviserInfo->field = "مشاور بالینی";
+                break;
+        }
+
+        switch ($adviserInfo->lastCertificate) {
+            case getValueInfo('diplom'):
+                $adviserInfo->lastCertificate = "دیپلم";
+                break;
+            case getValueInfo('foghDiplom'):
+                $adviserInfo->lastCertificate = "فوق دیپلم";
+                break;
+            case getValueInfo('lisans'):
+                $adviserInfo->lastCertificate = "کارشناسی";
+                break;
+            case getValueInfo('foghLisans'):
+                $adviserInfo->lastCertificate = "کارشناسی ارشد";
+                break;
+            case getValueInfo('phd'):
+                $adviserInfo->lastCertificate = "دکترا";
+                break;
+        }
+
+        return view('adviserInfo', ['adviserFields' => $adviserFields, 'adviserInfo' => $adviserInfo, 'adviser' => $adviser]);
     }
 
     public function studentsRanking($page = 1) {

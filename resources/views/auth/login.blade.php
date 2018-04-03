@@ -20,23 +20,7 @@
                         <input type="text" name="username" maxlength="40" required>
                     </div>
                     <div class="col-xs-5">
-                        <span>نام کاربری</span>
-                    </div>
-                </div>
-                <div class="col-xs-12">
-                    <div class="col-xs-7">
-                        <input type="text" name="phone" maxlength="40" required>
-                    </div>
-                    <div class="col-xs-5">
-                        <span>شماره موبایل</span>
-                    </div>
-                </div>
-                <div class="col-xs-12">
-                    <div class="col-xs-7">
-                        <input type="text" name="email" maxlength="40" required>
-                    </div>
-                    <div class="col-xs-5">
-                        <span>ایمیل</span>
+                        <span>نام کاربری، شماره موبایل، ایمیل</span>
                     </div>
                 </div>
                 <div class="col-xs-12">

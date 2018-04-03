@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\models\AdviserFields;
+use App\models\AdviserInfo;
 use App\models\Grade;
 use App\models\NamayandeSchool;
 use App\models\PointConfig;
@@ -66,7 +68,7 @@ class RegistrationController extends Controller {
             if($activation == null)
                 return $this->getActivation('شماره وارد شده در سیستم وجود ندارد');
 
-            $user = User::where('phoneNum', '=', $phoneNum)->first();
+            $user = User::wherePhoneNum($phoneNum)->first();
             if($user == null)
                 return $this->getActivation('شماره وارد شده در سیستم وجود ندارد');
 
@@ -83,7 +85,9 @@ class RegistrationController extends Controller {
 
     public function doRegistration() {
 
-        $msg = $NID = $username = $password = $sex = $level = $firstName = $lastName = $phoneNum = $invitationCode = "";
+        $msg = $NID = $username = $password = $sex = $level =
+        $firstName = $lastName = $phoneNum = $invitationCode =
+        $honors = $essay = $schools = $workYears = $birthDay = "";
 
         if (isset($_POST["doRegistration"])) {
 
@@ -97,6 +101,15 @@ class RegistrationController extends Controller {
             $level = makeValidInput($_POST["level"]);
             $NID = makeValidInput($_POST["NID"]);
             $sex = makeValidInput($_POST["sex"]);
+            $honors = makeValidInput($_POST["honors"]);
+            $essay = makeValidInput($_POST["essay"]);
+            $schools = makeValidInput($_POST["schools"]);
+            $workYears = makeValidInput($_POST["workYears"]);
+            $lastCertificate = makeValidInput($_POST["lastCertificate"]);
+            $grades = $_POST["grades"];
+            $field = makeValidInput($_POST["field"]);
+            $cityId = makeValidInput($_POST["cityId"]);
+            $birthDay = makeValidInput($_POST["birthDay"]);
 
             if($sex == "none") {
                 $msg = "لطفا جنسیت خود را وارد نمایید";
@@ -106,7 +119,9 @@ class RegistrationController extends Controller {
                 $msg = "لطفا عنوان ثبت نام خود را وارد نمایید";
             }
 
-            else if(User::whereUsername($username)->count() > 0) {
+            else if(User::whereUsername($username)->count() > 0 ||
+                User::wherePhoneNum($username)->count() > 0 ||
+                User::whereNID($username)->count() > 0) {
                 $msg = "نام کاربری وارد شده در سامانه موجود است";
             }
 
@@ -161,6 +176,35 @@ class RegistrationController extends Controller {
                         $user->introducer = $invitationCode;
 
                     $user->save();
+
+                    if($level != 1) {
+
+                        $adviserInfo = new AdviserInfo();
+                        $adviserInfo->uId = $user->id;
+                        $adviserInfo->cityId = $cityId;
+                        $adviserInfo->field = $field;
+                        $adviserInfo->lastCertificate = $lastCertificate;
+                        $adviserInfo->honors = $honors;
+                        $adviserInfo->essay = $essay;
+                        $adviserInfo->schools = $schools;
+                        $adviserInfo->workYears = $workYears;
+                        $adviserInfo->birthDay = $birthDay;
+
+                        try {
+                            $adviserInfo->save();
+
+                            foreach ($grades as $grade) {
+                                $adviserFields = new AdviserFields();
+                                $adviserFields->uId = $user->id;
+                                $adviserFields->gradeId = makeValidInput($grade);
+                                $adviserFields->save();
+                            }
+                        }
+                        catch (Exception $x) {
+
+                        }
+
+                    }
 
                     $activation = new Activation();
                     $activationCode = generateActivationCode();
@@ -244,7 +288,8 @@ class RegistrationController extends Controller {
         }
 
         return view('registration', array("mode" => "pass1", "msg" => $msg, "username" => $username, 'NID' => $NID,
-            "phoneNum" => $phoneNum, "sex" => $sex, "firstName" => $firstName, "lastName" => $lastName,
+            "phoneNum" => $phoneNum, "sex" => $sex, "firstName" => $firstName, "lastName" => $lastName, 'honors' => $honors,
+            'essay' => $essay, 'schools' => $schools, 'workYears' => $workYears,
             'invitationCode' => $invitationCode, 'level' => $level));
 
     }

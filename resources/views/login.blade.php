@@ -10,6 +10,7 @@
 @stop
 
 @section('main')
+
     <form method="post" action="{{route('doLogin')}}">
         {{ csrf_field() }}
         <center class="myRegister">
@@ -19,7 +20,7 @@
                         <input type="text" name="username" maxlength="40" required>
                     </div>
                     <div class="col-xs-5">
-                        <span>نام کاربری</span>
+                        <span>نام کاربری، شماره موبایل، ایمیل</span>
                     </div>
                 </div>
                 <div class="col-xs-12">
@@ -47,8 +48,8 @@
             <a href="{{route('resetPas')}}">رمز عبور را فراموش کردم!</a>
 
             <center style="margin-top: 10px">
-                {{--<p>درصورت بروز هر مشکلی با پشتیبانی تماس بگیرید.(09214915905)</p>--}}
                 <p class="errorText">نام کاربری و رمز ورود برای تمام دانش‌آموزانی که در آزمون به صورت حضوری شرکت کرده‌اند، به مسوول حوزه‌ی ایشان تحویل داده شده است. لطفاً و حتماً این اطلاعات را فقط از ایشان دریافت کنید.</p>
+                <p>درصورت بروز هر مشکلی با پشتیبانی تماس بگیرید.(09214915905)</p>
             </center>
         </center>
     </div>

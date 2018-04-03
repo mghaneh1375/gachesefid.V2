@@ -58,6 +58,14 @@ class ContentController extends Controller {
 
     }
 
+    public function getGradesOfField() {
+        
+        if(isset($_POST["field"])) {
+            echo json_encode(Grade::whereField(makeValidInput($_POST["field"]))->get());
+        }
+        
+    }
+
     public function getGrades() {
 
         echo json_encode(Grade::all());

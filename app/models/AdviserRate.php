@@ -9,11 +9,13 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property integer $id
  * @property integer $adviserId
+ * @property integer $questionId
  * @property integer $uId
  * @property integer $rate
  * @mixin \Eloquent
  * @method static \Illuminate\Database\Query\Builder|\App\models\AdviserRate whereUId($value)
  * @method static \Illuminate\Database\Query\Builder|\App\models\AdviserRate whereAdviserId($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\models\AdviserRate whereQuestionId($value)
  */
 
 class AdviserRate extends Model {

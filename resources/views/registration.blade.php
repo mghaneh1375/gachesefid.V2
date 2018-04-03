@@ -57,6 +57,7 @@
                 $("#reminderTimeDiv").css("visibility", "hidden");
                 $("#resendDiv").append(newElement);
             }
+
         </script>
     @endif
 
@@ -108,8 +109,12 @@
                             <input type="text" name="lastName" value="{{(isset($lastName) ? $lastName : '')}}" maxlength="40" required>
                         </div>
                         <div class="col-xs-5">
-                        <span><span  class="help" data-toggle="tooltip" data-placement="top" title="نام خانوادگی خود را وارد کنید."><img
-                                        src="{{URL::asset('images/help.png')}}" alt="LastName"></span> نام خانوادگی <span class="required">*</span></span>
+                            <span>
+                                <span class="help" data-toggle="tooltip" data-placement="top" title="نام خانوادگی خود را وارد کنید.">
+                                    <img src="{{URL::asset('images/help.png')}}" alt="LastName">
+                                </span> نام خانوادگی
+                                <span class="required">*</span>
+                            </span>
                         </div>
                     </div>
 
@@ -118,8 +123,12 @@
                             <input type="text" name="username" value="{{(isset($username) ? $username : '')}}" maxlength="40" required>
                         </div>
                         <div class="col-xs-5">
-                        <span><span  class="help" data-toggle="tooltip" data-placement="top" title="به دل‌خواه یک نام کاربری انتخاب کنید. پیشنهاد می‌کنیم این نام با حروف انگلیسی و اعداد باشد."><img
-                                        src="{{URL::asset('images/help.png')}}" alt="UserName"></span> نام کاربری <span class="required">*</span></span>
+                            <span>
+                                <span class="help" data-toggle="tooltip" data-placement="top" title="به دل‌خواه یک نام کاربری انتخاب کنید. پیشنهاد می‌کنیم این نام با حروف انگلیسی و اعداد باشد.">
+                                    <img src="{{URL::asset('images/help.png')}}" alt="UserName">
+                                </span> نام کاربری
+                                <span class="required">*</span>
+                            </span>
                         </div>
                     </div>
 
@@ -128,8 +137,12 @@
                             <input type="password" name="password" value="" maxlength="40" required>
                         </div>
                         <div class="col-xs-5">
-                        <span><span  class="help" data-toggle="tooltip" data-placement="top" title="رمز عبور خود را برای ورود به سامانه انتخاب کنید. "><img
-                                        src="{{URL::asset('images/help.png')}}" alt="PassWord"></span> رمز عبور <span class="required">*</span></span>
+                            <span>
+                                <span class="help" data-toggle="tooltip" data-placement="top" title="رمز عبور خود را برای ورود به سامانه انتخاب کنید. ">
+                                    <img src="{{URL::asset('images/help.png')}}" alt="PassWord">
+                                </span> رمز عبور
+                                <span class="required">*</span>
+                            </span>
                         </div>
                     </div>
 
@@ -138,8 +151,12 @@
                             <input type="text" placeholder="09123456789" onkeypress="validate(event)" name="phoneNum" value="{{(isset($phoneNum) ? $phoneNum : '')}}" maxlength="40" required>
                         </div>
                         <div class="col-xs-5">
-                        <span><span  class="help" data-toggle="tooltip" data-placement="top" title="شماره موبایل شما برای دریافت کد فعالسازی و ارتباط با سامانه نیاز است."><img
-                                        src="{{URL::asset('images/help.png')}}" alt="PhoneNumber"></span> شماره موبایل <span class="required">*</span></span>
+                            <span>
+                                <span class="help" data-toggle="tooltip" data-placement="top" title="شماره موبایل شما برای دریافت کد فعالسازی و ارتباط با سامانه نیاز است.">
+                                    <img src="{{URL::asset('images/help.png')}}" alt="PhoneNumber">
+                                </span> شماره موبایل
+                                <span class="required">*</span>
+                            </span>
                         </div>
                     </div>
 
@@ -148,8 +165,12 @@
                             <input type="text" onkeypress="validate(event)" name="NID" value="{{(isset($NID) ? $NID : '')}}" maxlength="40" required>
                         </div>
                         <div class="col-xs-5">
-                        <span><span  class="help" data-toggle="tooltip" data-placement="top" title="کد ملی خود را وارد کنید."><img
-                                        src="{{URL::asset('images/help.png')}}" alt="NationalID"></span> کد ملی <span class="required">*</span></span>
+                            <span>
+                                <span class="help" data-toggle="tooltip" data-placement="top" title="کد ملی خود را وارد کنید.">
+                                    <img src="{{URL::asset('images/help.png')}}" alt="NationalID">
+                                </span> کد ملی
+                                <span class="required">*</span>
+                            </span>
                         </div>
                     </div>
 
@@ -177,12 +198,10 @@
 
                     <div class="col-xs-12">
                         <div class="col-xs-7">
-                            <select class="mySelect"  style="min-width: 200px !important;" name="level">
+                            <select onchange="changeLevel(this.value)" class="mySelect"  style="min-width: 200px !important;" name="level">
                                 <option value="none">انتخاب کنید</option>
-                                @if(isset($level) && $level == "1")
-                                    <option selected value="1">دانش آموز</option>
-                                    <option value="2">مشاور</option>
-                                @elseif(isset($level) && $level == "0")
+
+                                @if(isset($level) && $level == "0")
                                     <option value="1">دانش آموز</option>
                                     <option selected value="2">مشاور</option>
                                 @else
@@ -201,13 +220,178 @@
 
                     </div>
 
-                    <div class="col-xs-12">
+                    <div class="row hidden" id="justForAdviser">
+
+                        <div class="col-xs-12">
+                            <div class="col-xs-7">
+                                <select class="mySelect" id="states" onchange="getCities(this.value)"></select>
+                            </div>
+                            <div class="col-xs-5">
+                                <span>
+                                    <span  class="help" data-toggle="tooltip" data-placement="top" title="استان خود را با توجه به استان های موجود انتخاب نمایید">
+                                        <img src="{{URL::asset('images/help.png')}}" alt="">
+                                    </span>استان
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <div class="col-xs-7">
+                                <select class="mySelect" id="cities" name="cityId"></select>
+                            </div>
+                            <div class="col-xs-5">
+                                <span>
+                                    <span  class="help" data-toggle="tooltip" data-placement="top" title="شهر خود را با توجه به شهر های موجود انتخاب نمایید">
+                                        <img src="{{URL::asset('images/help.png')}}" alt="">
+                                    </span>شهر
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <div class="col-xs-7">
+                                <select class="mySelect" id="field" onchange="changeField(this.value)" name="field">
+                                    <option value="{{getValueInfo('konkurAdvise')}}">کنکور</option>
+                                    <option value="{{getValueInfo('olympiadAdvise')}}">المپیاد</option>
+                                    <option value="{{getValueInfo('doore1Advice')}}">متوسطه دوره اول</option>
+                                    <option value="{{getValueInfo('doore2Advice')}}">متوسطه دوره دوم</option>
+                                    <option value="{{getValueInfo('baliniAdvice')}}">بالینی</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-5">
+                                <span>
+                                    <span  class="help" data-toggle="tooltip" data-placement="top" title="تخصص خود را از بین گزینه های موجود انتخاب نمایید">
+                                        <img src="{{URL::asset('images/help.png')}}" alt="">
+                                    </span>تخصص
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12" id="gradesDiv">
+                            <div class="col-xs-7">
+                                <div id="grades"></div>
+                            </div>
+                            <div class="col-xs-5">
+                                <span>
+                                    <span  class="help" data-toggle="tooltip" data-placement="top" title="تخصص خود را از بین گزینه های موجود انتخاب نمایید">
+                                        <img src="{{URL::asset('images/help.png')}}" alt="">
+                                    </span>رشته تحصیلی
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <div class="col-xs-7">
+                                <select class="mySelect" name="lastCertificate">
+                                    <option value="{{getValueInfo('diplom')}}">دیپلم</option>
+                                    <option value="{{getValueInfo('foghDiplom')}}">فوق دیپلم</option>
+                                    <option value="{{getValueInfo('lisans')}}">لیسانس</option>
+                                    <option value="{{getValueInfo('foghLisans')}}">فوق لیسانس</option>
+                                    <option value="{{getValueInfo('phd')}}">دکترا</option>
+                                </select>
+                            </div>
+
+                            <div class="col-xs-5">
+                                <span>
+                                    <span  class="help" data-toggle="tooltip" data-placement="top" title="آخرین مدرک تحصیلی خود را از بین گزینه های موجود انتخاب نمایید">
+                                        <img src="{{URL::asset('images/help.png')}}" alt="">
+                                    </span>آخرین مدرک تحصیلی
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <div class="col-xs-7">
+                                <textarea style="float: right; margin: 10px" name="honors" placeholder="حداکثر 1000 کاراکتر">{{(isset($honors)) ? $honors : ''}}</textarea>
+                            </div>
+                            <div class="col-xs-5">
+                            <span>
+                                <span class="help" data-toggle="tooltip" data-placement="top" title="افتخارات علمی خود را وارد کنید.">
+                                    <img src="{{URL::asset('images/help.png')}}" alt="NationalID">
+                                </span>افتخارات علمی
+                            </span>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <div class="col-xs-7">
+                                <textarea style="float: right; margin: 10px" name="essay" placeholder="حداکثر 1000 کاراکتر">{{isset($essay) ? $essay : ''}}</textarea>
+                            </div>
+                            <div class="col-xs-5">
+                            <span>
+                                <span class="help" data-toggle="tooltip" data-placement="top" title="تالیفات و ترجمه های خود را وارد کنید.">
+                                    <img src="{{URL::asset('images/help.png')}}" alt="NationalID">
+                                </span>تالیفات و ترجمه ها
+                            </span>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <div class="col-xs-7">
+                                <textarea style="float: right; margin: 10px" name="schools" placeholder="حداکثر 1000 کاراکتر">{{isset($schools) ? $schools : ''}}</textarea>
+                            </div>
+                            <div class="col-xs-5">
+                            <span>
+                                <span class="help" data-toggle="tooltip" data-placement="top" title="مدارس فعال خود را وارد کنید.">
+                                    <img src="{{URL::asset('images/help.png')}}" alt="NationalID">
+                                </span>مدارس فعال
+                            </span>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <div class="col-xs-7">
+                                <select name="workYears">
+                                    @for($i = 1330; $i <= substr(getToday()['date'], 0, 4); $i++)
+                                        @if(isset($workYears) && $workYears == $i)
+                                            <option selected value="{{$i}}">{{$i}}</option>
+                                        @else
+                                            <option value="{{$i}}">{{$i}}</option>
+                                        @endif
+                                    @endfor
+                                </select>
+                            </div>
+                            <div class="col-xs-5">
+                                <span>
+                                    <span class="help" data-toggle="tooltip" data-placement="top" title="سال شروع به کار خود را وارد کنید.">
+                                        <img src="{{URL::asset('images/help.png')}}" alt="since">
+                                    </span>سال شروع به کار
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <div class="col-xs-7">
+                                <select name="birthDay">
+                                    @for($i = 1330; $i <= substr(getToday()['date'], 0, 4); $i++)
+                                        @if(isset($birthDay) && $birthDay == $i)
+                                            <option selected value="{{$i}}">{{$i}}</option>
+                                        @else
+                                            <option value="{{$i}}">{{$i}}</option>
+                                        @endif
+                                    @endfor
+                                </select>
+                            </div>
+                            <div class="col-xs-5">
+                                <span>
+                                    <span class="help" data-toggle="tooltip" data-placement="top" title="سال تولد خود را وارد کنید.">
+                                        <img src="{{URL::asset('images/help.png')}}" alt="birth day">
+                                    </span>سال تولد
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12" id="justForStudent">
                         <div class="col-xs-7">
                             <input type="text" name="invitationCode" value="{{(isset($invitationCode) ? $invitationCode : '')}}" maxlength="40">
                         </div>
                         <div class="col-xs-5">
-                        <span><span  class="help" data-toggle="tooltip" data-placement="top" title="اگر کسی گچ سفید را به شما معرفی کرده، کد وی را در این بخش وارد کنید."><img
-                                        src="{{URL::asset('images/help.png')}}" alt=""></span>کد معرف </span>
+                            <span>
+                                <span  class="help" data-toggle="tooltip" data-placement="top" title="اگر کسی گچ سفید را به شما معرفی کرده، کد وی را در این بخش وارد کنید.">
+                                    <img src="{{URL::asset('images/help.png')}}" alt="">
+                                </span>کد معرف
+                            </span>
                         </div>
                     </div>
 
@@ -265,5 +449,107 @@
             </div>
         </center>
     </form>
+
+    <script>
+
+        var first = true;
+
+        function changeField(val) {
+
+            $.ajax({
+                type: 'post',
+                url: '{{route('getGradesOfField')}}',
+                data: {
+                    'field': val
+                },
+                success: function (response) {
+
+                    response = JSON.parse(response);
+
+                    var newElement = "";
+
+                    for(i = 0; i < response.length; i++) {
+                        newElement += "<div style='float: right; padding: 5px'><label for='grade_" + response[i].id + "'>" + response[i].name + "</label><input id='grade_" + response[i].id + "' type='checkbox' value='" + response[i].id + "' name='grades[]'></div>";
+                    }
+
+                    if(response.length == 0) {
+                        $("#gradesDiv").addClass('hidden');
+                    }
+                    else {
+                        $("#gradesDiv").removeClass('hidden');
+                    }
+
+                    $("#grades").empty().append(newElement);
+
+                }
+            });
+            
+        }
+        
+        function getStates() {
+
+            $.ajax({
+                type: 'post',
+                url: '{{route('getStates')}}',
+                success: function(response) {
+
+                    response = JSON.parse(response);
+                    var newElement = "";
+
+                    for(i = 0; i < response.length; i++) {
+                        newElement += "<option value='" + response[i].id + "'>" + response[i].name + "</option>";
+                    }
+
+                    $("#states").empty().append(newElement);
+
+                    if(response.length > 0)
+                        getCities(response[0].id);
+
+                }
+            });
+
+        }
+
+        function getCities(val) {
+
+            $.ajax({
+                type: 'post',
+                url: '{{route('getCities')}}',
+                data: {
+                    'stateId': val
+                },
+                success: function (response) {
+
+                    response = JSON.parse(response);
+
+                    var newElement = "";
+
+                    for(i = 0; i < response.length; i++) {
+                        newElement += "<option value='" + response[i].id +"'>" + response[i].name + "</option>";
+                    }
+
+                    $("#cities").empty().append(newElement);
+
+                }
+            });
+
+        }
+
+        function changeLevel(val) {
+            if(val == 2) {
+                if(first) {
+                    getStates();
+                    changeField($("#field").val());
+                    first = false;
+                }
+                $("#justForAdviser").removeClass('hidden');
+                $("#justForStudent").addClass('hidden');
+            }
+            else {
+                $("#justForAdviser").addClass('hidden');
+                $("#justForStudent").removeClass('hidden');
+            }
+        }
+    </script>
 
 @stop

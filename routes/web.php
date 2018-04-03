@@ -21,6 +21,8 @@ Route::group(array('middleware' => 'nothing'), function (){
 
 	Route::get('advisersList', array('as' => 'advisersList', 'uses' => 'ReportController@advisersList'));
 
+	Route::get('adviserInfo/{adviserInfo}', array('as' => 'adviserInfo', 'uses' => 'ReportController@adviserInfo'));
+
 	Route::get('studentsRanking/{page?}', array('as' => 'studentsRanking', 'uses' => 'ReportController@studentsRanking'));
 
 	Route::get('aboutUs', array('as' => 'aboutUs', 'uses' => 'HomeController@aboutUs'));
@@ -50,6 +52,12 @@ Route::group(array('middleware' => 'nothing'), function (){
 	Route::get('getActivation', array('as' => 'getActivation', 'uses' => 'RegistrationController@getActivation'));
 
 	Route::post('getActivation', array('as' => 'getActivation', 'uses' => 'RegistrationController@doGetActivation'));
+
+	Route::post('getStates', array('as' => 'getStates', 'uses' => 'StateController@getStates'));
+
+	Route::post('getCities', array('as' => 'getCities', 'uses' => 'StateController@getCities'));
+
+	Route::post('getGradesOfField', array('as' => 'getGradesOfField', 'uses' => 'ContentController@getGradesOfField'));
 });
 
 Route::group(array('middleware' => ['nothing', 'auth']), function (){
@@ -287,6 +295,20 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 });
 
+Route::group(array('middleware' => ['nothing', 'auth', 'adviserLevel']), function () {
+
+	Route::post('doEditAdviserInfo', array('as' => 'doEditAdviserInfo', 'uses' => 'HomeController@doEditAdviserInfo'));
+
+	Route::get('editAdviserInfo/{msg?}', array('as' => 'editAdviserInfo', 'uses' => 'HomeController@editAdviserInfo'));
+
+	Route::get('adviserQueue', array('as' => 'adviserQueue', 'uses' => 'HomeController@adviserQueue'));
+
+	Route::post('acceptStudent', array('as' => 'acceptStudent', 'uses' => 'HomeController@acceptStudent'));
+
+	Route::post('rejectStudent', array('as' => 'rejectStudent', 'uses' => 'HomeController@rejectStudent'));
+
+});
+
 Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
 	Route::get('config', array('as' => 'config', 'uses' => 'ConfigController@config'));
@@ -388,8 +410,6 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 	Route::get('discussion/{qId}', array('as' => 'discussion', 'uses' => 'QuestionController@discussion'));
 
 	Route::get('showSubjects', array('as' => 'showSubjects', 'uses' => 'ContentController@showSubjects'));
-
-	Route::post('getCities', array('as' => 'getCities', 'uses' => 'StateController@getCities'));
 
 	Route::get('chargeAccountWithStatus/{status}', array('as' => 'chargeAccountWithStatus', 'uses' => 'HomeController@chargeAccount'));
 
@@ -512,8 +532,6 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 	Route::post('deleteState', array('as' => 'deleteState', 'uses' => 'StateController@deleteState'));
 
 	Route::post('addStateBatch', array('as' => 'addStateBatch', 'uses' => 'StateController@addStateBatch'));
-
-	Route::post('getStates', array('as' => 'getStates', 'uses' => 'StateController@getStates'));
 
 });
 

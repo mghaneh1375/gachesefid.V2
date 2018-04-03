@@ -62,6 +62,16 @@
                         <span>حداقل امتیاز برای طراحی سوال</span>
                     </div>
                 </div>
+
+                <div class="col-xs-12">
+                    <div class="col-xs-7">
+                        <input type="number" name="percentOfPackage" min="0" value="{{$config->percentOfPackage}}" required>
+                    </div>
+                    <div class="col-xs-5">
+                        <span>درصد تخفیف برای خرید بسته ای آزمون ها</span>
+                    </div>
+                </div>
+
                 <div class="col-xs-12" style="margin-top: 10px">
                     <input type="submit" value="تایید" name="submitConfig" class="btn btn-default">
                 </div>

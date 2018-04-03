@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\models\AdviserQuestion;
 use App\models\AdviserRate;
 use App\models\Grade;
 use App\models\SchoolStudent;
@@ -649,34 +650,43 @@ class UserController extends Controller {
 
         $uId = Auth::user()->id;
 
-        $myAdviser = StudentAdviser::whereStudentId($uId)->first();
+        $myAdvisers = StudentAdviser::whereStudentId($uId)->get();
 
-        if($myAdviser != null) {
+        $users = [];
 
-            $rate = -2;
+        if($myAdvisers != null && count($myAdvisers) != 0) {
 
-            if($myAdviser->status == true) {
-                $rate = AdviserRate::whereUId($uId)->first();
-                if ($rate == null)
-                    $rate = -1;
-                else
-                    $rate = $rate->rate;
+            foreach ($myAdvisers as $myAdviser) {
+
+                $user = User::whereId($myAdviser->adviserId);
+                if ($user == null)
+                    return Redirect::route('profile');
+
+                $questions = AdviserQuestion::all();
+
+                $avg = 0;
+                foreach ($questions as $question) {
+                    $tmp = AdviserRate::whereUId($uId)->whereAdviserId($myAdviser->adviserId)->whereQuestionId($question->id)->first();
+                    if($tmp == null) {
+                        $question->rate = -1;
+                    }
+                    else {
+                        $question->rate = $tmp->rate;
+                        $avg += $question->rate;
+                    }
+                }
+
+                $user->totalStudents = StudentAdviser::whereAdviserId($myAdviser->adviserId)->whereStatus(true)->count();
+                $user->questions = $questions;
+                $user->status = $myAdviser->status;
+
+                $users[count($users)] = $user;
             }
 
-            $user = User::whereId($myAdviser->adviserId);
-            if($user == null)
-                return Redirect::route('profile');
-
-            $avgRate = AdviserRate::whereAdviserId($myAdviser->adviserId)->avg('rate');
-            if(empty($avgRate))
-                $avgRate = "بدون امتیاز";
-            $totalStudents = StudentAdviser::whereAdviserId($myAdviser->adviserId)->whereStatus(true)->count();
-
-            return view('myAdviser', array('myAdviser' => $user, 'rate' => $rate, 'avgRate' => $avgRate,
-                'totalStudents' => $totalStudents));
+            return view('myAdviser', array('myAdvisers' => $users));
         }
 
-        return view('myAdviser', array('myAdviser' => $myAdviser));
+        return view('myAdviser', array('myAdvisers' => $users));
     }
 
     public function submitRate() {
@@ -686,17 +696,19 @@ class UserController extends Controller {
             $rate = makeValidInput($_POST["rate"]);
             $adviserId = makeValidInput($_POST["adviserId"]);
             $studentId = makeValidInput($_POST["studentId"]);
+            $questionId = makeValidInput($_POST["questionId"]);
 
             $condition = ['adviserId' => $adviserId, 'studentId' => $studentId, 'status' => 1];
 
             if(StudentAdviser::where($condition)->count() > 0) {
 
-                $condition = ['adviserId' => $adviserId, 'uId' => $studentId];
+                $condition = ['adviserId' => $adviserId, 'uId' => $studentId, 'questionId' => $questionId];
 
                 AdviserRate::where($condition)->delete();
 
                 $tmp = new AdviserRate();
                 $tmp->adviserId = $adviserId;
+                $tmp->questionId = $questionId;
                 $tmp->uId = $studentId;
                 $tmp->rate = $rate;
 
@@ -721,12 +733,9 @@ class UserController extends Controller {
             $adviserId = makeValidInput($_POST["adviserId"]);
 
             if(User::whereId($adviserId) == null) {
-                echo "nok1";
+                echo "nok2";
                 return;
             }
-
-            StudentAdviser::whereStudentId($uId)->delete();
-            AdviserRate::whereUId($uId)->delete();
 
             $tmp = new StudentAdviser();
             $tmp->studentId = $uId;

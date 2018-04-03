@@ -8,6 +8,7 @@ use App\models\SchoolStudent;
 use App\models\School;
 use App\models\OrderId;
 use App\models\Mellat;
+use App\models\User;
 
 
 function makeValidInput($input) {
@@ -279,7 +280,8 @@ function getValueInfo($key) {
         'sampadSch' => 1, 'gheyrSch' => 2, 'nemoneSch' => 3, 'shahedSch' => 4, 'sayerSch' => 5, 'HeyatSch' => 6, 'dolatiSch' => 7,
         'staticOffCode' => 1, 'dynamicOffCode' => 2, 'chargeTransaction' => 4, 'systemQuiz' => 1, 'motevaseteAval' => 0, 'motevaseteDovom' => 1, 'dabestan' => 2, 'quizRankTransaction' => 9,
         'regularQuiz' => 2, 'questionQuiz' => 3, 'systemQuizTransaction' => 5, 'regularQuizTransaction' => 6, 'regularQuizGroupTransaction' => 7, 'questionBuyTransaction' => 10,
-        'konkurAdvise' => 1, 'olympiadAdvise' => 2, 'doore1Advice' => 3, 'doore2Advice' => 4, 'baliniAdvice' => 5
+        'konkurAdvise' => 1, 'olympiadAdvise' => 2, 'doore1Advice' => 3, 'doore2Advice' => 4, 'baliniAdvice' => 5,
+        'diplom' => 1, 'foghDiplom' => 2, 'lisans' => 3, 'foghLisans' => 4, 'phd' => 5
     ];
 
     return $values[$key];
@@ -362,7 +364,7 @@ function generateInvitationCode() {
                 $code .= chr(rand(0, 25) + $init2);
         }
 
-        if (User::where('invitationCode', '=', $code)->count() == 0)
+        if (User::whereInvitationCode($code)->count() == 0)
             return $code;
     }
     return null;
