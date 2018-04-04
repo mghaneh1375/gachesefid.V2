@@ -22,6 +22,10 @@
             overflow: auto;
         }
 
+        .btn {
+            min-width: 100px;
+        }
+
     </style>
 
     <center class="row alaki" style="margin-top: 50px">
@@ -70,7 +74,6 @@
 
                     @if($quiz->mode == "system")
                         @if($quiz->quizEntry == 1)
-                            <td><center>{{$quiz->quiz->reminder}}</center></td>
                             <td><button id="btn_{{$quiz->quiz->id}}" onclick="showConfirmationPane('{{$quiz->quiz->id}}')" data-val="{{route('doQuiz', ['quizId' => $quiz->quiz->id])}}" class="btn btn-success">ورود به آزمون</button></td>
                         @elseif($quiz->quizEntry == -2)
                             <td><button onclick="document.location.href = '{{route('showQuizWithOutTime', ['quizId' => $quiz->quiz->id, 'quizMode' => $quiz->quizMode])}}'" class="btn btn-primary">مرور آزمون</button></td>

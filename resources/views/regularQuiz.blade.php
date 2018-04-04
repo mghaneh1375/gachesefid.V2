@@ -104,8 +104,7 @@
                 $("#nxtQ").removeAttr('disabled');
 
             var newNode = "<img alt='در حال بارگذاری تصویر' style='max-width: 100%' src='{{URL::asset('images/questions/system')}}/" + questionArr[qIdx].questionFile + "'></span><br/>";
-            $("#BQ").empty();
-            $("#BQ").append(newNode);
+            $("#BQ").empty().append(newNode);
 
             if(questionArr[qIdx].kindQ == "1") {
                 newNode = "<center style='margin-top: 20px;'><span style='font-size: 20px; color: #ff0000'>پاسخ : </span><select class='mySelect' style='width: 60px; font-size: 14px' id='choices' onchange='submitC(this.value)'>";

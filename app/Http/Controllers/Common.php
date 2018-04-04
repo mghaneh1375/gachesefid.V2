@@ -450,15 +450,15 @@ function sumTimes($time1, $time2) {
     $time2 = $tmp . $time2;
 
     $digit3 = $time2[3] + $time1[3];
-    $reminder = ($digit3 > 10) ? $digit3 % 10 : 0;
+    $reminder = ($digit3 > 10) ? floor($digit3 / 10) : 0;
     $digit3 = ($digit3 > 10) ? $digit3 - 10 : $digit3;
 
     $digit2 = $time1[2] + $time2[2] + $reminder;
-    $reminder = ($digit2 > 6) ? $digit2 % 6 : 0;
+    $reminder = ($digit2 > 6) ? floor($digit2 / 6) : 0;
     $digit2 = ($digit2 > 6) ? $digit2 - 6 : $digit2;
 
     $digit1 = $time2[1] + $time1[1] + $reminder;
-    $reminder = ($digit1 > 10) ? $digit1 % 10 : 0;
+    $reminder = ($digit1 > 10) ? floor($digit1 / 10) : 0;
     $digit1 = ($digit1 > 10) ? $digit1 - 10 : $digit1;
 
     $digit0 = $time2[0] + $time1[0] + $reminder;

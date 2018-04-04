@@ -109,6 +109,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'reportLevel']), function
 
 	Route::get('quizReports', array('as' => 'quizReports', 'uses' => 'ReportController@chooseQuiz'));
 
+	Route::get('chooseRegularQuiz', array('as' => 'chooseRegularQuiz', 'uses' => 'ReportController@chooseRegularQuiz'));
+
 	Route::get('A5/{quizId}', array('as' => 'A5', 'uses' => 'ReportController@A5'));
 
 	Route::get('printA5/{quizId}', array('as' => 'printA5', 'uses' => 'ReportController@printA5'));
@@ -176,6 +178,10 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 
 Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
+	Route::get('chooseSystemQuiz', array('as' => 'chooseSystemQuiz', 'uses' => 'ReportController@chooseSystemQuiz'));
+
+	Route::get('getSystemQuizReport', array('as' => 'getSystemQuizReport', 'uses' => 'ReportController@getSystemQuizReport'));
+
 	Route::get('smsPanel', array('as' => 'smsPanel', 'uses' => 'SMSController@smsPanel'));
 
 	Route::post('sendSMS', array('as' => 'sendSMS', 'uses' => 'SMSController@sendSMS'));
@@ -242,15 +248,15 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 	Route::get('quizReport', array('as' => 'quizReport', 'uses' => 'ReportController@quizReport'));
 	
-	Route::get('doublePartialQuizReport/{quizId}/{sId}/{online}', array('as' => 'doublePartialQuizReport', 'uses' => 'ReportController@doublePartialQuizReport'));
+	Route::get('doublePartialQuizReport/{quizId}/{sId}/{online}/{quizMode}', array('as' => 'doublePartialQuizReport', 'uses' => 'ReportController@doublePartialQuizReport'));
 
-	Route::get('quizDoublePartialReportExcel/{quizId}/{sId}/{online}', array('as' => 'quizDoublePartialReportExcel', 'uses' => 'ReportController@quizDoublePartialReportExcel'));
+	Route::get('quizDoublePartialReportExcel/{quizId}/{sId}/{online}/{quizMode}', array('as' => 'quizDoublePartialReportExcel', 'uses' => 'ReportController@quizDoublePartialReportExcel'));
 	
-	Route::get('quizPartialReportExcel/{quizId}', array('as' => 'quizPartialReportExcel', 'uses' => 'ReportController@quizPartialReportExcel'));
+	Route::get('quizPartialReportExcel/{quizId}/{quizMode}', array('as' => 'quizPartialReportExcel', 'uses' => 'ReportController@quizPartialReportExcel'));
 
 	Route::get('quizReportExcel', array('as' => 'quizReportExcel', 'uses' => 'ReportController@quizReportExcel'));
 
-	Route::get('partialQuizReport/{quizId}', array('as' => 'partialQuizReport', 'uses' => 'ReportController@partialQuizReport'));
+	Route::get('partialQuizReport/{quizId}/{quizMode}', array('as' => 'partialQuizReport', 'uses' => 'ReportController@partialQuizReport'));
 
 	Route::get('moneyReport', array('as' => 'moneyReport', 'uses' => 'ReportController@moneyReport'));
 

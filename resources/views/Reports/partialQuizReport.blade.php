@@ -32,7 +32,7 @@
             <?php $sum1 = 0; $sum2 = 0; ?>
 
             @foreach($nonOnline as $itr)
-                <tr style="cursor: pointer" onclick="document.location.href = '{{route('doublePartialQuizReport', ['quizId' => $quiz->id, 'sId' => $itr->id, 'online' => 0])}}'">
+                <tr style="cursor: pointer" onclick="document.location.href = '{{route('doublePartialQuizReport', ['quizId' => $quiz->id, 'sId' => $itr->id, 'online' => 0, 'quizMode' => $quizMode])}}'">
                     <td><center>{{$itr->name}}</center></td>
                     <td><center>{{$itr->countNum}}</center></td>
                     <?php $sum1 += $itr->countNum; ?>
@@ -42,14 +42,14 @@
                 </tr>
             @endforeach
 
-            <tr style="cursor: pointer" onclick="document.location.href = '{{route('doublePartialQuizReport', ['quizId' => $quiz->id, 'sId' => -1, 'online' => 0])}}'">
+            <tr style="cursor: pointer" onclick="document.location.href = '{{route('doublePartialQuizReport', ['quizId' => $quiz->id, 'sId' => -1, 'online' => 0, 'quizMode' => $quizMode])}}'">
                 <td><center>نامشخص</center></td>
                 <td><center>{{$totalNonOnline - $sum1}}</center></td>
                 <td><center>حضوری</center></td>
             </tr>
 
             @foreach($online as $itr)
-                <tr style="cursor: pointer" onclick="document.location.href = '{{route('doublePartialQuizReport', ['quizId' => $quiz->id, 'sId' => $itr->id, 'online' => 1])}}'">
+                <tr style="cursor: pointer" onclick="document.location.href = '{{route('doublePartialQuizReport', ['quizId' => $quiz->id, 'sId' => $itr->id, 'online' => 1, 'quizMode' => $quizMode])}}'">
                     <td><center>{{$itr->name}}</center></td>
                     <td><center>{{$itr->countNum}}</center></td>
                     <?php $sum2 += $itr->countNum; ?>
@@ -59,7 +59,7 @@
                 </tr>
             @endforeach
 
-            <tr style="cursor: pointer" onclick="document.location.href = '{{route('doublePartialQuizReport', ['quizId' => $quiz->id, 'sId' => -1, 'online' => 1])}}'">
+            <tr style="cursor: pointer" onclick="document.location.href = '{{route('doublePartialQuizReport', ['quizId' => $quiz->id, 'sId' => -1, 'online' => 1, 'quizMode' => $quizMode])}}'">
                 <td><center>نامشخص</center></td>
                 <td><center>{{$totalOnline - $sum2}}</center></td>
                 <td><center>آنلاین</center></td>
@@ -67,7 +67,7 @@
         </table>
 
         <div style="margin-top: 10px">
-            <button onclick="document.location.href = '{{route('quizPartialReportExcel', ['quizId' => $quiz->id])}}'" class="btn btn-success">دانلود فایل اکسل</button>
+            <button onclick="document.location.href = '{{route('quizPartialReportExcel', ['quizId' => $quiz->id, 'quizMode' => $quizMode])}}'" class="btn btn-success">دانلود فایل اکسل</button>
         </div>
     </center>
 @stop

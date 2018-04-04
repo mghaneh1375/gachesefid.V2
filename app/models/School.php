@@ -22,6 +22,10 @@ class School extends Model{
     protected $table = 'school';
     public $timestamps = false;
 
+    public static function whereId($target) {
+        return School::find($target);
+    }
+
     public function user() {
         return $this->hasOne('App\models\User', 'uId');
     }

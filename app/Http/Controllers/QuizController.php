@@ -376,17 +376,26 @@ class QuizController extends Controller {
                 $itr->quiz = SystemQuiz::whereId($itr->qId);
                 $itr->quiz->timeLen = calcTimeLenQuiz($itr->quiz->id, 'system');
 
-                if(($itr->quiz->startDate == $date && $itr->quiz->startTime <= $time)) {
+                if($itr->quiz->startDate == $date) {
 
-                    $itr->quiz->reminder = subTimes(sumTimes($itr->quiz->startTime, $itr->quiz->timeLen), $time);
+                    if($itr->quiz->startTime <= $time) {
 
-                    if($itr->quiz->reminder <= 0)
-                        $itr->quizEntry = false;
-                    else
-                        $itr->quizEntry = true;
+                        $itr->quiz->reminder = subTimes(sumTimes($itr->quiz->startTime, $itr->quiz->timeLen), $time);
+
+                        if ($itr->quiz->reminder <= 0)
+                            $itr->quizEntry = -2;
+                        else
+                            $itr->quizEntry = 1;
+                    }
+                    else {
+                        $itr->quizEntry = -1;
+                    }
                 }
                 else {
-                    $itr->quizEntry = false;
+                    if($itr->quiz->startDate > $date)
+                        $itr->quizEntry = -1;
+                    else
+                        $itr->quizEntry = -2;
                 }
 
                 $itr->quiz->startDate = convertStringToDate($itr->quiz->startDate);
@@ -1521,7 +1530,25 @@ class QuizController extends Controller {
                 $roq->status = 0;
         }
 
-        $questions = DB::select('select ansFile, choicesCount, systemQOQ.mark, question.id, question.questionFile, question.kindQ, question.neededTime as qoqId from question, systemQOQ WHERE questionId = question.id and quizId = ' . $quizId . ' order by systemQOQ.qNo ASC');
+        $questions = DB::select('select ans, ansFile, choicesCount, systemQOQ.mark, question.id, question.questionFile, question.kindQ, question.neededTime as qoqId from question, systemQOQ WHERE questionId = question.id and quizId = ' . $quizId . ' order by systemQOQ.qNo ASC');
+
+        foreach ($questions as $question) {
+
+            $condition = ['questionId' => $question->id, 'result' => $question->ans];
+            $question->correct = ROQ::where($condition)->count();
+            $question->incorrect = DB::select('select count(*) as countNum from ROQ WHERE questionId = ' . $question->id . ' and result <> ' . $question->ans
+                . " and result <> 0")[0]->countNum;
+            $condition = ['questionId' => $question->id, 'result' => 0];
+            $question->white = ROQ::where($condition)->count();
+
+            $condition = ['uId' => $uId, 'questionId' => $question->id];
+            $question->hasLike = (LOK::where($condition)->count() == 1) ? true : false;
+            $question->level = getQuestionLevel($question->id);
+
+            $question->likeNo = LOK::whereQuestionId($question->id)->count();
+
+            $question->discussion = route('discussion', ['qId' => $question->id]);
+        }
 
         return view('showQuizWithOutTime', array('quiz' => $quiz, 'questions' => $questions, 'quizMode' => $quizMode,
             'roqs' => $roqs));

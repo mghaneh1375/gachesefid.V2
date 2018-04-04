@@ -50,7 +50,7 @@
         </table>
 
         <div style="margin-top: 10px">
-            <button onclick="document.location.href = '{{route('quizDoublePartialReportExcel', ['quizId' => $quizId, 'sId' => $sId, 'online' => $online])}}'" class="btn btn-success">دانلود فایل اکسل</button>
+            <button onclick="document.location.href = '{{route('quizDoublePartialReportExcel', ['quizId' => $quizId, 'sId' => $sId, 'online' => $online, 'quizMode' => $quizMode])}}'" class="btn btn-success">دانلود فایل اکسل</button>
         </div>
     </center>
 @stop

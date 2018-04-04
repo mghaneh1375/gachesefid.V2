@@ -207,8 +207,8 @@
                 <div class="col-xs-6" style="min-height: 45vh" id="questionPane"></div>
                 <div class="col-xs-12" id="qInfo" style="border: 2px solid #ccc; border-radius: 6px; min-height: 3vh"></div>
                 <p id="msg" style="position: absolute; top: 25vh"></p>
-                <button id="prevQ" onclick="prevQ()" style="position: absolute; left: 0; top: 25vh">قبلی</button>
-                <button id="nextQ" onclick="nextQ()" style="position: absolute; right: 0; top: 25vh">بعدی</button>
+                <div id="prevQ" onclick="prevQ()" class="fa fa-chevron-left" style="position: absolute; left: 0; font-size: 30px; cursor: pointer; z-index: 1000; top: 25vh"></div>
+                <div id="nextQ" onclick="nextQ()" class="fa fa-chevron-right" style="position: absolute; right: 0; font-size: 30px; cursor: pointer; z-index: 1000; top: 25vh"></div>
             </div>
             <div class="col-xs-12">
                 <center>
@@ -268,8 +268,8 @@
                 <div class="col-xs-6" style="min-height: 45vh" id="subQuestionPane"></div>
                 <div class="col-xs-12" id="subQInfo" style="border: 2px solid #ccc; border-radius: 6px; min-height: 3vh"></div>
                 <p id="subMsg" style="position: absolute; top: 25vh"></p>
-                <button id="subPrevQ" onclick="subPrevQ()" style="position: absolute; left: 0; top: 25vh">قبلی</button>
-                <button id="subNextQ" onclick="subNextQ()" style="position: absolute; right: 0; top: 25vh">بعدی</button>
+                <div id="subPrevQ" onclick="subPrevQ()" class="fa fa-chevron-left" style="position: absolute; left: 0; font-size: 30px; cursor: pointer; z-index: 1000; top: 20vh"></div>
+                <div id="subNextQ" onclick="subNextQ()"  class="fa fa-chevron-right" style="position: absolute; right: 0; font-size: 30px; cursor: pointer; z-index: 1000; top: 20vh"></div>
             </div>
 
             <div class="col-xs-12 submitOptions" style="margin-top: 10px">

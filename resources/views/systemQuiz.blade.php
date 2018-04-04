@@ -131,8 +131,7 @@
                 $("#nxtQ").removeAttr('disabled');
 
             var newNode = "<span><img alt='در حال بارگذاری تصویر' style='max-width: 100%' src='{{URL::asset('images/questions/system')}}/" + questionArr[qIdx].questionFile + "'><br/>";
-            $("#BQ").empty();
-            $("#BQ").append(newNode);
+            $("#BQ").empty().append(newNode);
 
             newNode = "<center>امتیاز سوال: <span>" + questionArr[qIdx].mark + "</span></center>";
 
@@ -340,7 +339,6 @@ if ($questions == null || $numQ == 0) {
                 },
                 success: function (response) {
                     response = JSON.parse(response);
-                    $("#ranking").empty();
 
                     newElement = "<table style='max-height: 70vh; overflow: auto'><tr><td><center>رتبه بندی</center></td><td><center>نام کاربری</center></td>";
                     for(j = 1; j <= questionArr.length; j++) {
@@ -358,10 +356,10 @@ if ($questions == null || $numQ == 0) {
                             newElement += "<td><center class='number'>" + response[i].roq[j] + "</center></td>";
                             sum += response[i].roq[j];
                         }
-                        newElement += "<td><center>" + sum + "</center></td></tr>";
+                        newElement += "<td><center class='number'>" + sum + "</center></td></tr>";
                     }
 
-                    $("#ranking").append(newElement);
+                    $("#ranking").empty().append(newElement);
 
                     $("#rankingPane").removeClass('hidden');
                 }

@@ -32,7 +32,7 @@
 
             @foreach($regularQuizes as $itr)
                 <tr>
-                    <td style="cursor: pointer" onclick="document.location.href = '{{route('partialQuizReport', ['quizId' => $itr->id])}}'"><center>{{$itr->name}}</center></td>
+                    <td style="cursor: pointer" onclick="document.location.href = '{{route('partialQuizReport', ['quizId' => $itr->id, 'quizMode' => getValueInfo('regularQuiz')])}}'"><center>{{$itr->name}}</center></td>
                     <td><center>{{$itr->id}}</center></td>
                     <td><center>پشت میز</center></td>
                     <td><center> حضوری: {{$itr->nonOnlineRegistered}} - غیر حضوری:  {{$itr->onlineRegistered}} </center></td>
@@ -43,7 +43,7 @@
 
             @foreach($systemQuizes as $itr)
                 <tr>
-                    <td><center>{{$itr->name}}</center></td>
+                    <td style="cursor: pointer" onclick="document.location.href = '{{route('partialQuizReport', ['quizId' => $itr->id, 'quizMode' => getValueInfo('systemQuiz')])}}'"><center>{{$itr->name}}</center></td>
                     <td><center>{{$itr->id}}</center></td>
                     <td><center>پای تخته</center></td>
                     <td><center>{{$itr->registered}}</center></td>

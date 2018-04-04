@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\models\AdviserFields;
 use App\models\AdviserInfo;
 use App\models\NamayandeSchool;
+use App\models\SystemQOQ;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -468,7 +469,7 @@ class ReportController extends Controller {
             $counter++;
         }
 
-        $systemQuizes = RegularQuiz::all();
+        $systemQuizes = SystemQuiz::all();
         foreach ($systemQuizes as $itr) {
             $itr->startDate = convertStringToDate($itr->startDate);
             $itr->startTime = convertStringToTime($itr->startTime);
@@ -2997,21 +2998,24 @@ class ReportController extends Controller {
         return count($tmp);
     }
 
-    public static function partialQuizReport($quizId) {
+    public static function partialQuizReport($quizId, $quizMode) {
 
-        $quiz = RegularQuiz::whereId($quizId);
+        if($quizMode == getValueInfo('regularQuiz'))
+            $quiz = RegularQuiz::whereId($quizId);
+        else
+            $quiz = SystemQuiz::whereId($quizId);
 
         if($quiz == null)
             return Redirect::to('quizReport');
 
         $online = DB::select('select s.id, s.name, count(*) as countNum, ci.name as cityName, sa.name as stateName from quizRegistry qR, users u, schoolStudent sS, school s, city ci, state sa WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
-            getValueInfo('regularQuiz') . ' and qR.online = 1 and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and ci.id = s.cityId and sa.id = ci.stateId group by(sS.sId)');
+            $quizMode . ' and qR.online = 1 and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and ci.id = s.cityId and sa.id = ci.stateId group by(sS.sId)');
 
         $nonOnline = DB::select('select s.id, s.name, count(*) as countNum, ci.name as cityName, sa.name as stateName from quizRegistry qR, users u, schoolStudent sS, school s, city ci, state sa WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
-            getValueInfo('regularQuiz') . ' and qR.online = 0 and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and ci.id = s.cityId and sa.id = ci.stateId group by(sS.sId)');
+            $quizMode . ' and qR.online = 0 and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and ci.id = s.cityId and sa.id = ci.stateId group by(sS.sId)');
 
         $totalOnline = DB::select('select count(*) as countNum from quizRegistry qR WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
-            getValueInfo('regularQuiz') . ' and qR.online = 1');
+            $quizMode . ' and qR.online = 1');
 
         if($totalOnline == null || count($totalOnline) == 0 || empty($totalOnline[0]->countNum))
             $totalOnline = 0;
@@ -3019,7 +3023,7 @@ class ReportController extends Controller {
             $totalOnline = $totalOnline[0]->countNum;
 
         $totalNonOnline = DB::select('select count(*) as countNum from quizRegistry qR WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
-            getValueInfo('regularQuiz') . ' and qR.online = 0');
+            $quizMode . ' and qR.online = 0');
 
         if($totalNonOnline == null || count($totalNonOnline) == 0 || empty($totalNonOnline[0]->countNum))
             $totalNonOnline = 0;
@@ -3027,35 +3031,42 @@ class ReportController extends Controller {
             $totalNonOnline = $totalNonOnline[0]->countNum;
 
         return view('Reports.partialQuizReport', array('online' => $online, 'nonOnline' => $nonOnline, 'totalOnline' => $totalOnline,
-            'totalNonOnline' => $totalNonOnline, 'quiz' => $quiz));
+            'totalNonOnline' => $totalNonOnline, 'quiz' => $quiz, 'quizMode' => $quizMode));
     }
 
-    public function doublePartialQuizReport($quizId, $sId, $online) {
+    public function doublePartialQuizReport($quizId, $sId, $online, $quizMode) {
 
-        if(RegularQuiz::whereId($quizId) == null || ($sId != -1 && School::find($sId) == null))
+        if($quizMode == getValueInfo('regularQuiz') && (RegularQuiz::whereId($quizId) == null || ($sId != -1 && School::whereId($sId) == null)))
+            return Redirect::to(route('profile'));
+
+        if($quizMode == getValueInfo('systemQuiz') && (SystemQuiz::whereId($quizId) == null || ($sId != -1 && School::whereId($sId) == null)))
             return Redirect::to(route('profile'));
 
         $schoolName = "نامشخص";
         $cityName = "نامشخص";
-        $quizName = RegularQuiz::whereId($quizId)->name;
+
+        if($quizMode == getValueInfo('regularQuiz'))
+            $quizName = RegularQuiz::whereId($quizId)->name;
+        else
+            $quizName = SystemQuiz::whereId($quizId)->name;
 
         if($sId != -1) {
-            $school = School::find($sId);
+            $school = School::whereId($sId);
             $schoolName = $school->name;
             $cityName = City::whereId($school->cityId)->name;
 
             $users = DB::select('select u.firstName, u.lastName, u.phoneNum, u.username from quizRegistry qR, users u, schoolStudent sS, school s WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
-                getValueInfo('regularQuiz') . ' and qR.online = ' . $online . ' and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and s.id = ' . $sId);
+                $quizMode . ' and qR.online = ' . $online . ' and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and s.id = ' . $sId);
         }
 
         else {
             $users = DB::select('select u.firstName, u.lastName, u.phoneNum, u.username from quizRegistry qR, users u WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
-                getValueInfo('regularQuiz') . ' and qR.online = ' . $online . ' and u.id = qR.uId and u.id not IN (select sS.uId from schoolStudent sS)');
+                $quizMode . ' and qR.online = ' . $online . ' and u.id = qR.uId and u.id not IN (select sS.uId from schoolStudent sS)');
         }
 
 
         return view('Reports.doublePartialQuizReport', array('online' => $online, 'schoolName' => $schoolName, 'users' => $users,
-            'quizName' => $quizName, 'cityName' => $cityName, 'quizId' => $quizId, 'sId' => $sId));
+            'quizName' => $quizName, 'cityName' => $cityName, 'quizId' => $quizId, 'sId' => $sId, 'quizMode' => $quizMode));
     }
 
     public function doRemoveUser() {
@@ -3067,19 +3078,22 @@ class ReportController extends Controller {
 
     }
 
-    public function quizDoublePartialReportExcel($quizId, $sId, $online) {
+    public function quizDoublePartialReportExcel($quizId, $sId, $online, $quizMode) {
 
-        if(RegularQuiz::whereId($quizId) == null || ($sId != -1 && School::find($sId) == null))
+        if($quizMode == getValueInfo('regularQuiz') && (RegularQuiz::whereId($quizId) == null || ($sId != -1 && School::whereId($sId) == null)))
+            return Redirect::to(route('profile'));
+
+        if($quizMode == getValueInfo('systemQuiz') && (SystemQuiz::whereId($quizId) == null || ($sId != -1 && School::whereId($sId) == null)))
             return Redirect::to(route('profile'));
 
         if($sId != -1) {
             $users = DB::select('select u.firstName, u.lastName, u.phoneNum, u.username from quizRegistry qR, users u, schoolStudent sS, school s WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
-                getValueInfo('regularQuiz') . ' and qR.online = ' . $online . ' and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and s.id = ' . $sId);
+                $quizMode . ' and qR.online = ' . $online . ' and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and s.id = ' . $sId);
         }
 
         else {
             $users = DB::select('select u.firstName, u.lastName, u.phoneNum, u.username from quizRegistry qR, users u WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
-                getValueInfo('regularQuiz') . ' and qR.online = ' . $online . ' and u.id = qR.uId and u.id not IN (select sS.uId from schoolStudent sS)');
+                $quizMode . ' and qR.online = ' . $online . ' and u.id = qR.uId and u.id not IN (select sS.uId from schoolStudent sS)');
         }
 
         $objPHPExcel = new PHPExcel();
@@ -3127,12 +3141,16 @@ class ReportController extends Controller {
             unlink($fileName);
         }
 
-        return Redirect::to(route('quizPartialReportExcel', ['quizId' => $quizId, 'sId' => $sId, 'online' => $online]));
+        return Redirect::route('quizPartialReportExcel', ['quizId' => $quizId, 'sId' => $sId, 'online' => $online, 
+            'quizMode' => $quizMode]);
     }
 
-    public function quizPartialReportExcel ($quizId) {
+    public function quizPartialReportExcel($quizId, $quizMode) {
 
-        $quiz = RegularQuiz::whereId($quizId);
+        if($quizMode == getValueInfo('regularQuiz'))
+            $quiz = RegularQuiz::whereId($quizId);
+        else
+            $quiz = SystemQuiz::whereId($quizId);
 
         if($quiz == null)
             return Redirect::to('quizReport');
@@ -3152,12 +3170,12 @@ class ReportController extends Controller {
         $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام مدرسه');
 
         $online = DB::select('select s.name, count(*) as countNum, ci.name as cityName, sa.name as stateName from quizRegistry qR, users u, schoolStudent sS, school s, city ci, state sa WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
-            getValueInfo('regularQuiz') . ' and qR.online = 1 and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and ci.id = s.cityId and sa.id = ci.stateId group by(sS.sId)');
+            $quizMode . ' and qR.online = 1 and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and ci.id = s.cityId and sa.id = ci.stateId group by(sS.sId)');
         $nonOnline = DB::select('select s.name, count(*) as countNum, ci.name as cityName, sa.name as stateName from quizRegistry qR, users u, schoolStudent sS, school s, city ci, state sa WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
-            getValueInfo('regularQuiz') . ' and qR.online = 0 and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and ci.id = s.cityId and sa.id = ci.stateId group by(sS.sId)');
+            $quizMode . ' and qR.online = 0 and u.id = qR.uId and sS.uId = u.id and s.uId = sS.sId and ci.id = s.cityId and sa.id = ci.stateId group by(sS.sId)');
 
         $totalOnline = DB::select('select count(*) as countNum from quizRegistry qR WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
-            getValueInfo('regularQuiz') . ' and qR.online = 1');
+            $quizMode . ' and qR.online = 1');
 
         if($totalOnline == null || count($totalOnline) == 0 || empty($totalOnline[0]->countNum))
             $totalOnline = 0;
@@ -3165,7 +3183,7 @@ class ReportController extends Controller {
             $totalOnline = $totalOnline[0]->countNum;
 
         $totalNonOnline = DB::select('select count(*) as countNum from quizRegistry qR WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' .
-            getValueInfo('regularQuiz') . ' and qR.online = 0');
+            $quizMode . ' and qR.online = 0');
 
         if($totalNonOnline == null || count($totalNonOnline) == 0 || empty($totalNonOnline[0]->countNum))
             $totalNonOnline = 0;
@@ -3173,6 +3191,7 @@ class ReportController extends Controller {
             $totalNonOnline = $totalNonOnline[0]->countNum;
 
         $counter = 2;
+        $sum = 0;
 
         foreach ($nonOnline as $itr) {
 
@@ -3181,11 +3200,12 @@ class ReportController extends Controller {
             $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), 'حضوری');
             $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $itr->countNum);
             $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter), $itr->name);
+            $sum += $itr->countNum;
             $counter++;
         }
 
         $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), 'حضوری');
-        $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $totalNonOnline);
+        $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), ($totalNonOnline - $sum));
         $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter++), 'نامشخص');
 
         foreach ($online as $itr) {
@@ -3222,7 +3242,7 @@ class ReportController extends Controller {
             unlink($fileName);
         }
 
-        return Redirect::to(route('partialQuizReport', ['quizId' => $quizId]));
+        return Redirect::route('partialQuizReport', ['quizId' => $quizId, 'quizMode' => $quizMode]);
     }
 
     private function getResultOfSpecificContainer($total, $corrects, $inCorrects) {
@@ -3319,6 +3339,10 @@ class ReportController extends Controller {
     }
 
     public function chooseQuiz() {
+        return view('chooseQuiz');
+    }
+
+    public function chooseRegularQuiz() {
 
         $user = Auth::user();
 
@@ -3340,7 +3364,15 @@ class ReportController extends Controller {
             $quizes = RegularQuiz::all();
         }
 
-        return view('chooseQuiz', array('quizes' => $quizes));
+        return view('chooseRegularQuiz', array('quizes' => $quizes));
+
+    }
+
+    public function chooseSystemQuiz() {
+        return view('chooseSystemQuiz', array('quizes' => SystemQuiz::all()));
+    }
+
+    public function getSystemQuizReport() {
 
     }
 

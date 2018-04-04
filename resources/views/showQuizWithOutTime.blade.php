@@ -16,7 +16,6 @@
             SUQ();
         });
 
-
         function showRanking() {
 
             hideElement();
@@ -46,7 +45,7 @@
                             newElement += "<td><center class='number'>" + response[i].roq[j] + "</center></td>";
                             sum += response[i].roq[j];
                         }
-                        newElement += "<td><center>" + sum + "</center></td></tr>";
+                        newElement += "<td><center class='number'>" + sum + "</center></td></tr>";
                     }
 
                     $("#ranking").empty().append(newElement);
@@ -100,7 +99,7 @@
             var newNode = "<span><img alt='در حال بارگذاری تصویر' style='max-width: 100%' src='{{URL::asset('images/questions/system')}}/" + questionArr[qIdx].questionFile + "'></span><br/>";
 
             if(questionArr[qIdx].kindQ == "1") {
-                newNode = "<center style='margin-top: 20px;'><span style='font-size: 20px; color: #ff0000'>پاسخ شما : </span><select disabled class='mySelect' style='width: 60px; font-size: 14px' id='choices' onchange='submitC(this.value)'>";
+                newNode += "<center style='margin-top: 20px;'><span style='font-size: 20px; color: #ff0000'>پاسخ شما : </span><select disabled class='mySelect' style='width: 60px; font-size: 14px' id='choices' onchange='submitC(this.value)'>";
 
                 if (answer[qIdx].result == -1)
                     newNode = newNode + "<option selected value='0' selected>خطا</option>";
@@ -128,7 +127,7 @@
                 newNode = newNode + "</select></center>";
             }
             else {
-                newNode = "<center style='margin-top: 20px'><label for='yourAns'>پاسخ شما:</label><input readonly style='max-width: 100px' onchange='submitC(this.value)' type='text' value='" + answer[qIdx].result + "'></center>";
+                newNode += "<center style='margin-top: 20px'><label for='yourAns'>پاسخ شما:</label><input readonly style='max-width: 100px' onchange='submitC(this.value)' type='text' value='" + answer[qIdx].result + "'></center>";
             }
             $("#likesNo").empty().append(questionArr[qIdx].likeNo);
             $("#correctNo").empty().append(questionArr[qIdx].correct);
@@ -174,11 +173,14 @@
                     if(response == "select") {
                         $('#likeDiv').empty().append('<i onclick="likeQuestion()" data-val="selected" onmouseleave="likeMouseLeaveEvent(this)" onmouseenter="likeMouseEnterEvent(this)" style="cursor: pointer; font-size: 20px" class="fa fa-heart" aria-hidden="true"></i>');
                         questionArr[qIdx].hasLike = true;
+                        questionArr[qIdx].likeNo = questionArr[qIdx].likeNo + 1;
                     }
                     else {
                         questionArr[qIdx].hasLike = false;
                         $('#likeDiv').empty().append('<i onclick="likeQuestion()" data-val="unselected" onmouseleave="likeMouseLeaveEvent(this)" onmouseenter="likeMouseEnterEvent(this)" style="cursor: pointer; font-size: 20px" class="fa fa-heart-o" aria-hidden="true"></i>');
+                        questionArr[qIdx].likeNo = questionArr[qIdx].likeNo - 1;
                     }
+                    SUQ();
                 }
             })
         }
@@ -261,34 +263,38 @@ if ($questions == null || $numQ == 0) {
             </div>
         </div>
 
-        <div class="col-xs-1" id="likeDiv"></div>
+        <div class="col-xs-12">
+            <div class="col-xs-1" id="likeDiv"></div>
 
-        <div class='col-xs-8 well well-sm' style="margin-top: 10px; border: 3px solid black; background-color: #ffffff">
-            <div id="BQ" style='height: auto; width: auto; max-width: 100%'></div>
-        </div>
+            <div class='col-xs-8 well well-sm' style="margin-top: 10px; border: 3px solid black; background-color: #ffffff">
+                <div id="BQ" style='height: auto; width: auto; max-width: 100%'></div>
+            </div>
 
 
-        <div class="col-xs-3" style="margin-top: 50px">
-            <div class="col-xs-12">
-                <p><span id="likesNo"></span><span>&nbsp;&nbsp;&nbsp;<i class="fa fa-thumbs-up" aria-hidden="true"></i></span></p>
-                <p><span>تعداد پاسخ گویی:&nbsp;&nbsp;</span><span id="totalAns"></span></p>
-                <p><span>تعداد جواب صحیح:&nbsp;&nbsp;</span><span id="correctNo"></span></p>
-                <p><span>تعداد جواب ناصحیح:&nbsp;&nbsp;</span><span id="incorrectNo"></span></p>
-                <p><span>تعداد جواب بدون پاسخ:&nbsp;&nbsp;</span><span id="whiteNo"></span></p>
-                <p><span>درصد پاسخ گویی:&nbsp;&nbsp;</span><span id="percent"></span></p>
-                <p><span>سطح سختی:&nbsp;&nbsp;</span><span id="qLevel"></span></p>
-                {{--<p><span>ناظر:&nbsp;&nbsp;</span><span id="controller"></span></p>--}}
-                {{--<p><span>طراح:&nbsp;&nbsp;</span><span id="author"></span></p>--}}
+            <div class="col-xs-3" style="margin-top: 50px">
+                <div class="col-xs-12">
+                    <p><span id="likesNo"></span><span>&nbsp;&nbsp;&nbsp;<i class="fa fa-thumbs-up" aria-hidden="true"></i></span></p>
+                    <p><span>تعداد پاسخ گویی:&nbsp;&nbsp;</span><span id="totalAns"></span></p>
+                    <p><span>تعداد جواب صحیح:&nbsp;&nbsp;</span><span id="correctNo"></span></p>
+                    <p><span>تعداد جواب ناصحیح:&nbsp;&nbsp;</span><span id="incorrectNo"></span></p>
+                    <p><span>تعداد جواب بدون پاسخ:&nbsp;&nbsp;</span><span id="whiteNo"></span></p>
+                    <p><span>درصد پاسخ گویی:&nbsp;&nbsp;</span><span id="percent"></span></p>
+                    <p><span>سطح سختی:&nbsp;&nbsp;</span><span id="qLevel"></span></p>
+                    {{--<p><span>ناظر:&nbsp;&nbsp;</span><span id="controller"></span></p>--}}
+                    {{--<p><span>طراح:&nbsp;&nbsp;</span><span id="author"></span></p>--}}
+                </div>
             </div>
         </div>
 
-        <div class="col-xs-1"></div>
+        <div class="col-xs-12">
+            <div class="col-xs-1"></div>
 
-        <div class='col-xs-8 well well-sm' style="margin-top: 10px; border: 3px solid black; background-color: #ffffff">
-            <div id="BA" style='height: auto; width: auto; max-width: 100%'></div>
+            <div class='col-xs-8 well well-sm' style="margin-top: 10px; border: 3px solid black; background-color: #ffffff">
+                <div id="BA" style='height: auto; width: auto; max-width: 100%'></div>
+            </div>
+
+            <div class="col-xs-3"></div>
         </div>
-
-        <div class="col-xs-3"></div>
 
         <div class="col-xs-12">
             <div style='margin-top: 5px; padding: 10px'>
