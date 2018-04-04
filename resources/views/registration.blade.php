@@ -86,6 +86,7 @@
     </div>
 
     <form method="post" action="{{route('doRegistration')}}">
+        {{csrf_field()}}
         <center class="myRegister">
             <div class="row data">
 

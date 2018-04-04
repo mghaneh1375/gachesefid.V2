@@ -145,7 +145,7 @@
                 <div id="containerDiv" style="margin-top: 20px">
 
                     <form id="editInfo1" class="content hidden" method="post" action="{{route('editInfo')}}">
-
+                        {{csrf_field()}}
                         @if(!(isset($msg) && $mode == "editInfo" && ($msg == "pending" || $msg == "pendingErr" || $msg == "pendingErrTime")))
 
                             <div class="col-xs-12">
@@ -272,7 +272,7 @@
                     </form>
 
                     <form id="editInfo2" class="content hidden" method="post" action="{{route('editRedundantInfo1')}}">
-
+                        {{csrf_field()}}
                         <div class="col-xs-12">
                             <div class="col-xs-7">
                                 <input style="min-width: 200px" type="text" name="fatherName" value="{{(isset($redundant1) && !empty($redundant1->fatherName)) ? $redundant1->fatherName : ''}}" required>
@@ -360,6 +360,7 @@
                     </form>
 
                     <form id="editInfo3" class="content hidden" method="post" action="{{route('editRedundantInfo2')}}">
+                        {{csrf_field()}}
                         <div class="col-xs-12" style="padding: 10px">
                             <div class="col-xs-7">
                                 <textarea name="address" style="float: right; width: 300px; height: 300px" maxlength="1000" placeholder="حداکثر 1000 کاراکتر" required>{{(isset($redundant2) && !empty($redundant2->address)) ? $redundant2->address : ''}}</textarea>
@@ -487,7 +488,7 @@
                     <div id="containerDiv" style="margin-top: 20px">
 
                         <form id="editInfo1" class="content" method="post" action="{{route('editInfo')}}">
-
+                            {{csrf_field()}}
                             @if(!(isset($msg) && $mode == "editInfo" && ($msg == "pending" || $msg == "pendingErr" || $msg == "pendingErrTime")))
 
                                 <div class="col-xs-12">

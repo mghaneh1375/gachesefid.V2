@@ -22,6 +22,7 @@
         <div class="row data">
 
             <form method="post" action="{{route('deleteAdviserQuestion')}}">
+                {{csrf_field()}}
                 @foreach($adviserQuestions as $itr)
                     <div class="col-xs-12" style="margin-top: 10px">
                         <span>{{$itr->name}}</span>

@@ -35,6 +35,7 @@
         </style>
         @if($mode == getValueInfo('schoolLevel'))
             <form method="post" action="{{route('removeUser', ['mode' => $mode])}}">
+                {{csrf_field()}}
                 <div class="col-xs-12" style="margin-top: 20px">
                     <table>
                         <tr>
@@ -78,7 +79,7 @@
             </form>
         @else
             <form method="post" action="{{route('removeUser', ['mode' => $mode])}}">
-
+                {{csrf_field()}}
                 <div class="col-xs-12" style="margin-top: 20px">
                     <table>
                         <tr>

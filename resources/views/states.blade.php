@@ -22,6 +22,7 @@
         <div class="row data">
             
             <form method="post" action="{{route('deleteState')}}">
+                {{csrf_field()}}
                 @foreach($states as $state)
                     <div class="col-xs-12" style="margin-top: 10px">
                         <span>{{$state->name}}</span>
@@ -61,6 +62,7 @@
         <div onclick="hideElement('addBatch')" class="ui_close_x"></div>
             <div class="body_text">
                 <form method="post" action="{{route('addStateBatch')}}" enctype="multipart/form-data">
+                    {{csrf_field()}}
                     <input type="file" name="states">
                     <div class="submitOptions" style="margin-top: 10px">
                         <button name="submitBtn" class="btn btn-success">تایید</button>

@@ -12,6 +12,7 @@
 
 @section('main')
     <form method="post" action="{{route('pointsConfig')}}">
+        {{csrf_field()}}
         <center class="myRegister">
             <div class="row data">
                 <div class="col-xs-12">

@@ -13,6 +13,7 @@
 <script src="{{URL::asset('js/persianumber.js')}}"></script>
 <link rel="stylesheet" href="{{URL::asset('css/mobileMenuCSS.css')}}">
 <script src = {{URL::asset("js/mobileMenu.js") }}></script>
+<meta name="csrf-token" content="{{ csrf_token() }}" />
 
 {{--<script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="214cf062-f382-445e-b5f1-e755d9a01365";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>--}}
 
@@ -20,5 +21,12 @@
     $(document).ready(function () {
         $(document.body).persiaNumber();
     });
+</script>
 
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 </script>

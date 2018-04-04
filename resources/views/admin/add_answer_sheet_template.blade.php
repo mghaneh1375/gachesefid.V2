@@ -16,6 +16,7 @@
         @else
             <form method="post" action="{{route('edit_answer_sheet_template', ['aId' => $aId])}}">
         @endif
+            {{csrf_field()}}
             <div class="row">
                 <div class="col-xs-12">
                     <label>

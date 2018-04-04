@@ -36,6 +36,7 @@
             </tr>
 
             <form method="post" action="{{route('removeSchool')}}">
+                {{csrf_field()}}
                 @foreach($schools as $user)
                     <tr>
                         <td onclick="document.location.href = '{{route('schoolStudent', ['sId' => $user->id])}}'">

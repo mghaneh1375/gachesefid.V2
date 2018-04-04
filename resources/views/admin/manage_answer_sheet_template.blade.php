@@ -77,6 +77,7 @@
 
 
             <form method="post" action="{{route('add_answer_answer_sheet_template', ['answer_sheet_template' => $answer_sheet_template->id])}}">
+                {{csrf_field()}}
                 <div class="col-xs-12" style="margin-top: 10px">
                     <div class="col-xs-3">
                         <button class="btn btn-success">افزودن</button>

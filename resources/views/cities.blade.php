@@ -29,6 +29,7 @@
         <div class="row data">
 
             <form method="post" action="{{route('deleteCity')}}">
+                {{csrf_field()}}
                 <div class="col-xs-12" style="margin-top: 10px">
                     <table>
                         @foreach($cities as $city)
@@ -96,6 +97,7 @@
         <div onclick="hideElement('addBatch')" class="ui_close_x"></div>
             <div class="body_text">
                 <form method="post" action="{{route('addCityBatch')}}" enctype="multipart/form-data">
+                    {{csrf_field()}}
                     <input type="file" name="cities">
                     <div class="submitOptions" style="margin-top: 10px">
                         <button name="submitBtn" class="btn btn-success">تایید</button>

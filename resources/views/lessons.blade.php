@@ -90,6 +90,7 @@
         <div onclick="hideElement()" class="ui_close_x"></div>
         <div class="body_text">
             <form method="post" action="{{route('addLessonBatch')}}" enctype="multipart/form-data">
+                {{csrf_field()}}
                 <input type="file" name="lessons">
                 <div class="submitOptions" style="margin-top: 10px">
                     <button name="submitBtn" class="btn btn-success">تایید</button>

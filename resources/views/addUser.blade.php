@@ -50,7 +50,7 @@
 @section('main')
 
     <form method="post" action="{{$url}}">
-        
+        {{csrf_field()}}
         @if($url == route('addSchool'))
             <center class="myRegister">
                 <div class="row data">

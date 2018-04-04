@@ -33,7 +33,7 @@
             <div id="containerDiv" style="margin-top: 20px">
 
                 <form method="post" action="{{route('doEditAdviserInfo')}}">
-
+                    {{csrf_field()}}
                     <div class="col-xs-12">
                         <div class="col-xs-7">
                             <input type="text" name="firstName" value="{{$user->firstName}}" maxlength="40" required autofocus>

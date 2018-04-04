@@ -15,6 +15,7 @@
         <div class="myRegister">
             <div class="data row">
                 <form method="post" action="{{route('defineKarname')}}">
+                    {{csrf_field()}}
                     <div class="col-xs-12">
                         <label>
                             <span>نمایش ضرایب دروس</span>

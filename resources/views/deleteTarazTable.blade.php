@@ -16,6 +16,7 @@
     @if($mode == "select")
 
         <form method="post" action="{{route('deleteTarazTable')}}">
+            {{csrf_field()}}
             <center class="col-xs-12" style="margin-top: 100px">
                 <label>
                     <span>آزمون مورد نظر</span>

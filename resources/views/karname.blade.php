@@ -64,6 +64,7 @@
 
     <center style="margin-top: 20px">
         <form method="post" action="{{URL(route('seeResult'))}}">
+            {{csrf_field()}}
             <div class="col-xs-12">
                 <label style="min-width: 350px !important;">
                     <span style="float: right; width: 200px; text-align: -webkit-right;">آزمون مورد نظر</span>

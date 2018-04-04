@@ -24,6 +24,7 @@
 @section('main')
     <div class="row">
         <form method="post" action="{{route('opOnSlides')}}">
+            {{csrf_field()}}
             <?php $i = 1; ?>
             @foreach($slides as $slide)
                 <div class="col-xs-12" style="margin-top: 10px">
@@ -51,6 +52,7 @@
 
 
         <form method="post" action="{{route('opOnSlides')}}" enctype="multipart/form-data">
+            {{csrf_field()}}
             <span id="newSlidePane" class="ui_overlay" style="visibility: hidden; position: fixed; left: 30%; right: auto; top: 174px; bottom: auto">
                 <div class="fromUpload">
                     <div class="fileContainer">

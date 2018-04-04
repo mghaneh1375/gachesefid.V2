@@ -14,6 +14,7 @@
 @section('main')
     
     <form method="post" action="{{route('doChangePas')}}">
+        {{csrf_field()}}
         <center class="myRegister">
             <div class="data row">
                 <div class="col-xs-12">

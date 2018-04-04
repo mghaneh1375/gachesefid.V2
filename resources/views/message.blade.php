@@ -143,6 +143,7 @@
             <center id="sendMsgDiv" style="visibility: hidden; position: absolute; top: 80px">
                 <div class="row">
                     <form method="post" action="{{route('sendMsg')}}">
+                        {{csrf_field()}}
                         <table id="sendMsgTable">
                             <tr>
                                 <td>نام کاربری مقصد</td>

@@ -59,6 +59,7 @@
             </div>
 
             <form method="post" action="{{route('doGroupRegistry')}}" style="margin-top: 10px" enctype="multipart/form-data">
+                {{csrf_field()}}
                 <span>مرحله دوم</span><span>&nbsp;</span>
                 <input id="group" onchange="displayName()" name="group" type="file" style="display: none">
                 <label for="group" class="uploadBtn" style="width: 200px">

@@ -290,6 +290,7 @@
                 </div>
 
                 <form method="post" action="{{route('addBatchQToQ')}}" enctype="multipart/form-data">
+                    {{csrf_field()}}
                     <input type="hidden" id="hiddenCurrQuiz" name="quizId">
                     <div class="col-xs-12">
                         <label for="batchQ">فایل دسته ای سوالات</label>

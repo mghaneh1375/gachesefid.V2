@@ -30,6 +30,7 @@
         <div class="myRegister">
             <div class="data row">
                 <form method="post" action="{{URL(route('quizStatus'))}}">
+                    {{csrf_field()}}
                     @foreach($quizStatus as $itr)
                         <div class="col-xs-12">
                             <label>
@@ -72,6 +73,7 @@
             @if($mode == 'addNewStatus')
                 <div class="data row">
                     <form method="post" action="{{URL('quizStatus')}}" enctype="multipart/form-data">
+                        {{csrf_field()}}
                         <div class="col-xs-12">
                             <label>
                                 <span>محتوای وضعیت</span>
