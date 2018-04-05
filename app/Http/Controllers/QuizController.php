@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\models\ComposeQuiz;
+use App\models\ComposeQuizItem;
 use App\models\LOK;
 use App\models\OffCode;
 use App\models\QuizStatus;
@@ -1393,6 +1395,104 @@ class QuizController extends Controller {
 
         return view('selfQuiz', array('quiz' => $quiz, 'mode' => 'normal',
             'reminder' => $reminder, 'roqs' => $roqs));
+
+    }
+
+    public function composeQuizes() {
+
+        $composes = ComposeQuiz::all();
+
+        foreach ($composes as $compose) {
+
+            $quizes = ComposeQuizItem::whereComposeId($compose->id)->get();
+
+            if($quizes != null && count($quizes) > 0) {
+                foreach ($quizes as $tmp) {
+                    if ($tmp->quizMode == getValueInfo('regularQuiz')) {
+                        $tmp->quizId = RegularQuiz::whereId($tmp->quizId)->name;
+                    } else if ($tmp->quizMode == getValueInfo('systemQuiz')) {
+                        $tmp->quizId = SystemQuiz::whereId($tmp->quizId)->name;
+                    }
+                }
+            }
+
+            $compose->items = $quizes;
+        }
+
+        return view('composeQuizes', ['composeQuizes' => $composes, 'regulars' => RegularQuiz::all(), 'systems' => SystemQuiz::all()]);
+    }
+
+    public function removeCompose() {
+        
+        if(isset($_POST["composeId"])) {
+            ComposeQuiz::destroy(makeValidInput($_POST["composeId"]));
+        }
+
+        return Redirect::route('composeQuizes');
+    }
+
+    public function addQuizToCompose() {
+        
+        if(isset($_POST["quizId"]) && isset($_POST["quizMode"]) && isset($_POST["composes"])) {
+
+            $quizId = makeValidInput($_POST["quizId"]);
+            $quizMode = makeValidInput($_POST["quizMode"]);
+
+            $composes = $_POST['composes'];
+
+            $condition = ['quizId' => $quizId, 'quizMode' => $quizMode];
+            ComposeQuizItem::where($condition)->delete();
+
+            foreach ($composes as $compose) {
+
+                $compose = makeValidInput($compose);
+
+                $tmp = new ComposeQuizItem();
+                $tmp->quizId = $quizId;
+                $tmp->quizMode = $quizMode;
+                $tmp->composeId = $compose;
+
+                try {
+                    $tmp->save();
+                }
+                catch (Exception $x) {}
+            }
+
+            echo "ok";
+        }
+        
+    }
+
+    public function addCompose() {
+
+        if(isset($_POST["name"])) {
+
+            $name = makeValidInput($_POST["name"]);
+            if(ComposeQuiz::whereName($name)->count() == 0) {
+
+                $tmp = new ComposeQuiz();
+                $tmp->name = $name;
+
+                try {
+                    $tmp->save();
+                }
+                catch (Exception $x) {}
+            }
+        }
+
+        return Redirect::route('composeQuizes');
+    }
+
+    public function getComposeListOfQuiz() {
+
+        if(isset($_POST["qId"]) && isset($_POST["quizMode"])) {
+
+            $qId = makeValidInput($_POST["qId"]);
+            $quizMode = makeValidInput($_POST["quizMode"]);
+
+            echo \GuzzleHttp\json_encode(ComposeQuizItem::whereQuizId($qId)->whereQuizMode($quizMode)->select('composeId')->get());
+
+        }
 
     }
 

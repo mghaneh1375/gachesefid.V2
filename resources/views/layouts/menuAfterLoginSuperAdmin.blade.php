@@ -61,6 +61,9 @@
                             </li>
                             <li data-val="test" class="menuItem nb-sport"><a><span>آزمون</span></a>
                                 <ul class="subItem hidden test">
+
+                                    <li class="sub_item" data-val="subComposeQuiz"><a href="{{route('composeQuizes')}}">ساخت بسته های آزمونی</a></li>
+
                                     <li class="sub_item" data-val="subOnlineQuiz"><a>سنجش پای تخته!</a>
                                         <ul class="subSubItem hidden subOnlineQuiz">
                                             <li><a href="{{route('onlineQuizes')}}">ساخت آزمون</a></li>

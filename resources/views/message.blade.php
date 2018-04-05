@@ -168,6 +168,7 @@
                                 <textarea name="msg" style="width: 800px; height: 200px" maxlength="1000" placeholder="حداکثر 1000 کاراکتر"></textarea>
                             @endif
                         </div>
+
                         <div class="col-xs-12">
                             <input type="submit" value="ارسال" name="sendMsg" class="btn btn-success">
                             @if(isset($err) && !empty($err) && $err != 'outbox')

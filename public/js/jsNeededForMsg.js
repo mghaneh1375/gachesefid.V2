@@ -124,10 +124,10 @@ function showMsg(id, element, mode) {
             newElement += "<td style='width: 60%; text-align: center'> متن پیام: " + response.message + "</td>";
             newElement += "<td style='width: 20%; text-align: center'>";
             if(mode) {
-                newElement += "<button onclick='$(\"#destUserSendMsg\").val(\"" + response.senderId + "\"); $(\"#subjectSendMsg\").val(\"" + response.subject + "\"); sendMode(\"sendFolder\", \"inbox\", \"sendMsgDiv\", \"showMsgContainer\");' class='btn btn-warning'><span>ارسال پیام به </span><span>" + response.senderId + "</span></button></td>";
+                newElement += "<button onclick='$(\"#destUserSendMsg\").val(\"" + response.senderId + "\"); $(\"#subjectSendMsg\").val(\"Re: " + response.subject + "\"); sendMode(\"sendFolder\", \"inbox\", \"sendMsgDiv\", \"showMsgContainer\");' class='btn btn-warning'><span>پاسخ به </span><span>" + response.senderId + "</span></button></td>";
             }
             else {
-                newElement += "<button onclick='$(\"#destUserSendMsg\").val(\"" + response.receiverId + "\"); $(\"#subjectSendMsg\").val(\"" + response.subject + "\"); sendMode(\"sendFolder\", \"inbox\", \"sendMsgDiv\", \"showMsgContainer\");' class='btn btn-warning'><span>ارسال پیام به </span><span>" + response.receiverId + "</span></button></td>";
+                newElement += "<button onclick='$(\"#destUserSendMsg\").val(\"" + response.receiverId + "\"); $(\"#subjectSendMsg\").val(\"Re: " + response.subject + "\"); sendMode(\"sendFolder\", \"inbox\", \"sendMsgDiv\", \"showMsgContainer\");' class='btn btn-warning'><span>پاسخ به </span><span>" + response.receiverId + "</span></button></td>";
             }
 
             $("#" + element).empty().append(newElement).removeClass('hidden');

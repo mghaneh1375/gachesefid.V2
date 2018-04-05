@@ -299,6 +299,16 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 	Route::post('editAdviserQuestion', array('as' => 'editAdviserQuestion', 'uses' => 'AdminController@editAdviserQuestion'));
 
+	Route::get('composeQuizes', array('as' => 'composeQuizes', 'uses' => 'QuizController@composeQuizes'));
+
+	Route::post('removeCompose', array('as' => 'removeCompose', 'uses' => 'QuizController@removeCompose'));
+
+	Route::post('addCompose', array('as' => 'addCompose', 'uses' => 'QuizController@addCompose'));
+
+	Route::post('getComposeListOfQuiz', array('as' => 'getComposeListOfQuiz', 'uses' => 'QuizController@getComposeListOfQuiz'));
+
+	Route::post('addQuizToCompose', array('as' => 'addQuizToCompose', 'uses' => 'QuizController@addQuizToCompose'));
+
 });
 
 Route::group(array('middleware' => ['nothing', 'auth', 'adviserLevel']), function () {
