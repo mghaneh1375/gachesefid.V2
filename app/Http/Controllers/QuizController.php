@@ -1409,9 +1409,9 @@ class QuizController extends Controller {
             if($quizes != null && count($quizes) > 0) {
                 foreach ($quizes as $tmp) {
                     if ($tmp->quizMode == getValueInfo('regularQuiz')) {
-                        $tmp->quizId = RegularQuiz::whereId($tmp->quizId)->name;
+                        $tmp->quizName = RegularQuiz::whereId($tmp->quizId)->name;
                     } else if ($tmp->quizMode == getValueInfo('systemQuiz')) {
-                        $tmp->quizId = SystemQuiz::whereId($tmp->quizId)->name;
+                        $tmp->quizName = SystemQuiz::whereId($tmp->quizId)->name;
                     }
                 }
             }
@@ -1431,35 +1431,52 @@ class QuizController extends Controller {
         return Redirect::route('composeQuizes');
     }
 
+    public function deleteFromPackage() {
+
+        if (isset($_POST["qId"]) && isset($_POST["quizMode"])) {
+
+            $quizId = makeValidInput($_POST["qId"]);
+            $quizMode = makeValidInput($_POST["quizMode"]);
+
+            $condition = ['quizId' => $quizId, 'quizMode' => $quizMode];
+            if (ComposeQuizItem::where($condition)->count() == 0) {
+                echo "nok";
+                return;
+            }
+
+            ComposeQuizItem::where($condition)->delete();
+
+            echo "ok";
+        }
+    }
+
     public function addQuizToCompose() {
         
-        if(isset($_POST["quizId"]) && isset($_POST["quizMode"]) && isset($_POST["composes"])) {
+        if(isset($_POST["quizId"]) && isset($_POST["quizMode"]) && isset($_POST["composeId"])) {
 
             $quizId = makeValidInput($_POST["quizId"]);
             $quizMode = makeValidInput($_POST["quizMode"]);
 
-            $composes = $_POST['composes'];
+            $composeId = makeValidInput($_POST['composeId']);
 
             $condition = ['quizId' => $quizId, 'quizMode' => $quizMode];
-            ComposeQuizItem::where($condition)->delete();
-
-            foreach ($composes as $compose) {
-
-                $compose = makeValidInput($compose);
-
-                $tmp = new ComposeQuizItem();
-                $tmp->quizId = $quizId;
-                $tmp->quizMode = $quizMode;
-                $tmp->composeId = $compose;
-
-                try {
-                    $tmp->save();
-                }
-                catch (Exception $x) {}
+            if(ComposeQuizItem::where($condition)->count() > 0) {
+                echo "nok";
+                return;
             }
 
-            echo "ok";
+            $tmp = new ComposeQuizItem();
+            $tmp->quizId = $quizId;
+            $tmp->quizMode = $quizMode;
+            $tmp->composeId = $composeId;
+
+            try {
+                $tmp->save();
+            }
+            catch (Exception $x) {}
         }
+
+        echo "ok";
         
     }
 

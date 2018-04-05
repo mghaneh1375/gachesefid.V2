@@ -12,19 +12,19 @@
 
     $(document).ready(function () {
 
-        timeVal1 = Math.floor(money / 100);
+        timeVal1 = (money > 0) ? Math.floor(money / 100) : 1;
         countMoney(-1);
 
-        timeVal2 = Math.floor(1000 / myQuizNo);
+        timeVal2 = (myQuizNo > 0) ? Math.floor(1000 / myQuizNo) : 1;
         countMyQuizNo(-1);
 
-        timeVal4 = Math.floor(1000 / nextQuizNo);
+        timeVal4 = (nextQuizNo > 0) ? Math.floor(1000 / nextQuizNo) : 1;
         countNextQuizNo(-1);
 
-        timeVal3 = Math.floor(1000 / questionNo);
+        timeVal3 = (questionNo > 0) ? Math.floor(1000 / questionNo) : 1;
         countQuestionNo(-1);
 
-        timeVal5 = Math.floor(1000 / rate);
+        timeVal5 = (rate > 0) ? Math.floor(1000 / rate) : 1;
         countRate(-1);
 
         if(rank != 0) {

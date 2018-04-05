@@ -49,6 +49,11 @@
                                 <tr>
                                     <td>
                                         <span> {{$quiz->name}} </span>
+
+                                        <button data-toggle="tooltip" title="حذف بسته" name="composeId" value="{{$quiz->id}}" class="btn btn-danger">
+                                            <span class="glyphicon glyphicon-remove" style="margin-left: 30%"></span>
+                                        </button>
+
                                         @if($quiz->items != null && count($quiz->items) > 0)
                                             <span> / </span>
                                             <span> محتویات : </span>
@@ -59,15 +64,13 @@
                                                     @elseif($itr->quizMode == getValueInfo('systemQuiz'))
                                                         <span> سنجش پای تخته </span>
                                                     @endif
-                                                    <span> {{$itr->quizId}} </span>
+                                                    <span> {{$itr->quizName}} </span>
+                                                    <span onclick="deleteFromPackage('{{$itr->quizId}}', '{{$itr->quizMode}}')" data-toggle="tooltip" title="حذف آزمون از بسته" class="btn btn-warning">
+                                                        <span class="glyphicon glyphicon-remove"></span>
+                                                    </span>
                                                 </p>
                                             @endforeach
                                         @endif
-                                    </td>
-                                    <td>
-                                        <button name="composeId" value="{{$quiz->id}}" class="btn btn-danger">
-                                            <span class="glyphicon glyphicon-remove" style="margin-left: 30%"></span>
-                                        </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -123,7 +126,7 @@
                     <div class="col-xs-12">
                         <label>
                             <span>{{$itr->name}}</span>
-                            <input type="checkbox" id="compose_{{$itr->id}}" name="packages" value="{{$itr->id}}">
+                            <input type="radio" id="compose_{{$itr->id}}" name="packages" value="{{$itr->id}}">
                         </label>
                     </div>
                 @endforeach
@@ -138,13 +141,31 @@
         
         var selectedQuiz = -1;
         var selectedQuizMode = -1;
-        
+
+        function deleteFromPackage(quizId, quizMode) {
+
+            $.ajax({
+                type: 'post',
+                url: '{{route('deleteFromPackage')}}',
+                data: {
+                    'qId': quizId,
+                    'quizMode': quizMode
+                },
+                success: function (response) {
+
+                    if(response == "ok")
+                        document.location.href = '{{route('composeQuizes')}}';
+                }
+            });
+
+        }
+
         function showPackages(quizId, quizMode) {
 
             selectedQuiz = quizId;
             selectedQuizMode = quizMode;
 
-            $("input:checkbox[name=packages]").prop('checked', false);
+            $("input:radio[name=packages]").prop('checked', false);
 
             $.ajax({
                 type: 'post',
@@ -170,14 +191,13 @@
         
         function doAddQuizToPackages() {
 
-            var selected = [];
-            var itr = 0;
+            var selected = -1;
 
-            $("input:checkbox[name=packages]:checked").each(function () {
-                selected[itr++] = $(this).val();
+            $("input:radio[name=packages]:checked").each(function () {
+                selected = $(this).val();
             });
 
-            if(selected.length == 0)
+            if(selected == -1)
                 return;
 
             $.ajax({
@@ -186,11 +206,13 @@
                 data: {
                     'quizId': selectedQuiz,
                     'quizMode': selectedQuizMode,
-                    'composes': selected
+                    'composeId': selected
                 },
                 success: function (response) {
                     if(response == "ok")
                         document.location.href = '{{route('composeQuizes')}}';
+                    else if(response == "nok")
+                        alert("آزمون مورد نظر در بسته ای دیگر موجود است");
                 }
             });
 

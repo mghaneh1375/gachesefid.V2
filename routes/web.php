@@ -309,6 +309,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 	Route::post('addQuizToCompose', array('as' => 'addQuizToCompose', 'uses' => 'QuizController@addQuizToCompose'));
 
+	Route::post('deleteFromPackage', array('as' => 'deleteFromPackage', 'uses' => 'QuizController@deleteFromPackage'));
+
 });
 
 Route::group(array('middleware' => ['nothing', 'auth', 'adviserLevel']), function () {
