@@ -73,6 +73,15 @@
                     </div>
                 </div>
 
+                <div class="col-xs-12">
+                    <div class="col-xs-7">
+                        <input type="number" name="percentOfQuizes" min="0" value="{{$config->percentOfQuizes}}" required>
+                    </div>
+                    <div class="col-xs-5">
+                        <span>درصد تخفیف برای از آزمون ها</span>
+                    </div>
+                </div>
+
                 <div class="col-xs-12" style="margin-top: 10px">
                     <input type="submit" value="تایید" name="submitConfig" class="btn btn-default">
                 </div>

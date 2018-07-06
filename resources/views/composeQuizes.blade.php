@@ -110,6 +110,16 @@
                         </label>
                     </div>
 
+                    <div class="col-xs-12">
+                        <label>
+                            <span>نوع بسته</span>
+                            <select name="kindQuiz">
+                                <option value="{{getValueInfo('regularQuiz')}}">سنجش پشت میز</option>
+                                <option value="{{getValueInfo('systemQuiz')}}">سنجش پای تخته</option>
+                            </select>
+                        </label>
+                    </div>
+
                     <div class="submitOptions" style="margin-top: 10px">
                         <input type="submit" value="تایید" class="btn btn-success">
                     </div>
@@ -213,6 +223,8 @@
                         document.location.href = '{{route('composeQuizes')}}';
                     else if(response == "nok")
                         alert("آزمون مورد نظر در بسته ای دیگر موجود است");
+                    else if(response == "nok2")
+                        alert("نوع آزمون مورد نظر با نوع بسته هماهنگی ندارد");
                 }
             });
 

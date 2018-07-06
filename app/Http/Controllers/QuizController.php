@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\models\ComposeQuiz;
 use App\models\ComposeQuizItem;
+use App\models\ConfigModel;
 use App\models\LOK;
 use App\models\OffCode;
 use App\models\QuizStatus;
@@ -1060,6 +1061,176 @@ class QuizController extends Controller {
         return Redirect::to(route('chargeAccountWithStatus', ['status' => 'err']));
     }
 
+    public function doMultiQuizRegistryFromAccount($mode) {
+
+        if(isset($_POST["quizId"]) && isset($_POST["giftCode"]) && isset($_POST["pack"])) {
+
+            include_once 'MoneyController.php';
+
+            $total = getTotalMoney();
+            $qIds = $_POST["quizId"];
+            $uId = Auth::user()->id;
+            $toPay = 0;
+            $pack = makeValidInput($_POST["pack"]);
+
+            if($mode == getValueInfo('systemQuiz')) {
+                foreach ($qIds as $qId) {
+                    $quiz = SystemQuiz::whereId($qId);
+                    if($quiz == null) {
+                        echo "nok1";
+                        return;
+                    }
+
+                    $condition = ['uId' => $uId, 'qId' => $qId, 'quizMode' => getValueInfo('systemQuiz')];
+
+                    if(QuizRegistry::where($condition)->count() > 0) {
+                        echo "nok2";
+                        return;
+                    }
+
+                    $toPay += $quiz->price;
+                }
+            }
+            elseif($mode == getValueInfo('regularQuiz')) {
+                foreach ($qIds as $qId) {
+
+                    $quiz = RegularQuiz::whereId($qId);
+                    if($quiz == null) {
+                        echo "nok1";
+                        return;
+                    }
+
+                    $condition = ['uId' => $uId, 'qId' => $qId, 'quizMode' => getValueInfo('regularQuiz')];
+                    if(QuizRegistry::where($condition)->count() > 0) {
+                        echo "nok2";
+                        return;
+                    }
+
+                    $toPay += $quiz->price;
+                }
+            }
+            else {
+                echo "nok1";
+                return;
+            }
+
+            $config = ConfigModel::first();
+
+            if($pack == "true")
+                $toPay = floor($toPay * (100 - $config->percentOfPackage) / 100);
+            else
+                $toPay = floor($toPay * (100 - $config->percentOfQuizes) / 100);
+
+            $useGift = -1;
+
+            $giftCode = makeValidInput($_POST["giftCode"]);
+            if(checkOffCodeValidation($giftCode)) {
+                $code = OffCode::whereCode($giftCode)->first();
+
+                if($code->type == getValueInfo('staticOffCode'))
+                    $toPay -= $code->amount;
+                else
+                    $toPay -= ceil($code->amount * $toPay / 100);
+                if($toPay < 0)
+                    $toPay = 0;
+
+                $useGift = $giftCode;
+            }
+
+            if($toPay > $total) {
+                echo "nok1";
+                return;
+            }
+
+            if($mode == getValueInfo('systemQuiz')) {
+                foreach ($qIds as $qId) {
+                    quizRegistry(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'), $qId, $useGift);
+                }
+            }
+            else {
+                foreach ($qIds as $qId) {
+                    quizRegistry(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'), $qId, $useGift);
+                }
+            }
+
+            echo "ok";
+            return;
+        }
+
+        echo "nok3";
+    }
+
+    public function doQuizRegistryFromAccount($mode) {
+
+        if(isset($_POST["quizId"]) && isset($_POST["giftCode"])) {
+
+            include_once 'MoneyController.php';
+
+            $total = getTotalMoney();
+            $quizId = makeValidInput($_POST["quizId"]);
+            $uId = Auth::user()->id;
+
+            if($mode == "system")
+                $quiz = SystemQuiz::whereId($quizId);
+            else if($mode == "regular")
+                $quiz = RegularQuiz::whereId($quizId);
+            else {
+                echo "nok1";
+                return;
+            }
+
+            if($quiz == null) {
+                echo "nok1";
+                return;
+            }
+
+            $toPay = $quiz->price;
+            $useGift = -1;
+
+            $giftCode = makeValidInput($_POST["giftCode"]);
+            if(checkOffCodeValidation($giftCode)) {
+                $code = OffCode::whereCode($giftCode)->first();
+
+                if($code->type == getValueInfo('staticOffCode'))
+                    $toPay -= $code->amount;
+                else
+                    $toPay -= ceil($code->amount * $toPay / 100);
+                if($toPay < 0)
+                    $toPay = 0;
+
+                $useGift = $giftCode;
+            }
+
+            if($toPay > $total) {
+                echo "nok1";
+                return;
+            }
+
+            if($mode == "system")
+                $condition = ['uId' => $uId, 'qId' => $quizId, 'quizMode' => getValueInfo('systemQuiz')];
+            else
+                $condition = ['uId' => $uId, 'qId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')];
+
+            if(QuizRegistry::where($condition)->count() > 0) {
+                echo "nok2";
+                return;
+            }
+
+            if($mode == "system")
+                quizRegistry(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id,
+                    getValueInfo('money2'), $quizId, $useGift);
+            else
+                quizRegistry(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id,
+                    getValueInfo('money2'), $quizId, $useGift);
+
+            echo "ok";
+            return;
+        }
+
+        echo "nok3";
+
+    }
+    
     public function paymentQuiz($mode) {
 
         if(isset($_POST["quizId"]) && isset($_POST["giftCode"])) {
@@ -1135,6 +1306,111 @@ class QuizController extends Controller {
             else
                 quizRegistry(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id,
                     getValueInfo('money2'), $quizId, $useGift);
+
+            echo json_encode(['status' => 'ok2']);
+            return;
+        }
+
+        echo json_encode(['status' => 'nok1']);
+    }
+
+    public function multiPaymentQuiz($mode) {
+
+        if(isset($_POST["quizId"]) && isset($_POST["giftCode"]) && isset($_POST["pack"])) {
+
+            include_once 'MoneyController.php';
+
+            $qIds = $_POST["quizId"];
+            $uId = Auth::user()->id;
+            $toPay = 0;
+            $pack = makeValidInput($_POST["pack"]);
+
+            if($mode == getValueInfo('systemQuiz')) {
+                foreach ($qIds as $qId) {
+                    $quiz = SystemQuiz::whereId($qId);
+                    if($quiz == null) {
+                        echo "nok1";
+                        return;
+                    }
+
+                    $condition = ['uId' => $uId, 'qId' => $qId, 'quizMode' => getValueInfo('systemQuiz')];
+
+                    if(QuizRegistry::where($condition)->count() > 0) {
+                        echo "nok2";
+                        return;
+                    }
+
+                    $toPay += $quiz->price;
+                }
+            }
+            elseif($mode == getValueInfo('regularQuiz')) {
+                foreach ($qIds as $qId) {
+
+                    $quiz = RegularQuiz::whereId($qId);
+                    if($quiz == null) {
+                        echo "nok1";
+                        return;
+                    }
+
+                    $condition = ['uId' => $uId, 'qId' => $qId, 'quizMode' => getValueInfo('regularQuiz')];
+                    if(QuizRegistry::where($condition)->count() > 0) {
+                        echo "nok2";
+                        return;
+                    }
+
+                    $toPay += $quiz->price;
+                }
+            }
+            else {
+                echo "nok1";
+                return;
+            }
+
+            $config = ConfigModel::first();
+
+            if($pack == "true")
+                $toPay = floor($toPay * (100 - $config->percentOfPackage) / 100);
+            else
+                $toPay = floor($toPay * (100 - $config->percentOfQuizes) / 100);
+
+            $useGift = -1;
+
+            $giftCode = makeValidInput($_POST["giftCode"]);
+            if(checkOffCodeValidation($giftCode)) {
+                $code = OffCode::whereCode($giftCode)->first();
+
+                if($code->type == getValueInfo('staticOffCode'))
+                    $toPay -= $code->amount;
+                else
+                    $toPay -= ceil($code->amount * $toPay / 100);
+                if($toPay < 0)
+                    $toPay = 0;
+
+                $useGift = $giftCode;
+            }
+
+            if($toPay > 10 && $toPay > getTotalMoney()) {
+
+                $callBackUrl = route('multiPaymentPostQuiz', ['qIds' => \GuzzleHttp\json_encode($qIds), 'mode' =>
+                    $mode]);
+
+                $res = payment(($toPay - getTotalMoney()) * 10, $callBackUrl, $useGift);
+
+                echo json_encode(['status' => 'nok', 'refId' => $res]);
+                return;
+            }
+
+
+            if($mode == getValueInfo('systemQuiz')) {
+                foreach ($qIds as $qId) {
+                    quizRegistry(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'), $qId, $useGift);
+                }
+            }
+            else {
+                foreach ($qIds as $qId) {
+                    quizRegistry(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'), $qId, $useGift);
+                }
+            }
 
             echo json_encode(['status' => 'ok2']);
             return;
@@ -1283,6 +1559,148 @@ class QuizController extends Controller {
 
         return Redirect::to(route('doQuizRegistryWithStatus', ['quizId' => $quizId,
             'mode' => $mode, 'status' => 'err']));
+    }
+
+    public function multiPaymentPostQuiz($qIds, $mode, $pack) {
+
+        if (isset($_POST["RefId"]) && isset($_POST["ResCode"]) && isset($_POST["SaleOrderId"]) && isset($_POST["SaleReferenceId"]))  {
+
+            $qIds = \GuzzleHttp\json_decode($qIds);
+            $arg = ['mode' => $mode, 'pack' => $pack, 'status' => 'err'];
+            $counter = 1;
+            foreach ($qIds as $qId) {
+                $arg['qId' . ($counter++)] = $qId;
+            }
+
+            if(makeValidInput($_POST["ResCode"]) != 0)
+                return Redirect::route('doMultiQuizRegistry', $arg);
+
+            $condition = ['refId' => makeValidInput($_POST["RefId"])];
+            $mellat = Mellat::where($condition)->first();
+
+            $mellat->saleReferenceId = makeValidInput($_POST["SaleReferenceId"]);
+            $mellat->saleOrderId = makeValidInput($_POST["SaleOrderId"]);
+            $mellat->status = 2;
+            $mellat->save();
+
+//            require_once("lib/nusoap.php");
+
+            $client = new soapclient('https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl');
+            $namespace = 'http://interfaces.core.sw.bps.com/';
+
+            $terminalId = 909350;
+            $userName = "irysc";
+            $userPassword = "ir99ys";
+
+            $tmp = new OrderId();
+            $orderId = rand(1, 1000000000);
+
+            while (OrderId::whereCode($orderId)->count() > 0)
+                $orderId = rand(1, 1000000000);
+
+            $tmp->code = $orderId;
+            $tmp->save();
+
+            $verifySaleOrderId = $mellat->saleOrderId;
+            $verifySaleReferenceId = $mellat->saleReferenceId;
+
+            // Check for an error
+            $err = $client->getError();
+            if ($err)
+                return Redirect::route('doMultiQuizRegistry', $arg);
+
+
+            $parameters = array(
+                'terminalId' => $terminalId,
+                'userName' => $userName,
+                'userPassword' => $userPassword,
+                'orderId' => $orderId,
+                'saleOrderId' => $verifySaleOrderId,
+                'saleReferenceId' => $verifySaleReferenceId);
+
+            // Call the SOAP method
+            $result = $client->call('bpVerifyRequest', $parameters, $namespace);
+
+            // Check for a fault
+            if ($client->fault)
+                return Redirect::route('doMultiQuizRegistry', $arg);
+
+            else {
+                $resultStr = $result;
+
+                $err = $client->getError();
+                if ($err)
+                    return Redirect::route('doMultiQuizRegistry', $arg);
+                else {
+
+                    if($resultStr == 0) {
+
+                        include_once 'MoneyController.php';
+
+                        if($mode == getValueInfo('systemQuiz')) {
+                            foreach ($qIds as $qId) {
+                                quizRegistryOnline(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $mellat->amount / 10, Auth::user()->id,
+                                    getValueInfo('money2'), $qId, $mellat->gift);
+                            }
+                        }
+                        else {
+                            foreach ($qIds as $qId) {
+                                quizRegistryOnline(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $mellat->amount / 10, Auth::user()->id,
+                                    getValueInfo('money2'), $qId, $mellat->gift);
+                            }
+                        }
+
+                        $mellat->status = 3;
+                        $mellat->save();
+
+                        $tmp = new OrderId();
+                        $orderId = rand(1, 1000000000);
+
+                        while (OrderId::whereCode($orderId)->count() > 0)
+                            $orderId = rand(1, 1000000000);
+
+                        $tmp->code = $orderId;
+                        $tmp->save();
+
+                        $settleSaleOrderId = $mellat->saleOrderId;
+                        $settleSaleReferenceId = $mellat->saleReferenceId;
+
+                        // Check for an error
+                        $err = $client->getError();
+                        if (empty($err)) {
+
+                            $parameters = array(
+                                'terminalId' => $terminalId,
+                                'userName' => $userName,
+                                'userPassword' => $userPassword,
+                                'orderId' => $orderId,
+                                'saleOrderId' => $settleSaleOrderId,
+                                'saleReferenceId' => $settleSaleReferenceId);
+
+                            // Call the SOAP method
+                            $result = $client->call('bpSettleRequest', $parameters, $namespace);
+
+                            if(empty($client->fault)) {
+                                $resultStr = $result;
+                                $err = $client->getError();
+                                if (empty($err)) {
+                                    if ($resultStr == 0) {
+                                        $mellat->status = 4;
+                                        $mellat->save();
+                                    }
+                                }
+                            }// end Display the result
+                        }
+
+                        $arg["status"] = "finish";
+                        return Redirect::route('doMultiQuizRegistry', $arg);
+
+                    }
+                }// end Display the result
+            }// end Check for errors
+        }
+
+        return Redirect::route('profile');
     }
 
     public function quizEntry() {
@@ -1456,8 +1874,12 @@ class QuizController extends Controller {
 
             $quizId = makeValidInput($_POST["quizId"]);
             $quizMode = makeValidInput($_POST["quizMode"]);
-
             $composeId = makeValidInput($_POST['composeId']);
+
+            if(ComposeQuiz::whereId($composeId)->kindQuiz != $quizMode) {
+                echo "nok2";
+                return;
+            }
 
             $condition = ['quizId' => $quizId, 'quizMode' => $quizMode];
             if(ComposeQuizItem::where($condition)->count() > 0) {
@@ -1482,13 +1904,16 @@ class QuizController extends Controller {
 
     public function addCompose() {
 
-        if(isset($_POST["name"])) {
+        if(isset($_POST["name"]) && isset($_POST["kindQuiz"])) {
 
             $name = makeValidInput($_POST["name"]);
+            $kindQuiz = makeValidInput($_POST["kindQuiz"]);
+
             if(ComposeQuiz::whereName($name)->count() == 0) {
 
                 $tmp = new ComposeQuiz();
                 $tmp->name = $name;
+                $tmp->kindQuiz = $kindQuiz;
 
                 try {
                     $tmp->save();
@@ -2045,20 +2470,38 @@ class QuizController extends Controller {
         $date = getToday()["date"];
         $uId = Auth::user()->id;
 
-        $quizes = SystemQuiz::whereNotExists(function($query) use ($uId) {
-            $query->select(DB::raw(1))
-                ->from('quizRegistry')
-                ->whereRaw('systemQuiz.id = quizRegistry.qId and quizRegistry.quizMode = ' . getValueInfo('systemQuiz') . ' and quizRegistry.uId = ' . $uId);
-        })->whereRaw('startReg <= ' . $date . ' and endReg >= ' . $date)->get();
+        $composes = DB::select('select DISTINCT c.id, c.name from ' .
+            ' composeQuiz c, systemQuiz s, composeQuizItem qI WHERE qI.composeId = c.id and c.kindQuiz = ' .
+            getValueInfo('systemQuiz') . ' and s.id = qI.quizId and qI.quizMode = c.kindQuiz and s.startReg <= ' . $date .
+            ' and s.endReg >= ' . $date . ' and not exists (select * from quizRegistry qR where s.id = qR.qId and qR.quizMode = ' .
+            getValueInfo('systemQuiz') . ' and qR.uId = ' . $uId . ')'
+        );
 
-        foreach ($quizes as $quiz) {
-            $quiz->startDate = convertStringToDate($quiz->startDate);
-            $quiz->startTime = convertStringToTime($quiz->startTime);
-            $quiz->startReg = convertStringToDate($quiz->startReg);
-            $quiz->endReg = convertStringToDate($quiz->endReg);
+        $config = ConfigModel::first();
+
+        foreach ($composes as $compose) {
+
+            $compose->registerable = DB::select('select s.id, s.name, s.startDate, s.startTime, s.startReg, s.endReg, s.price from ' .
+                ' systemQuiz s, composeQuizItem qI WHERE qI.composeId = ' . $compose->id . ' and s.id = qI.quizId and ' .
+                ' qI.quizMode = ' . getValueInfo('systemQuiz') . ' and s.startReg <= ' . $date .
+                ' and s.endReg >= ' . $date . ' and not exists (select * from quizRegistry qR where s.id = qR.qId and qR.quizMode = ' .
+                getValueInfo('systemQuiz') . ' and qR.uId = ' . $uId . ')'
+            );
+
+            $totalPrice = 0;
+            
+            foreach ($compose->registerable as $quiz) {
+                $quiz->startDate = convertStringToDate($quiz->startDate);
+                $quiz->startTime = convertStringToTime($quiz->startTime);
+                $quiz->startReg = convertStringToDate($quiz->startReg);
+                $quiz->endReg = convertStringToDate($quiz->endReg);
+                $totalPrice += $quiz->price;
+            }
+
+            $compose->totalPrice = floor($totalPrice * (100 - $config->percentOfPackage) / 100);
         }
 
-        return view('quizRegistry', array('quizes' => $quizes, 'mode' => 'system'));
+        return view('quizRegistry', array('composes' => $composes, 'mode' => 'system', 'percentOfQuizes' => $config->percentOfQuizes));
     }
 
     public function regularQuizRegistry() {
@@ -2066,92 +2509,108 @@ class QuizController extends Controller {
         $date = getToday()["date"];
         $uId = Auth::user()->id;
 
-        $quizes = RegularQuiz::whereNotExists(function($query) use ($uId) {
-            $query->select(DB::raw(1))
-                ->from('quizRegistry')
-                ->whereRaw('regularQuiz.id = quizRegistry.qId and quizRegistry.quizMode = ' . getValueInfo('regularQuiz') . ' and quizRegistry.uId = ' . $uId);
-        })->whereRaw('startReg <= ' . $date . ' and endReg >= ' . $date)->get();
+        $config = ConfigModel::first();
 
-        foreach ($quizes as $quiz) {
-            $quiz->startDate = convertStringToDate($quiz->startDate);
-            $quiz->endDate = convertStringToDate($quiz->endDate);
-            $quiz->startTime = convertStringToTime($quiz->startTime);
-            $quiz->endTime = convertStringToTime($quiz->endTime);
-            $quiz->startReg = convertStringToDate($quiz->startReg);
-            $quiz->endReg = convertStringToDate($quiz->endReg);
+        $composes = DB::select('select DISTINCT c.id, c.name from ' .
+            ' composeQuiz c, regularQuiz r, composeQuizItem qI WHERE qI.composeId = c.id and c
+.kindQuiz = ' . getValueInfo('regularQuiz') . ' and r.id = qI.quizId and qI.quizMode = c.kindQuiz and r.startReg <= ' . $date . ' and r.endReg >= ' . $date . ' and not exists (select * from quizRegistry qR where r.id = qR.qId and qR.quizMode = ' .
+            getValueInfo('regularQuiz') . ' and qR.uId = ' . $uId . ')'
+        );
+
+        foreach ($composes as $compose) {
+
+            $compose->registerable = DB::select('select s.id, s.name, s.startDate, s.startTime, s.endTime, s.startReg, s.endReg, s.price, s.endDate from ' . ' regularQuiz s, composeQuizItem qI
+ WHERE qI.composeId = ' . $compose->id . ' and s.id = qI.quizId and ' .
+                ' qI.quizMode = ' . getValueInfo('regularQuiz') . ' and s.startReg <= ' . $date .
+                ' and s.endReg >= ' . $date . ' and not exists (select * from quizRegistry qR where s.id = qR.qId and qR.quizMode = ' . getValueInfo('regularQuiz') . ' and qR.uId = ' . $uId . ')'
+            );
+
+            $totalPrice = 0;
+
+            foreach ($compose->registerable as $quiz) {
+                $quiz->startDate = convertStringToDate($quiz->startDate);
+                $quiz->startTime = convertStringToTime($quiz->startTime);
+                $quiz->endDate = convertStringToTime($quiz->endDate);
+                $quiz->startReg = convertStringToDate($quiz->startReg);
+                $quiz->endReg = convertStringToDate($quiz->endReg);
+                $quiz->endTime = convertStringToTime($quiz->endTime);
+                $totalPrice += $quiz->price;
+            }
+
+            $compose->totalPrice = floor($totalPrice * (100 - $config->percentOfPackage) / 100);
         }
 
-        return view('quizRegistry', array('quizes' => $quizes, 'mode' => 'regular'));
+        return view('quizRegistry', array('composes' => $composes, 'mode' => 'regular', 'percentOfQuizes' => $config->percentOfQuizes));
     }
 
-    public function doQuizRegistryFromAccount($mode) {
+    public function doComposeQuizRegistry($composeId) {
 
-        if(isset($_POST["quizId"]) && isset($_POST["giftCode"])) {
+        $compose = ComposeQuiz::whereId($composeId);
+        if($compose == null)
+            return Redirect::route('profile');
 
-            include_once 'MoneyController.php';
+        $date = getToday()["date"];
+        $uId = Auth::user()->id;
 
-            $total = getTotalMoney();
-            $quizId = makeValidInput($_POST["quizId"]);
-            $uId = Auth::user()->id;
+        $quizes = DB::select('select s.id from ' . ' regularQuiz s, composeQuizItem qI
+ WHERE qI.composeId = ' . $compose->id . ' and s.id = qI.quizId and ' .
+            ' qI.quizMode = ' . getValueInfo('regularQuiz') . ' and s.startReg <= ' . $date .
+            ' and s.endReg >= ' . $date . ' and not exists (select * from quizRegistry qR where s.id = qR.qId and qR.quizMode = ' . getValueInfo('regularQuiz') . ' and qR.uId = ' . $uId . ')'
+        );
 
-            if($mode == "system")
-                $quiz = SystemQuiz::whereId($quizId);
-            else if($mode == "regular")
-                $quiz = RegularQuiz::whereId($quizId);
-            else {
-                echo "nok1";
-                return;
+        if($quizes == null || count($quizes) == 0)
+            return Redirect::route('profile');
+
+        $counter = 0;
+        $qIds = [];
+
+        foreach ($quizes as $quiz)
+             $qIds[$counter++] = $quiz->id;
+
+        return $this->doMultiQuizRegistry($compose->kindQuiz, true, 'nop', $qIds);
+
+    }
+
+    public function doMultiQuizRegistry($mode, $pack, $status, ... $qIds) {
+
+        $today = getToday();
+        $toPay = 0;
+        $qIds = $qIds[0];
+
+        if($mode == getValueInfo('systemQuiz')) {
+            foreach ($qIds as $qId) {
+                $quiz = SystemQuiz::whereId($qId);
+                if($quiz == null || $quiz->startReg > $today["date"] ||
+                    $quiz->endReg < $today["date"])
+                    return Redirect::route('profile');
+                $toPay += $quiz->price;
             }
-
-            if($quiz == null) {
-                echo "nok1";
-                return;
+        }
+        else {
+            foreach ($qIds as $qId) {
+                $quiz = RegularQuiz::whereId($qId);
+                if($quiz == null || $quiz->startReg > $today["date"] ||
+                    $quiz->endReg < $today["date"])
+                    return Redirect::route('profile');
+                $toPay += $quiz->price;
             }
-
-            $toPay = $quiz->price;
-            $useGift = -1;
-            
-            $giftCode = makeValidInput($_POST["giftCode"]);
-            if(checkOffCodeValidation($giftCode)) {
-                $code = OffCode::whereCode($giftCode)->first();
-
-                if($code->type == getValueInfo('staticOffCode'))
-                    $toPay -= $code->amount;
-                else
-                    $toPay -= ceil($code->amount * $toPay / 100);
-                if($toPay < 0)
-                    $toPay = 0;
-                
-                $useGift = $giftCode;
-            }
-
-            if($toPay > $total) {
-                echo "nok1";
-                return;
-            }
-
-            if($mode == "system")
-                $condition = ['uId' => $uId, 'qId' => $quizId, 'quizMode' => getValueInfo('systemQuiz')];
-            else
-                $condition = ['uId' => $uId, 'qId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')];
-
-            if(QuizRegistry::where($condition)->count() > 0) {
-                echo "nok2";
-                return;
-            }
-
-            if($mode == "system")
-                quizRegistry(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id,
-                    getValueInfo('money2'), $quizId, $useGift);
-            else
-                quizRegistry(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id,
-                    getValueInfo('money2'), $quizId, $useGift);
-
-            echo "ok";
-            return;
         }
 
-        echo "nok3";
+        $config = ConfigModel::first();
+
+        include_once 'MoneyController.php';
+
+        if($pack)
+            $toPay = floor($toPay * (100 - $config->percentOfPackage) / 100);
+        else
+            $toPay = floor($toPay * (100 - $config->percentOfQuizes) / 100);
+
+        if($mode == getValueInfo('regularQuiz'))
+            return view('preTransaction', array('quizId' => $qIds, 'url' => route('regularQuizRegistry'), 'backURL' => route('regularQuizRegistry'), 'status' => $status, 'multi' => true, 'pack' => $pack,
+                'total' => getTotalMoney(), 'toPay' => $toPay, 'payURL' => route('doMultiQuizRegistryFromAccount', ['mode' => $mode]), 'payURL2' => route('multiPaymentQuiz', ['mode' => $mode])));
+
+        return view('preTransaction', array('quizId' => $qIds, 'url' => route('quizRegistry'), 'backURL' => route('quizRegistry'), 'status' => $status, 'multi' => true, 'pack' => $pack,
+            'total' => getTotalMoney(), 'toPay' => $toPay, 'payURL' => route('doMultiQuizRegistryFromAccount', ['mode' => $mode]), 'payURL2' => route('multiPaymentQuiz', ['mode' => $mode])));
 
     }
 
@@ -2516,13 +2975,13 @@ class QuizController extends Controller {
         if(isset($_POST["quizId"])) {
 
             $quizId = makeValidInput($_POST["quizId"]);
-            $quiz = SystemQuiz::whereId($quizId);
-            $today = getToday();
+//            $quiz = SystemQuiz::whereId($quizId);
+//            $today = getToday();
 
-            if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
-                echo "timeOut";
-                return;
-            }
+//            if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
+//                echo "timeOut";
+//                return;
+//            }
 
             $questions = DB::select('select systemQOQ.mark as mark, systemQOQ.qNo as qNo, questionFile, ans, users.level as authorLevel, ansFile, question.level,
                 neededTime, question.id from question, systemQOQ, users WHERE users.id = author and
@@ -2552,8 +3011,8 @@ class QuizController extends Controller {
         if(isset($_POST["quizId"])) {
 
             $quizId = makeValidInput($_POST["quizId"]);
-            $quiz = RegularQuiz::whereId($quizId);
-            $today = getToday();
+//            $quiz = RegularQuiz::whereId($quizId);
+//            $today = getToday();
 
             /*if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
                 echo "timeOut";
@@ -2782,10 +3241,10 @@ class QuizController extends Controller {
             $today = getToday();
             $questionId = makeValidInput($_POST["questionId"]);
 
-            if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
-                echo "timeOut";
-                return;
-            }
+//            if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
+//                echo json_encode(['status' => "nok"]);
+//                return;
+//            }
 
             if(ControllerActivity::where('qId', '=', $questionId)->count() == 0) {
                 echo json_encode(['status' => "nok"]);
@@ -2821,14 +3280,14 @@ class QuizController extends Controller {
         if(isset($_POST["quizId"]) && isset($_POST["questionId"])) {
 
             $quizId = makeValidInput($_POST["quizId"]);
-            $quiz = RegularQuiz::whereId($quizId);
-            $today = getToday();
+//            $quiz = RegularQuiz::whereId($quizId);
+//            $today = getToday();
             $questionId = makeValidInput($_POST["questionId"]);
 
-            if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
-                echo "timeOut";
-                return;
-            }
+//            if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
+//                echo json_encode(['status' => "nok"]);
+//                return;
+//            }
 
             if(ControllerActivity::where('qId', '=', $questionId)->count() == 0) {
                 echo json_encode(['status' => "nok"]);
@@ -2864,12 +3323,12 @@ class QuizController extends Controller {
 
             $quizId = makeValidInput($_POST["quizId"]);
             $quiz = SystemQuiz::whereId($quizId);
-            $today = getToday();
+//            $today = getToday();
 
-            if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
-                echo "timeOut";
-                return;
-            }
+//            if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
+//                echo "timeOut";
+//                return;
+//            }
 
             $quiz->startDate = convertStringToDate($quiz->startDate);
             $quiz->startReg = convertStringToDate($quiz->startReg);
@@ -2886,7 +3345,7 @@ class QuizController extends Controller {
 
             $quizId = makeValidInput($_POST["quizId"]);
             $quiz = RegularQuiz::whereId($quizId);
-            $today = getToday();
+//            $today = getToday();
 
 
 //            if($quiz->startDate < $today["date"] ||

@@ -117,9 +117,6 @@ function calcRank($quizId, $uId) {
 
         if($ranks[$i]->uId == $uId) {
 
-            if($i == 0)
-                dd($ranks[$i]->uId . " " . $ranks[$i]->weighted_avg);
-
             $r = $i + 1;
 
             $currTaraz = $ranks[$i]->weighted_avg;
@@ -651,7 +648,7 @@ function getSubjectQuiz($quizId) {
 
 function payment($amount, $callBackUrl, $useGift) {
 
-    require_once("lib/nusoap.php");
+//    require_once("lib/nusoap.php");
 
     $client = new nusoap_client('https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl');
     $namespace = 'http://interfaces.core.sw.bps.com/';

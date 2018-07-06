@@ -42,7 +42,9 @@ class HomeController extends Controller {
 	}
 
     public function showHome() {
-		
+
+//		dd(Hash::check("irexam123@news", User::whereId(5)->password));
+
 		$sliders = SlideBar::all();
 		foreach ($sliders as $slider) {
 			$slider->pic = URL::asset('images/slideBar/' . $slider->pic);
@@ -61,7 +63,7 @@ class HomeController extends Controller {
 
 	public function logout() {
 		Auth::logout();
-		return Redirect::To("login");
+		return Redirect::route("login");
 	}
 
 	public function checkAuth() {

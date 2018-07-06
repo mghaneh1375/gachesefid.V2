@@ -41,6 +41,7 @@
                         <tr>
                             <td><center>نام مدرسه</center></td>
                             <td><center>شهر</center></td>
+                            <td><center>استان</center></td>
                             <td><center>نوع مدرسه</center></td>
                             <td><center>مقطع</center></td>
                             <td><center>جنسیت</center></td>
@@ -56,6 +57,7 @@
                             <tr>
                                 <td><center>{{$user->schoolName}}</center></td>
                                 <td><center>{{$user->schoolCity}}</center></td>
+                                <td><center>{{$user->schoolState}}</center></td>
                                 <td><center>{{$user->schoolKind}}</center></td>
                                 <td><center>{{$user->schoolLevel}}</center></td>
                                 <td><center>{{($user->sex == 0) ? 'دخترانه' : 'پسرانه'}}</center></td>
@@ -75,6 +77,8 @@
                             </tr>
                         @endforeach
                     </table>
+
+                    <a class="btn btn-success" href="{{route('schoolsExcel')}}">دانلود فایل اکسل</a>
                 </div>
             </form>
         @else

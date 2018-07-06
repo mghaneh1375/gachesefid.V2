@@ -10,18 +10,14 @@ function hideElement() {
 function changeKindQ(val) {
 
     if(val == 1) {
-        $("#kindQ").empty();
-        $("#kindQ").append('تستی');
-        $("#kindQ").attr('data-val', "1");
+        $("#kindQ").empty().append('تستی').attr('data-val', "1");
         $("#teloranceDiv").hide();
         $("#ansDiv").show();
         $("#shortAnsDiv").hide();
         $("#choice").show();
     }
     else {
-        $("#kindQ").empty();
-        $("#kindQ").append('کوتاه پاسخ');
-        $("#kindQ").attr('data-val', "0");
+        $("#kindQ").empty().append('کوتاه پاسخ').attr('data-val', "0");
         $("#teloranceDiv").show();
         $("#ansDiv").hide();
         $("#choice").hide();
@@ -30,7 +26,7 @@ function changeKindQ(val) {
 }
 
 $(document).ready(function(){
-
+    
     $("input:file[id='pic']").on('change', prepareUpload);
     $("input:file[id='ansPic']").on('change', prepareUpload2);
 
@@ -112,19 +108,13 @@ function changeLevel(val) {
     switch (val) {
         case 1:
         default:
-            $("#level").attr('data-val', '1');
-            $("#level").empty();
-            $("#level").append('ساده');
+            $("#level").attr('data-val', '1').empty().append('ساده');
             break;
         case 2:
-            $("#level").attr('data-val', '2');
-            $("#level").empty();
-            $("#level").append('متوسط');
+            $("#level").attr('data-val', '2').empty().append('متوسط');
             break;
         case 3:
-            $("#level").attr('data-val', '3');
-            $("#level").empty();
-            $("#level").append('دشوار');
+            $("#level").attr('data-val', '3').empty().append('دشوار');
             break;
 
     }

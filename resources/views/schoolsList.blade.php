@@ -25,15 +25,17 @@
                 <tr>
                     <td data-sort="asc" data-col="0" class="alphabeticallySortable" style="cursor: pointer"><span>نام مدرسه</span><span class="sortIcon" id="sortIcon_0"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
                     <td data-sort="asc" data-col="1" style="cursor: pointer" class="alphabeticallySortable"><span>شهر</span><span class="sortIcon" id="sortIcon_1"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
-                    <td data-sort="asc" data-col="2" style="cursor: pointer" class="alphabeticallySortable"><span>نوع مدرسه</span><span class="sortIcon" id="sortIcon_2"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
-                    <td data-sort="asc" data-col="3" style="cursor: pointer" class="alphabeticallySortable"><span>مقطع</span><span class="sortIcon" id="sortIcon_3"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
-                    <td data-sort="asc" data-col="4" style="cursor: pointer" class="alphabeticallySortable"><span>جنسیت</span><span class="sortIcon" id="sortIcon_4"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
+                    <td data-sort="asc" data-col="2" style="cursor: pointer" class="alphabeticallySortable"><span>استان</span><span class="sortIcon" id="sortIcon_2"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
+                    <td data-sort="asc" data-col="3" style="cursor: pointer" class="alphabeticallySortable"><span>نوع مدرسه</span><span class="sortIcon" id="sortIcon_3"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
+                    <td data-sort="asc" data-col="4" style="cursor: pointer" class="alphabeticallySortable"><span>مقطع</span><span class="sortIcon" id="sortIcon_4"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
+                    <td data-sort="asc" data-col="5" style="cursor: pointer" class="alphabeticallySortable"><span>جنسیت</span><span class="sortIcon" id="sortIcon_5"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
                     <td>کد مدرسه</td>
                 </tr>
                 @foreach($users as $user)
                     <tr>
                         <td class="schoolName">{{$user->schoolName}}</td>
                         <td>{{$user->schoolCity}}</td>
+                        <td>{{$user->schoolState}}</td>
                         <td>{{$user->schoolKind}}</td>
                         <td>{{$user->schoolLevel}}</td>
                         <td>{{($user->sex == 0) ? 'دخترانه' : 'پسرانه'}}</td>

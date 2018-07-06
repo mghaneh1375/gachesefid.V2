@@ -371,15 +371,15 @@ function getSubjectQuestions (sId) {
                     subQuestions = response;
                 }
                 else {
-                    $("#subMsg").empty();
-                    $("#subMsg").append('سوالی موجود نیست');
+                    $("#subMsg").empty().append('سوالی موجود نیست');
                 }
 
                 showSubQuestion();
-                $("#addQuestion").removeClass('hidden');
             }
         });
     }
+
+    $("#addQuestion").removeClass('hidden');
 }
 
 function showQuestion() {

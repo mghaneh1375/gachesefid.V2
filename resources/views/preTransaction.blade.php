@@ -120,6 +120,8 @@
             }
         }
 
+        var pack = '{{(isset($pack)) ? $pack : "false"}}';
+
         $(document).ready(function () {
 
 
@@ -138,13 +140,20 @@
 
             val = $("input[name='fromWhere']:checked").val();
 
+            @if(isset($multi) && $multi)
+                var quizId = {!! json_encode($quizId) !!};
+            @else
+                var quizId = '{{$quizId}}';
+            @endif
+
             if(val == "myAccount") {
                 $.ajax({
                     type: 'post',
                     url: '{{$payURL}}',
                     data: {
-                        'quizId': '{{$quizId}}',
-                        'giftCode': $("#giftCode").val()
+                        'quizId': quizId,
+                        'giftCode': $("#giftCode").val(),
+                        'pack': pack
                     },
                     success: function (response) {
                         if(response == "ok") {
@@ -168,8 +177,9 @@
                     type: 'post',
                     url: '{{$payURL2}}',
                     data: {
-                        'quizId': '{{$quizId}}',
-                        'giftCode': $("#giftCode").val()
+                        'quizId': quizId,
+                        'giftCode': $("#giftCode").val(),
+                        'pack': pack
                     },
                     success: function (response) {
 

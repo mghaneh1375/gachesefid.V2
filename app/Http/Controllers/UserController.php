@@ -22,6 +22,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
+use PHPExcel;
+use PHPExcel_Writer_Excel2007;
 
 class UserController extends Controller {
 
@@ -318,7 +320,9 @@ class UserController extends Controller {
 
             $user->schoolLevel = ($tmp->level == getValueInfo('motevaseteAval')) ? 'متوسطه اول' : 'متوسطه دوم';
 
-            $user->schoolCity = City::whereId($tmp->cityId)->name;
+            $tmpCity = City::whereId($tmp->cityId);
+            $user->schoolCity = $tmpCity->name;
+            $user->schoolState = State::whereId($tmpCity->stateId)->name;
             
             $tmp = NamayandeSchool::where('sId', '=', $user->id)->first();
             if($tmp == null)
@@ -379,7 +383,9 @@ class UserController extends Controller {
             $user->schoolLevel = ($tmp->level == getValueInfo('motevaseteAval')) ? 'متوسطه اول' :
                 ($tmp->level == getValueInfo('motevaseteDovom')) ? 'متوسطه دوم' : 'دبستان';
 
-            $user->schoolCity = City::whereId($tmp->cityId)->name;
+            $tmpCity = City::whereId($tmp->cityId);
+            $user->schoolCity = $tmpCity->name;
+            $user->schoolState = State::whereId($tmpCity->stateId)->name;
 
             $tmp = NamayandeSchool::whereSId($user->id)->first();
             if($tmp == null)
@@ -388,6 +394,121 @@ class UserController extends Controller {
             $user->schoolNamayande = User::whereId($tmp->nId)->username;
         }
         
+        return view('users', array('mode' => $val, 'users' => $users));
+    }
+
+    public function schoolsExcel() {
+
+        $val = getValueInfo('schoolLevel');
+
+        $users = User::whereLevel($val)->get();
+        foreach ($users as $user) {
+
+            $tmp = School::whereUId($user->id)->first();
+            if($tmp == null)
+                return Redirect::to('profile');
+
+            $user->schoolName = $tmp->name;
+            switch ($tmp->kind) {
+                case getValueInfo('sampadSch'):
+                default:
+                    $user->schoolKind = 'سمپاد';
+                    break;
+                case getValueInfo('gheyrSch'):
+                    $user->schoolKind = 'غیرانتفاعی';
+                    break;
+                case getValueInfo('nemoneSch'):
+                    $user->schoolKind = 'نمونه دولتی';
+                    break;
+                case getValueInfo('shahedSch'):
+                    $user->schoolKind = 'شاهد';
+                    break;
+                case getValueInfo('dolatiSch'):
+                    $user->schoolKind = 'دولتی';
+                    break;
+                case getValueInfo('sayerSch'):
+                    $user->schoolKind = 'سایر';
+                    break;
+                case getValueInfo('HeyatSch'):
+                    $user->schoolKind = 'هیئت امنایی';
+                    break;
+            }
+
+            $user->schoolLevel = ($tmp->level == getValueInfo('motevaseteAval')) ? 'متوسطه اول' :
+                ($tmp->level == getValueInfo('motevaseteDovom')) ? 'متوسطه دوم' : 'دبستان';
+
+            $tmpCity = City::whereId($tmp->cityId);
+            $user->schoolCity = $tmpCity->name;
+            $user->schoolState = State::whereId($tmpCity->stateId)->name;
+
+            $tmp = NamayandeSchool::whereSId($user->id)->first();
+            if($tmp == null)
+                return Redirect::to('profile');
+
+            $user->schoolNamayande = User::whereId($tmp->nId)->username;
+        }
+
+
+        $objPHPExcel = new PHPExcel();
+        $objPHPExcel->getProperties()->setCreator("Gachesefid");
+        $objPHPExcel->getProperties()->setLastModifiedBy("Gachesefid");
+        $objPHPExcel->getProperties()->setTitle("Office 2007 XLSX Test Document");
+        $objPHPExcel->getProperties()->setSubject("Office 2007 XLSX Test Document");
+        $objPHPExcel->getProperties()->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.");
+
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        $objPHPExcel->getActiveSheet()->setCellValue('L1', 'کد مدرسه');
+        $objPHPExcel->getActiveSheet()->setCellValue('K1', 'شماره ثابت');
+        $objPHPExcel->getActiveSheet()->setCellValue('J1', 'شماره همراه');
+        $objPHPExcel->getActiveSheet()->setCellValue('I1', 'نام کاربری مسئول مدرسه');
+        $objPHPExcel->getActiveSheet()->setCellValue('H1', 'نام مسئول مدرسه');
+        $objPHPExcel->getActiveSheet()->setCellValue('G1', 'نمایندگی');
+        $objPHPExcel->getActiveSheet()->setCellValue('F1', 'جنسیت');
+        $objPHPExcel->getActiveSheet()->setCellValue('E1', 'مقطع');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'نوع مدرسه');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'استان');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'شهر');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام مدرسه');
+
+        $counter = 2;
+
+        foreach ($users as $user) {
+            $objPHPExcel->getActiveSheet()->setCellValue('L' . $counter, $user->invitationCode);
+            $objPHPExcel->getActiveSheet()->setCellValue('K' . $counter, $user->introducer);
+            $objPHPExcel->getActiveSheet()->setCellValue('J' . $counter, $user->phoneNum);
+            $objPHPExcel->getActiveSheet()->setCellValue('I' . $counter, $user->username);
+            $objPHPExcel->getActiveSheet()->setCellValue('H' . $counter, $user->firstName . " " . $user->lastName);
+            $objPHPExcel->getActiveSheet()->setCellValue('G' . $counter, $user->schoolNamayande);
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . $counter, ($user->sex == 0) ? 'دخترانه' : 'پسرانه');
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . $counter, $user->schoolLevel);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . $counter, $user->schoolKind);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . $counter, $user->schoolState);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . $counter, $user->schoolCity);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . $counter++, $user->schoolName);
+        }
+
+
+        $fileName = __DIR__ . "/../../../public/registrations/schools.xlsx";
+
+        $objPHPExcel->getActiveSheet()->setTitle('گزارش گیری آزمون ها');
+
+        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save($fileName);
+
+
+        if (file_exists($fileName)) {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="'.basename($fileName).'"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($fileName));
+            readfile($fileName);
+            unlink($fileName);
+        }
+
         return view('users', array('mode' => $val, 'users' => $users));
     }
 

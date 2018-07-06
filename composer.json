@@ -11,7 +11,8 @@
         "barryvdh/laravel-cors": "^0.11.0",
         "graham-campbell/throttle": "^5.3",
         "zarincheg/telegram-bot-dialogs": "dev-master",
-        "longman/telegram-bot": "*"
+        "longman/telegram-bot": "*",
+        "econea/nusoap": "^0.9.6"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.1",

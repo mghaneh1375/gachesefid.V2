@@ -446,7 +446,11 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 	Route::get('quizEntry', array('as' => 'quizEntry', 'uses' => 'QuizController@quizEntry'));
 	
 	Route::get('myQuizes', array('as' => 'myQuizes', 'uses' => 'QuizController@myQuizes'));
-	
+
+	Route::get('doComposeQuizRegistry/{composeId}', array('as' => 'doComposeQuizRegistry', 'uses' => 'QuizController@doComposeQuizRegistry'));
+
+	Route::get('doMultiQuizRegistry/{mode}/{pack}/{status}/{qId1}/{qId2}/{qId3?}/{qId4?}/{qId5?}/{qId6?}', ['as' => 'doMultiQuizRegistry', 'uses' => 'QuizController@doMultiQuizRegistry']);
+
 	Route::get('doQuizRegistry/{quizId}/{mode}', array('as' => 'doQuizRegistry', 'uses' => 'QuizController@doQuizRegistry'));
 
 	Route::get('doQuizRegistry/{quizId}/{mode}/{status}', array('as' => 'doQuizRegistryWithStatus', 'uses' => 'QuizController@doQuizRegistry'));
@@ -454,6 +458,13 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 	Route::post('doQuizRegistryFromAccount/{mode}', array('as' => 'doQuizRegistryFromAccount', 'uses' => 'QuizController@doQuizRegistryFromAccount'));
 
 	Route::post('paymentQuiz/{mode}', array('as' => 'paymentQuiz', 'uses' => 'QuizController@paymentQuiz'));
+
+
+	Route::post('doMultiQuizRegistryFromAccount/{mode}', array('as' => 'doMultiQuizRegistryFromAccount', 'uses' => 'QuizController@doMultiQuizRegistryFromAccount'));
+
+	Route::post('multiPaymentQuiz/{mode}', array('as' => 'multiPaymentQuiz', 'uses' => 'QuizController@multiPaymentQuiz'));
+
+	Route::post('multiPaymentPostQuiz/{qIds}/{mode}', array('as' => 'multiPaymentPostQuiz', 'uses' => 'QuizController@multiPaymentPostQuiz'));
 
 	Route::post('paymentPostQuiz/{quizId}/{mode}', array('as' => 'paymentPostQuiz', 'uses' => 'QuizController@paymentPostQuiz'));
 
@@ -520,6 +531,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 	Route::get('addNamayande', array('as' => 'addNamayande', 'uses' => 'UserController@addNamayande'));
 
 	Route::get('schools', array('as' => 'schools', 'uses' => 'UserController@schools'));
+
+	Route::get('schoolsExcel', array('as' => 'schoolsExcel', 'uses' => 'UserController@schoolsExcel'));
 
 	Route::post('confirmAdviser', array('as' => 'confirmAdviser', 'uses' => 'UserController@confirmAdviser'));
 
