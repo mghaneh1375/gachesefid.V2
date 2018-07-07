@@ -18,7 +18,10 @@ class VerifyCsrfToken extends BaseVerifier
         'showRSSIrysc',
         'get_exam_answer_sheet_template',
         'getROQ',
-        'checkAuth'
+        'checkAuth',
+        'paymentPostQuiz/*/*',
+        'multiPaymentPostQuiz/*/*',
+        'paymentPostSelfQuiz/*'
     ];
 
     public function handle($request, Closure $next) {

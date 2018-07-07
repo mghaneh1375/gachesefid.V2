@@ -147,7 +147,7 @@ class HomeController extends Controller {
 					$user->save();
 
 					Mail::send('newPasswordGenerated', array("newPas" => $newPas), function ($message) {
-						$message->to("mghaneh1375@yahoo.com", "بازیابی پسورد")->subject('Gachesefid@new password');
+						$message->to("mghaneh1375@yahoo.com")->subject('بازیابی رمزعبور');
 					});
 				}
 			} else {
