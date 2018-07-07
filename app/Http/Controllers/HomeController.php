@@ -146,8 +146,8 @@ class HomeController extends Controller {
 					$user->password = Hash::make($newPas);
 					$user->save();
 
-					Mail::send('newPasswordGenerated', array("newPas" => $newPas), function ($message) {
-						$message->to("mghaneh1375@yahoo.com")->subject('بازیابی رمزعبور');
+					Mail::send('newPasswordGenerated', array("newPas" => $newPas), function ($message) use($val) {
+						$message->to($val, $val)->subject('بازیابی رمزعبور');
 					});
 				}
 			} else {
