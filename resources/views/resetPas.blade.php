@@ -6,7 +6,7 @@
     <script src="{{URL::asset('js/jsNeededForResetPas.js')}}"></script>
 
     <script>
-        var resetPasPath = '{{route('resetPas')}}';
+        var resetPasPath = '{{route('doResetPas')}}';
     </script>
 
 @stop

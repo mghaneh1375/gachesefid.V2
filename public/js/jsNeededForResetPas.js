@@ -12,14 +12,14 @@ function validate(evt) {
 
 function resetPas(noticePane) {
 
-    if($("#username").val() == "")
+    username = $("#username").val();
+    if(username.length == 0)
         return;
 
     if($("#email").val() == "" && $("#phone").val() == "")
         return;
 
     mode = 2;
-    username = $("#username").val();
 
     if($("#email").val() != "") {
         mode = 1;
@@ -45,8 +45,7 @@ function resetPas(noticePane) {
             if(response == "ok")
                 $("#" + noticePane).css("display", '');
             else {
-                $("#msg").empty();
-                $("#msg").append(response);
+                $("#msg").empty().append(response);
             }
         }
     });
