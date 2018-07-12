@@ -1,11 +1,5 @@
 <?php
 
-Route::get('salam', array('as' => 'getUpdates', 'uses' => 'HomeController@salam'));
-
-Route::any('{token}/webhook', array('as' => 'webhook', 'uses' => 'TelegramController@getUpdates'));
-
-Route::get('salam2', array('as' => 'getUpdates', 'uses' => 'TelegramController@postSendMessage'));
-
 Route::post('doRegistration', 'RegistrationController@doRegistration')->name('doRegistration');
 
 Route::post('get_exam_answer_sheet_template/{exam_id}', array('as' => 'get_exam_answer_sheet_template', 'uses' => 'AdminController@get_exam_answer_sheet_template'));

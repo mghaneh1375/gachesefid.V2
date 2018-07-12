@@ -142,6 +142,7 @@ textarea {
     padding-top: 20px;
     color: black;
     border-bottom: 3px solid red;
+    font-size: 14px;
 }
 
 .w3-row-padding img {

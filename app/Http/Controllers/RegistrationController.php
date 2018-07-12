@@ -585,13 +585,13 @@ class RegistrationController extends Controller {
                 $tmp->username = $username;
                 $tmp->password = Hash::make($pas);
                 $tmp->status = 1;
+                $tmp->NID = $user[4];
                 $redundantInfo = new RedundantInfo1();
 
                 try {
                     $tmp->save();
 
                     charge(PointConfig::first()->init, $tmp->id, getValueInfo('initTransaction'), getValueInfo('money2'));
-                    $redundantInfo->NID = "";
 
                     $redundantInfo->gradeId = $gradeTmp->id;
                     $redundantInfo->cityId = $schoolCity;
@@ -668,13 +668,13 @@ class RegistrationController extends Controller {
                 $tmp->username = $username;
                 $tmp->password = Hash::make($pas);
                 $tmp->status = 1;
+                $tmp->NID = $user[3];
                 $redundantInfo = new RedundantInfo1();
 
                 try {
                     $tmp->save();
 
                     charge(PointConfig::first()->init, $tmp->id, getValueInfo('initTransaction'), getValueInfo('money2'));
-                    $redundantInfo->NID = "";
                     $redundantInfo->gradeId = $gradeTmp->id;
                     $redundantInfo->cityId = $schoolCity;
                     $redundantInfo->email = "";

@@ -33,10 +33,6 @@ use Illuminate\Support\Facades\URL;
 
 class HomeController extends Controller {
 
-	public function salam() {
-		require_once 'getUpdatesCLI.php';
-	}
-
 	public function aboutUs() {
 		return View('aboutUs');
 	}
@@ -516,11 +512,12 @@ class HomeController extends Controller {
 		}
 
 		else if(isset($_POST['firstName']) && isset($_POST['lastName']) && isset($_POST['username']) &&
-			isset($_POST['phoneNum'])) {
+			isset($_POST['phoneNum']) && isset($_POST["NID"])) {
 
 			$user = Auth::user();
 
 			$username = makeValidInput($_POST["username"]);
+			$NID = makeValidInput($_POST["NID"]);
 
 			if($user->username != $username && User::whereUsername($username)->count() > 0) {
 				$msg = "نام کاربری وارد شده در سیستم موجود است";
@@ -529,58 +526,64 @@ class HomeController extends Controller {
 
 				$user->firstName = makeValidInput($_POST["firstName"]);
 				$user->lastName = makeValidInput($_POST["lastName"]);
-				$namayandeCode = "";
-				if(isset($_POST["namayandeCode"]))
-					$namayandeCode = makeValidInput($_POST["namayandeCode"]);
 
-				if(!empty($namayandeCode)) {
-					$namayande = User::whereInvitationCode($namayandeCode)->first();
-					if($namayande != null) {
-						SchoolStudent::whereSId($user->id)->delete();
-						$tmp = new SchoolStudent();
-						$tmp->sId = $user->id;
-						$tmp->uId = $namayande->id;
-						$tmp->save();
+				if(User::whereNID($NID)->count() > 0 || !_custom_check_national_code($NID))
+					$msg = "کد ملی وارد شده معتبر نمی باشد";
+
+				else {
+					$user->NID = $NID;
+					$namayandeCode = "";
+					if (isset($_POST["namayandeCode"]))
+						$namayandeCode = makeValidInput($_POST["namayandeCode"]);
+
+					if (!empty($namayandeCode)) {
+						$namayande = User::whereInvitationCode($namayandeCode)->first();
+						if ($namayande != null) {
+							SchoolStudent::whereSId($user->id)->delete();
+							$tmp = new SchoolStudent();
+							$tmp->sId = $user->id;
+							$tmp->uId = $namayande->id;
+							$tmp->save();
+						}
 					}
-				}
 
-				$user->username = $username;
-				$user->save();
+					$user->username = $username;
+					$user->save();
 
-				$phoneNum = makeValidInput($_POST["phoneNum"]);
+					$phoneNum = makeValidInput($_POST["phoneNum"]);
 
-				if($phoneNum != $user->phoneNum) {
+					if ($phoneNum != $user->phoneNum) {
 
 //					$user->phoneNum = $phoneNum;
 //					$user->save();
 //					return Redirect::to('profile');
 
-					if(User::wherePhoneNum($phoneNum)->count() > 0) {
-						$msg = "شماره همراه وارد شده در سیستم موجود است";
-					}
-					else {
-
-						$activation = Activation::wherePhoneNum( $phoneNum)->first();
-
-						if ($activation == null) {
-							$activation = new Activation();
-							$activation->phoneNum = $phoneNum;
+						if (User::wherePhoneNum($phoneNum)->count() > 0) {
+							$msg = "شماره همراه وارد شده در سیستم موجود است";
 						} else {
-							if (time() - $activation->startTime < 300) {
-								$msg = "pendingErrTime";
-								return $this->userInfo($msg, 'editInfo', 300 - time() + $activation->sendTime, $phoneNum);
+
+							$activation = Activation::wherePhoneNum($phoneNum)->first();
+
+							if ($activation == null) {
+								$activation = new Activation();
+								$activation->phoneNum = $phoneNum;
+							} else {
+								if (time() - $activation->startTime < 300) {
+									$msg = "pendingErrTime";
+									return $this->userInfo($msg, 'editInfo', 300 - time() + $activation->sendTime, $phoneNum);
+								}
 							}
+
+							$activationCode = generateActivationCode();
+							$activation->code = $activationCode;
+							$activation->sendTime = time();
+
+							$activation->save();
+							sendSMS($phoneNum, $activationCode, "activationCode");
+
+							$msg = "pending";
+							return $this->userInfo($msg, 'editInfo', '300', $phoneNum);
 						}
-
-						$activationCode = generateActivationCode();
-						$activation->code = $activationCode;
-						$activation->sendTime = time();
-
-						$activation->save();
-						sendSMS($phoneNum, $activationCode, "activationCode");
-
-						$msg = "pending";
-						return $this->userInfo($msg, 'editInfo', '300', $phoneNum);
 					}
 				}
 			}

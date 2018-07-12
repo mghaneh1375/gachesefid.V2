@@ -47,7 +47,8 @@
 .myRegister > .data  center > input[type=submit] {
     padding: 15px;
     margin-top: 10px;
-    border-radius: 3px;
+    border-radius: 5px;
+    max-width: 250px;
     background-color: transparent;
     border: 1px solid black;
     color: black;

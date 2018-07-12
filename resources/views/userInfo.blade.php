@@ -137,6 +137,10 @@
                 <p class="errorText">لطفا قسمت مربوط به تلفن همراه خود را پر نمایید</p>
             @endif
 
+            @if(Auth::user()->NID == null)
+                <p class="errorText">لطفا قسمت مربوط به کد ملی خود را پر نمایید</p>
+            @endif
+
             <diV class="data row titleBarPane">
                 <a id="necessary" onclick="changeTitle('necessary', 'editInfo1')" class="titleBar">اطلاعات اولیه</a>
                 <a id="additional1" onclick="changeTitle('additional1', 'editInfo2')" class="titleBar">اطلاعات تکمیلی</a>
@@ -181,6 +185,15 @@
                                 </div>
                                 <div class="col-xs-5">
                                     <span>شماره تلفن<span class="required">*</span></span>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12">
+                                <div class="col-xs-7">
+                                    <input type="text" onkeypress="validate(event)" name="NID" value="{{$user->NID}}" maxlength="40" required>
+                                </div>
+                                <div class="col-xs-5">
+                                    <span>کد ملی<span class="required">*</span></span>
                                 </div>
                             </div>
 

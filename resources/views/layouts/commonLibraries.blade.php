@@ -15,6 +15,13 @@
 <script src = {{URL::asset("js/mobileMenu.js") }}></script>
 <meta name="csrf-token" content="{{ csrf_token() }}" />
 
+<link rel='stylesheet' href='{{URL::asset('css/grid.css')}}' type='text/css' media='all' />
+<link rel='stylesheet' href='{{URL::asset('css/themeStyle.css')}}' type='text/css' media='all' />
+<link rel='stylesheet' href='{{URL::asset('css/themePlugin.css')}}' type='text/css' media='all' />
+<link rel='stylesheet' href='{{URL::asset('css/blocks.css')}}' type='text/css' media='all' />
+<link rel='stylesheet' href='{{URL::asset('css/googleFont.css')}}' type='text/css' media='all' />
+<link rel="stylesheet" href="{{URL::asset('css/rtl.css')}}" type="text/css" media="screen" />
+
 {{--<script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="214cf062-f382-445e-b5f1-e755d9a01365";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>--}}
 
 <script>
