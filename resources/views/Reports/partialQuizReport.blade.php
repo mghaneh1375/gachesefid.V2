@@ -1,4 +1,4 @@
-@extends('layouts.form2')
+@extends('layouts.form')
 
 @section('head')
     @parent

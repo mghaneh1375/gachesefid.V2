@@ -2,7 +2,7 @@ var lineWidth;
 var counter;
 
 $(document).ready(function () {
-    lineWidth = $(".col-xs-4").css('width').split('px')[0] - 220;
+    lineWidth = $(".col-xs-4").css('width').split('px')[0] - 200;
     startDrawLine();
 });
 
@@ -42,7 +42,7 @@ function draw2() {
 
 function draw3() {
 
-    if(50 <= counter) {
+    if(80 <= counter) {
         counter = 0;
         setTimeout("draw4()", 100);
         return;
@@ -83,7 +83,7 @@ function draw5() {
 
 function draw6() {
 
-    if(50 <= counter) {
+    if(80 <= counter) {
         counter = 0;
         setTimeout("draw7()", 100);
         return;

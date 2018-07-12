@@ -24,19 +24,8 @@
         var bigScreenFlag = 2000; // a number greater than "mobileWidthBase"
         var smallScreenFlag = 200; // a number less than "mobileWidthBase"
 
-        // sub-menu/megamenu indicators
-        $(menu).children("li").children("a").each(function(){
-            if($(this).siblings(".sub-menu, .megamenu").length > 0){
-                $(this).append("<span class='indicator'>" + settings.indicatorFirstLevel + "</span>");
-            }
-        });
         $(menu).children("li").children(".megamenu").each(function(){
             $(this).find('ul').removeClass('sub-menu');
-        });
-        $(menu).find(".sub-menu").children("li").children("a").each(function(){
-            if($(this).siblings(".sub-menu").length > 0){
-                $(this).append("<span class='indicator'>" + settings.indicatorSecondLevel + "</span>");
-            }
         });
 
         // navigation alignment

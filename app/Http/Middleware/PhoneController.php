@@ -17,7 +17,8 @@ class PhoneController
      */
     public function handle($request, Closure $next)
     {
-        if(Auth::user()->phoneNum == "" || Auth::user()->NID == null)
+        if(Auth::user()->phoneNum == "" || (Auth::user()->level == getValueInfo('studentLevel') && Auth::user()->NID ==
+                null))
             return Redirect::to('userInfo');
 
         return $next($request);

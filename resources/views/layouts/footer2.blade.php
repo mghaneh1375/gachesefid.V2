@@ -1,40 +1,62 @@
 
 
-<footer id="site-footer" class="footer ">
+<footer id="site-footer" class="footer" style="font-family: IRANSans !important;">
     <div class="container">
-        <div class="row info" itemscope itemtype="http://schema.org/Organization">
+        <div class="row info">
             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                 <div class="crumina-heading widget-heading">
-                    <h4 class="heading-title"  itemprop="name">گچ سفید از کجا قدرت می‌گیرد؟</h4>
+                    <h4 class="heading-title">گچ سفید از کجا قدرت می‌گیرد؟</h4>
                     <div class="heading-decoration"><span class="first"></span><span class="second"></span>
                     </div>
-                    <div class="heading-text" itemprop="description">
+                    <div class="heading-text">
                         <p style="text-align: justify">گروه <a href="http://irysc.com" target="_blank" rel="noopener">آیریسک</a> به همت جمعی از مدال‌آوران و مدرسین المپیادی و اساتید دانشگاه از شهریور سال 1386 کار خود را آغاز کرد. در این سال‌ها ساخت محتوای قوی، برگزاری آزمون‌های آزمایشی (المپیاد و تیزهوشان)، برگزاری دوره‌های آموزشی برای دانش‌آموزان و مسوولین، برنامه‌ریزی آموزشی و پژوهشی برای مدارس کشور و تولید کتاب‌های گوناگون را انجام داده است. خرسندیم که این فعالیت‌ها نقش مفید و پررنگی در پیشرفت دانش‌پژوهان ایران داشته است و با استقبال ده‌ها هزار نفر و کسب نتایج علمی و صنعتی عالی توسط دانش‌آموختگان این گروه، فعالیت‌های آیریسک روز‌به‌روز در حال گسترش است.</p>
                     </div>
                 </div>
                 <div class="socials">
-                    <link itemprop="url" href="http://uitest.gachesefid.com" />
-                    <a href="https://www.instagram.com/iran.olympiad/" class="social__item" target="_blank" itemprop="sameAs"><img src="http://uitest.gachesefid.com/wp-content/themes/seosight/svg/socials/instagram.svg" alt=""></a><a href="https://twitter.com/irysccom" class="social__item" target="_blank" itemprop="sameAs"><img src="http://uitest.gachesefid.com/wp-content/themes/seosight/svg/socials/twitter.svg" alt=""></a><a href="https://www.youtube.com/channel/UCMKyuVX9WUvS8Uatmy-Judg" class="social__item" target="_blank" itemprop="sameAs"><img src="http://uitest.gachesefid.com/wp-content/themes/seosight/svg/socials/youtube.svg" alt=""></a>                    </div>
+                    <a href="https://www.instagram.com/iran.olympiad/" class="social__item" target="_blank">
+                        <img src="{{URL::asset('images/instagram.svg')}}">
+                    </a>
+                    <a href="https://twitter.com/irysccom" class="social__item" target="_blank">
+                        <img src="{{URL::asset('images/twitter.svg')}}">
+                    </a>
+                    <a href="https://www.youtube.com/channel/UCMKyuVX9WUvS8Uatmy-Judg" class="social__item" target="_blank">
+                        <img src="{{URL::asset('images/youtube.svg')}}">
+                    </a>
+                </div>
             </div>
 
             <div class="col-lg-offset-1 col-md-offset-1 col-lg-2 col-md-2 col-sm-12 col-xs-12">
                 <div class="row">
-                    <aside id="seosight_menus-2" class="widget w-custom-menu col-lg-12 col-md-12 col-sm-12 col-xs-12"><div class="crumina-heading widget-heading"><h4 class="heading-title">لینکستان</h4><div class="heading-decoration"><span class="first"></span><span class="second"></span></div></div>	<div class="menus-wrap ovh">
-                            <ul id="menu-%d9%85%d9%86%d9%88-%d9%81%d9%88%d8%aa%d8%b1-%d8%b1%d8%a7%d8%b3%d8%aa" class="list--traingle full-width"><li><a href="http://irysc.com"><i class="fa fa-caret-right" aria-hidden="true"></i>آیریسک</a></li>
+                    <aside id="seosight_menus-2" class="widget w-custom-menu col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="crumina-heading widget-heading">
+                            <h4 class="heading-title">لینکستان</h4>
+                            <div class="heading-decoration">
+                                <span class="first"></span>
+                                <span class="second"></span>
+                            </div>
+                        </div>
+                        <div class="menus-wrap ovh">
+                            <ul class="list--traingle full-width">
+                                <li><a href="http://irysc.com"><i class="fa fa-caret-right" aria-hidden="true"></i>آیریسک</a></li>
                                 <li><a href="http://gachpub.com"><i class="fa fa-caret-right" aria-hidden="true"></i>انتشارات گچ</a></li>
                                 <li><a href="http://shop.irysc.com"><i class="fa fa-caret-right" aria-hidden="true"></i>فروشگاه کتاب آیریسک</a></li>
-                            </ul>	</div>
-                    </aside>                    </div>
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
             </div>
         </div>
-        <div class="row"  itemscope itemtype="http://schema.org/Organization">
+
+        <div class="row">
             <div class="contacts">
                 <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                     <div class="contacts-item">
                         <div class="icon js-animate-icon">
                             <svg enable-background="new 0 0 64 64" version="1.1" viewBox="0 0 64 64" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path d="  M48.2,41.7c-2.4-2.4-5.9-4.5-8.6-1.8c-1.9,1.9-2.7,4.1-2.7,4.1s-4.5,2.4-12.4-5.5s-5.5-12.4-5.5-12.4s2.2-0.8,4.1-2.7  c2.7-2.7,0.6-6.2-1.8-8.6c-2.8-2.8-6.6-5.2-8.7-3.1c-3.9,3.9-4.6,8.9-4.6,8.9s1.9,11.8,12.3,22.1s22.1,12.3,22.1,12.3s5-0.8,8.9-4.6  C53.4,48.3,51,44.5,48.2,41.7z" fill="none" stroke="#fcb03b" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><path d="  M33,22c3.9,0,7,3.1,7,7" fill="none" stroke="#fcb03b" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><path d="  M33,15c7.7,0,14,6.3,14,14" fill="none" stroke="#fcb03b" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><path d="  M33,7.5c11.9,0,21.5,9.6,21.5,21.5" fill="none" stroke="#fcb03b" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/></svg>                                </div>
                         <div class="content">
-                            <span class="title" itemprop="telephone">02166917230</span><p class="sub-title">شنبه تا چهارشنبه از 9 تا 16</p>                                </div>
+                            <span class="title">02166917230</span>
+                            <p class="sub-title">شنبه تا چهارشنبه از 9 تا 16</p>
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
@@ -42,7 +64,8 @@
                         <div class="icon js-animate-icon">
                             <svg enable-background="new 0 0 64 64" version="1.1" viewBox="0 0 64 64" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" points="  54,17 32,36 10,17 " stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><line fill="none" stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="10.9" x2="26" y1="48" y2="36"/><path d="  M32.7,49H13c-2.2,0-4-1.8-4-4V19c0-2.2,1.8-4,4-4h38c2.2,0,4,1.8,4,4v15.5" fill="none" stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><circle cx="44.9" cy="43.1" fill="none" r="10.1" stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><path d="  M44,41.4c0,0-1.3,3.4-0.9,5.1c0.4,1.7,2.6,2.1,3.7,1.1" fill="none" stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><g><circle cx="45.4" cy="38.3" fill="#DCE9EE" r="0.9"/><path d="M45.4,37.3c-0.5,0-0.9,0.4-0.9,0.9c0,0.5,0.4,0.9,0.9,0.9s0.9-0.4,0.9-0.9C46.4,37.8,46,37.3,45.4,37.3   L45.4,37.3z" fill="#f15b26"/></g></svg>                                </div>
                         <div class="content">
-                            <a href="mailto:info@irysc.com" class="title" itemprop="email">info@irysc.com</a>                                </div>
+                            <a href="mailto:info@irysc.com" class="title">info@irysc.com</a>
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
@@ -50,9 +73,11 @@
                         <div class="icon js-animate-icon">
                             <svg enable-background="new 0 0 64 64" version="1.1" viewBox="0 0 64 64" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
     <path d="  M15.1,23.1C8.8,25.7,4.5,30.7,4.5,36.4c0,2.8,1,5.4,2.7,7.6l-1.9,8.2l8.3-3.2c3.2,1.6,7.1,2.5,11.3,2.5c6.7,0,12.6-2.4,16.3-6" fill="none" stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><path d="  M59.5,26.9c0,2.8-1,5.4-2.7,7.6l1.9,8.2l-8.3-3.2c-3.2,1.6-7.1,2.5-11.3,2.5c-11.3,0-20.4-6.8-20.4-15.2S27.8,11.7,39,11.7  S59.5,18.5,59.5,26.9z" fill="none" stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><line fill="none" stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="28" x2="41" y1="24" y2="24"/><line fill="none" stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="28" x2="49" y1="28" y2="28"/><line fill="none" stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="49" x2="38" y1="32" y2="32"/>
-</svg>                                </div>
+</svg>
+                        </div>
                         <div class="content">
-                            <span class="title" itemprop="address">09900220525</span><p class="sub-title">پیامک و تلگرام</p>                                </div>
+                            <span class="title">09900220525</span><p class="sub-title">پیامک و تلگرام</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -63,12 +88,9 @@
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<span class="site-copyright-text">
-							کلیه حقوق برای <a href="https://gachpub.com">انتشارات گچ </a>محفوظ است، یکی از سایت‌های مجموعه <a href="https://irysc.com">آیریسک </a>که توسط نخبگان علمی ایران اداره می‌شود.						</span>
-                    <svg class="back-to-top ">
-                        <a class="smooth-scroll" href="#primary">
-                            <use xlink:href="#to-top"></use>
-                        </a>
-                    </svg>
+							کلیه حقوق برای <a href="https://gachpub.com">انتشارات گچ </a>محفوظ است، یکی از سایت‌های مجموعه <a href="https://irysc.com">آیریسک </a>که توسط نخبگان علمی ایران اداره می‌شود.
+                        </span>
+                    <svg class="back-to-top"></svg>
 
                 </div>
             </div>
