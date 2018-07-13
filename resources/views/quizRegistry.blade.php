@@ -168,7 +168,7 @@
             var counter = 0;
 
             $("input:checkbox[name=selectedQuiz]:checked").each(function () {
-                qIds[counter++] += $(this).attr('data-id');
+                qIds[counter++] = $(this).attr('data-id');
             });
 
             if(qIds.length == 0) {

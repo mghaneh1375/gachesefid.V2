@@ -2572,7 +2572,7 @@ class QuizController extends Controller {
 
             if(count($qIdsFinal) > 0) {
 
-                $arr = ['mode' => $mode, 'pack' => false, 'status' => 'nop'];
+                $arr = ['mode' => $mode, 'pack' => 0, 'status' => 'nop'];
                 for ($i = 1; $i <= count($qIdsFinal); $i++)
                     $arr['qId' . $i] = $qIdsFinal[($i - 1)];
 
@@ -2581,6 +2581,7 @@ class QuizController extends Controller {
             }
 
             echo \GuzzleHttp\json_encode(['status' => 'nok1']);
+            return;
         }
 
         echo \GuzzleHttp\json_encode(['status' => 'nok']);
