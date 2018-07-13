@@ -61,6 +61,7 @@
             position: fixed !important;
             left: 40% !important;
             margin-top: -20px;
+            top: 40% !important;;
         }
         .clockpicker-popover {
             z-index: 100000;
@@ -148,7 +149,8 @@
         </div>
     </center>
 
-    <span id="newQuizContainer" class="ui_overlay item hidden" style="position: fixed; left: 30%; right: 30%; top: 10px; bottom: auto">
+    <span id="newQuizContainer" class="ui_overlay item hidden" style="max-height: 80%; overflow: auto; position:
+    fixed; left: 30%; right: 30%; top: 10px; bottom: auto">
         <div class="header_text">آزمون جدید</div>
         <div onclick="hideElement()" class="ui_close_x"></div>
         <center class="body_text">
@@ -200,14 +202,17 @@
                     <span>ساعت شروع</span>
                 </label>
                 <div class="clockpicker">
-                    <input type="text" name="sTime" id="sTime" style="direction: ltr" class="form-detail form-control" value="09:30">
+                    <input type="text" name="sTime" autocomplete="off" id="sTime" style="direction: ltr" class="form-detail form-control"
+                           value="09:30">
                 </div>
             </div>
 
             <div class="col-xs-12" style="margin-top: 5px">
                 <label for="eTime">ساعت اتمام</label>
                 <div class="clockpicker">
-                    <input type="text" name="eTime" id="eTime" style="direction: ltr" class="form-detail form-control" value="09:30">
+                    <input type="text" name="eTime" autocomplete="off" id="eTime" style="direction: ltr" class="form-detail
+                    form-control"
+                           value="09:30">
                 </div>
             </div>
 
@@ -273,7 +278,8 @@
         </div>
     </span>
 
-    <span id="addQuestion" class="ui_overlay item hidden" style="position: fixed; left: 20%; right: 20%; top: 60px; bottom: auto">
+    <span id="addQuestion" class="ui_overlay item hidden" style="position: fixed; left: 20%; right: 20%; top: 60px;
+    bottom: auto">
         <div class="header_text">لیست سوالات</div>
         <div onclick="hideAddQuestion()" class="ui_close_x"></div>
         <div class="body_text row">

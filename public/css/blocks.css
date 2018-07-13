@@ -2843,7 +2843,7 @@ tbody.collapse.in {
     padding: 20px 40px; }
 
 input, textarea {
-    padding: 20px 40px;
+    padding: 10px 20px;
     border-color: transparent;
     -webkit-transition: all .3s ease;
     transition: all .3s ease;
@@ -3142,7 +3142,7 @@ form input + p {
     display: block; }
 
 select {
-    padding: 20px 40px 20px 20px;
+    padding: 6px 15px 6px 0;
     border-color: transparent;
     -webkit-transition: all .3s ease;
     transition: all .3s ease;

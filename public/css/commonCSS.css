@@ -190,6 +190,8 @@ textarea {
 
 .ui_overlay {
     z-index: 10004;
+    max-height: 80% !important;
+    overflow: auto;
     display: inline-block;
     padding: 48px;
     direction: rtl;
