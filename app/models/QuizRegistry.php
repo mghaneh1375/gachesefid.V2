@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property boolean $online
  * @mixin \Eloquent
  * @method static \Illuminate\Database\Query\Builder|\App\models\QuizRegistry whereUId($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\models\QuizRegistry whereQuizMode($value)
  * @method static \Illuminate\Database\Query\Builder|\App\models\QuizRegistry whereQId($value)
  */
 

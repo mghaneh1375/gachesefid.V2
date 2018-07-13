@@ -127,7 +127,8 @@
                                 <td>
                                     <center>
                                         <button onclick="document.location.href = '{{route('doQuizRegistry', ['quizId' => $quiz->id, 'mode' => 'regular'])}}'" class="btn btn-primary">ثبت نام در آزمون</button>
-                                        <input onclick="calcTotal()" value="{{$quiz->price}}" name="selectedQuiz" type="checkbox">
+                                        <input onclick="calcTotal()" data-id="{{$quiz->id}}" value="{{$quiz->price}}"
+                                               name="selectedQuiz" type="checkbox">
                                     </center>
                                 </td>
                             </tr>
@@ -139,6 +140,8 @@
 
         @if(count($composes) > 0)
             <center style="padding: 5px"><p><span>جمع کل: </span><span id="totalSum">0</span></p></center>
+            <input class="btn btn-success" type="submit" value="ثبت نام در آزمون های انتخاب شده"
+                   onclick="multiQuizRegistry()">
         @endif
     </center>
 
@@ -158,7 +161,36 @@
         $(".quiz").mouseleave(function () {
             $(".quiz").css('background-color', '#ccc').css('border-color', 'black');
         });
-        
+
+        function multiQuizRegistry() {
+
+            var qIds = [];
+            var counter = 0;
+
+            $("input:checkbox[name=selectedQuiz]:checked").each(function () {
+                qIds[counter++] += $(this).attr('data-id');
+            });
+
+            if(qIds.length == 0) {
+                alert('لطفا آزمون مورد نظر خود را انتخاب نمایید');
+                return;
+            }
+
+            $.ajax({
+                type: 'post',
+                url: '{{route('selectiveQuizRegistry')}}',
+                data: {
+                    'mode': '{{getValueInfo('regularQuiz')}}',
+                    'qIds': qIds
+                },
+                success: function (response) {
+                    response = JSON.parse(response);
+                    if(response.status == 'ok')
+                        document.location.href = response.url;
+                }
+            });
+        }
+
         function calcTotal() {
 
             var sum = 0;

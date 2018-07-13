@@ -1288,9 +1288,6 @@ class QuizController extends Controller {
 
                 $res = payment(($toPay - getTotalMoney()) * 10, $callBackUrl, $useGift);
 
-                echo json_encode(['status' => 'nok', 'refId' => $res]);
-                return;
-
                 if($res != -1)
                     echo json_encode(['status' => 'ok', 'refId' => $res]);
 
@@ -1368,7 +1365,7 @@ class QuizController extends Controller {
 
             $config = ConfigModel::first();
 
-            if($pack == "true")
+            if($pack == 1)
                 $toPay = floor($toPay * (100 - $config->percentOfPackage) / 100);
             else
                 $toPay = floor($toPay * (100 - $config->percentOfQuizes) / 100);
@@ -1389,14 +1386,17 @@ class QuizController extends Controller {
                 $useGift = $giftCode;
             }
 
-            if($toPay > 10 && $toPay > getTotalMoney()) {
+            if($toPay > 100 && $toPay > getTotalMoney() && ($toPay - getTotalMoney()) > 100) {
 
                 $callBackUrl = route('multiPaymentPostQuiz', ['qIds' => \GuzzleHttp\json_encode($qIds), 'mode' =>
-                    $mode]);
+                    $mode, 'pack' => $pack]);
 
                 $res = payment(($toPay - getTotalMoney()) * 10, $callBackUrl, $useGift);
 
-                echo json_encode(['status' => 'nok', 'refId' => $res]);
+                if($res == -1)
+                    echo json_encode(['status' => 'nok1']);
+                else
+                    echo json_encode(['status' => 'ok', 'refId' => $res]);
                 return;
             }
 
@@ -2543,6 +2543,49 @@ class QuizController extends Controller {
         return view('quizRegistry', array('composes' => $composes, 'mode' => 'regular', 'percentOfQuizes' => $config->percentOfQuizes));
     }
 
+    public function selectiveQuizRegistry() {
+
+        if(isset($_POST["qIds"]) && isset($_POST["mode"])) {
+            
+            $mode = makeValidInput($_POST["mode"]);
+            $qIdsFinal = [];
+            $qIds = $_POST["qIds"];
+            $counter = 0;
+            $uId = Auth::user()->id;
+            if($mode == getValueInfo('regularQuiz')) {
+                foreach ($qIds as $qId) {
+                    $qId = makeValidInput($qId);
+                    if(RegularQuiz::whereId($qId) != null && QuizRegistry::whereQId($qId)->whereUId($uId)->whereQuizMode
+                        ($mode)->count() == 0)
+                        $qIdsFinal[$counter++] = $qId;
+                }
+            }
+
+            else {
+                foreach ($qIds as $qId) {
+                    $qId = makeValidInput($qId);
+                    if(SystemQuiz::whereId($qId) != null && QuizRegistry::whereQId($qId)->whereUId($uId)->whereQuizMode
+                        ($mode)->count() == 0)
+                        $qIdsFinal[$counter++] = $qId;
+                }
+            }
+
+            if(count($qIdsFinal) > 0) {
+
+                $arr = ['mode' => $mode, 'pack' => false, 'status' => 'nop'];
+                for ($i = 1; $i <= count($qIdsFinal); $i++)
+                    $arr['qId' . $i] = $qIdsFinal[($i - 1)];
+
+                echo \GuzzleHttp\json_encode(['status' => 'ok', 'url' => route('doMultiQuizRegistry', $arr)]);
+                return;
+            }
+
+            echo \GuzzleHttp\json_encode(['status' => 'nok1']);
+        }
+
+        echo \GuzzleHttp\json_encode(['status' => 'nok']);
+    }
+
     public function doComposeQuizRegistry($composeId) {
 
         $compose = ComposeQuiz::whereId($composeId);
@@ -2567,7 +2610,7 @@ class QuizController extends Controller {
         foreach ($quizes as $quiz)
              $qIds[$counter++] = $quiz->id;
 
-        return $this->doMultiQuizRegistry($compose->kindQuiz, true, 'nop', $qIds);
+        return $this->doMultiQuizRegistry($compose->kindQuiz, true, 'nop', $qIds[0]);
 
     }
 
@@ -2575,7 +2618,6 @@ class QuizController extends Controller {
 
         $today = getToday();
         $toPay = 0;
-        $qIds = $qIds[0];
 
         if($mode == getValueInfo('systemQuiz')) {
             foreach ($qIds as $qId) {
