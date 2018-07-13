@@ -179,7 +179,6 @@
 
     </style>
 
-
     <style>
         @media only screen and (max-width:1000px) and (min-width:767px){
             .hideOn1000 {
@@ -198,10 +197,7 @@
     {{--</div>--}}
 
     <Div class="row">
-        <div class="col-md-2 col-xs-12 col-md-push-10 hiddenOnMobile hideOn1000">
-            <div onclick="document.location.href = '{{route('home')}}'" class="SiteName" style="position: fixed; z-index: 10001; cursor: pointer">
-                <img class="mobile-gach-icon" src="{{URL::asset('images/banner-gach-4.png')}}">
-            </div>
+        <div class="col-xs-12 hiddenOnMobile hideOn1000">
             @if(Auth::check())
                 <?php
                 $level = Auth::user()->level;
@@ -261,7 +257,7 @@
             </div>
         </div>
 
-        <div class="col-md-10 col-xs-12 col-md-pull-2" onclick="$('#mobileMenuBar').addClass('hidden');">
+        <div class="col-xs-12" onclick="$('#mobileMenuBar').addClass('hidden');">
             <div class="wholePage" style="background-color: white">
                 <div style="margin-right: 20%">
                     @include('layouts.slideBar')

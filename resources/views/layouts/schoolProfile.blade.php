@@ -126,7 +126,7 @@
     .lineRightToLeft {
         position: absolute;
         right: 220px;
-        top: 50px;
+        top: 59px;
         height: 5px;
         background-color: black; z-index: -1
     }
@@ -134,7 +134,7 @@
     .lineLeftToRight {
         position: absolute;
         left: 220px;
-        top: 50px;
+        top: 59px;
         height: 5px;
         direction: ltr;
         background-color: black; z-index: -1
@@ -142,7 +142,7 @@
 
     .lineTopToDown {
         position: absolute;
-        right: 100px;
+        right: 120px;
         top: 120px;
         width: 5px;
         background-color: black;

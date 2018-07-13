@@ -164,7 +164,6 @@
 
     .rssContainer {
         height: 300px;
-        margin-top: 100px;
     }
 
     .sliderBtnsContainer {
@@ -231,7 +230,7 @@
 
 <Div class="col-xs-12">
     <div class="col-md-2 hiddenOnMobile"></div>
-    <div class="col-md-4 col-md-push-6 col-xs-12 sliderContainer" style="overflow: hidden; border: 2px solid black; padding: 0; min-height: 300px; border-radius: 6px; margin-top: 100px">
+    <div class="col-md-4 col-md-push-6 col-xs-12 sliderContainer" style="overflow: hidden; border: 2px solid black; padding: 0; min-height: 300px; border-radius: 6px">
         <div style="width: 100%; padding-top: 100%; position: relative">
             <?php $left = 55 - 5 * count($sliders); $counter = 0; ?>
             @foreach($sliders as $slider)

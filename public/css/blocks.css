@@ -5,16 +5,17 @@
     cursor: pointer;
     display: inline-block;
     text-decoration: none;
-    padding: 22px 50px;
     font-size: 15px;
-    text-transform: uppercase;
-    font-family: "Varela Round", Arial, "Helvetica Neue", Helvetica, sans-serif;
-    color: #fff;
+    color: #757575;
     border-radius: 50px;
     position: relative;
     -webkit-transition: all .3s ease;
     transition: all .3s ease;
-    text-align: center; }
+    text-align: center;
+}
+.btn-primary, .btn-danger, .btn-success, .btn-info {
+    color: white !important;
+}
 @media (max-width: 768px) {
     .btn {
         padding: 15px 35px;
@@ -49,7 +50,6 @@
     text-decoration: none;
     padding: 20px 50px;
     font-size: 15px;
-    font-family: "Varela Round", Arial, "Helvetica Neue", Helvetica, sans-serif;
     color: #fff;
     border-radius: 50px;
     position: relative;
@@ -162,8 +162,6 @@
 .woocommerce .widget_price_filter .price_slider_amount .button {
     padding: 22px 30px;
     font-size: 15px;
-    text-transform: uppercase;
-    font-family: "Varela Round", Arial, "Helvetica Neue", Helvetica, sans-serif;
     border-radius: 50px;
     -webkit-transition: all .3s ease;
     transition: all .3s ease; }
@@ -628,8 +626,6 @@
     text-decoration: none;
     padding: 10px 30px;
     font-size: 15px;
-    text-transform: uppercase;
-    font-family: "Varela Round", Arial, "Helvetica Neue", Helvetica, sans-serif;
     border-radius: 50px;
     position: relative;
     -webkit-transition: all .3s ease;
@@ -651,7 +647,6 @@
     content: '\f00d';
     display: block;
     position: absolute;
-    font-family: FontAwesome;
     color: #fff;
     left: 0;
     top: 0;
@@ -2857,7 +2852,7 @@ input, textarea {
     margin-bottom: 30px;
     border-radius: 50px;
     background-color: #f7f9f9;
-    width: 100%; }
+}
 input:focus, textarea:focus {
     box-shadow: 25px 20px 20px -15px rgba(0, 0, 0, 0.3); }
 input.focus-white:focus, textarea.focus-white:focus {
@@ -6912,7 +6907,7 @@ body.woocommerce-cart .entry-header {
     font-size: 24px;
     width: auto;
     color: #2f2c2c;
-    font-family: "Varela Round", Arial, "Helvetica Neue", Helvetica, sans-serif; }
+}
 @media (max-width: 640px) {
     .woocommerce .cart-total table.shop_table .order-total td,
     .woocommerce table.shop_table tbody:first-child tr:first-child td {
@@ -6950,7 +6945,7 @@ body.woocommerce-cart .entry-header {
     font-size: 24px;
     width: auto;
     color: #2f2c2c;
-    font-family: "Varela Round", Arial, "Helvetica Neue", Helvetica, sans-serif; }
+}
 
 .cross-sells .crumina-heading {
     margin-bottom: 40px; }
@@ -7079,8 +7074,8 @@ body.woocommerce-cart .entry-header {
     font-size: 19px;
     font-weight: 400 !important;
     color: #2f2c2c;
-    font-family: "Varela Round", Arial, "Helvetica Neue", Helvetica, sans-serif;
-    border: none; }
+    border: none;
+}
 @media (max-width: 800px) {
     .woocommerce table .cart_item td,
     .woocommerce table .cart_item th {
@@ -7130,8 +7125,8 @@ body.woocommerce-cart .entry-header {
     font-size: 24px;
     font-weight: 400;
     color: #2f2c2c;
-    font-family: "Varela Round", Arial, "Helvetica Neue", Helvetica, sans-serif;
-    list-style: none; }
+    list-style: none;
+}
 @media (max-width: 768px) {
     .woocommerce-checkout #payment ul.payment_methods li {
         font-size: 18px; } }
@@ -7762,8 +7757,6 @@ li {
     margin-left: 20px; }
 .project-meta + .crumina-heading {
     margin-bottom: 30px; }
-.project-meta .sl-wrapper .count-likes {
-    font-family: "Varela Round", Arial, "Helvetica Neue", Helvetica, serif; }
 .project-meta .likes {
     display: inline-block;
     color: #ff454f;
@@ -8103,7 +8096,7 @@ p.order-again .button:after {
     text-transform: uppercase;
     font-weight: 900;
     margin: 30px 0;
-    color: #fff;
+    color: #757575;
     border-radius: 30px;
     background-color: #4cc2c0; }
 .woocommerce form.login [type="checkbox"] {
@@ -8317,7 +8310,6 @@ html body.kc-css-system .kc_tabs_nav ~ .kc_tab:not(.ui-tabs-body-active) {
 
 .kc_accordion_header > span.ui-accordion-header-icon {
     float: right;
-    font-family: 'simple-line-icons';
     margin: 17px;
     color: #aaa;
     speak: none;

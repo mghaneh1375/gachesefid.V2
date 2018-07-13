@@ -52,10 +52,10 @@ function createPaging() {
                 newElement += "<span class='btn btn-success' style='background-color: #4DC7BC !important; float: left; border: none; margin: 5px;'>" + i + "</span>";
             }
             else if(i != limit) {
-                newElement += "<button onclick='changePage(this.value)' value='" + i + "' name='pageNum' class='btn btn-success' style='float: left; background-color: transparent; border: 2px solid #454545; border-radius: 5px; margin: 5px; color: #963019'>" + i + "</button>";
+                newElement += "<button onclick='changePage(this.value)' value='" + i + "' name='pageNum' class='btn btn-success' style='float: left; color:black !important; background-color: transparent; border: 2px solid #454545; border-radius: 5px; margin: 5px;'>" + i + "</button>";
             }
             else
-                newElement += "<button onclick='changePage(this.value)' value='" + i + "' name='pageNum' class='btn btn-success' style='float: right; background-color: transparent; border: 2px solid #454545; border-radius: 5px; margin: 5px; color: #963019'>" + i + "</button>";
+                newElement += "<button onclick='changePage(this.value)' value='" + i + "' name='pageNum' class='btn btn-success' style='float: right; background-color: transparent; border: 2px solid #454545; border-radius: 5px; margin: 5px; color: black !important;'>" + i + "</button>";
         }
         else if(i < currPage && !passPage2) {
             passPage2 = true;

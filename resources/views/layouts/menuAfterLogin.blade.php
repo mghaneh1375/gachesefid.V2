@@ -25,9 +25,6 @@
 
                 <ul id="primary-menu" class="primary-menu-menu">
 
-                    <li id="menu-item-578" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-507 current_page_item menu-item-has-icon menu-item-578"><a href="{{route('home')}}" ><i class="menu-item-icon fa fa-home" ></i>صفحه نخست</a>
-                    </li>
-
                     <li id="menu-item-1981" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-has-icon menu-item-1981"><a href="#" ><i class="menu-item-icon fa fa-group" ></i>آزمون ها</a>
                         <ul class="sub-menu sub-menu-has-icons">
                             <li id="menu-item-1982" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-icon menu-item-1982"><a href="{{route('myQuizes')}}" ><i class="menu-item-icon fa fa-check-square-o" ></i>آزمون های من<i
@@ -79,9 +76,8 @@
                         </ul>
                     </li>
 
-                </ul>
-                <ul class="nav-add">
-                    <li class="search search_main"><a href="#" class="js-open-search"><i class="seoicon-loupe"></i></a></li>
+                    <li id="menu-item-2021" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-507 current_page_item menu-item-has-icon menu-item-2021"><a href="{{route('logout')}}" ><i class="menu-item-icon fa fa-sign-out" ></i>خروج</a>
+                    </li>
                 </ul>
             </nav>
         </div>

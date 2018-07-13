@@ -176,7 +176,7 @@ ol li::before {
 }
 
 .header nav {
-    float: left;
+    float: right;
 }
 
 .nav-add {
@@ -276,7 +276,6 @@ ol li::before {
 
 .btn + .btn {
     margin-left: 0;
-    margin-right: 30px;
 }
 
 .main-slider .main-slider-btn-wrap .btn + .btn {

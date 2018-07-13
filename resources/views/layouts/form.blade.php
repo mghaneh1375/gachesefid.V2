@@ -11,14 +11,36 @@
                 display: none;
             }
         }
+        .primary-menu {
+            float: right !important;
+        }
     </style>
 
 </head>
 
 @if(Auth::check())
-    <?php $level = Auth::user()->level; ?>
-    @if($level == getValueInfo('studentLevel'))
+    <?php
+    $level = Auth::user()->level;
+    ?>
+
+    @if($level == getValueInfo('adminLevel') || $level == getValueInfo('superAdminLevel'))
+        @include('layouts.menuAfterLoginSuperAdmin')
+    @elseif($level == getValueInfo('namayandeLevel'))
+        @include('layouts.menuAfterLoginNamayande')
+    @elseif($level == getValueInfo('adviserLevel'))
+        @include('layouts.menuAfterLoginAdviser')
+    @elseif($level == getValueInfo('studentLevel'))
         @include('layouts.menuAfterLogin')
+    @elseif($level == getValueInfo('operator2Level'))
+        @include('layouts.menuAfterLoginOperator2')
+    @elseif($level == getValueInfo('operator1Level'))
+        @include('layouts.menuAfterLoginOperator2')
+    @elseif($level == getValueInfo('controllerLevel'))
+        @include('layouts.menuAfterLoginController')
+    @elseif($level == getValueInfo('schoolLevel'))
+        @include('layouts.menuAfterLoginSchool')
+    @else
+        @include('layouts.preLoginMenu')
     @endif
 @else
     @include('layouts.preLoginMenu')
@@ -69,7 +91,7 @@
                 <img onclick="toggleMenu()" src="{{URL::asset('images/menuIcon.png')}}" style="cursor: pointer; float: right; margin-top: 10px" width="50px">
             </div>
 
-            <div class="col-xs-12" onclick="$('#mobileMenuBar').addClass('hidden');">
+            <div style="margin-top: 50px" class="col-xs-12" onclick="$('#mobileMenuBar').addClass('hidden');">
 
                 <div class="col-xs-1 hideOn1200">
                     @section('sideBar')
