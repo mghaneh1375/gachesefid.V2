@@ -1,5 +1,5 @@
 
-<header class="header hiddenOnMobile" id="site-header" style="font-family: IRANSans !important;">
+<header class="header" data-pinned="swingInX" data-unpinned="swingOutX" id="site-header" style="font-family: IRANSans !important;">
     <div class="container">
         <div class="header-content-wrapper">
             <div class="logo">

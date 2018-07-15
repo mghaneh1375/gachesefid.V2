@@ -196,32 +196,39 @@
         {{--<div data-val="3" class="scrollItem" id="menu_3"></div>--}}
     {{--</div>--}}
 
-    <Div class="row">
-        <div class="col-xs-12 hiddenOnMobile hideOn1000">
-            @if(Auth::check())
-                <?php
-                $level = Auth::user()->level;
-                ?>
 
-                @if($level == getValueInfo('adminLevel') || $level == getValueInfo('superAdminLevel'))
-                    @include('layouts.menuAfterLoginSuperAdmin')
-                @elseif($level == getValueInfo('adviserLevel'))
-                    @include('layouts.menuAfterLoginAdviser')
-                @elseif($level == getValueInfo('studentLevel'))
-                    @include('layouts.menuAfterLogin')
-                @elseif($level == getValueInfo('operator2Level'))
-                    @include('layouts.menuAfterLoginOperator2')
-                @elseif($level == getValueInfo('operator1Level'))
-                    @include('layouts.menuAfterLoginOperator2')
-                @elseif($level == getValueInfo('controllerLevel'))
-                    @include('layouts.menuAfterLoginController')
-                @else
-                    @include('layouts.preLoginMenu')
-                @endif
-            @else
-                @include('layouts.preLoginMenu')
-            @endif
-        </div>
+    <body class="rtl home page-template-default page page-id-507 kingcomposer kc-css-system _masterslider _msp_version_3.2.2 footer-widgets crumina-grid">
+
+
+    @if(Auth::check())
+        <?php
+        $level = Auth::user()->level;
+        ?>
+
+        @if($level == getValueInfo('adminLevel') || $level == getValueInfo('superAdminLevel'))
+            @include('layouts.menuAfterLoginSuperAdmin')
+        @elseif($level == getValueInfo('namayandeLevel'))
+            @include('layouts.menuAfterLoginNamayande')
+        @elseif($level == getValueInfo('adviserLevel'))
+            @include('layouts.menuAfterLoginAdviser')
+        @elseif($level == getValueInfo('studentLevel'))
+            @include('layouts.menuAfterLogin')
+        @elseif($level == getValueInfo('operator2Level'))
+            @include('layouts.menuAfterLoginOperator2')
+        @elseif($level == getValueInfo('operator1Level'))
+            @include('layouts.menuAfterLoginOperator2')
+        @elseif($level == getValueInfo('controllerLevel'))
+            @include('layouts.menuAfterLoginController')
+        @elseif($level == getValueInfo('schoolLevel'))
+            @include('layouts.menuAfterLoginSchool')
+        @else
+            @include('layouts.preLoginMenu')
+        @endif
+    @else
+        @include('layouts.preLoginMenu')
+    @endif
+
+    <Div class="row">
 
         <div class="col-xs-12 hiddenOnScreenMain topTitle">
             <p style="position: absolute; left: 35%; margin-top: 5px; font-size: 32px; font-family: ghasem !important;">گچ سفید</p>

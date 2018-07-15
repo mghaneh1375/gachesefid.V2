@@ -18,6 +18,42 @@
 
 </head>
 
+{{--<div class="col-xs-12 hiddenOnScreen">--}}
+    {{--<div id="mobileMenuBar" class="hidden">--}}
+
+        {{--@if(Auth::check())--}}
+            {{--<?php--}}
+            {{--$level = Auth::user()->level;--}}
+            {{--?>--}}
+
+            {{--@if($level == getValueInfo('adminLevel') || $level == getValueInfo('superAdminLevel'))--}}
+                {{--@include('layouts.menuAfterLoginSuperAdminMobile')--}}
+            {{--@elseif($level == getValueInfo('namayandeLevel'))--}}
+                {{--@include('layouts.menuAfterLoginNamayandeMobile')--}}
+            {{--@elseif($level == getValueInfo('adviserLevel'))--}}
+                {{--@include('layouts.menuAfterLoginAdviserMobile')--}}
+            {{--@elseif($level == getValueInfo('studentLevel'))--}}
+                {{--@include('layouts.menuAfterLoginMobile')--}}
+            {{--@elseif($level == getValueInfo('schoolLevel'))--}}
+                {{--@include('layouts.menuAfterLoginSchoolMobile')--}}
+            {{--@elseif($level == getValueInfo('operator2Level'))--}}
+                {{--                            @include('layouts.menuAfterLoginOperator2Mobile')--}}
+            {{--@elseif($level == getValueInfo('operator1Level'))--}}
+                {{--@include('layouts.menuAfterLoginOperator2Mobile')--}}
+            {{--@elseif($level == getValueInfo('controllerLevel'))--}}
+                {{--                            @include('layouts.menuAfterLoginControllerMobile')--}}
+            {{--@else--}}
+                {{--@include('layouts.preLoginMenuMobile')--}}
+            {{--@endif--}}
+        {{--@else--}}
+            {{--@include('layouts.preLoginMenuMobile')--}}
+        {{--@endif--}}
+    {{--</div>--}}
+{{--</div>--}}
+
+<body class="rtl home page-template-default page page-id-507 kingcomposer kc-css-system _masterslider _msp_version_3.2.2 footer-widgets crumina-grid">
+
+
 @if(Auth::check())
     <?php
     $level = Auth::user()->level;
@@ -45,41 +81,6 @@
 @else
     @include('layouts.preLoginMenu')
 @endif
-
-<div class="col-xs-12 hiddenOnScreen">
-    <div id="mobileMenuBar" class="hidden">
-
-        @if(Auth::check())
-            <?php
-            $level = Auth::user()->level;
-            ?>
-
-            @if($level == getValueInfo('adminLevel') || $level == getValueInfo('superAdminLevel'))
-                @include('layouts.menuAfterLoginSuperAdminMobile')
-            @elseif($level == getValueInfo('namayandeLevel'))
-                @include('layouts.menuAfterLoginNamayandeMobile')
-            @elseif($level == getValueInfo('adviserLevel'))
-                @include('layouts.menuAfterLoginAdviserMobile')
-            @elseif($level == getValueInfo('studentLevel'))
-                @include('layouts.menuAfterLoginMobile')
-            @elseif($level == getValueInfo('schoolLevel'))
-                @include('layouts.menuAfterLoginSchoolMobile')
-            @elseif($level == getValueInfo('operator2Level'))
-                {{--                            @include('layouts.menuAfterLoginOperator2Mobile')--}}
-            @elseif($level == getValueInfo('operator1Level'))
-                {{--@include('layouts.menuAfterLoginOperator2Mobile')--}}
-            @elseif($level == getValueInfo('controllerLevel'))
-                {{--                            @include('layouts.menuAfterLoginControllerMobile')--}}
-            @else
-                @include('layouts.preLoginMenuMobile')
-            @endif
-        @else
-            @include('layouts.preLoginMenuMobile')
-        @endif
-    </div>
-</div>
-
-<body>
 
     <div class="dark hidden" style="position: absolute; left: 0; top: 0; z-index: 10000; width: 100%; height: 100%; background-color: rgba(120, 119, 120, 0.62)"></div>
 
