@@ -646,7 +646,7 @@ class QuizController extends Controller {
 
         $cityId = RedundantInfo1::whereUId($uId)->first();
 
-        if(count($cityId) == 0)
+        if($cityId == null)
             $cityId = City::first()->id;
         else
             $cityId = $cityId->cityId;
@@ -710,10 +710,65 @@ class QuizController extends Controller {
         if($kindKarname->lessonMark)
             $totalMark = 20;
 
+        $avgTaraz = -1;
+        $avgRate = -1;
+        $sumTaraz = -1;
+        $sumRate = -1;
+        $pack = false;
+
+        $composeId = DB::select('select c.id from composeQuiz c, composeQuizItem ci WHERE c.id = ci.composeId and ci.quizId = ' . $quizId .' and ci.quizMode = ' . getValueInfo('regularQuiz'));
+        if($composeId != null && count($composeId) > 0) {
+            $composeId = $composeId[0]->id;
+
+            $avgTarazes = DB::select('SELECT AVG(t.taraz) as avgTaraz, qR.uId from taraz t, quizregistry qR, composequizitem ci WHERE t.qEntryId = qR.id and qR.qId = ci.quizId and qR.quizMode = ci.quizMode and ' . $composeId . ' = ci.composeId GROUP BY(qR.uId) order BY avgTaraz DESC');
+
+            for($i = 0; $i < count($avgTarazes); $i++) {
+
+                if($avgTarazes[$i]->uId == $uId) {
+
+                    $r = $i + 1;
+                    $avgTaraz = $avgTarazes[$i]->avgTaraz;
+                    $k = $i - 1;
+
+                    while ($k >= 0 && $avgTarazes[$k]->avgTaraz == $avgTaraz) {
+                        $k--;
+                        $r--;
+                    }
+                    $avgRate = $r;
+                    $avgTaraz = round($avgTaraz, 2);
+                    break;
+                }
+            }
+
+            $sumTarazes = DB::select('SELECT SUM(t.taraz) as sumTaraz, qR.uId from taraz t, quizregistry qR, composequizitem ci WHERE t.qEntryId = qR.id and 
+qR.qId = ci.quizId and qR.quizMode = ci.quizMode and ' . $composeId . ' = ci.composeId GROUP BY(qR.uId) order BY 
+sumTaraz DESC');
+
+            for($i = 0; $i < count($sumTarazes); $i++) {
+
+                if($sumTarazes[$i]->uId == $uId) {
+
+                    $r = $i + 1;
+                    $sumTaraz = $sumTarazes[$i]->sumTaraz;
+                    $k = $i - 1;
+
+                    while ($k >= 0 && $sumTarazes[$k]->sumTaraz == $sumTaraz) {
+                        $k--;
+                        $r--;
+                    }
+                    $sumRate = $r;
+                    break;
+                }
+            }
+
+            $pack = true;
+        }
+
         return view('generalKarname', array('quizId' => $quizId, 'status' => $status, 'kindKarname' => $kindKarname,
-            'rank' => $rank, 'rankInLessonCity' => $rankInLessonCity, 'rankInLesson' => $rankInLesson,
+            'rank' => $rank, 'rankInLessonCity' => $rankInLessonCity, 'rankInLesson' => $rankInLesson, 'pack' => $pack,
             'lessons' => $lessons, 'taraz' => $taraz, 'rankInLessonState' => $rankInLessonState, 'stateRank' => $stateRank,
-            'avgs' => $avgs, 'roq' => $roq, 'cityRank' => $cityRank, "totalMark" => $totalMark));
+            'avgs' => $avgs, 'roq' => $roq, 'cityRank' => $cityRank, "totalMark" => $totalMark,
+            'avgRate' => $avgRate, 'avgTaraz' => $avgTaraz, 'sumRate' => $sumRate, 'sumTaraz' => $sumTaraz));
     }
 
     private function getResultOfSpecificContainer($total, $corrects, $inCorrects) {

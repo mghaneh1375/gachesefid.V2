@@ -190,6 +190,9 @@
         </table>
 
         <table style="margin-top: 10px">
+            @if($pack)
+                <caption><center>منفک از بسته</center></caption>
+            @endif
             <tr>
                 @if($kindKarname->generalTaraz)
                     <td><center>میانگین تراز</center></td>
@@ -219,6 +222,26 @@
                 @endif
             </tr>
         </table>
+        @if($pack)
+            <table style="margin-top: 10px">
+                <caption><center>بسته ای</center></caption>
+                <tr>
+                    <td><center>نوع رتبه بندی</center></td>
+                    <td><center>جمع/میانگین</center></td>
+                    <td><center>رتبه</center></td>
+                </tr>
+                <tr>
+                    <td><center>جمع انباره ای</center></td>
+                    <td><center>{{$sumTaraz}}</center></td>
+                    <td><center>{{$sumRate}}</center></td>
+                </tr>
+                <tr>
+                    <td><center>میانگین</center></td>
+                    <td><center>{{$avgTaraz}}</center></td>
+                    <td><center>{{$avgRate}}</center></td>
+                </tr>
+            </table>
+        @endif
 
         <div class="col-xs-12" style="margin-top: 10px; padding: 5px;">
             <a href="{{route('printKarname', ['quizId' => $quizId])}}" target="_blank" class="btn btn-success">چاپ کارنامه</a>
