@@ -32,6 +32,9 @@ function resetPas(noticePane) {
 
     $("#msg").css("visibility", "visible");
 
+    $(".dark").removeClass('hidden');
+    $(".animatedContainer").removeClass('hidden');
+
     $.ajax({
         type: 'post',
         url: resetPasPath,
@@ -42,9 +45,12 @@ function resetPas(noticePane) {
         },
         success: function (response) {
 
+            $(".animatedContainer").removeClass('hidden');
+
             if(response == "ok")
-                $("#" + noticePane).css("display", '');
+                $("#" + noticePane).removeClass('hidden');
             else {
+                $(".dark").removeClass('hidden');
                 $("#msg").empty().append(response);
             }
         }

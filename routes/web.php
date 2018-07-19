@@ -6,6 +6,10 @@ Route::post('doRegistration', 'RegistrationController@doRegistration')->name('do
 
 Route::post('get_exam_answer_sheet_template/{exam_id}', array('as' => 'get_exam_answer_sheet_template', 'uses' => 'AdminController@get_exam_answer_sheet_template'));
 
+Route::get('alaki', function () {
+	return view('alaki');
+});
+
 Route::group(array('middleware' => ['nothing', 'notLogin']), function () {
 	
 	Route::get('login', 'HomeController@login')->name('login');
