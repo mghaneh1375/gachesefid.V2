@@ -1,5 +1,3 @@
-
-
 <footer id="site-footer" class="footer" style="font-family: IRANSans !important;">
     <div class="container">
         <div class="row info">
@@ -54,7 +52,7 @@
                         <div class="icon js-animate-icon">
                             <svg enable-background="new 0 0 64 64" version="1.1" viewBox="0 0 64 64" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path d="  M48.2,41.7c-2.4-2.4-5.9-4.5-8.6-1.8c-1.9,1.9-2.7,4.1-2.7,4.1s-4.5,2.4-12.4-5.5s-5.5-12.4-5.5-12.4s2.2-0.8,4.1-2.7  c2.7-2.7,0.6-6.2-1.8-8.6c-2.8-2.8-6.6-5.2-8.7-3.1c-3.9,3.9-4.6,8.9-4.6,8.9s1.9,11.8,12.3,22.1s22.1,12.3,22.1,12.3s5-0.8,8.9-4.6  C53.4,48.3,51,44.5,48.2,41.7z" fill="none" stroke="#fcb03b" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><path d="  M33,22c3.9,0,7,3.1,7,7" fill="none" stroke="#fcb03b" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><path d="  M33,15c7.7,0,14,6.3,14,14" fill="none" stroke="#fcb03b" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><path d="  M33,7.5c11.9,0,21.5,9.6,21.5,21.5" fill="none" stroke="#fcb03b" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/></svg>                                </div>
                         <div class="content">
-                            <span class="title">02166917230</span>
+                            <span style="border: none !important;" class="title">02166917230</span>
                             <p class="sub-title">شنبه تا چهارشنبه از 9 تا 16</p>
                         </div>
                     </div>
@@ -64,7 +62,7 @@
                         <div class="icon js-animate-icon">
                             <svg enable-background="new 0 0 64 64" version="1.1" viewBox="0 0 64 64" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" points="  54,17 32,36 10,17 " stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><line fill="none" stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="10.9" x2="26" y1="48" y2="36"/><path d="  M32.7,49H13c-2.2,0-4-1.8-4-4V19c0-2.2,1.8-4,4-4h38c2.2,0,4,1.8,4,4v15.5" fill="none" stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><circle cx="44.9" cy="43.1" fill="none" r="10.1" stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><path d="  M44,41.4c0,0-1.3,3.4-0.9,5.1c0.4,1.7,2.6,2.1,3.7,1.1" fill="none" stroke="#f15b26" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><g><circle cx="45.4" cy="38.3" fill="#DCE9EE" r="0.9"/><path d="M45.4,37.3c-0.5,0-0.9,0.4-0.9,0.9c0,0.5,0.4,0.9,0.9,0.9s0.9-0.4,0.9-0.9C46.4,37.8,46,37.3,45.4,37.3   L45.4,37.3z" fill="#f15b26"/></g></svg>                                </div>
                         <div class="content">
-                            <a href="mailto:info@irysc.com" class="title">info@irysc.com</a>
+                            <a style="border: none !important;" href="mailto:info@irysc.com" class="title">info@irysc.com</a>
                         </div>
                     </div>
                 </div>
@@ -76,7 +74,7 @@
 </svg>
                         </div>
                         <div class="content">
-                            <span class="title">09900220525</span><p class="sub-title">پیامک و تلگرام</p>
+                            <span style="border: none !important;" class="title">09900220525</span><p class="sub-title">پیامک و تلگرام</p>
                         </div>
                     </div>
                 </div>

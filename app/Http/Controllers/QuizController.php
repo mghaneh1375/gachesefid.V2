@@ -720,7 +720,9 @@ class QuizController extends Controller {
         if($composeId != null && count($composeId) > 0) {
             $composeId = $composeId[0]->id;
 
-            $avgTarazes = DB::select('SELECT AVG(t.taraz) as avgTaraz, qR.uId from taraz t, quizregistry qR, composequizitem ci WHERE t.qEntryId = qR.id and qR.qId = ci.quizId and qR.quizMode = ci.quizMode and ' . $composeId . ' = ci.composeId GROUP BY(qR.uId) order BY avgTaraz DESC');
+            $avgTarazes = DB::select('SELECT AVG(t.taraz) as avgTaraz, qR.uId from taraz t, quizRegistry qR, 
+            composeQuizItem ci WHERE t.qEntryId = qR.id 
+and qR.qId = ci.quizId and qR.quizMode = ci.quizMode and ' . $composeId . ' = ci.composeId GROUP BY(qR.uId) order BY avgTaraz DESC');
 
             for($i = 0; $i < count($avgTarazes); $i++) {
 
@@ -740,7 +742,7 @@ class QuizController extends Controller {
                 }
             }
 
-            $sumTarazes = DB::select('SELECT SUM(t.taraz) as sumTaraz, qR.uId from taraz t, quizregistry qR, composequizitem ci WHERE t.qEntryId = qR.id and 
+            $sumTarazes = DB::select('SELECT SUM(t.taraz) as sumTaraz, qR.uId from taraz t, quizRegistry qR, composeQuizItem ci WHERE t.qEntryId = qR.id and 
 qR.qId = ci.quizId and qR.quizMode = ci.quizMode and ' . $composeId . ' = ci.composeId GROUP BY(qR.uId) order BY 
 sumTaraz DESC');
 

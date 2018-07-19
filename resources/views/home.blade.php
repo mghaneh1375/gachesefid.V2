@@ -22,14 +22,14 @@
         var usersNo = '{{$usersNo}}';
         var quizNo = '{{$quizNo}}';
         var adviserNos = '{{$adviserNos}}';
-        var sliders = '{{count($sliders)}}';
+        var schoolNo = '{{$schoolsNo}}';
+        var composeNo = '{{$composeNo}}';
 
-        var timeVal1, timeVal2, timeVal3, timeVal4;
+        var timeVal1, timeVal2, timeVal3, timeVal4, timeVal5, timeVal6;
 
         $(document).ready(function () {
 
             changeSelectedPageScrollItem();
-            showSlideBar();
 
             timeVal1 = Math.floor(1000 / usersNo);
             countUserNos(-1);
@@ -43,13 +43,19 @@
             timeVal4 = Math.floor(1000 / adviserNos);
             countAdviserNos(-1);
 
-            $.ajax({
-                type: 'post',
-                url: "{{route('showRSSGach')}}",
-                success: function (response) {
-                    $("#rss").append(response).persiaNumber();
-                }
-            });
+            timeVal5 = Math.floor(1000 / schoolNo);
+            countSchoolNo(-1);
+
+            timeVal6 = Math.floor(1000 / composeNo);
+            countComposeNo(-1);
+
+            {{--$.ajax({--}}
+                {{--type: 'post',--}}
+                {{--url: "{{route('showRSSGach')}}",--}}
+                {{--success: function (response) {--}}
+                    {{--$("#rss").append(response).persiaNumber();--}}
+                {{--}--}}
+            {{--});--}}
 
         });
 
@@ -102,6 +108,38 @@
             $("#adviserNos").empty().append(idx).persiaNumber();
 
             setTimeout("countAdviserNos(" + idx + ")", timeVal4);
+        }
+
+        function countComposeNo(idx) {
+
+            if(idx == composeNo)
+                return;
+
+            if(idx + 10 < composeNo) {
+                idx += 10;
+            }
+            else
+                idx++;
+
+            $("#composeNo").empty().append(idx).persiaNumber();
+
+            setTimeout("countComposeNo(" + idx + ")", timeVal6);
+        }
+
+        function countSchoolNo(idx) {
+
+            if(idx == schoolNo)
+                return;
+
+            if(idx + 10 < schoolNo) {
+                idx += 10;
+            }
+            else
+                idx++;
+
+            $("#schoolsNo").empty().append(idx).persiaNumber();
+
+            setTimeout("countSchoolNo(" + idx + ")", timeVal5);
         }
 
         function countQuizNos(idx) {
@@ -199,7 +237,6 @@
 
     <body class="rtl home page-template-default page page-id-507 kingcomposer kc-css-system _masterslider _msp_version_3.2.2 footer-widgets crumina-grid">
 
-
     @if(Auth::check())
         <?php
         $level = Auth::user()->level;
@@ -229,7 +266,6 @@
     @endif
 
     <Div class="row">
-
         <div class="col-xs-12 hiddenOnScreenMain topTitle">
             <p style="position: absolute; left: 35%; margin-top: 5px; font-size: 32px; font-family: ghasem !important;">گچ سفید</p>
             <img onclick="toggleMenu()" src="{{URL::asset('images/menuIcon.png')}}" style="cursor: pointer; float: right; margin-top: 10px" width="50px">
@@ -264,36 +300,44 @@
             </div>
         </div>
 
-        <div class="col-xs-12" onclick="$('#mobileMenuBar').addClass('hidden');">
-            <div class="wholePage" style="background-color: white">
-                <div style="margin-right: 20%">
-                    @include('layouts.slideBar')
-                    <div class="col-xs-12" style="margin-top: 20px">
-                        <div class="col-md-3 col-xs-12" style="height: 150px">
-                            <div style="float: right">
-                                <img style="width: 150px; margin: 10px" src="{{URL::asset('images/teacher.png')}}">
-                                <center style="font-weight: bolder; color: white; margin-top: -85px; font-size: 30px" id="adviserNos"></center>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-xs-12" style="margin-top: 10px; height: 150px">
-                            <div style="float: right">
-                                <img style="width: 150px; margin: 10px" src="{{URL::asset('images/exam.png')}}">
-                                <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 30px" id="quizNos"></center>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-xs-12" style="margin-top: 10px; height: 150px">
-                            <div style="float: right">
-                                <img style="width: 150px; margin: 10px" src="{{URL::asset('images/blackboard.png')}}">
-                                <center style="font-weight: bolder; color: white; margin-top: -85px; font-size: 30px" id="qNos"></center>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-xs-12" style="margin-top: 10px; height: 150px">
-                            <div style="float: right">
-                                <img style="width: 150px; margin: 10px" src="{{URL::asset('images/student.png')}}">
-                                <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 28px" id="usersNo"></center>
-                            </div>
-                        </div>
-                    </div>
+                    {{--@include('layouts.slideBar')--}}
+        <div class="col-xs-12" style="margin-top: 100px">
+            <div class="col-md-4 col-xs-12" style="height: 150px">
+                <div style="float: right">
+                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/teacher.png')}}">
+                    <center style="font-weight: bolder; color: white; margin-top: -85px; font-size: 30px" id="adviserNos"></center>
+                </div>
+            </div>
+            <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
+                <div style="float: right">
+                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/exam.png')}}">
+                    <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 30px" id="quizNos"></center>
+                </div>
+            </div>
+            <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
+                <div style="float: right">
+                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/blackboard.png')}}">
+                    <center style="font-weight: bolder; color: white; margin-top: -85px; font-size: 30px" id="qNos"></center>
+                </div>
+            </div>
+            <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
+                <div style="float: right">
+                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/student.png')}}">
+                    <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 28px" id="usersNo"></center>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
+                <div style="float: right">
+                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/student.png')}}">
+                    <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 28px" id="schoolsNo"></center>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
+                <div style="float: right">
+                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/student.png')}}">
+                    <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 28px" id="composeNo"></center>
                 </div>
             </div>
 

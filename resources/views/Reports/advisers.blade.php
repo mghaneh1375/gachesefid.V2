@@ -34,7 +34,7 @@
                         <td><center style="direction: ltr">{{$itr->rate}}</center></td>
                         <td><center>{{$itr->studentsNo}}</center></td>
                         <td><center>{{$itr->invitationCode}}</center></td>
-                        <?php $allow = true; ?>
+                        <?php $allow = (\Illuminate\Support\Facades\Auth::user()->level == getValueInfo('studentLevel')) ? true : false; ?>
                         @foreach($myAdvisers as $myAdviser)
                             @if($itr->id == $myAdviser->adviserId)
                                 <?php $allow = false; ?>

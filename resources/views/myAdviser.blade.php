@@ -26,7 +26,10 @@
 
     <div class="row">
         @if($myAdvisers == null || count($myAdvisers) == 0)
-            <center style="padding: 10px"><p class="errorText">مشاوری برای شما ثبت نشده است</p></center>
+            <center style="padding: 10px">
+                <p class="errorText">مشاوری برای شما ثبت نشده است</p>
+                <a href="{{route('advisersList')}}" class="btn btn-primary">رفتن به صفحه لیست مشاوران</a>
+            </center>
         @else
             @foreach($myAdvisers as $myAdviser)
                 <center class="col-xs-12">

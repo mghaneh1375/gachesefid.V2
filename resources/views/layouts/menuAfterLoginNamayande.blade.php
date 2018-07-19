@@ -2,7 +2,7 @@
     <div class="container">
         <div class="header-content-wrapper">
             <div class="logo">
-                <a href="{{route('home')}}" class="full-block-link" rel="home"></a>
+                <a href="{{route('profile')}}" class="full-block-link" rel="home"></a>
                 <img src="{{URL::asset('images/Logo-Gach.png')}}" alt="گچ سفید - سامانه آزمون و رقابت هوشمند" style="width:94px; height:50px;"/>
             </div>
 
@@ -57,7 +57,7 @@
                     </li>
 
 
-                    <li id="menu-item-1990" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-507 current_page_item menu-item-has-icon menu-item-1990"><a href="{{route('schoolsList')}}" ><i class="menu-item-icon fa fa-home" ></i>صندوق پیام ها</a>
+                    <li id="menu-item-1990" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-507 current_page_item menu-item-has-icon menu-item-1990"><a href="{{route('message')}}" ><i class="menu-item-icon fa fa-home" ></i>صندوق پیام ها</a>
                     </li>
 
 

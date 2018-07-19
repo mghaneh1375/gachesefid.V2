@@ -88,6 +88,7 @@ class RegistrationController extends Controller {
         $msg = $NID = $username = $password = $sex = $level =
         $firstName = $lastName = $phoneNum = $invitationCode =
         $honors = $essay = $schools = $workYears = $birthDay = "";
+        $grades = [];
 
         if (isset($_POST["doRegistration"])) {
 
@@ -106,7 +107,10 @@ class RegistrationController extends Controller {
             $schools = makeValidInput($_POST["schools"]);
             $workYears = makeValidInput($_POST["workYears"]);
             $lastCertificate = makeValidInput($_POST["lastCertificate"]);
-            $grades = $_POST["grades"];
+
+            if(isset($_POST["grades"]))
+                $grades = $_POST["grades"];
+
             $field = makeValidInput($_POST["field"]);
             $cityId = makeValidInput($_POST["cityId"]);
             $birthDay = makeValidInput($_POST["birthDay"]);
@@ -200,9 +204,7 @@ class RegistrationController extends Controller {
                                 $adviserFields->save();
                             }
                         }
-                        catch (Exception $x) {
-
-                        }
+                        catch (Exception $x) {}
 
                     }
 

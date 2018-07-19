@@ -19,7 +19,10 @@
         var quizName = "{{$quizName}}";
 
     </script>
-    <div class="title">رتبه بندی (تا این لحظه)</div>
+    <div class="title">
+        <p>آزمون {{$quizName}}</p>
+        <p style="margin-top: -30px; font-size: 24px">(تا این لحظه)</p>
+    </div>
 @stop
 
 @section('main')

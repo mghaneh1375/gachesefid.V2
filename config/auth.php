@@ -64,6 +64,9 @@ return [
     |
     */
 
+
+//        "laravel/framework": "5.6.*",
+
     'providers' => [
         'users' => [
             'driver' => 'eloquent',

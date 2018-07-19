@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\models\SlideBar;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Session;
 
 class SlideBarController extends Controller {
 
@@ -57,14 +56,15 @@ class SlideBarController extends Controller {
         }
 
         elseif(isset($_POST["editSlide"])) {
-
-            Session::put('slideId', makeValidInput($_POST["editSlide"]));
+//
+//            Session::put('slideId', makeValidInput($_POST["editSlide"]));
             return $this->slides('', 'edit');
         }
 
         elseif(isset($_POST["doEditPhoto"]) && isset($_FILES["newPic"])) {
 
-            $slideId = makeValidInput(Session::get('slideId', -1));
+//            $slideId = makeValidInput(Session::get('slideId', -1));
+            $slideId = 1;
 
             if($slideId == -1)
                 return Redirect::to(route('slideBarManagement'));

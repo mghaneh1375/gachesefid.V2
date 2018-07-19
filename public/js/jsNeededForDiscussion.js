@@ -57,10 +57,8 @@ var Preview2 = {
         Preview2.timeout = null;
         if (this.mjRunning) return;
         for(i = 0; i < this.src.length; i++) {
-            alert(document.getElementById(this.src[i]).value);
             var text = document.getElementById(this.src[i]).value;
             // if (text === this.oldtext) return;
-            alert(this.buffer[i]);
             document.getElementById(this.buffer[i]).innerHTML = this.oldtext = text;
             MathJax.Hub.Queue(
                 ["Typeset", MathJax.Hub, document.getElementById(this.buffer[i])],
@@ -172,7 +170,6 @@ function showQuestions(arr) {
 
         srcIds[i] = "desc_" + arr[i].id;
         destIds[i] = "mirrorDesc_" + arr[i].id;
-        alert(destIds[i]);
     }
 
     Preview2.Init(srcIds, destIds);

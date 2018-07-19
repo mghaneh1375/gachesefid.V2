@@ -3,7 +3,7 @@
     <div class="container">
         <div class="header-content-wrapper">
             <div class="logo">
-                <a href="{{route('home')}}" class="full-block-link" rel="home"></a>
+                <a href="{{route('profile')}}" class="full-block-link" rel="home"></a>
                 <img src="{{URL::asset('images/Logo-Gach.png')}}" alt="گچ سفید - سامانه آزمون و رقابت هوشمند" style="width:94px; height:50px;"/>
             </div>
 
@@ -36,13 +36,15 @@
                         <a href="#"><i class="menu-item-icon fa fa-group" ></i>رتبه بندی</a>
                         <ul class="sub-menu sub-menu-has-icons">
                             <li id="menu-item-1954" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1954"><a href="{{route('studentsRanking')}}" >دانش آموزان<i class="seoicon-right-arrow" ></i></a></li>
-                            <li id="menu-item-1975" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1975"><a href="{{route('myAdviser')}}" >مشاوران<i class="seoicon-right-arrow" ></i></a></li>
+                            <li id="menu-item-1975" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1975"><a href="{{route('advisersList')}}" >مشاوران<i class="seoicon-right-arrow" ></i></a></li>
                         </ul>
                     </li>
 
-                    <li id="menu-item-1990" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-507 current_page_item menu-item-has-icon menu-item-1990"><a href="{{route('schoolsList')}}" ><i class="menu-item-icon fa fa-home" ></i>صندوق پیام ها</a>
+                    <li id="menu-item-1990" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-507 current_page_item menu-item-has-icon menu-item-1990"><a href="{{route('message')}}" ><i class="menu-item-icon fa fa-home" ></i>صندوق پیام ها</a>
                     </li>
 
+                    <li id="menu-item-4343" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-507 current_page_item menu-item-has-icon menu-item-4343"><a href="{{route('adviserQueue')}}" ><i class="menu-item-icon fa fa-home" ></i>دانش آموزان در صف انتظار</a>
+                    </li>
 
                     <li id="menu-item-1992" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-has-icon menu-item-1992">
                         <a href="{{route('profile')}}"><i class="menu-item-icon fa fa-group" ></i>پروفایل</a>

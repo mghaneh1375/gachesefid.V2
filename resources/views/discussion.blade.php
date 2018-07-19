@@ -1,14 +1,5 @@
 @extends('layouts.form')
 
-@section('sideBar')
-    <p style="margin-top: 150px">
-علائم ریاضی:
-برای نوشتن علائم ریاضی می‌تونی از Mathjax استفاده کنی. راهنمای Mathjax رو از سایت <a target="_blank" href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">math.stackexchange</a>  بخون.
-برای نوشتن عبارت ریاضی وسط جمله، اون عبارت رو بین دوتا <span>$</span> قرار بده.
-برای نوشتن عبارت ریاضی تو یه خط جدید اون رو بین دوتا $$ قرار بده.
-    </p>
-@stop
-
 @section('head')
     @parent
 
@@ -128,8 +119,7 @@
 @stop
 
 @section('caption')
-    <div class="title">تالار گفتمان
-    </div>
+    <div class="title">پرسش و پاسخ درباره این سوال</div>
 @stop
 
 @section('main')

@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\models\AdviserFields;
 use App\models\AdviserInfo;
+use App\models\ComposeQuiz;
 use App\models\Question;
 use App\models\QuizRegistry;
+use App\models\School;
 use App\models\StudentAdviser;
 use App\models\Transaction;
 use App\models\User;
@@ -39,16 +41,14 @@ class HomeController extends Controller {
 
     public function showHome() {
 
-//		dd(Hash::check("irexam123@news", User::whereId(5)->password));
+//		$sliders = SlideBar::all();
+//		foreach ($sliders as $slider) {
+//			$slider->pic = URL::asset('images/slideBar/' . $slider->pic);
+//		}
 
-		$sliders = SlideBar::all();
-		foreach ($sliders as $slider) {
-			$slider->pic = URL::asset('images/slideBar/' . $slider->pic);
-		}
-
-		return view('home', ['sliders' => $sliders, 'qNos' => Question::accepted()->count(),
-			'usersNo' => User::students()->count(),
-			'quizNo' => RegularQuiz::count(), 'adviserNos' => User::advisers()->count()]);
+		return view('home', ['qNos' => Question::accepted()->count(),
+			'usersNo' => User::students()->count(), 'schoolsNo' => School::count(), 'composeNo' => ComposeQuiz::count(),
+			'quizNo' => RegularQuiz::count(), 'adviserNos' => User::advisers()->whereStatus(1)->count()]);
 	}
 
 	public function login() {
@@ -90,30 +90,43 @@ class HomeController extends Controller {
 		echo "false3";
     }
 
+	private function checkRequiresForAuth() {
+
+//		if(Auth::user()->status != 1) {
+//			$msg = "حساب کاربری شما هنوز فعال نشده است";
+//			Auth::logout();
+//		}
+//		else {
+			if(Auth::user()->phoneNum == "")
+				return Redirect::to('userInfo');
+
+			return redirect::route('profile');
+//		}
+
+//		dd($msg);
+//		return view('login', array('msg' => $msg));
+	}
+
 	public function doLogin() {
 
 		$username = makeValidInput(Input::get('username'));
 		$password = makeValidInput(Input::get('password'));
 
-		if(Auth::attempt(['username' => $username, 'password' => $password], true) ||
-			Auth::attempt(['phoneNum' => $username, 'password' => $password], true) ||
-			Auth::attempt(['NID' => $username, 'password' => $password], true)
-		) {
-			if(Auth::user()->status != 1) {
-				$msg = "حساب کاربری شما هنوز فعال نشده است";
-				Auth::logout();
-			}
-			else {
-				if(Auth::user()->phoneNum == "")
-					return Redirect::to('userInfo');
-
-				return Redirect::to('profile');
-			}
+		if(Auth::attempt(['username' => $username, 'password' => $password], true)) {
+			return $this->checkRequiresForAuth();
+		}
+		elseif(Auth::attempt(['phoneNum' => $username, 'password' => $password], true)) {
+			return $this->checkRequiresForAuth();
+		}
+		elseif(Auth::attempt(['NID' => $username, 'password' => $password], true)) {
+			return $this->checkRequiresForAuth();
 		}
 		else {
 			$msg = 'نام کاربری و یا رمزعبور اشتباه است';
 		}
-		return view('login', array('msg' => $msg));
+
+		dd($msg);
+//		return view('login', array('msg' => $msg));
 	}
 
 	public function resetPas($msg = "") {

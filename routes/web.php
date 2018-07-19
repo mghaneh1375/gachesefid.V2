@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 Route::post('doRegistration', 'RegistrationController@doRegistration')->name('doRegistration');
 
 Route::post('get_exam_answer_sheet_template/{exam_id}', array('as' => 'get_exam_answer_sheet_template', 'uses' => 'AdminController@get_exam_answer_sheet_template'));
@@ -8,7 +10,7 @@ Route::group(array('middleware' => ['nothing', 'notLogin']), function () {
 	
 	Route::get('login', 'HomeController@login')->name('login');
 
-	Route::post('doLogin', 'HomeController@doLogin')->name('doLogin');
+	Route::post('checkLogin', ['as' => 'checkLogin', 'uses' => 'HomeController@doLogin']);
 });
 
 Route::group(array('middleware' => 'nothing'), function (){
@@ -162,9 +164,9 @@ Route::group(array('middleware' => ['nothing', 'auth']), function () {
 	Route::post('doChangePassword', array('as' => 'doChangePas', 'uses' => 'HomeController@doChangePas'));
 });
 
-Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
+Route::get('profile', array('as' => 'profile', 'uses' => 'HomeController@profile'));
 
-	Route::get('profile', array('as' => 'profile', 'uses' => 'HomeController@profile'));
+Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 
 	Route::post('getSubjectQuestionNumsUser', array('as' => 'getSubjectQuestionNumsUser', 'uses' => 'QuestionController@getSubjectQuestionNumsUser'));
 
@@ -716,6 +718,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 });
 
+Route::post('changeQuestionStatus', array('as' => 'changeQuestionStatus', 'uses' => 'QuestionController@changeQuestionStatus'));
+
 Route::group(array('middleware' => ['nothing', 'auth', 'operator2Level']), function () {
 
 	Route::get('unConfirmedDiscussionQ', array('as' => 'unConfirmedDiscussionQ', 'uses' => 'QuestionController@unConfirmedDiscussionQ'));
@@ -733,8 +737,6 @@ Route::group(array('middleware' => ['nothing', 'auth', 'operator2Level']), funct
 	Route::post('getConfirmedAndUnConfirmedQuestions', array('as' => 'getConfirmedAndUnConfirmedQuestions', 'uses' => 'QuestionController@getConfirmedAndUnConfirmedQuestions'));
 
 	Route::post('getConfirmedAndUnConfirmedAnses', array('as' => 'getConfirmedAndUnConfirmedAnses', 'uses' => 'QuestionController@getConfirmedAndUnConfirmedAnses'));
-
-	Route::post('changeQuestionStatus', array('as' => 'changeQuestionStatus', 'uses' => 'QuestionController@changeQuestionStatus'));
 
 	Route::get('controlMsg', array('as' => 'controlMsg', 'uses' => 'MessageController@controlMsg'));
 

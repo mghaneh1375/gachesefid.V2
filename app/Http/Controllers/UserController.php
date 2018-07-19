@@ -15,8 +15,8 @@ use App\models\NamayandeSchool;
 use App\models\ControllerLevel;
 use App\models\Lesson;
 use App\models\RedundantInfo1;
-use Auth;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
@@ -815,7 +815,7 @@ class UserController extends Controller {
         if(isset($_POST["rate"])) {
 
             $rate = makeValidInput($_POST["rate"]);
-            $adviserId = makeValidInput($_POST["adviserId"]);
+            $adviserId = explode('_', makeValidInput($_POST["adviserId"]))[0];
             $studentId = makeValidInput($_POST["studentId"]);
             $questionId = makeValidInput($_POST["questionId"]);
 
@@ -868,7 +868,7 @@ class UserController extends Controller {
                 echo "ok";
             }
             catch (Exception $x) {
-                echo "nok3";
+                echo "nok3" . $x->getMessage();
             }
             return;
         }

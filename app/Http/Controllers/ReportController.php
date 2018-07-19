@@ -80,7 +80,6 @@ class ReportController extends Controller {
     }
 
     public function advisersList() {
-
         $advisers = DB::select('select u.id, u.firstName, u.lastName, u.invitationCode, (select avg(aR.rate) from adviserRate aR WHERE aR.adviserId = u.id group by(aR.adviserId)) as rate, '.
             '(select count(*) from studentsAdviser sA WHERE sA.status = 1 and sA.adviserId = u.id) as studentsNo from ' .
             'users u where u.status = 1 and u.level = ' . getValueInfo('adviserLevel') .
@@ -103,11 +102,12 @@ class ReportController extends Controller {
     public function adviserInfo($adviserId) {
 
         $adviser = User::whereId($adviserId);
-        
+
+
         if($adviser == null || $adviser->level != getValueInfo('adviserLevel')) {
             return Redirect::route('home');
         }
-        
+
         $adviserFields = AdviserFields::whereUID($adviserId)->get();
 
         foreach ($adviserFields as $adviserField) {
