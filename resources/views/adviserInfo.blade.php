@@ -107,12 +107,41 @@
             <center>
                 <p>
                     <label><span>دروس تخصصی:</span></label>
-                    @foreach($adviserFields as $adviserField)
-                        <span>{{$adviserField->gradeId}} - &nbsp;</span>
-                    @endforeach
+                    @if(count($adviserFields) > 0)
+                        <span>{{$adviserFields[0]->gradeId}}</span>
+                    @endif
+                    @for($i = 1; $i < count($adviserFields); $i++)
+                        <span> - &nbsp;{{$adviserFields[$i]->gradeId}}</span>
+                    @endfor
                 </p>
             </center>
         </div>
+
+        <div class="col-xs-12">
+            <center><button onclick="setAsMyAdviser('{{$adviser->id}}')" class="btn btn-primary">انتخاب به عنوان مشاور من</button></center>
+        </div>
+
     </center>
 
+    <script>
+        function setAsMyAdviser(adviserId) {
+
+            $.ajax({
+                type: 'post',
+                url: '{{route('setAsMyAdviser')}}',
+                data: {
+                    'adviserId': adviserId
+                },
+                success: function (response) {
+                    if(response == "ok") {
+                        document.location.href = '{{route('advisersList')}}';
+                    }
+                    else {
+                        alert("خطایی در انجام عملیات مورد نظر رخ داده است");
+                    }
+                }
+            });
+
+        }
+    </script>
 @stop

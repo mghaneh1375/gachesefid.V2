@@ -9,7 +9,7 @@
 }
 
 @font-face {
-    font-family: IRANSans2;
+    font-family: IRANSans_Medium;
     font-style: normal;
     font-weight: 100;
     src: url('../fonts/IRANSans/eot/IRANSansWeb_Medium.eot');
@@ -17,3 +17,5 @@
     url('../fonts/IRANSans/woff/IRANSansWeb_Medium.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
     url('../fonts/IRANSans/ttf/IRANSansWeb_Medium.ttf') format('truetype');
 }
+
+@font-face {font-family: 'IRANSans_Light';src: url('../fonts/IRANSans/iransans.woff') format('woff');}

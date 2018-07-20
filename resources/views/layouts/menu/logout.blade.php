@@ -1,0 +1,2 @@
+
+<li id="menu-item-2021" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-507 current_page_item menu-item-has-icon menu-item-2021"><a href="{{route('logout')}}" ><i class="menu-item-icon fa fa-sign-out" ></i>خروج</a></li>

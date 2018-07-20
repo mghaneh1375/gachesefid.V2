@@ -8,7 +8,6 @@
 <link href="{{URL::asset('css/myFont.css')}}" rel="stylesheet" type="text/css">
 <link rel="icon" href="{{URL::asset('images/ICON-GACH-50.png')}}">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-{{--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.0.13/css/font-awesome.min.css">--}}
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/v4-shims.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
 <script src="{{URL::asset('js/persianumber.js')}}"></script>

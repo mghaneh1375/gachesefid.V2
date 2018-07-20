@@ -331,7 +331,12 @@ class QuizController extends Controller {
 
                 $itr->mode = "regular";
                 $itr->quiz = RegularQuiz::whereId($itr->qId);
-                $itr->quiz->timeLen = calcTimeLenQuiz($itr->quiz->id, 'regular');
+                $tmpTimeLen = calcTimeLenQuiz($itr->quiz->id, 'regular');
+
+                if($tmpTimeLen < 10)
+                    $itr->quiz->timeLen = " - ";
+                else
+                    $itr->quiz->timeLen = $tmpTimeLen;
 
                 if(($itr->quiz->startDate < $date && $itr->quiz->endDate > $date) ||
                     ($itr->quiz->startDate < $date && $itr->quiz->endDate >= $date && $itr->quiz->endTime > $time) ||
@@ -377,7 +382,12 @@ class QuizController extends Controller {
 
                 $itr->mode = "system";
                 $itr->quiz = SystemQuiz::whereId($itr->qId);
-                $itr->quiz->timeLen = calcTimeLenQuiz($itr->quiz->id, 'system');
+                $tmpTimeLen = calcTimeLenQuiz($itr->quiz->id, 'system');
+
+                if($tmpTimeLen < 10)
+                    $itr->quiz->timeLen = " - ";
+                else
+                    $itr->quiz->timeLen = $tmpTimeLen;
 
                 if($itr->quiz->startDate == $date) {
 
@@ -405,8 +415,6 @@ class QuizController extends Controller {
                 $itr->quiz->startTime = convertStringToTime($itr->quiz->startTime);
 
             }
-
-
         }
 
         $condition = ['uId' => $uId, 'status' => 1];

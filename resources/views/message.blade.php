@@ -29,6 +29,18 @@
 
     </script>
 
+    <style>
+        .mb_12, #sendMsgTable {
+            border: none !important;
+        }
+        .mb_12 td {
+            border: none;
+        }
+        #sendMsgTable td {
+            border: none;
+        }
+    </style>
+
 @stop
 
 @section('main')
@@ -42,7 +54,7 @@
             <div class="main_content">
                 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="mb_12">
                     <tr>
-                        <td style="position: absolute">
+                        <td>
                             <div class="floatRight">
                                 <div class="saveLeftNav">
                                     <div>
@@ -78,7 +90,7 @@
                             </div>
                         </td>
 
-                        <td class="inbox" id="inbox">
+                        <td class="inbox" id="inbox" style="float: right">
                             <div class="alignLeft">
                                 <div class="p5">
 
@@ -140,7 +152,7 @@
                 }
             </style>
 
-            <center id="sendMsgDiv" style="visibility: hidden; position: absolute; top: 80px">
+            <center id="sendMsgDiv" style="visibility: hidden; position: absolute; top: 80px; right: 20%">
                 <div class="row">
                     <form method="post" action="{{route('sendMsg')}}">
                         {{csrf_field()}}

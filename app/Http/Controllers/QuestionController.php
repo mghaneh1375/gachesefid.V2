@@ -699,7 +699,7 @@ class QuestionController extends Controller {
         }
         if(empty($err))
             $err = "مشکلی در انجام عملیات مورد نظر رخ داده است (خطای 101)";
-        
+
         echo json_encode(['status' => 'nok', 'msg' => $err]);
     }
 
@@ -735,7 +735,7 @@ class QuestionController extends Controller {
 
         echo json_encode(['status' => 'nok', 'msg' => $err]);
     }
-    
+
     public function addAnsToQuestion($qId) {
 
         $question = Question::whereId($qId);
@@ -822,7 +822,7 @@ class QuestionController extends Controller {
 
         echo json_encode(['status' => 'nok', 'msg' => $err]);
     }
-    
+
     public function addDetailToQuestion($qId) {
 
         $question = Question::whereId($qId);
@@ -1109,7 +1109,7 @@ class QuestionController extends Controller {
 
         $lId = -1;
         $gradeId = -1;
-        
+
         if(!empty($qId)) {
             if(Question::whereId($qId) == null)
                 $qId = "";
@@ -1124,7 +1124,7 @@ class QuestionController extends Controller {
                 }
             }
         }
-        
+
         return view('totalQuestions', array('grades' => $grades, 'err' => "", 'qId' => $qId, 'lId' => $lId, 'gradeId' => $gradeId));
     }
 
@@ -1175,10 +1175,10 @@ class QuestionController extends Controller {
     public function getQuestionSubjects() {
 
         if (isset($_POST["questionId"])) {
-            
+
             echo json_encode(DB::select('select subject.id, subject.name from subject, SOQ WHERE 
               sId = subject.id and qId = ' . makeValidInput($_POST["questionId"])));
-            
+
         }
 
     }
@@ -1238,7 +1238,7 @@ class QuestionController extends Controller {
     }
 
     public function rejectQuestion() {
-        
+
         if(isset($_POST["qId"]) && isset($_POST['desc'])) {
 
             $qId = makeValidInput($_POST["qId"]);
@@ -1273,7 +1273,7 @@ class QuestionController extends Controller {
         }
 
         echo "nok";
-        
+
     }
 
     public function unConfirmedDiscussionQ() {
@@ -1301,15 +1301,15 @@ class QuestionController extends Controller {
                     $question->uId = "نامشخص";
                 }
                 $question->date = convertStringToDate($question->date);
-                
+
                 $tmp = Question::whereId($question->qId);
                 if($tmp == null)
                     continue;
                 $level = User::where('id', '=', $tmp->author)->select('level')->first()->level;
                 if($level == getValueInfo('adminLevel') || $level == getValueInfo('superAdminLevel'))
-                    $question->fileName =  'http://test.gachesefid.com/images/questions/system/' . $tmp->questionFile;
+                    $question->fileName =  URL::asset('images/questions/system/' . $tmp->questionFile);
                 else
-                    $question->fileName = 'http://test.gachesefid.com/images/questions/student/' . $tmp->questionFile;
+                    $question->fileName = URL::asset('images/questions/student/' . $tmp->questionFile);
             }
 
             echo json_encode($questions);
@@ -1344,9 +1344,9 @@ class QuestionController extends Controller {
                     continue;
                 $level = User::where('id', '=', $tmp->author)->select('level')->first()->level;
                 if($level == getValueInfo('adminLevel') || $level == getValueInfo('superAdminLevel'))
-                    $question->fileName =  'http://test.gachesefid.com/images/questions/system/' . $tmp->questionFile;
+                    $question->fileName =  URL::asset('images/questions/system/' . $tmp->questionFile);
                 else
-                    $question->fileName = 'http://test.gachesefid.com/images/questions/student/' . $tmp->questionFile;
+                    $question->fileName = URL::asset('images/questions/student/' . $tmp->questionFile);
             }
 
             echo json_encode($questions);
@@ -1380,9 +1380,9 @@ class QuestionController extends Controller {
                     continue;
                 $level = User::where('id', '=', $tmp->author)->select('level')->first()->level;
                 if($level == getValueInfo('adminLevel') || $level == getValueInfo('superAdminLevel'))
-                    $question->fileName =  'http://test.gachesefid.com/images/questions/system/' . $tmp->questionFile;
+                    $question->fileName =  URL::asset('images/questions/system/' . $tmp->questionFile);
                 else
-                    $question->fileName = 'http://test.gachesefid.com/images/questions/student/' . $tmp->questionFile;
+                    $question->fileName = URL::asset('images/questions/student/' . $tmp->questionFile);
             }
             echo json_encode($questions);
         }
@@ -1443,9 +1443,9 @@ class QuestionController extends Controller {
                     continue;
                 $level = User::where('id', '=', $tmp->author)->select('level')->first()->level;
                 if($level == getValueInfo('adminLevel') || $level == getValueInfo('superAdminLevel'))
-                    $question->fileName =  'http://test.gachesefid.com/images/questions/system/' . $tmp->questionFile;
+                    $question->fileName =  URL::asset('images/questions/system/' . $tmp->questionFile);
                 else
-                    $question->fileName = 'http://test.gachesefid.com/images/questions/student/' . $tmp->questionFile;
+                    $question->fileName = URL::asset('images/questions/student/' . $tmp->questionFile);
             }
 
             echo json_encode($questions);
@@ -1480,9 +1480,9 @@ class QuestionController extends Controller {
                     continue;
                 $level = User::where('id', '=', $tmp->author)->select('level')->first()->level;
                 if($level == getValueInfo('adminLevel') || $level == getValueInfo('superAdminLevel'))
-                    $question->fileName =  'http://test.gachesefid.com/images/questions/system/' . $tmp->questionFile;
+                    $question->fileName =  URL::asset('images/questions/system/' . $tmp->questionFile);
                 else
-                    $question->fileName = 'http://test.gachesefid.com/images/questions/student/' . $tmp->questionFile;
+                    $question->fileName = URL::asset('images/questions/student/' . $tmp->questionFile);
             }
 
             echo json_encode($questions);
@@ -1517,9 +1517,9 @@ class QuestionController extends Controller {
                     continue;
                 $level = User::where('id', '=', $tmp->author)->select('level')->first()->level;
                 if($level == getValueInfo('adminLevel') || $level == getValueInfo('superAdminLevel'))
-                    $question->fileName =  'http://test.gachesefid.com/images/questions/system/' . $tmp->questionFile;
+                    $question->fileName =  URL::asset('images/questions/system/' . $tmp->questionFile);
                 else
-                    $question->fileName = 'http://test.gachesefid.com/images/questions/student/' . $tmp->questionFile;
+                    $question->fileName = URL::asset('images/questions/student/' . $tmp->questionFile);
             }
 
             echo json_encode($questions);

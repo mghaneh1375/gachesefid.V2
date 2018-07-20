@@ -1366,10 +1366,6 @@ License: http://codecanyon.net/licenses
     margin-right: 3px;
     vertical-align: middle; }
 
-.fa-comment-alt-smile:before {
-    content: "\f4aa";
-}
-
 .primary-menu-menu > li > a:before {
     content: '';
     display: block;
@@ -1766,6 +1762,13 @@ License: http://codecanyon.net/licenses
 /* 10 - ICONS (parent menu items)
 ======================================*/
 .primary-menu-menu > li > a > i {
+    margin: 0 5px 0 0;
+    font-size: 18px;
+    float: left;
+    line-height: 20px;
+}
+
+.primary-menu-menu > li > a > svg {
     margin: 0 5px 0 0;
     font-size: 18px;
     float: left;
