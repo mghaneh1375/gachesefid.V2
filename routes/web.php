@@ -466,7 +466,7 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 
 	Route::post('multiPaymentQuiz/{mode}', array('as' => 'multiPaymentQuiz', 'uses' => 'QuizController@multiPaymentQuiz'));
 
-	Route::post('multiPaymentPostQuiz/{qIds}/{mode}/{pack}', array('as' => 'multiPaymentPostQuiz', 'uses' => 'QuizController@multiPaymentPostQuiz'));
+	Route::post('multiPaymentPostQuiz/{mode}/{pack}/{qId1}/{qId2}/{qId3?}/{qId4?}/{qId5?}/{qId6?}', array('as' => 'multiPaymentPostQuiz', 'uses' => 'QuizController@multiPaymentPostQuiz'));
 
 	Route::post('paymentPostQuiz/{quizId}/{mode}', array('as' => 'paymentPostQuiz', 'uses' => 'QuizController@paymentPostQuiz'));
 

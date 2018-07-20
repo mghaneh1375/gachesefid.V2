@@ -12,6 +12,13 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        //
+        'showRSSGach',
+        'showRSSIrysc',
+        'get_exam_answer_sheet_template',
+        'getROQ',
+        'checkAuth',
+        'multiPaymentPostQuiz/*',
+        'paymentPostQuiz/*'
     ];
 }
+

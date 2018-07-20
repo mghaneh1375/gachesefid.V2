@@ -1445,8 +1445,13 @@ sumTaraz DESC');
 
             if($toPay > 100 && $toPay > getTotalMoney() && ($toPay - getTotalMoney()) > 100) {
 
-                $callBackUrl = route('multiPaymentPostQuiz', ['qIds' => \GuzzleHttp\json_encode($qIds), 'mode' =>
-                    $mode, 'pack' => $pack]);
+                $arrTmp['mode'] = $mode;
+                $arrTmp['pack'] = $pack;
+                for ($i = 0; $i < count($qIds); $i++) {
+                    $arrTmp["qId" . ($i + 1)] = $qIds[$i];
+                }
+
+                $callBackUrl = route('multiPaymentPostQuiz', $arrTmp);
 
                 $res = payment(($toPay - getTotalMoney()) * 10, $callBackUrl, $useGift);
 
@@ -1618,11 +1623,13 @@ sumTaraz DESC');
             'mode' => $mode, 'status' => 'err']));
     }
 
-    public function multiPaymentPostQuiz($qIds, $mode, $pack) {
+    public function multiPaymentPostQuiz($mode, $pack, ... $qIds) {
+
+        if(count($qIds) == 0)
+            $qIds = $qIds[0];
 
         if (isset($_POST["RefId"]) && isset($_POST["ResCode"]) && isset($_POST["SaleOrderId"]) && isset($_POST["SaleReferenceId"]))  {
 
-            $qIds = \GuzzleHttp\json_decode($qIds);
             $arg = ['mode' => $mode, 'pack' => $pack, 'status' => 'err'];
             $counter = 1;
             foreach ($qIds as $qId) {
@@ -1640,9 +1647,9 @@ sumTaraz DESC');
             $mellat->status = 2;
             $mellat->save();
 
-//            require_once("lib/nusoap.php");
+            require_once("lib/nusoap.php");
 
-            $client = new soapclient('https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl');
+            $client = new \nusoap_client('https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl');
             $namespace = 'http://interfaces.core.sw.bps.com/';
 
             $terminalId = 909350;
@@ -1989,7 +1996,7 @@ sumTaraz DESC');
             $qId = makeValidInput($_POST["qId"]);
             $quizMode = makeValidInput($_POST["quizMode"]);
 
-            echo \GuzzleHttp\json_encode(ComposeQuizItem::whereQuizId($qId)->whereQuizMode($quizMode)->select('composeId')->get());
+            echo json_encode(ComposeQuizItem::whereQuizId($qId)->whereQuizMode($quizMode)->select('composeId')->get());
 
         }
 
@@ -2558,7 +2565,9 @@ sumTaraz DESC');
             $compose->totalPrice = floor($totalPrice * (100 - $config->percentOfPackage) / 100);
         }
 
-        return view('quizRegistry', array('composes' => $composes, 'mode' => 'system', 'percentOfQuizes' => $config->percentOfQuizes));
+        return view('quizRegistry', array('composes' => $composes, 'mode' => 'system',
+            'percentOfQuizes' => $config->percentOfQuizes,
+            'percentOfCompose' => $config->percentOfPackage));
     }
 
     public function regularQuizRegistry() {
@@ -2597,7 +2606,9 @@ sumTaraz DESC');
             $compose->totalPrice = floor($totalPrice * (100 - $config->percentOfPackage) / 100);
         }
 
-        return view('quizRegistry', array('composes' => $composes, 'mode' => 'regular', 'percentOfQuizes' => $config->percentOfQuizes));
+        return view('quizRegistry', array('composes' => $composes, 'mode' => 'regular',
+            'percentOfQuizes' => $config->percentOfQuizes,
+            'percentOfCompose' => $config->percentOfPackage));
     }
 
     public function selectiveQuizRegistry() {
@@ -2633,15 +2644,15 @@ sumTaraz DESC');
                 for ($i = 1; $i <= count($qIdsFinal); $i++)
                     $arr['qId' . $i] = $qIdsFinal[($i - 1)];
 
-                echo \GuzzleHttp\json_encode(['status' => 'ok', 'url' => route('doMultiQuizRegistry', $arr)]);
+                echo json_encode(['status' => 'ok', 'url' => route('doMultiQuizRegistry', $arr)]);
                 return;
             }
 
-            echo \GuzzleHttp\json_encode(['status' => 'nok1']);
+            echo json_encode(['status' => 'nok1']);
             return;
         }
 
-        echo \GuzzleHttp\json_encode(['status' => 'nok']);
+        echo json_encode(['status' => 'nok']);
     }
 
     public function doComposeQuizRegistry($composeId) {
@@ -2668,11 +2679,14 @@ sumTaraz DESC');
         foreach ($quizes as $quiz)
              $qIds[$counter++] = $quiz->id;
 
-        return $this->doMultiQuizRegistry($compose->kindQuiz, true, 'nop', $qIds[0]);
+        return $this->doMultiQuizRegistry($compose->kindQuiz, true, 'nop', $qIds);
 
     }
 
     public function doMultiQuizRegistry($mode, $pack, $status, ... $qIds) {
+
+        if(count($qIds) == 1)
+            $qIds = $qIds[0];
 
         $today = getToday();
         $toPay = 0;

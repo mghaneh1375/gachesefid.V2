@@ -75,7 +75,7 @@
                                 <td>
                                     <center>
                                         <button onclick="document.location.href = '{{route('doQuizRegistry', ['quizId' => $quiz->id, 'mode' => 'system'])}}'" class="btn btn-primary">ثبت نام در آزمون</button>
-                                        <input onclick="calcTotal()" value="{{$quiz->price}}" type="checkbox" name="selectedQuiz">
+                                        <input onclick="calcTotal('{{$compose->totalPrice}}')" value="{{$quiz->price}}" type="checkbox" name="selectedQuiz">
                                     </center>
                                 </td>
                             </tr>
@@ -127,7 +127,7 @@
                                 <td>
                                     <center>
                                         <button onclick="document.location.href = '{{route('doQuizRegistry', ['quizId' => $quiz->id, 'mode' => 'regular'])}}'" class="btn btn-primary">ثبت نام در آزمون</button>
-                                        <input onclick="calcTotal()" data-id="{{$quiz->id}}" value="{{$quiz->price}}"
+                                        <input onclick="calcTotal('{{$compose->totalPrice}}')" data-id="{{$quiz->id}}" value="{{$quiz->price}}"
                                                name="selectedQuiz" type="checkbox">
                                     </center>
                                 </td>
@@ -140,7 +140,7 @@
 
         @if(count($composes) > 0)
             <center style="padding: 5px"><p><span>جمع کل: </span><span id="totalSum">0</span></p></center>
-            <input class="btn btn-success" type="submit" value="ثبت نام در آزمون های انتخاب شده"
+            <input class="btn btn-success hidden" id="multiBtn" type="submit" value="ثبت نام در آزمون های انتخاب شده"
                    onclick="multiQuizRegistry()">
         @endif
     </center>
@@ -148,6 +148,7 @@
     <script>
 
         var percentOfQuizes = '{{$percentOfQuizes}}';
+        var percentOfCompose = '{{$percentOfQuizes}}';
 
         $(".quiz").mouseenter(function () {
             val = $(this).attr('data-val');
@@ -191,7 +192,7 @@
             });
         }
 
-        function calcTotal() {
+        function calcTotal(total) {
 
             var sum = 0;
             var counter = 0;
@@ -203,8 +204,16 @@
                 counter++;
             });
 
-            if(counter == 1)
+            if(counter == $("input:checkbox[name=selectedQuiz]").length)
+                sum = total;
+
+            if(counter == 1) {
                 sum += (initPrice * (percentOfQuizes) / 100);
+                $("#multiBtn").addClass('hidden');
+            }
+            else if(counter > 1) {
+                $("#multiBtn").removeClass('hidden');
+            }
 
             $("#totalSum").empty().append(sum);
         }

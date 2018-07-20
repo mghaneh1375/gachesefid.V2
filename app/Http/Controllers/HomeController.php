@@ -92,19 +92,18 @@ class HomeController extends Controller {
 
 	private function checkRequiresForAuth() {
 
-//		if(Auth::user()->status != 1) {
-//			$msg = "حساب کاربری شما هنوز فعال نشده است";
-//			Auth::logout();
-//		}
-//		else {
+		if(Auth::user()->status != 1) {
+			$msg = "حساب کاربری شما هنوز فعال نشده است";
+			Auth::logout();
+		}
+		else {
 			if(Auth::user()->phoneNum == "")
 				return Redirect::to('userInfo');
 
 			return redirect::route('profile');
-//		}
+		}
 
-//		dd($msg);
-//		return view('login', array('msg' => $msg));
+		return view('login', array('msg' => $msg));
 	}
 
 	public function doLogin() {
@@ -125,8 +124,7 @@ class HomeController extends Controller {
 			$msg = 'نام کاربری و یا رمزعبور اشتباه است';
 		}
 
-		dd($msg);
-//		return view('login', array('msg' => $msg));
+		return view('login', array('msg' => $msg));
 	}
 
 	public function resetPas($msg = "") {

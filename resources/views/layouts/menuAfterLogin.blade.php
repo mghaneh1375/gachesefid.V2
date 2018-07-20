@@ -1,5 +1,5 @@
 
-<header class="header" data-pinned="swingInX" data-unpinned="swingOutX" id="site-header" style="font-family: IRANSans !important;">
+<header class="header" data-pinned="swingInX" data-unpinned="swingOutX" id="site-header" style="font-family: IRANSans2 !important;">
     <div class="container">
         <div class="header-content-wrapper">
             <div class="logo">
@@ -25,7 +25,7 @@
 
                 <ul id="primary-menu" class="primary-menu-menu">
 
-                    <li id="menu-item-1981" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-has-icon menu-item-1981"><a href="#" ><i class="menu-item-icon fa fa-group" ></i>آزمون ها</a>
+                    <li id="menu-item-1981" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-has-icon menu-item-1981"><a href="#" ><i class="menu-item-icon fa fa-check-circle" ></i>آزمون ها</a>
                         <ul class="sub-menu sub-menu-has-icons">
                             <li id="menu-item-1982" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-icon menu-item-1982"><a href="{{route('myQuizes')}}" ><i class="menu-item-icon fa fa-check-square-o" ></i>آزمون های من<i
                                             class="seoicon-right-arrow"
@@ -40,31 +40,28 @@
                                     ></i></a></li>
 
                             <li id="menu-item-1988" class="menu-item menu-item-type-custom menu-item-object-custom
-                            menu-item-has-icon menu-item-1988"><a href="{{route('message')}}" ><i class="menu-item-icon fa fa-edit" ></i>ساخت آزمون جدید<i class="seoicon-right-arrow"
+                            menu-item-has-icon menu-item-1988"><a href="{{route('createCustomQuiz')}}" ><i class="menu-item-icon fa fa-edit" ></i>ساخت آزمون جدید<i class="seoicon-right-arrow"
                                     ></i></a>
                             </li>
 
                         </ul>
                     </li>
 
-                    <li id="menu-item-1989" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-507 current_page_item menu-item-has-icon menu-item-1989"><a href="{{route('ranking1')}}" ><i class="menu-item-icon fa fa-home" ></i>رتبه بندی آزمون ها</a>
-                    </li>
-
                     <li id="menu-item-1989" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-507 current_page_item menu-item-has-icon menu-item-1989"><a href="{{route('schoolsList')}}" ><i class="menu-item-icon fa fa-home" ></i>لیست مدارس</a>
                     </li>
 
                     <li id="menu-item-254" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-has-icon menu-item-254">
-                        <a href="#"><i class="menu-item-icon fa fa-group" ></i>رتبه بندی</a>
+                        <a href="#"><i class="menu-item-icon fa fa-chart-bar" ></i>رتبه بندی</a>
                         <ul class="sub-menu sub-menu-has-icons">
                             <li id="menu-item-1954" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1954"><a href="{{route('studentsRanking')}}" >دانش آموزان<i class="seoicon-right-arrow" ></i></a></li>
                             <li id="menu-item-1975" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1975"><a href="{{route('advisersList')}}" >مشاوران<i class="seoicon-right-arrow" ></i></a></li>
+                            <li id="menu-item-1989" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1989"><a href="{{route('ranking1')}}" ><i class="menu-item-icon" ></i>رتبه بندی آزمون ها</a></li>
                         </ul>
                     </li>
 
-                    <li id="menu-item-1991" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-507 current_page_item menu-item-has-icon menu-item-1991"><a href="{{route('myAdviser')}}" ><i class="menu-item-icon fa fa-home" ></i>مشاور من</a>
-                    </li>
+                    <li id="menu-item-1991" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-507 current_page_item menu-item-has-icon menu-item-1991"><a href="{{route('myAdviser')}}" ><i class="menu-item-icon fa fa-glass" ></i>مشاور من</a></li>
 
-                    <li id="menu-item-1990" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-507 current_page_item menu-item-has-icon menu-item-1990"><a href="{{route('message')}}" ><i class="menu-item-icon fa fa-home" ></i>صندوق پیام ها</a>
+                    <li id="menu-item-1990" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-507 current_page_item menu-item-has-icon menu-item-1990"><a href="{{route('message')}}" ><i class="menu-item-icon fas fa-comment-alt-smile" ></i>صندوق پیام ها</a>
                     </li>
 
 
