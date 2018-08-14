@@ -112,7 +112,8 @@ class RegistrationController extends Controller {
                 $grades = $_POST["grades"];
 
             $field = makeValidInput($_POST["field"]);
-            $cityId = makeValidInput($_POST["cityId"]);
+            if(isset($_POST["cityId"]))
+                $cityId = makeValidInput($_POST["cityId"]);
             $birthDay = makeValidInput($_POST["birthDay"]);
 
             if($sex == "none") {
@@ -185,7 +186,8 @@ class RegistrationController extends Controller {
 
                         $adviserInfo = new AdviserInfo();
                         $adviserInfo->uId = $user->id;
-                        $adviserInfo->cityId = $cityId;
+                        if(isset($cityId))
+                            $adviserInfo->cityId = $cityId;
                         $adviserInfo->field = $field;
                         $adviserInfo->lastCertificate = $lastCertificate;
                         $adviserInfo->honors = $honors;
