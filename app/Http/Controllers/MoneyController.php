@@ -144,22 +144,24 @@ function quizRegistry($kindTransactionId, $quizMode, $amount, $uId, $kindMoney, 
     }
 }
 
-function quizRegistryOnline($kindTransactionId, $quizMode, $amount, $uId, $kindMoney, $quizId, $useGift, $mode = true) {
+function quizRegistryOnline($kindTransactionId, $quizMode, $amount, $uId, $kindMoney, $quizId, $useGift, $mode = true, $addTransaction = true) {
 
     try{
-        DB::transaction(function () use ($amount, $uId, $kindTransactionId, $kindMoney, $quizId, $quizMode, $useGift, $mode){
+        DB::transaction(function () use ($amount, $uId, $kindTransactionId, $kindMoney, $quizId, $quizMode, $useGift, $mode, $addTransaction){
 
-            $transaction = new Transaction();
-            $transaction->amount = -$amount;
-            $transaction->userId = $uId;
-            $transaction->kindMoney = $kindMoney;
-            $transaction->kindTransactionId = $kindTransactionId;
-            $transaction->date = getToday()["date"];
-            $transaction->save();
+            if($addTransaction) {
+                $transaction = new Transaction();
+                $transaction->amount = -$amount;
+                $transaction->userId = $uId;
+                $transaction->kindMoney = $kindMoney;
+                $transaction->kindTransactionId = $kindTransactionId;
+                $transaction->date = getToday()["date"];
+                $transaction->save();
 
-            $user = User::whereId($uId);
-            $user->money = 0;
-            $user->save();
+                $user = User::whereId($uId);
+                $user->money = 0;
+                $user->save();
+            }
 
             if($mode) {
                 $quizRegistry = new QuizRegistry();

@@ -1716,9 +1716,12 @@ sumTaraz DESC');
                             }
                         }
                         else {
+                            $first = true;
                             foreach ($qIds as $qId) {
                                 quizRegistryOnline(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $mellat->amount / 10, Auth::user()->id,
-                                    getValueInfo('money2'), $qId, $mellat->gift);
+                                    getValueInfo('money2'), $qId, $mellat->gift, $first);
+                                if($first)
+                                    $first = false;
                             }
                         }
 
