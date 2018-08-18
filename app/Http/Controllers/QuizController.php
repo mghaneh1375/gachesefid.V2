@@ -1208,13 +1208,21 @@ sumTaraz DESC');
             }
 
             if($mode == getValueInfo('systemQuiz')) {
+                $first = true;
                 foreach ($qIds as $qId) {
-                    quizRegistry(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'), $qId, $useGift);
+                    quizRegistry(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'),
+                        $qId, $useGift, $first);
+                    if($first)
+                        $first = false;
                 }
             }
             else {
+                $first = true;
                 foreach ($qIds as $qId) {
-                    quizRegistry(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'), $qId, $useGift);
+                    quizRegistry(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'),
+                        $qId, $useGift, $first);
+                    if($first)
+                        $first = false;
                 }
             }
 
@@ -1472,13 +1480,22 @@ sumTaraz DESC');
 
 
             if($mode == getValueInfo('systemQuiz')) {
+                $first = true;
                 foreach ($qIds as $qId) {
-                    quizRegistry(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'), $qId, $useGift);
+                    quizRegistry(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'),
+                        $qId, $useGift, $first);
+
+                    if($first)
+                        $first = false;
                 }
             }
             else {
+                $first = true;
                 foreach ($qIds as $qId) {
-                    quizRegistry(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'), $qId, $useGift);
+                    quizRegistry(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'),
+                        $qId, $useGift, $first);
+                    if($first)
+                        $first = false;
                 }
             }
 
@@ -1710,9 +1727,12 @@ sumTaraz DESC');
                         include_once 'MoneyController.php';
 
                         if($mode == getValueInfo('systemQuiz')) {
+                            $first = true;
                             foreach ($qIds as $qId) {
                                 quizRegistryOnline(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $mellat->amount / 10, Auth::user()->id,
-                                    getValueInfo('money2'), $qId, $mellat->gift);
+                                    getValueInfo('money2'), $qId, $mellat->gift, $first);
+                                if($first)
+                                    $first = false;
                             }
                         }
                         else {
