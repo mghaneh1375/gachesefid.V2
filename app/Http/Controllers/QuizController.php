@@ -3293,7 +3293,7 @@ sumTaraz DESC');
             }
 
             try{
-                SystemQuiz::destroy($quizId);
+                RegularQuiz::destroy($quizId);
                 echo "ok";
                 return;
             }
