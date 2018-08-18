@@ -303,42 +303,42 @@
                     {{--@include('layouts.slideBar')--}}
         <div class="col-xs-12" style="margin-top: 100px">
             <div class="col-md-4 col-xs-12" style="height: 150px">
-                <div style="float: right">
+                <center>
                     <img style="width: 150px; margin: 10px" src="{{URL::asset('images/teacher.png')}}">
                     <center style="font-weight: bolder; color: white; margin-top: -85px; font-size: 30px" id="adviserNos"></center>
-                </div>
+                </center>
             </div>
             <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
-                <div style="float: right">
+                <center>
                     <img style="width: 150px; margin: 10px" src="{{URL::asset('images/exam.png')}}">
                     <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 30px" id="quizNos"></center>
-                </div>
+                </center>
             </div>
             <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
-                <div style="float: right">
+                <center>
                     <img style="width: 150px; margin: 10px" src="{{URL::asset('images/blackboard.png')}}">
                     <center style="font-weight: bolder; color: white; margin-top: -85px; font-size: 30px" id="qNos"></center>
-                </div>
+                </center>
             </div>
             <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
-                <div style="float: right">
+                <center>
                     <img style="width: 150px; margin: 10px" src="{{URL::asset('images/student.png')}}">
                     <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 28px" id="usersNo"></center>
-                </div>
+                </center>
             </div>
 
             <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
-                <div style="float: right">
+                <center>
                     <img style="width: 150px; margin: 10px" src="{{URL::asset('images/student.png')}}">
                     <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 28px" id="schoolsNo"></center>
-                </div>
+                </center>
             </div>
 
             <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
-                <div style="float: right">
+                <center>
                     <img style="width: 150px; margin: 10px" src="{{URL::asset('images/student.png')}}">
                     <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 28px" id="composeNo"></center>
-                </div>
+                </center>
             </div>
 
             <div class="wholePage hidden" style="background-color: #3498db" id="wholePage2">

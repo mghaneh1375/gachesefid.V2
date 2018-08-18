@@ -161,31 +161,31 @@
 
 <div class="col-xs-12">
     <div class="col-xs-12" style="margin-top: 100px">
-        <div class="col-md-4 col-xs-12">
+        <center class="col-md-4 col-xs-12">
             <img style="width: 200px" src="{{URL::asset('images/u-future-exam.png')}}">
             <center class="textOfPhoto" id="nextQuizNo"></center>
-        </div>
-        <div class="col-md-4 col-xs-12" style="cursor:pointer;" onclick="document.location.href = '{{route('chargeAccount')}}';">
+        </center>
+        <center class="col-md-4 col-xs-12" style="cursor:pointer;" onclick="document.location.href = '{{route('chargeAccount')}}';">
             <img style="width: 200px" src="{{URL::asset('images/u-money.png')}}">
             <center class="textOfPhoto" id="money"></center>
-        </div>
-        <div class="col-md-4 col-xs-12" style="cursor:pointer;" onclick="document.location.href = '{{route('myQuizes')}}';">
+        </center>
+        <center class="col-md-4 col-xs-12" style="cursor:pointer;" onclick="document.location.href = '{{route('myQuizes')}}';">
             <img style="width: 200px" src="{{URL::asset('images/u-past-exam.png')}}">
             <center class="textOfPhoto" id="myQuizNo"></center>
-        </div>
+        </center>
     </div>
     <div class="col-xs-12">
-        <div class="col-md-4 col-xs-12">
+        <center class="col-md-4 col-xs-12">
             <img style="width: 200px" src="{{URL::asset('images/u-question.png')}}">
             <center class="textOfPhoto" id="questionNo"></center>
-        </div>
-        <div class="col-md-4 col-xs-12">
+        </center>
+        <center class="col-md-4 col-xs-12">
             <img style="width: 200px" src="{{URL::asset('images/u-rank.png')}}">
             <center class="textOfPhoto" id="rate"></center>
-        </div>
-        <div class="col-md-4 col-xs-12" style="cursor:pointer;" onclick="document.location.href = '{{route('studentsRanking', ['k' => 1, 'page' => 1])}}';">
+        </center>
+        <center class="col-md-4 col-xs-12" style="cursor:pointer;" onclick="document.location.href = '{{route('studentsRanking', ['k' => 1, 'page' => 1])}}';">
             <img style="width: 200px" src="{{URL::asset('images/u-ranking.png')}}">
             <center class="textOfPhoto" id="rank"></center>
-        </div>
+        </center>
     </div>
 </div>
