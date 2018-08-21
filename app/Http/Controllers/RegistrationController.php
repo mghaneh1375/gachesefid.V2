@@ -275,20 +275,26 @@ class RegistrationController extends Controller {
         else if(isset($_POST["resendActivation"])) {
 
             $phoneNum = makeValidInput($_POST["phoneNum"]);
-            $activation = Activation::wherePhoneNum( $phoneNum)->first();
 
-            if($activation->sendTime >= time() - 300)
-                return view("registration", array("mode" => "pending", "phoneNum" => $phoneNum, 
-                    'uId' => makeValidInput($_POST["uId"]), 'reminder' => 300 - time() + $activation->sendTime));
+            if(strlen($phoneNum) == 10)
+                $phoneNum = '0' . $phoneNum;
 
-            $uId = makeValidInput($_POST["uId"]);
+            $activation = Activation::wherePhoneNum($phoneNum)->first();
 
-            sendSMS($phoneNum, $activation->code, "activationCode");
+            if($activation != null) {
+                if ($activation->sendTime >= time() - 300)
+                    return view("registration", array("mode" => "pending", "phoneNum" => $phoneNum,
+                        'uId' => makeValidInput($_POST["uId"]), 'reminder' => 300 - time() + $activation->sendTime));
 
-            $activation->sendTime = time();
-            $activation->save();
-            return view("registration", array("mode" => "pending", "phoneNum" => $phoneNum,
-                'uId' => $uId, 'reminder' => 300 - time() + $activation->sendTime));
+                $uId = makeValidInput($_POST["uId"]);
+
+                sendSMS($phoneNum, $activation->code, "activationCode");
+
+                $activation->sendTime = time();
+                $activation->save();
+                return view("registration", array("mode" => "pending", "phoneNum" => $phoneNum,
+                    'uId' => $uId, 'reminder' => 300 - time() + $activation->sendTime));
+            }
         }
 
         return view('registration', array("mode" => "pass1", "msg" => $msg, "username" => $username, 'NID' => $NID,

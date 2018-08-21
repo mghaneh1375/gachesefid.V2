@@ -48,7 +48,7 @@
             function showResendBtn() {
 
                 newElement = "<center>";
-                newElement += '<input type="hidden" name="phoneNum" value="' + {{$phoneNum}} + '">';
+                newElement += '<input type="text" class="hidden" name="phoneNum" value="' + {{$phoneNum}} + '">';
                 newElement += '<input type="hidden" name="uId" value="' + {{$uId}} + '">';
                 newElement += "<input type='submit' value='ارسال مجدد کد فعال سازی' name='resendActivation'>";
                 newElement += "</center>";
