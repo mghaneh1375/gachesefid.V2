@@ -1013,7 +1013,7 @@ sumTaraz DESC');
 
             require_once("lib/nusoap.php");
 
-            $client = new soapclient('https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl');
+            $client = new \nusoap_client('https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl');
             $namespace = 'http://interfaces.core.sw.bps.com/';
 
             $terminalId = 909350;
@@ -1142,14 +1142,14 @@ sumTaraz DESC');
                 foreach ($qIds as $qId) {
                     $quiz = SystemQuiz::whereId($qId);
                     if($quiz == null) {
-                        echo "nok1";
+                        echo json_encode(['status' => 'nok5']);
                         return;
                     }
 
                     $condition = ['uId' => $uId, 'qId' => $qId, 'quizMode' => getValueInfo('systemQuiz')];
 
                     if(QuizRegistry::where($condition)->count() > 0) {
-                        echo "nok2";
+                        echo json_encode(['status' => 'nok2']);
                         return;
                     }
 
@@ -1161,13 +1161,13 @@ sumTaraz DESC');
 
                     $quiz = RegularQuiz::whereId($qId);
                     if($quiz == null) {
-                        echo "nok1";
+                        echo json_encode(['status' => 'nok5']);
                         return;
                     }
 
                     $condition = ['uId' => $uId, 'qId' => $qId, 'quizMode' => getValueInfo('regularQuiz')];
                     if(QuizRegistry::where($condition)->count() > 0) {
-                        echo "nok2";
+                        echo json_encode(['status' => 'nok2']);
                         return;
                     }
 
@@ -1175,13 +1175,13 @@ sumTaraz DESC');
                 }
             }
             else {
-                echo "nok1";
+                echo json_encode(['status' => 'nok6']);
                 return;
             }
 
             $config = ConfigModel::first();
 
-            if($pack == "true")
+            if($pack == "true" || $pack)
                 $toPay = floor($toPay * (100 - $config->percentOfPackage) / 100);
             else
                 $toPay = floor($toPay * (100 - $config->percentOfQuizes) / 100);
@@ -1203,34 +1203,28 @@ sumTaraz DESC');
             }
 
             if($toPay > $total) {
-                echo "nok1";
+                echo json_encode(['status' => 'nok1']);
                 return;
             }
 
             if($mode == getValueInfo('systemQuiz')) {
-                $first = true;
-                foreach ($qIds as $qId) {
-                    quizRegistry(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'),
-                        $qId, $useGift, $first);
-                    if($first)
-                        $first = false;
+                for ($i = 0; $i < count($qIds); $i++) {
+                    quizRegistryOnline(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'),
+                        $qIds[$i], $useGift, false, true, ($i == 0));
                 }
             }
             else {
-                $first = true;
-                foreach ($qIds as $qId) {
-                    quizRegistry(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'),
-                        $qId, $useGift, $first);
-                    if($first)
-                        $first = false;
+                for ($i = 0; $i < count($qIds); $i++) {
+                    quizRegistryOnline(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'),
+                        $qIds[$i], $useGift, false, true, ($i == 0));
                 }
             }
 
-            echo "ok";
+            echo json_encode(['status' => 'ok']);
             return;
         }
 
-        echo "nok3";
+        echo json_encode(['status' => 'nok3']);
     }
 
     public function doQuizRegistryFromAccount($mode) {
@@ -1248,12 +1242,12 @@ sumTaraz DESC');
             else if($mode == "regular")
                 $quiz = RegularQuiz::whereId($quizId);
             else {
-                echo "nok1";
+                echo json_encode(["status" => "nok5"]);
                 return;
             }
 
             if($quiz == null) {
-                echo "nok1";
+                echo json_encode(["status" => "nok5"]);
                 return;
             }
 
@@ -1275,7 +1269,7 @@ sumTaraz DESC');
             }
 
             if($toPay > $total) {
-                echo "nok1";
+                echo json_encode(["status" => "nok1"]);
                 return;
             }
 
@@ -1285,22 +1279,22 @@ sumTaraz DESC');
                 $condition = ['uId' => $uId, 'qId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')];
 
             if(QuizRegistry::where($condition)->count() > 0) {
-                echo "nok2";
+                echo json_encode(["status" => "nok2"]);
                 return;
             }
 
             if($mode == "system")
-                quizRegistry(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id,
-                    getValueInfo('money2'), $quizId, $useGift);
+                quizRegistryOnline(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id,
+                    getValueInfo('money2'), $quizId, $useGift, false);
             else
-                quizRegistry(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id,
-                    getValueInfo('money2'), $quizId, $useGift);
+                quizRegistryOnline(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id,
+                    getValueInfo('money2'), $quizId, $useGift, false);
 
-            echo "ok";
+            echo json_encode(["status" => "ok"]);
             return;
         }
 
-        echo "nok3";
+        echo json_encode(["status" => "nok3"]);
 
     }
     
@@ -1371,11 +1365,11 @@ sumTaraz DESC');
             }
 
             if($mode == "system")
-                quizRegistry(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id,
-                    getValueInfo('money2'), $quizId, $useGift);
+                quizRegistryOnline(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id,
+                    getValueInfo('money2'), $quizId, $useGift, false);
             else
-                quizRegistry(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id,
-                    getValueInfo('money2'), $quizId, $useGift);
+                quizRegistryOnline(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id,
+                    getValueInfo('money2'), $quizId, $useGift, false);
 
             echo json_encode(['status' => 'ok2']);
             return;
@@ -1399,14 +1393,14 @@ sumTaraz DESC');
                 foreach ($qIds as $qId) {
                     $quiz = SystemQuiz::whereId($qId);
                     if($quiz == null) {
-                        echo "nok1";
+                        echo json_encode(['status' => 'nok1']);
                         return;
                     }
 
                     $condition = ['uId' => $uId, 'qId' => $qId, 'quizMode' => getValueInfo('systemQuiz')];
 
                     if(QuizRegistry::where($condition)->count() > 0) {
-                        echo "nok2";
+                        echo json_encode(['status' => 'nok2']);
                         return;
                     }
 
@@ -1418,13 +1412,13 @@ sumTaraz DESC');
 
                     $quiz = RegularQuiz::whereId($qId);
                     if($quiz == null) {
-                        echo "nok1";
+                        echo json_encode(['status' => 'nok1']);
                         return;
                     }
 
                     $condition = ['uId' => $uId, 'qId' => $qId, 'quizMode' => getValueInfo('regularQuiz')];
                     if(QuizRegistry::where($condition)->count() > 0) {
-                        echo "nok2";
+                        echo json_encode(['status' => 'nok2']);
                         return;
                     }
 
@@ -1432,7 +1426,7 @@ sumTaraz DESC');
                 }
             }
             else {
-                echo "nok1";
+                echo json_encode(['status' => 'nok1']);
                 return;
             }
 
@@ -1480,22 +1474,15 @@ sumTaraz DESC');
 
 
             if($mode == getValueInfo('systemQuiz')) {
-                $first = true;
-                foreach ($qIds as $qId) {
-                    quizRegistry(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'),
-                        $qId, $useGift, $first);
-
-                    if($first)
-                        $first = false;
+                for ($i = 0; $i < count($qIds); $i++) {
+                    quizRegistryOnline(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'),
+                        $qIds[$i], $useGift, false, true, ($i == 0));
                 }
             }
             else {
-                $first = true;
-                foreach ($qIds as $qId) {
-                    quizRegistry(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'),
-                        $qId, $useGift, $first);
-                    if($first)
-                        $first = false;
+                for ($i = 0; $i < count($qIds); $i++) {
+                    quizRegistryOnline(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $toPay, Auth::user()->id, getValueInfo('money2'),
+                        $qIds[$i], $useGift, false, true, ($i == 0));
                 }
             }
 
@@ -1525,7 +1512,7 @@ sumTaraz DESC');
 
             require_once("lib/nusoap.php");
 
-            $client = new soapclient('https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl');
+            $client = new \nusoap_client('https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl');
             $namespace = 'http://interfaces.core.sw.bps.com/';
 
             $terminalId = 909350;
@@ -1588,11 +1575,11 @@ sumTaraz DESC');
 
                         if($mode == "system") {
                             quizRegistryOnline(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $mellat->amount / 10, Auth::user()->id,
-                                getValueInfo('money2'), $quizId, $mellat->gift);
+                                getValueInfo('money2'), $quizId, $mellat->gift, true);
                         }
                         else
                             quizRegistryOnline(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $mellat->amount / 10, Auth::user()->id,
-                                getValueInfo('money2'), $quizId, $mellat->gift);
+                                getValueInfo('money2'), $quizId, $mellat->gift, true);
 
                         $mellat->status = 3;
                         $mellat->save();
@@ -1727,21 +1714,15 @@ sumTaraz DESC');
                         include_once 'MoneyController.php';
 
                         if($mode == getValueInfo('systemQuiz')) {
-                            $first = true;
-                            foreach ($qIds as $qId) {
+                            for ($i = 0; $i < count($qIds); $i++) {
                                 quizRegistryOnline(getValueInfo('systemQuizTransaction'), getValueInfo('systemQuiz'), $mellat->amount / 10, Auth::user()->id,
-                                    getValueInfo('money2'), $qId, $mellat->gift, $first);
-                                if($first)
-                                    $first = false;
+                                    getValueInfo('money2'), $qIds[$i], $mellat->gift, true, true, ($i == 0));
                             }
                         }
                         else {
-                            $first = true;
-                            foreach ($qIds as $qId) {
+                            for ($i = 0; $i < count($qIds); $i++) {
                                 quizRegistryOnline(getValueInfo('regularQuizTransaction'), getValueInfo('regularQuiz'), $mellat->amount / 10, Auth::user()->id,
-                                    getValueInfo('money2'), $qId, $mellat->gift, $first);
-                                if($first)
-                                    $first = false;
+                                    getValueInfo('money2'), $qIds[$i], $mellat->gift, true, true, ($i == 0));
                             }
                         }
 
@@ -2560,7 +2541,7 @@ sumTaraz DESC');
         echo json_encode(["status" => 'nok']);
     }
 
-    public function quizRegistry() {
+    public function showQuizRegistry() {
 
         $date = getToday()["date"];
         $uId = Auth::user()->id;

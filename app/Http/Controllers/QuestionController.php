@@ -88,7 +88,7 @@ class QuestionController extends Controller {
             $quiz = UserCreatedQuiz::whereId($quizId);
 
             if($quiz == null) {
-                echo "nok1";
+                echo json_encode(["status" => "nok1"]);
                 return;
             }
 
@@ -110,18 +110,18 @@ class QuestionController extends Controller {
             }
 
             if($toPay > $total) {
-                echo "nok1";
+                echo json_encode(["status" => "nok1"]);
                 return;
             }
 
-            quizRegistry(getValueInfo('questionBuyTransaction'), getValueInfo('questionQuiz'), $toPay, Auth::user()->id,
-                    getValueInfo('money2'), $quizId, $useGift, false);
+            quizRegistryOnline(getValueInfo('questionBuyTransaction'), getValueInfo('questionQuiz'), $toPay, Auth::user()->id,
+                    getValueInfo('money2'), $quizId, $useGift, false, false);
 
-            echo "ok";
+            echo json_encode(["status" => "ok"]);
             return;
         }
 
-        echo "nok";
+        echo json_encode(["status" => "nok"]);
     }
 
     public function doCreateCustomQuizOnline() {
@@ -196,7 +196,7 @@ class QuestionController extends Controller {
 
             require_once("lib/nusoap.php");
 
-            $client = new soapclient('https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl');
+            $client = new \nusoap_client('https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl');
             $namespace = 'http://interfaces.core.sw.bps.com/';
 
             $terminalId = 909350;
@@ -258,7 +258,7 @@ class QuestionController extends Controller {
                         include_once 'MoneyController.php';
 
                         quizRegistryOnline(getValueInfo('questionBuyTransaction'), getValueInfo('questionQuiz'), $mellat->amount / 10, Auth::user()->id,
-                            getValueInfo('money2'), $quizId, $mellat->gift, false);
+                            getValueInfo('money2'), $quizId, $mellat->gift, true, false);
 
                         $mellat->status = 3;
                         $mellat->save();

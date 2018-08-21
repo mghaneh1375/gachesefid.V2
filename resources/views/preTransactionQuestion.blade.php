@@ -112,8 +112,7 @@
                 $("#myAccountDiv").css('background-color', '#ccc');
                 $("#myAccountDiv").css('border-color', 'black');
                 $("#offCode1").empty();
-                $("#offCode2").empty();
-                $("#offCode2").append(offCode);
+                $("#offCode2").empty().append(offCode);
             }
             else {
                 $("#myAccountDiv").css('background-color', '#fafef5');
@@ -121,8 +120,7 @@
                 $("#onlineDiv").css('background-color', '#ccc');
                 $("#onlineDiv").css('border-color', 'black');
                 $("#offCode2").empty();
-                $("#offCode1").empty();
-                $("#offCode1").append(offCode);
+                $("#offCode1").empty().append(offCode);
             }
         }
 
@@ -153,13 +151,19 @@
                         'quizId': '{{$quizId}}'
                     },
                     success: function (response) {
-                        if(response == "ok") {
+                        response = JSON.parse(response);
+                        if(response.status == "ok") {
                             hideElement();
                             $("#confirmationPane").removeClass('hidden');
                         }
-                        else if(response == "nok1") {
-                            $("#errMsg").empty();
-                            $("#errMsg").append("موجودی شما کافی نیست");
+                        else if(response.status == "nok1") {
+                            $("#errMsg").empty().append("موجودی شما کافی نیست");
+                        }
+                        else if(response.status == "nok2") {
+                            $("#errMsg").empty().append("شما قبلا این آزمون را خریداری کرده اید");
+                        }
+                        else if(response.status == "nok5" || response.status == "nok3" || response.status == "nok6") {
+                            $("#errMsg").empty().append("اشکالی در انجام عملیات مورد نظر رخ داده است");
                         }
                     }
                 });

@@ -439,7 +439,7 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 
 	Route::post('chargeWithGiftCard', array('as' => 'chargeWithGiftCard', 'uses' => 'HomeController@chargeWithGiftCard'));
 
-	Route::get('quizRegistry', array('as' => 'quizRegistry', 'uses' => 'QuizController@quizRegistry'));
+	Route::get('quizRegistry', array('as' => 'quizRegistry', 'uses' => 'QuizController@showQuizRegistry'));
 
 	Route::get('regularQuizRegistry', array('as' => 'regularQuizRegistry', 'uses' => 'QuizController@regularQuizRegistry'));
 

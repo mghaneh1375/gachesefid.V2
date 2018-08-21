@@ -156,18 +156,20 @@
                         'pack': pack
                     },
                     success: function (response) {
-                        if(response == "ok") {
+                        response = JSON.parse(response);
+                        if(response.status == "ok" || response.status == "ok2") {
                             hideElement();
                             $(".dark").removeClass('hidden');
                             $("#confirmationPane").removeClass('hidden');
                         }
-                        else if(response == "nok1") {
-                            $(".dark").removeClass('hidden');
+                        else if(response.status == "nok1") {
                             $("#errMsg").empty().append("موجودی شما کافی نیست");
                         }
-                        else if(response == "nok2") {
-                            $(".dark").removeClass('hidden');
+                        else if(response.status == "nok2") {
                             $("#errMsg").empty().append("شما قبلا در این آزمون ثبت نام کرده اید");
+                        }
+                        else if(response.status == "nok5" || response.status == "nok6" || response.status == "nok3") {
+                            $("#errMsg").empty().append("اشکالی در انجام عملیات مورد نظر رخ داده است");
                         }
                     }
                 });
@@ -197,6 +199,9 @@
                         }
                         else if(response.status == "nok2") {
                             $("#errMsg").empty().append("شما قبلا در این آزمون ثبت نام کرده اید");
+                        }
+                        else if(response.status == "nok5" || response.status == "nok6") {
+                            $("#errMsg").empty().append("اشکالی در انجام عملیات مورد نظر رخ داده است");
                         }
                     }
                 });

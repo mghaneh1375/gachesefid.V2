@@ -105,14 +105,20 @@ function checkOffCodeValidation($code) {
 
 }
 
-function quizRegistry($kindTransactionId, $quizMode, $amount, $uId, $kindMoney, $quizId, $useGift, $mode = true, $addTransaction = true) {
+function quizRegistryOnline($kindTransactionId, $quizMode, $amount, $uId, $kindMoney, $quizId, $useGift, $emptyAccount, $mode = true, $addTransaction = true) {
 
     try{
-        DB::transaction(function () use ($amount, $uId, $kindTransactionId, $kindMoney, $quizId, $quizMode, $useGift, $mode, $addTransaction){
+        DB::transaction(function () use ($amount, $uId, $kindTransactionId, $kindMoney, $quizId, $quizMode, $useGift, $mode, $addTransaction, $emptyAccount){
 
             if($addTransaction) {
+
                 $transaction = new Transaction();
-                $transaction->amount = $amount;
+
+                if($emptyAccount)
+                    $transaction->amount = -$amount;
+                else
+                    $transaction->amount = $amount;
+
                 $transaction->userId = $uId;
                 $transaction->kindMoney = $kindMoney;
                 $transaction->kindTransactionId = $kindTransactionId;
@@ -120,7 +126,11 @@ function quizRegistry($kindTransactionId, $quizMode, $amount, $uId, $kindMoney, 
                 $transaction->save();
 
                 $user = User::whereId($uId);
-                $user->money = $user->money - $amount;
+                if($emptyAccount)
+                    $user->money = 0;
+                else
+                    $user->money = $user->money - $amount;
+
                 $user->save();
             }
 
@@ -142,48 +152,7 @@ function quizRegistry($kindTransactionId, $quizMode, $amount, $uId, $kindMoney, 
         });
     }
     catch (Exception $x) {
-        echo $x->getMessage();
-    }
-}
-
-function quizRegistryOnline($kindTransactionId, $quizMode, $amount, $uId, $kindMoney, $quizId, $useGift, $mode = true, $addTransaction = true) {
-
-    try{
-        DB::transaction(function () use ($amount, $uId, $kindTransactionId, $kindMoney, $quizId, $quizMode, $useGift, $mode, $addTransaction){
-
-            if($addTransaction) {
-                $transaction = new Transaction();
-                $transaction->amount = -$amount;
-                $transaction->userId = $uId;
-                $transaction->kindMoney = $kindMoney;
-                $transaction->kindTransactionId = $kindTransactionId;
-                $transaction->date = getToday()["date"];
-                $transaction->save();
-
-                $user = User::whereId($uId);
-                $user->money = 0;
-                $user->save();
-            }
-
-            if($mode) {
-                $quizRegistry = new QuizRegistry();
-                $quizRegistry->qId = $quizId;
-                $quizRegistry->uId = $uId;
-                $quizRegistry->quizMode = $quizMode;
-                $quizRegistry->save();
-            }
-            else {
-                $tmp = UserCreatedQuiz::whereId($quizId);
-                $tmp->status = 1;
-                $tmp->save();
-            }
-
-            if($useGift)
-                OffCode::whereCode($useGift)->delete();
-        });
-    }
-    catch (Exception $x) {
-        echo $x->getMessage();
+//        echo $x->getMessage();
     }
 }
 
