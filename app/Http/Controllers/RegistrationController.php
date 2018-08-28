@@ -63,6 +63,9 @@ class RegistrationController extends Controller {
 
             $phoneNum = makeValidInput($_POST["phoneNum"]);
 
+            if(strlen($phoneNum) == 10)
+                $phoneNum = '0' . $phoneNum;
+
             $activation = Activation::wherePhoneNum( $phoneNum)->first();
 
             if($activation == null)

@@ -36,6 +36,9 @@
                         <input type="submit" name="login" value="ورود">
                         @if(isset($msg) && !empty($msg))
                             <p class="errorText">{{$msg}}</p>
+                            @if($msg == "حساب کاربری شما هنوز فعال نشده است")
+                                <a class="btn btn-warning" href="{{route('getActivation')}}">وارد کردن کد فعال سازی</a>
+                            @endif
                         @endif
                     </center>
                 </div>

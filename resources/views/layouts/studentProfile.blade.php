@@ -148,7 +148,7 @@
         color: black;
         margin-top: -100px;
         font-size: 40px;
-        margin-left: 30%;
+        margin-left: -10%;
     }
 
     @media only screen and (max-width:767px) {
@@ -162,29 +162,29 @@
 <div class="col-xs-12">
     <div class="col-xs-12" style="margin-top: 100px">
         <center class="col-md-4 col-xs-12">
-            <img style="width: 200px" src="{{URL::asset('images/u-future-exam.png')}}">
+            <img style="width: 230px" src="{{URL::asset('images/u-future-exam.png')}}">
             <center class="textOfPhoto" id="nextQuizNo"></center>
         </center>
         <center class="col-md-4 col-xs-12" style="cursor:pointer;" onclick="document.location.href = '{{route('chargeAccount')}}';">
-            <img style="width: 200px" src="{{URL::asset('images/u-money.png')}}">
+            <img style="width: 230px" src="{{URL::asset('images/u-money.png')}}">
             <center class="textOfPhoto" id="money"></center>
         </center>
         <center class="col-md-4 col-xs-12" style="cursor:pointer;" onclick="document.location.href = '{{route('myQuizes')}}';">
-            <img style="width: 200px" src="{{URL::asset('images/u-past-exam.png')}}">
+            <img style="width: 230px" src="{{URL::asset('images/u-past-exam.png')}}">
             <center class="textOfPhoto" id="myQuizNo"></center>
         </center>
     </div>
     <div class="col-xs-12">
         <center class="col-md-4 col-xs-12">
-            <img style="width: 200px" src="{{URL::asset('images/u-question.png')}}">
+            <img style="width: 230px" src="{{URL::asset('images/u-question.png')}}">
             <center class="textOfPhoto" id="questionNo"></center>
         </center>
         <center class="col-md-4 col-xs-12">
-            <img style="width: 200px" src="{{URL::asset('images/u-rank.png')}}">
+            <img style="width: 230px" src="{{URL::asset('images/u-rank.png')}}">
             <center class="textOfPhoto" id="rate"></center>
         </center>
         <center class="col-md-4 col-xs-12" style="cursor:pointer;" onclick="document.location.href = '{{route('studentsRanking', ['k' => 1, 'page' => 1])}}';">
-            <img style="width: 200px" src="{{URL::asset('images/u-ranking.png')}}">
+            <img style="width: 230px" src="{{URL::asset('images/u-ranking.png')}}">
             <center class="textOfPhoto" id="rank"></center>
         </center>
     </div>

@@ -5,11 +5,6 @@
 @stop
 
 
-@section('caption')
-    <div class="title">دریافت کد فعال سازی
-    </div>
-@stop
-
 @section('main')
 
     <span class="ui_overlay item" style="position: fixed; left: 40%; right: auto; top: 174px; bottom: auto">
