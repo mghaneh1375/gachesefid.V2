@@ -311,6 +311,24 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 	Route::post('deleteFromPackage', array('as' => 'deleteFromPackage', 'uses' => 'QuizController@deleteFromPackage'));
 
+	Route::get('createOffCode/{type}/{count}', function ($type, $count) {
+
+		for($i = 0; $i < $count; $i++) {
+			$tmp = new \App\models\OffCode();
+			$tmp->amount = 8000;
+			$tmp->code = str_random(10);
+			$tmp->expireTime = "2018-08-31";
+			$tmp->type = $type;
+			try {
+				$tmp->save();
+			}
+			catch (\Exception $x) {
+				dd($x);
+			}
+		}
+
+	});
+
 });
 
 Route::group(array('middleware' => ['nothing', 'auth', 'adviserLevel']), function () {
