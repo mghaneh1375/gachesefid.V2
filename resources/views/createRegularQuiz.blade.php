@@ -286,7 +286,7 @@
             <div class="col-xs-6">
                 <div class="col-xs-12">
                     <label for="organizationId">جست و جو بر اساس کد سازمانی سوال</label>
-                    <input id="organizationId" type="text" maxlength="10">
+                    <input id="organizationId" type="text" maxlength="20">
                 </div>
                 <div class="col-xs-12" style="margin-top: 10px">
                     <center>

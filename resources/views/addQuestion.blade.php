@@ -145,7 +145,7 @@
 
             <div class="col-xs-12" >
                 <div class="col-xs-6">
-                    <input class="btn btn-primary" type="text" style="border-radius:4px; margin-right:0 !important; height:34px; background-color: #337ab7; border-color: #2e6da4; width: 30%; float: right" maxlength="10" id="organizationId">
+                    <input class="btn btn-primary" type="text" style="border-radius:4px; margin-right:0 !important; height:34px; background-color: #337ab7; border-color: #2e6da4; width: 30%; float: right" maxlength="20" id="organizationId">
                 </div>
                 <div class="col-xs-6">
                     <span style="float: left">کد سازمانی سوال</span>

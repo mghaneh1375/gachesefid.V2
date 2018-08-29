@@ -331,6 +331,7 @@ class QuizController extends Controller {
 
                 $itr->mode = "regular";
                 $itr->quiz = RegularQuiz::whereId($itr->qId);
+
                 $tmpTimeLen = calcTimeLenQuiz($itr->quiz->id, 'regular');
 
                 if($tmpTimeLen < 10)
@@ -340,7 +341,7 @@ class QuizController extends Controller {
 
                 if(($itr->quiz->startDate < $date && $itr->quiz->endDate > $date) ||
                     ($itr->quiz->startDate < $date && $itr->quiz->endDate >= $date && $itr->quiz->endTime > $time) ||
-                    ($itr->quiz->startDate == $date && $itr->quiz->starTime <= $time && (
+                    ($itr->quiz->startDate == $date && $itr->quiz->startTime <= $time && (
                             ($itr->quiz->startDate == $itr->quiz->endDate && $itr->quiz->endTime > $time) ||
                             ($itr->quiz->startDate != $itr->quiz->endDate) ||
                             ($itr->quiz->endDate == $date && $itr->quiz->endTime > $time)
@@ -365,7 +366,7 @@ class QuizController extends Controller {
                     }
                 }
                 else if($itr->quiz->startDate > $date ||
-                    ($itr->quiz->startDate == $date && $itr->quiz->starTime > $time)) {
+                    ($itr->quiz->startDate == $date && $itr->quiz->startTime > $time)) {
                     $itr->quizEntry = -1;
                 }
                 else {
@@ -2191,7 +2192,7 @@ sumTaraz DESC');
 
         if(!(($quiz->startDate < $date && $quiz->endDate > $date) ||
             ($quiz->startDate < $date && $quiz->endDate >= $date && $quiz->endTime > $time) ||
-            ($quiz->startDate == $date && $quiz->starTime <= $time && (
+            ($quiz->startDate == $date && $quiz->startTime <= $time && (
                     ($quiz->startDate == $quiz->endDate && $quiz->endTime > $time) ||
                     ($quiz->startDate != $quiz->endDate) ||
                     ($quiz->endDate == $date && $quiz->endTime > $time)
