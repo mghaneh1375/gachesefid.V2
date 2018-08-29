@@ -148,7 +148,7 @@ class ContentController extends Controller {
                 $lastRow = $workSheet->getHighestRow();
                 $cols = $workSheet->getHighestColumn();
 
-                if (count($cols) < 'B') {
+                if ($cols < 'B') {
                     unlink($path);
                     $err = "تعداد ستون های فایل شما معتبر نمی باشد";
                 } else {
@@ -323,7 +323,7 @@ class ContentController extends Controller {
                 $lastRow = $workSheet->getHighestRow();
                 $cols = $workSheet->getHighestColumn();
 
-                if (count($cols) < 'F') {
+                if ($cols < 'F') {
                     unlink($path);
                     $err = "تعداد ستون های فایل شما معتبر نمی باشد";
                 } else {

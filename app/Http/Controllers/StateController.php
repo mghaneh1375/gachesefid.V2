@@ -75,7 +75,7 @@ class StateController extends Controller {
                 $states = array();
                 $lastRow = $workSheet->getHighestRow();
                 $cols = $workSheet->getHighestColumn();
-                if (count($cols) < 1) {
+                if ($cols < 1) {
                     unlink($path);
                     $err = "تعداد ستون های فایل شما معتبر نمی باشد";
                 } else {
@@ -162,7 +162,7 @@ class StateController extends Controller {
                 $cities = array();
                 $lastRow = $workSheet->getHighestRow();
                 $cols = $workSheet->getHighestColumn();
-                if (count($cols) < 'B') {
+                if ($cols < 'B') {
                     unlink($path);
                     $err = "تعداد ستون های فایل شما معتبر نمی باشد";
                 } else {

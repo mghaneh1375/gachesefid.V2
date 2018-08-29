@@ -1021,7 +1021,7 @@ class QuestionController extends Controller {
                 $lastRow = $workSheet->getHighestRow();
                 $cols = $workSheet->getHighestColumn();
 
-                if (count($cols) < 'I') {
+                if ($cols < 'I') {
                     unlink($path);
                     $err = "تعداد ستون های فایل شما معتبر نمی باشد";
                 } else {

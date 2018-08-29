@@ -749,7 +749,7 @@ class RegistrationController extends Controller {
 
                     if($level == getValueInfo('namayandeLevel') || $level == getValueInfo('adminLevel') ||
                         $level == getValueInfo('superAdminLevel')) {
-                        if (count($cols) < 'F') {
+                        if ($cols < 'F') {
                             unlink($path);
                             $err = "تعداد ستون های فایل شما معتبر نمی باشد";
                         } else {
@@ -770,7 +770,7 @@ class RegistrationController extends Controller {
                         }
                     }
                     else {
-                        if (count($cols) < 'E') {
+                        if ($cols < 'E') {
                             unlink($path);
                             $err = "تعداد ستون های فایل شما معتبر نمی باشد";
                         } else {

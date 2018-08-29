@@ -3013,7 +3013,7 @@ sumTaraz DESC');
                         $lastRow = $workSheet->getHighestRow();
                         $cols = $workSheet->getHighestColumn();
 
-                        if (count($cols) < 'A') {
+                        if ($cols < 'A') {
                             unlink($path);
                             $err = "تعداد ستون های فایل شما معتبر نمی باشد";
                         } else {
