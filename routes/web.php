@@ -384,6 +384,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'namayandeLevel']), funct
 Route::group(array('middleware' => ['nothing', 'auth', 'phone', 'studentLevel']), function () {
 
 	Route::get('myAdviser', array('as' => 'myAdviser', 'uses' => 'UserController@myAdviser'));
+
+	Route::get('cancelAdviser/{adviserId}', array('as' => 'cancelAdviser', 'uses' => 'UserController@cancelAdviser'));
 	
 	Route::post('setAsMyAdviser', array('as' => 'setAsMyAdviser', 'uses' => 'UserController@setAsMyAdviser'));
 

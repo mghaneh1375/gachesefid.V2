@@ -810,6 +810,18 @@ class UserController extends Controller {
         return view('myAdviser', array('myAdvisers' => $users));
     }
 
+    public function cancelAdviser($adviserId) {
+
+        $uId = Auth::user()->id;
+        
+        $myAdviser = StudentAdviser::whereStudentId($uId)->whereAdviserId($adviserId)->first();
+
+        if($myAdviser != null)
+            $myAdviser->delete();
+        
+        return Redirect::route('advisersList');
+    }
+
     public function submitRate() {
 
         if(isset($_POST["rate"])) {

@@ -9,6 +9,7 @@ use App\models\School;
 use App\models\OrderId;
 use App\models\Mellat;
 use App\models\User;
+use Illuminate\Support\Facades\Auth;
 
 
 function makeValidInput($input) {
