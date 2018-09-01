@@ -56,7 +56,6 @@
                         <button onclick="document.location.href = '{{route('sendMessage', ['dest' => $myAdviser->id])}}'" class="btn btn-success">پیام به مشاور</button>
                         <button onclick="document.location.href = '{{route('showInboxSpecificMsgs', ['selectedUser' => $myAdviser->id])}}'" class="btn btn-info">پیام های ارسالی به مشاور</button>
                         <button onclick="document.location.href = '{{route('showOutboxSpecificMsgs', ['selectedUser' => $myAdviser->id])}}'" class="btn btn-warning">پیام های دریافتی از مشاور</button>
-                        <button onclick="document.location.href = '{{route('cancelAdviser', ['adviserId' => $myAdviser->id])}}'" class="btn btn-danger">لغو مشاور</button>
                     @endif
 
                     <button onclick="document.location.href = '{{route('cancelAdviser', ['adviserId' => $myAdviser->id])}}'" class="btn btn-danger">لغو مشاور</button>
