@@ -316,7 +316,7 @@
             </div>
             <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
                 <center>
-                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/blackboard.png')}}">
+                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/question.png')}}">
                     <center style="font-weight: bolder; color: white; margin-top: -85px; font-size: 30px" id="qNos"></center>
                 </center>
             </div>
@@ -329,14 +329,14 @@
 
             <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
                 <center>
-                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/student.png')}}">
+                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/school.png')}}">
                     <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 28px" id="schoolsNo"></center>
                 </center>
             </div>
 
             <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
                 <center>
-                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/student.png')}}">
+                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/exam-pack.png')}}">
                     <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 28px" id="composeNo"></center>
                 </center>
             </div>
