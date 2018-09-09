@@ -223,6 +223,18 @@
                 display: none;
             }
         }
+
+        .fontInImg {
+            font-weight: bolder;
+            margin-top: -115px;
+            color: white;
+            font-size: 40px
+        }
+        .imgSize {
+            width: 200px;
+            margin: 10px;
+        }
+
     </style>
 </head>
 
@@ -304,40 +316,40 @@
         <div class="col-xs-12" style="margin-top: 100px">
             <div class="col-md-4 col-xs-12" style="height: 150px">
                 <center>
-                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/teacher.png')}}">
-                    <center style="font-weight: bolder; color: white; margin-top: -85px; font-size: 30px" id="adviserNos"></center>
+                    <img class="imgSize" src="{{URL::asset('images/teacher.png')}}">
+                    <center class="fontInImg" id="adviserNos"></center>
                 </center>
             </div>
             <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
                 <center>
-                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/exam.png')}}">
-                    <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 30px" id="quizNos"></center>
+                    <img class="imgSize" src="{{URL::asset('images/exam.png')}}">
+                    <center class="fontInImg" id="quizNos"></center>
                 </center>
             </div>
             <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
                 <center>
-                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/question.png')}}">
-                    <center style="font-weight: bolder; color: white; margin-top: -85px; font-size: 30px" id="qNos"></center>
+                    <img class="imgSize" src="{{URL::asset('images/question.png')}}">
+                    <center class="fontInImg" id="qNos"></center>
                 </center>
             </div>
             <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
                 <center>
-                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/student.png')}}">
-                    <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 28px" id="usersNo"></center>
-                </center>
-            </div>
-
-            <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
-                <center>
-                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/school.png')}}">
-                    <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 28px" id="schoolsNo"></center>
+                    <img class="imgSize" src="{{URL::asset('images/student.png')}}">
+                    <center class="fontInImg" id="usersNo"></center>
                 </center>
             </div>
 
             <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
                 <center>
-                    <img style="width: 150px; margin: 10px" src="{{URL::asset('images/exam-pack.png')}}">
-                    <center style="font-weight: bolder; margin-top: -85px; color: white; font-size: 28px" id="composeNo"></center>
+                    <img class="imgSize" src="{{URL::asset('images/school.png')}}">
+                    <center class="fontInImg" id="schoolsNo"></center>
+                </center>
+            </div>
+
+            <div class="col-md-4 col-xs-12" style="margin-top: 10px; height: 150px">
+                <center>
+                    <img class="imgSize" src="{{URL::asset('images/exam-pack.png')}}">
+                    <center class="fontInImg" id="composeNo"></center>
                 </center>
             </div>
 
