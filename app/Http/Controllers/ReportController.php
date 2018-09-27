@@ -287,7 +287,7 @@ class ReportController extends Controller {
             return Redirect::to('profile');
 
         $backURL = route('schoolStudent', ['sId' => $sId]);
-        $students = DB::select('select users.id, firstName, lastName, username, phoneNum, sex, invitationCode from schoolStudent sS, users WHERE sId = ' . $sId . ' and sS.uId = users.id');
+        $students = DB::select('select users.id, firstName, lastName, username, phoneNum, sex, invitationCode, users.NID from schoolStudent sS, users WHERE sId = ' . $sId . ' and sS.uId = users.id');
         return view('Reports.schoolStudent', array('students' => $students, 'sId' => $sId, 'backURL' => $backURL));
     }
 
