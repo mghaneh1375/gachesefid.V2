@@ -20,7 +20,7 @@
             <li id="menu-item-1954" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1954"><a href="{{route('addSchool')}}" ><i class="menu-item-icon fa fa-edit" ></i>افزودن مدرسه<i class="seoicon-right-arrow" ></i></a></li>
             <li id="menu-item-1975" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1975"><a href="{{route('namayandeSchool')}}" ><i class="menu-item-icon fa fa-edit" ></i>گزارش گیری از مدارس<i class="seoicon-right-arrow" ></i></a></li>
 
-            <li id="menu-item-1975" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1975"><a href="{{route('schoolsList')}}" ><i class="menu-item-icon fa fa-edit" ></i>لیست مدارس<i class="seoicon-right-arrow" ></i></a></li>
+            <li id="menu-item-1975" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1975"><a href="{{route('schoolsList')}}" ><i class="menu-item-icon fa fa-edit" ></i>لیست کل مدارس<i class="seoicon-right-arrow" ></i></a></li>
         </ul>
     </li>
 
@@ -34,6 +34,5 @@
         </ul>
     </li>
 
-    @include('layouts.menu.schools')
     @include('layouts.menu.ranking')
 @stop

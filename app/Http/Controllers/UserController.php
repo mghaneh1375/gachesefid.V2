@@ -514,7 +514,7 @@ class UserController extends Controller {
 
     public function editStudent() {
 
-        if(isset($_POST["firstName"]) && isset($_POST["lastName"]) && isset($_POST["sex"]) && isset($_POST["uId"])) {
+        if(isset($_POST["firstName"]) && isset($_POST["lastName"]) && isset($_POST["sex"]) && isset($_POST["uId"]) && isset($_POST["NID"])) {
 
             $user = User::whereId(makeValidInput($_POST["uId"]));
 
@@ -523,6 +523,20 @@ class UserController extends Controller {
                 $user->firstName = makeValidInput($_POST["firstName"]);
                 $user->lastName = makeValidInput($_POST["lastName"]);
                 $user->sex = makeValidInput($_POST["sex"]);
+
+                $NID = makeValidInput($_POST["NID"]);
+
+                if(!_custom_check_national_code($NID)) {
+                    echo "کد ملی وارد شده معتبر نمی باشد";
+                    return;
+                }
+
+                if(User::whereNID($NID)->count() > 0 && $user->NID != $NID) {
+                    echo "کد ملی وارد شده در سامانه موجود است";
+                    return;
+                }
+
+                $user->NID = $NID;
 
                 $user->save();
                 echo "ok";

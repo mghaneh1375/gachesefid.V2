@@ -31,6 +31,7 @@
                 <td><center>نام</center></td>
                 <td><center>نام خانوادگی</center></td>
                 <td><center>نام کاربری</center></td>
+                <td><center>کد ملی</center></td>
                 <td><center>شماره تماس</center></td>
                 <td><center>جنسیت</center></td>
                 <td><center>کد معرفی</center></td>
@@ -41,6 +42,7 @@
                     <td><center>{{$itr->firstName}}</center></td>
                     <td><center>{{$itr->lastName}}</center></td>
                     <td><center>{{$itr->username}}</center></td>
+                    <td><center>{{$itr->NID}}</center></td>
                     <td><center>{{$itr->phoneNum}}</center></td>
                     <td><center>{{($itr->sex == 1) ? 'پسر' : 'دختر'}}</center></td>
                     <td><center>{{$itr->invitationCode}}</center></td>
@@ -48,7 +50,7 @@
                         <td><center><button onclick="changeSchoolCode('{{$itr->id}}')" class="btn btn-success">تغییر کد مدرسه</button></center></td>
                     @endif
 
-                    <td><center><button data-toggle="tooltip" title="ویرایش" onclick="editStdOfSchool('{{$itr->id}}', '{{$itr->firstName}}', '{{$itr->lastName}}', '{{$itr->sex}}')" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span></button></center></td>
+                    <td><center><button data-toggle="tooltip" title="ویرایش" onclick="editStdOfSchool('{{$itr->id}}', '{{$itr->firstName}}', '{{$itr->lastName}}', '{{$itr->sex}}', '{{$itr->NID}}')" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span></button></center></td>
                     <td><center><button data-toggle="tooltip" title="حذف" onclick="deleteStdFromSchool('{{$itr->id}}')" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button></center></td>
                 </tr>
             @endforeach
@@ -83,6 +85,12 @@
                 <label for="lastName">نام خانوادگی</label>
                 <input id="lastName" type="text">
             </div>
+
+            <div class="col-xs-12">
+                <label for="NID">کد ملی</label>
+                <input id="NID" type="tel">
+            </div>
+
             <div class="col-xs-12">
                 <label for="sex">جنسیت</label>
                 <select id="sex">
@@ -120,13 +128,14 @@
 
         }
 
-        function editStdOfSchool(id, f, l, s) {
+        function editStdOfSchool(id, f, l, s, n) {
 
             selectedUId = id;
 
             $("#firstName").val(f);
             $("#lastName").val(l);
             $("#sex").val(s);
+            $("#NID").val(n);
 
             $("#editStudent").removeClass('hidden');
 
@@ -141,11 +150,15 @@
                     'uId': selectedUId,
                     'firstName': $("#firstName").val(),
                     'lastName': $("#lastName").val(),
-                    'sex': $("#sex").val()
+                    'sex': $("#sex").val(),
+                    'NID': $("#NID").val()
                 },
                 success: function (response) {
                     if(response == "ok") {
                         document.location.href = '{{$backURL}}';
+                    }
+                    else {
+                        alert(response);
                     }
                 }
             });

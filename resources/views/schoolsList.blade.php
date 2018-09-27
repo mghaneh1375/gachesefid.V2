@@ -15,7 +15,7 @@
 
 @section('caption')
     <div class="title" style="width: 500px !important;">
-        لیست مدارس
+        لیست کل مدارس
     </div>
 @stop
 

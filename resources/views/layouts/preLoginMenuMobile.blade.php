@@ -14,5 +14,5 @@
     <button onclick="document.location.href = '{{route('ranking1')}}'" class="btn menuBtn">رتبه بندی آزمون ها</button>
 </center>
 <center>
-    <button onclick="document.location.href = '{{route('schoolsList')}}'" class="btn menuBtn">لیست مدارس</button>
+    <button onclick="document.location.href = '{{route('schoolsList')}}'" class="btn menuBtn">لیست کل مدارس</button>
 </center>

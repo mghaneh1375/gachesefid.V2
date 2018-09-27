@@ -22,12 +22,13 @@
 
         <p style="padding: 10px; font-size: 20px; color: #2ab27b">
             <span>{{$schoolName}}</span>
-            <span>&nbsp;</span>
+            <span>&nbsp;-&nbsp;</span>
             <span>{{$cityName}}</span>
-            <span>آزمون</span>
+            <span>&nbsp;-&nbsp;</span>
+            <span>آزمون:</span>
             <span>&nbsp;</span>
             <span>{{$quizName}}</span>
-            <span>&nbsp;</span>
+            <span>&nbsp;-&nbsp;</span>
             <span>{{($online == 1) ? "آنلاین" : "حضوری"}}</span>
         </p>
 

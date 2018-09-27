@@ -104,7 +104,7 @@
     <p class="sub-header" onclick="document.location.href = '{{route('moneyReport')}}'"><span> - </span><span>گزارش گیری مالی</span></p>
 </div>
 
-<p class="header" onclick="document.location.href = '{{route('schoolsList')}}'">لیست مدارس</p>
+<p class="header" onclick="document.location.href = '{{route('schoolsList')}}'">لیست کل مدارس</p>
 <div class="header">
     <p>ارتباطات</p>
     <p class="sub-header" onclick="document.location.href = '{{route('smsPanel')}}'"><span> - </span><span>سامانه پیام رسانی</span></p>

@@ -97,7 +97,12 @@
                             <td><center>عملیات</center></td>
                         </tr>
                         @foreach($users as $user)
-                            <tr>
+
+                            @if($mode == getValueInfo('adviserLevel'))
+                                <tr style="cursor: pointer" onclick="document.location.href = '{{route('adviserInfo', ['adviserId' => $user->id])}}'">
+                            @else
+                                <tr>
+                            @endif
                                 <td><center>{{$user->firstName}} {{$user->lastName}}</center></td>
                                 <td><center>{{$user->username}}</center></td>
                                 <td><center>{{$user->phoneNum}}</center></td>

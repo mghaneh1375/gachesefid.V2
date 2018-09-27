@@ -19,7 +19,7 @@
                 <li id="menu-item-1984" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children mega-menu-col menu-item-1984"><a href="#" >آمار گچ سفید<i class="seoicon-right-arrow" ></i></a><div class="megamenu-item-info-text" >اعداد و آمار گچ سفید</div>
                     <ul class="sub-menu sub-menu-has-icons">
                         <li id="menu-item-1954" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1954"><a href="http://exam.gachesefid.com/ranking1" ><i class="menu-item-icon fa fa-edit" ></i>رتبه‌بندی آزمون‌ها<i class="seoicon-right-arrow" ></i></a></li>
-                        <li id="menu-item-1975" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1975"><a href="http://exam.gachesefid.com/schoolsList" ><i class="menu-item-icon fa fa-edit" ></i>لیست مدارس همکار<i class="seoicon-right-arrow" ></i></a></li>
+                        <li id="menu-item-1975" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1975"><a href="http://exam.gachesefid.com/schoolsList" ><i class="menu-item-icon fa fa-edit" ></i>لیست کل مدارس همکار<i class="seoicon-right-arrow" ></i></a></li>
                         <li id="menu-item-1976" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1976"><a href="#"><i class="menu-item-icon fa fa-edit" ></i>عددبازی در گچ<i class="seoicon-right-arrow" ></i></a></li>
                     </ul>
                 </li>

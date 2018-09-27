@@ -542,7 +542,7 @@ class RegistrationController extends Controller {
 
             foreach ($users as $user) {
 
-                if(count($user) != 5)
+                if(count($user) != 6)
                     continue;
 
                 $condition = ['level' => getValueInfo('schoolLevel'),
@@ -598,6 +598,7 @@ class RegistrationController extends Controller {
                 $tmp->username = $username;
                 $tmp->password = Hash::make($pas);
                 $tmp->status = 1;
+                $tmp->sex = $user[5];
                 $tmp->NID = $user[4];
                 $redundantInfo = new RedundantInfo1();
 
@@ -639,7 +640,7 @@ class RegistrationController extends Controller {
 
             foreach ($users as $user) {
 
-                if(count($user) != 4)
+                if(count($user) != 5)
                     continue;
 
                 if(User::whereNID($user[3])->count() > 0 || !_custom_check_national_code($user[3]))
@@ -682,6 +683,7 @@ class RegistrationController extends Controller {
                 $tmp->password = Hash::make($pas);
                 $tmp->status = 1;
                 $tmp->NID = $user[3];
+                $tmp->sex = $user[4];
                 $redundantInfo = new RedundantInfo1();
 
                 try {
@@ -749,6 +751,28 @@ class RegistrationController extends Controller {
 
                     if($level == getValueInfo('namayandeLevel') || $level == getValueInfo('adminLevel') ||
                         $level == getValueInfo('superAdminLevel')) {
+                        if ($cols < 'G') {
+                            unlink($path);
+                            $err = "تعداد ستون های فایل شما معتبر نمی باشد";
+                        } else {
+                            for ($row = 2; $row <= $lastRow; $row++) {
+
+                                if($workSheet->getCell('B' . $row)->getValue() == "")
+                                    break;
+
+                                $users[$row - 2][0] = $workSheet->getCell('B' . $row)->getValue();
+                                $users[$row - 2][1] = $workSheet->getCell('C' . $row)->getValue();
+                                $users[$row - 2][2] = $workSheet->getCell('D' . $row)->getValue();
+                                $users[$row - 2][3] = $workSheet->getCell('E' . $row)->getValue();
+                                $users[$row - 2][4] = $workSheet->getCell('F' . $row)->getValue();
+                                $users[$row - 2][5] = $workSheet->getCell('G' . $row)->getValue();
+                            }
+                            unlink($path);
+                            $this->addUsers($users);
+                            $err = "getFile";
+                        }
+                    }
+                    else {
                         if ($cols < 'F') {
                             unlink($path);
                             $err = "تعداد ستون های فایل شما معتبر نمی باشد";
@@ -763,26 +787,6 @@ class RegistrationController extends Controller {
                                 $users[$row - 2][2] = $workSheet->getCell('D' . $row)->getValue();
                                 $users[$row - 2][3] = $workSheet->getCell('E' . $row)->getValue();
                                 $users[$row - 2][4] = $workSheet->getCell('F' . $row)->getValue();
-                            }
-                            unlink($path);
-                            $this->addUsers($users);
-                            $err = "getFile";
-                        }
-                    }
-                    else {
-                        if ($cols < 'E') {
-                            unlink($path);
-                            $err = "تعداد ستون های فایل شما معتبر نمی باشد";
-                        } else {
-                            for ($row = 2; $row <= $lastRow; $row++) {
-
-                                if($workSheet->getCell('B' . $row)->getValue() == "")
-                                    break;
-
-                                $users[$row - 2][0] = $workSheet->getCell('B' . $row)->getValue();
-                                $users[$row - 2][1] = $workSheet->getCell('C' . $row)->getValue();
-                                $users[$row - 2][2] = $workSheet->getCell('D' . $row)->getValue();
-                                $users[$row - 2][3] = $workSheet->getCell('E' . $row)->getValue();
                             }
                             unlink($path);
                             $this->addUsers($users);

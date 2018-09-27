@@ -37,7 +37,10 @@ class ReportController extends Controller {
     public function namayandeSchool() {
 
         $uId = Auth::user()->id;
-        $schools = DB::select('select (SELECT count(*) FROM schoolStudent sS WHERE sS.sId = nS.sId) as students, firstName, lastName, username, phoneNum, sex, invitationCode, users.id, introducer, school.name as schoolName, school.level as schoolLevel, school.kind as schoolKind, school.cityId from namayandeSchool nS, users, school WHERE school.uId = nS.sId and nId = ' . $uId . ' and nS.sId = users.id');
+        $schools = DB::select('select (SELECT count(*) FROM schoolStudent sS WHERE sS.sId = nS.sId) as students, '.
+            'firstName, lastName, username, phoneNum, sex, invitationCode, users.id, introducer, school.name as schoolName, ' .
+            'school.level as schoolLevel, school.kind as schoolKind, school.cityId from namayandeSchool nS, users, school ' .
+            'WHERE school.uId = nS.sId and nS.nId = ' . $uId . ' and nS.sId = users.id');
 
         foreach ($schools as $school) {
 
@@ -103,10 +106,12 @@ class ReportController extends Controller {
 
         $adviser = User::whereId($adviserId);
 
-
         if($adviser == null || $adviser->level != getValueInfo('adviserLevel')) {
             return Redirect::route('home');
         }
+
+        if($adviser->status != 1 && Auth::user()->level != getValueInfo('adminLevel'))
+            return Redirect::route('home');
 
         $adviserFields = AdviserFields::whereUID($adviserId)->get();
 
@@ -262,7 +267,7 @@ class ReportController extends Controller {
         $user = Auth::user();
 
         $backURL = route('namayandeStudent');
-        $students = DB::select('select users.id, firstName, lastName, username, phoneNum, sex, invitationCode from namayandeSchool nS, schoolStudent sS, users WHERE nS.nId = ' . $user->id . ' and nS.sId = sS.sId and sS.uId = users.id');
+        $students = DB::select('select users.id, firstName, lastName, username, phoneNum, sex, invitationCode, users.NID from namayandeSchool nS, schoolStudent sS, users WHERE nS.nId = ' . $user->id . ' and nS.sId = sS.sId and sS.uId = users.id');
         return view('Reports.schoolStudent', array('students' => $students, 'backURL' => $backURL));
 
     }
@@ -3042,8 +3047,8 @@ class ReportController extends Controller {
         if($quizMode == getValueInfo('systemQuiz') && (SystemQuiz::whereId($quizId) == null || ($sId != -1 && School::whereId($sId) == null)))
             return Redirect::to(route('profile'));
 
-        $schoolName = "نامشخص";
-        $cityName = "نامشخص";
+        $schoolName = "کل مدارس";
+        $cityName = "کل شهرها";
 
         if($quizMode == getValueInfo('regularQuiz'))
             $quizName = RegularQuiz::whereId($quizId)->name;

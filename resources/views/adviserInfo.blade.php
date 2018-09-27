@@ -117,9 +117,11 @@
             </center>
         </div>
 
-        <div class="col-xs-12">
-            <center><button onclick="setAsMyAdviser('{{$adviser->id}}')" class="btn btn-primary">انتخاب به عنوان مشاور من</button></center>
-        </div>
+        @if(\Illuminate\Support\Facades\Auth::user()->level == getValueInfo('studentLevel'))
+            <div class="col-xs-12">
+                <center><button onclick="setAsMyAdviser('{{$adviser->id}}')" class="btn btn-primary">انتخاب به عنوان مشاور من</button></center>
+            </div>
+        @endif
 
     </center>
 

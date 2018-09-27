@@ -48,7 +48,7 @@
 
     <center style="margin-top: 50px">
         <div class="col-xs-12">
-            <label for="qId">آزمون مورد نظر</label>
+            <label style="float: right; font-size: 20px; color: #d9534f; padding: 10px" for="qId">توجه: ابتدا آزمون مورد نظر خود را انتخاب کنید</label>
             <select id="qId" onchange="getStdOfQuiz(this.value)">
                 @foreach($quizes as $quiz)
                     <option value="{{$quiz->id}}">{{$quiz->name}}- شروع آزمون:

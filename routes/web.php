@@ -21,7 +21,7 @@ Route::group(array('middleware' => 'nothing'), function (){
 
 	Route::get('advisersList', array('as' => 'advisersList', 'uses' => 'ReportController@advisersList'));
 
-	Route::get('adviserInfo/{adviserInfo}', array('as' => 'adviserInfo', 'uses' => 'ReportController@adviserInfo'));
+	Route::get('adviserInfo/{adviserId}', array('as' => 'adviserInfo', 'uses' => 'ReportController@adviserInfo'));
 
 	Route::get('studentsRanking/{page?}', array('as' => 'studentsRanking', 'uses' => 'ReportController@studentsRanking'));
 

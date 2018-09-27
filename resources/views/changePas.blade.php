@@ -7,7 +7,7 @@
 
 
 @section('caption')
-    <div class="title">تغییر پسورد
+    <div class="title">تغییر رمزعبور
     </div>
 @stop
 
@@ -22,7 +22,7 @@
                         <input type="password" name="oldPas" maxlength="40" required autofocus>
                     </div>
                     <div class="col-xs-5">
-                        <span>پسورد فعلی</span>
+                        <span>رمزعبور فعلی</span>
                     </div>
                 </div>
                 <div class="col-xs-12">
@@ -30,7 +30,7 @@
                         <input type="password" name="newPas" maxlength="40" required>
                     </div>
                     <div class="col-xs-5">
-                        <span>پسورد جدید</span>
+                        <span>رمزعبور جدید</span>
                     </div>
                 </div>
                 <div class="col-xs-12">
@@ -38,7 +38,7 @@
                         <input type="password" name="confirmPas" maxlength="40" required>
                     </div>
                     <div class="col-xs-5">
-                        <span>تکرار پسورد جدید</span>
+                        <span>تکرار رمزعبور جدید</span>
                     </div>
                 </div>
 

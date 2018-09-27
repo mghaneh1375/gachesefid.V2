@@ -26,7 +26,7 @@
     <p>مدارس</p>
     <p class="sub-header" onclick="document.location.href = '{{route('addSchool')}}'">افزودن مدرسه</p>
     <p class="sub-header" onclick="document.location.href = '{{route('namayandeSchool')}}'">گزارش گیری از مدارس</p>
-    <p class="sub-header" onclick="document.location.href = '{{route('schoolsList')}}'">لیست مدارس</p>
+    <p class="sub-header" onclick="document.location.href = '{{route('schoolsList')}}'">لیست کل مدارس</p>
 </div>
 
 

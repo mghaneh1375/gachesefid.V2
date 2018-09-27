@@ -26,7 +26,7 @@
 </div>
 
 <p class="header" onclick="document.location.href = '{{route('ranking1')}}'">رتبه بندی آزمون ها</p>
-<p class="header" onclick="document.location.href = '{{route('schoolsList')}}'">لیست مدارس</p>
+<p class="header" onclick="document.location.href = '{{route('schoolsList')}}'">لیست کل مدارس</p>
 
 
 <div class="header">

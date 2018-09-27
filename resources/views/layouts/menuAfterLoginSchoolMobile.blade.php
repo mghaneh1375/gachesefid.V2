@@ -29,7 +29,7 @@
     <p class="sub-header" onclick="document.location.href = '{{route('quizReports')}}'">گزارشات مربوط به آزمون ها</p>
 </div>
 
-<p class="header" onclick="document.location.href = '{{route('schoolsList')}}'">لیست مدارس</p>
+<p class="header" onclick="document.location.href = '{{route('schoolsList')}}'">لیست کل مدارس</p>
 
 <div class="header">
     <p>پروفایل</p>
