@@ -311,13 +311,13 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 	Route::post('deleteFromPackage', array('as' => 'deleteFromPackage', 'uses' => 'QuizController@deleteFromPackage'));
 
-	Route::get('createOffCode/{type}/{count}', function ($type, $count) {
+	Route::get('createOffCode/{type}/{count}/{expireTime}', function ($type, $count, $expireTime) {
 
 		for($i = 0; $i < $count; $i++) {
 			$tmp = new \App\models\OffCode();
 			$tmp->amount = 8000;
 			$tmp->code = "gach" . random_int(10000, 99999);
-			$tmp->expireTime = "2018-08-31";
+			$tmp->expireTime = $expireTime;
 			$tmp->type = $type;
 			try {
 				$tmp->save();
