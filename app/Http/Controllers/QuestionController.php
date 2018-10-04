@@ -1047,7 +1047,7 @@ class QuestionController extends Controller {
                     unlink($path);
                     $errors = $this->addQuestions($questions);
                     if (count($errors) == 0)
-                        return Redirect::to(route('addQuestion'));
+                        $err = "کلیه سوالات به درستی به سامانه افزوده شدند";
                     else {
                         $err = "بجز سوالات زیر که در سامانه موجود است بقیه به درستی اضافه شدند" . '<br/>';
                         $size = count($errors);

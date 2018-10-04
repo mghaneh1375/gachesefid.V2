@@ -316,7 +316,10 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 		for($i = 0; $i < $count; $i++) {
 			$tmp = new \App\models\OffCode();
 			$tmp->amount = $amount;
-			$tmp->code = "gach" . random_int(10000, 99999);
+			$code = "gach" . random_int(10000, 99999);
+			while (\App\models\OffCode::whereCode($code)->count() > 0)
+				$code = "gach" . random_int(10000, 99999);
+			$tmp->code = $code;
 			$tmp->expireTime = $expireTime;
 			$tmp->type = $type;
 			try {

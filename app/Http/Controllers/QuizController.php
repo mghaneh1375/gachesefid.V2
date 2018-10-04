@@ -3039,12 +3039,14 @@ sumTaraz DESC');
     public function doAddBatchQToQ($questions, $quizId) {
 
         $errs = "بجز سوالات زیر بقیه به درستی به آزمون افزوده شدند" . "<br/>";
+        $emptyErr = true;
 
         foreach ($questions as $question) {
 
             $tmp = Question::where('organizationId', '=', $question)->first();
             if($tmp == null) {
                 $errs .= $question . ', ';
+                $emptyErr = false;
                 continue;
             }
 
@@ -3066,9 +3068,12 @@ sumTaraz DESC');
             }
             catch (Exception $x) {
                 $errs .= $question . ', ';
+                $emptyErr = false;
             }
         }
 
+        if($emptyErr)
+            $errs = "کلیه سوالات به درستی به آزمون افزوده شدند";
         return $errs;
 
     }

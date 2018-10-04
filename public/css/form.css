@@ -51,7 +51,7 @@
     max-width: 250px;
     background-color: transparent;
     border: 1px solid black;
-    color: black;
+    color: black !important;
     font-family: IRANSans;
 }
 

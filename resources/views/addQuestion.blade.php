@@ -12,6 +12,11 @@
         var rootDir = '{{route('home')}}';
     </script>
     <script src="{{URL::asset('js/jsNeededForQuestion.js')}}"></script>
+    <style>
+        .caret {
+            display: inline-block !important;
+        }
+    </style>
 @stop
 
 
