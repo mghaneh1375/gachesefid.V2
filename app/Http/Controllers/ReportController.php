@@ -106,9 +106,8 @@ class ReportController extends Controller {
 
         $adviser = User::whereId($adviserId);
 
-        if($adviser == null || $adviser->level != getValueInfo('adviserLevel')) {
+        if($adviser == null || $adviser->level != getValueInfo('adviserLevel'))
             return Redirect::route('home');
-        }
 
         if($adviser->status != 1 && Auth::user()->level != getValueInfo('adminLevel'))
             return Redirect::route('home');
@@ -121,8 +120,16 @@ class ReportController extends Controller {
 
         $adviserInfo = AdviserInfo::whereUID($adviserId)->first();
 
-        if($adviserInfo == null)
-            return Redirect::route('home');
+        if($adviserInfo == null) {
+            $adviserInfo = new AdviserInfo();
+            $adviserInfo->uId = $adviserId;
+            $adviserInfo->cityId = City::first()->id;
+            $adviserInfo->field = getValueInfo('unknownAdvice');
+            $adviserInfo->lastCertificate = getValueInfo('unknown');
+            $adviserInfo->birthDay = 1396;
+            $adviserInfo->workYears = 1397;
+            $adviserInfo->save();
+        }
 
         $adviserInfo->cityId = City::whereId($adviserInfo->cityId)->name;
 
@@ -142,6 +149,9 @@ class ReportController extends Controller {
             case getValueInfo('baliniAdvice'):
                 $adviserInfo->field = "مشاور بالینی";
                 break;
+            case getValueInfo('unknownAdvice'):
+                $adviserInfo->field = "نامشخص";
+                break;
         }
 
         switch ($adviserInfo->lastCertificate) {
@@ -159,6 +169,9 @@ class ReportController extends Controller {
                 break;
             case getValueInfo('phd'):
                 $adviserInfo->lastCertificate = "دکترا";
+                break;
+            case getValueInfo('unknown'):
+                $adviserInfo->lastCertificate = "نامشخص";
                 break;
         }
 

@@ -71,13 +71,13 @@
     </li>
 
     <li id="menu-item-457" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-icon menu-item-457">
-        <a href="http://uitest.gachesefid.com/news/" >
+        <a href="http://gachesefid.com/news/" >
             <i class="menu-item-icon seosight seosight-targeting" ></i>
             اخبار
         </a>
     </li>
     <li id="menu-item-506" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-icon menu-item-506">
-        <a href="http://uitest.gachesefid.com/contact-information/" >
+        <a href="http://gachesefid.com/contact-information/" >
             <i class="menu-item-icon seosight seosight-mail-send" ></i>تماس با ما
         </a>
     </li>
