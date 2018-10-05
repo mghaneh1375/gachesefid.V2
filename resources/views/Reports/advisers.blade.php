@@ -41,7 +41,7 @@
                                 @if($myAdviser->status == 1)
                                     <td><center onclick="document.location.href = '{{route('myAdviser')}}';" style="cursor: pointer; color: #00AF87">مشاور فعلی من</center></td>
                                 @else
-                                    <td><center onclick="document.location.href = '{{route('myAdviser')}}';" style="cursor: pointer; color: #00AF87">مشاور آینده من</center></td>
+                                    <td><center onclick="document.location.href = '{{route('myAdviser')}}';" style="cursor: pointer; color: #00AF87">در انتظار تایید مشاور</center></td>
                                 @endif
                             @endif
                         @endforeach

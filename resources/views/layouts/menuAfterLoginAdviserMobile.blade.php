@@ -15,7 +15,7 @@
 </style>
 
 <p class="header" onclick="document.location.href = '{{route('home')}}'">خانه</p>
-<p class="header" onclick="document.location.href = '{{route('quizReports')}}'">گزارشات مربوط به آزمون ها</p>
+<p class="header" onclick="document.location.href = '{{route('quizReports')}}'">گزارش دانش‌آموزان من</p>
 <p class="header" onclick="document.location.href = '{{route('schoolsList')}}'">لیست کل مدارس</p>
 <p class="header" onclick="document.location.href = '{{route('message')}}'"><span> - </span><span>صندوق پیام ها</span></p>
 <p class="header" onclick="document.location.href = '{{route('adviserQueue')}}'"><span> - </span><span>دانش آموزان در صف انتظار</span></p>

@@ -6,7 +6,12 @@
 
 
 @section('caption')
-    <div class="title">گزارش گیری از آزمون ها
+    <div class="title">
+    @if(\Illuminate\Support\Facades\Auth::user()->level == getValueInfo('adviserLevel'))
+            گزارش دانش‌آموزان من
+    @else
+        گزارش گیری از آزمون ها
+    @endif
     </div>
 @stop
 

@@ -15,7 +15,7 @@
     <center class="col-xs-12" style="margin-top: 50px">
 
         @if(count($quizes) == 0)
-            <p>آزمونی وجود ندارد</p>
+            <p>دانش‌آموزان شما در آزمونی شرکت نکرده‌اند.</p>
         @else
             <div>
                 <label style="min-width: 300px !important;">
