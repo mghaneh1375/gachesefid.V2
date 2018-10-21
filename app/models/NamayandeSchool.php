@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $nId
  * @property int $sId
  * @method static \Illuminate\Database\Query\Builder|\App\models\NamayandeSchool whereSId($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\models\NamayandeSchool whereNId($value)
  * @mixin \Eloquent
  */
 

@@ -241,11 +241,11 @@ class HomeController extends Controller {
 
 		if(Auth::user()->level == getValueInfo('studentLevel')) {
 
-			$uId = Auth::user()->id;
+			$user = Auth::user();
 			$today = getToday();
 
 			$tmp1 = DB::select('select count(*) as countNum from systemQuiz sQ WHERE endReg >= '. $today["date"] .
-					' and not exists(select * from quizRegistry qR where qR.uId = ' . $uId . ' and qR.qId = sQ.id and qR.quizMode = ' . getValueInfo('systemQuiz') . ')');
+					' and not exists(select * from quizRegistry qR where qR.uId = ' . $user->id . ' and qR.qId = sQ.id and qR.quizMode = ' . getValueInfo('systemQuiz') . ')');
 
 			if($tmp1 == null || count($tmp1) == 0 || $tmp1[0]->countNum == 0)
 				$tmp1 = 0;
@@ -253,7 +253,7 @@ class HomeController extends Controller {
 				$tmp1 = $tmp1[0]->countNum;
 
 			$tmp2 = DB::select('select count(*) as countNum from regularQuiz rQ WHERE endReg >= '. $today["date"] .
-				' and not exists(select * from quizRegistry qR where qR.uId = ' . $uId . ' and qR.qId = rQ.id and qR.quizMode = ' . getValueInfo('regularQuiz') . ')');
+				' and not exists(select * from quizRegistry qR where qR.uId = ' . $user->id . ' and qR.qId = rQ.id and qR.quizMode = ' . getValueInfo('regularQuiz') . ')');
 
 			if($tmp2 == null || count($tmp2) == 0 || $tmp2[0]->countNum == 0)
 				$tmp2 = 0;
@@ -262,13 +262,13 @@ class HomeController extends Controller {
 
 			$totalQuizes = $tmp1 + $tmp2;
 
-			$regularCondition = ['uId' => $uId, 'quizMode' => getValueInfo('regularQuiz')];
-			$systemCondition = ['uId' => $uId, 'quizMode' => getValueInfo('systemQuiz')];
+			$regularCondition = ['uId' => $user->id, 'quizMode' => getValueInfo('regularQuiz')];
+			$systemCondition = ['uId' => $user->id, 'quizMode' => getValueInfo('systemQuiz')];
 
 			$tmp = QuizRegistry::where($regularCondition)->count() + QuizRegistry::where($systemCondition)->count();
 
 			$amount = DB::select('select sum(q.level) * 5 as totalSum from ROQ, question q'.
-				' where uId = ' . $uId . ' and q.id = questionId and q.ans = result');
+				' where uId = ' . $user->id . ' and q.id = questionId and q.ans = result');
 
 			if($amount == null || count($amount) == 0 || $amount[0]->totalSum == 0) {
 				$rate = -1;
@@ -282,10 +282,16 @@ class HomeController extends Controller {
 					' group by(uId) having totalSum > ' . $amount));
 			}
 
+			$name =  $user->firstName . " " . $user->lastName;
+			$school = SchoolStudent::whereUId($user->id)->first();
+			if($school == null)
+				$school = "نامشخص";
+			else
+				$school = School::whereUId($school->sId)->first()->name;
 
 			return view('profile', array('money' => Auth::user()->money,
-				'myQuizNo' => $tmp,
-				'nextQuizNo' => $totalQuizes,
+				'myQuizNo' => $tmp, 'name' => $name,
+				'nextQuizNo' => $totalQuizes, 'school' => $school,
 				'rate' => $amount, 'rank' => $rate,
 				'questionNo' => 0));
 
@@ -543,21 +549,6 @@ class HomeController extends Controller {
 
 				else {
 					$user->NID = $NID;
-					$namayandeCode = "";
-					if (isset($_POST["namayandeCode"]))
-						$namayandeCode = makeValidInput($_POST["namayandeCode"]);
-
-					if (!empty($namayandeCode)) {
-						$namayande = User::whereInvitationCode($namayandeCode)->first();
-						if ($namayande != null) {
-							SchoolStudent::whereSId($user->id)->delete();
-							$tmp = new SchoolStudent();
-							$tmp->sId = $user->id;
-							$tmp->uId = $namayande->id;
-							$tmp->save();
-						}
-					}
-
 					$user->username = $username;
 					$user->save();
 
@@ -703,5 +694,23 @@ class HomeController extends Controller {
 				return $this->changePas("رمز وارد شده نامعتبر است");
 		}
 		return $this->changePas();
+	}
+
+	public function setAsMySchool() {
+
+		if (isset($_POST["sId"])) {
+
+			$sId = makeValidInput($_POST["sId"]);
+			$uId = Auth::user()->id;
+			SchoolStudent::whereUId($uId)->delete();
+			$tmp = new SchoolStudent();
+			$tmp->sId = $sId;
+			$tmp->uId = $uId;
+			try {
+				$tmp->save();
+				echo "ok";
+			}
+			catch (\Exception $x) {}
+		}
 	}
 }

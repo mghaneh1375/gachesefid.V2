@@ -209,18 +209,6 @@
                                 </div>
                             </div>
 
-                            <div class="col-xs-12">
-                                <div class="col-xs-7">
-                                    <input name="namayandeCode" type="text" value="{{$namayande}}">
-                                </div>
-                                <div class="col-xs-5">
-
-                            <span  class="help" data-toggle="tooltip" data-placement="top" title="کد مدیر مدرسه">
-                                <img src="{{URL::asset('images/help.png')}}" alt="FirstName">
-                            </span>
-                                    <span>کد مدیر مدرسه</span>
-                                </div>
-                            </div>
 
                             <div class="col-xs-12" style="margin-bottom: 10px">
                                 <center>

@@ -19,6 +19,7 @@
 <div class="header">
     <p>مدارس</p>
     <p class="sub-header" onclick="document.location.href = '{{route('groupRegistration')}}'">ثبت لیست دانش‌آموزان</p>
+    <p class="sub-header" onclick="document.location.href = '{{route('oneByOneRegistration')}}'">ثبت تکی تکی دانش‌آموزان</p>
     <p class="sub-header" onclick="document.location.href = '{{route('namayandeStudent')}}'">گزارش گیری از دانش آموزان</p>
 </div>
 

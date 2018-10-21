@@ -160,6 +160,17 @@
 </style>
 
 <div class="col-xs-12">
+
+    <p style="color: black">
+        <span>کاربر گرامی</span>
+        <span>&nbsp;</span>
+        <span>{{$name}}</span>
+        <span>&nbsp;</span>
+        <span>از مدرسه</span>
+        <span>&nbsp;</span>
+        <span><a style="font-size: 18px; color: #7f0b03" href="{{route('schoolsList')}}">{{$school}}</a></span>
+    </p>
+
     <div class="col-xs-12" style="margin-top: 100px">
         <center class="col-md-4 col-xs-12">
             <img style="width: 230px" src="{{URL::asset('images/u-future-exam.png')}}">

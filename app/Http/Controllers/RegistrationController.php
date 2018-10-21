@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\models\AdviserFields;
 use App\models\AdviserInfo;
+use App\models\City;
 use App\models\Grade;
 use App\models\NamayandeSchool;
 use App\models\PointConfig;
@@ -305,6 +306,174 @@ class RegistrationController extends Controller {
             'essay' => $essay, 'schools' => $schools, 'workYears' => $workYears,
             'invitationCode' => $invitationCode, 'level' => $level));
 
+    }
+
+    public function oneByOneRegistration($err = "") {
+
+
+        if(Auth::user()->level == getValueInfo('namayandeLevel')) {
+
+            $mySchools = NamayandeSchool::whereNId(Auth::user()->id)->get();
+            $out = [];
+            $counter = 0;
+
+            foreach ($mySchools as $school) {
+                $school = School::whereUId($school->sId)->first();
+                $school->cityId = City::whereId($school->cityId)->name;
+                $out[$counter++] = $school;
+            }
+
+            return view('oneByOneRegistration', array('err' => $err, 'grades' => Grade::all(), 'schools' => $out));
+        }
+        return view('oneByOneRegistration', array('err' => $err, 'grades' => Grade::all()));
+    }
+
+    public function doOneByOneRegistration() {
+
+        $user = Auth::user();
+        $out = [];
+        $counter = 0;
+        include_once 'MoneyController.php';
+
+        if($user->level == getValueInfo('namayandeLevel')) {
+            if(isset($_POST["firstNameArr"]) && isset($_POST["lasNameArr"]) &&
+                isset($_POST["NIDArr"]) && isset($_POST["sexArr"]) && isset($_POST["gradeArr"]) &&
+                isset($_POST["schoolArr"])) {
+
+                $firstNameArr = $_POST["firstNameArr"];
+                $lastNameArr = $_POST["lasNameArr"];
+                $NIDArr = $_POST["NIDArr"];
+                $sexArr = $_POST["sexArr"];
+                $schoolArr = $_POST["schoolArr"];
+                $gradeArr = $_POST["gradeArr"];
+
+                for ($i = 0; $i < count($firstNameArr); $i++) {
+
+                    $school = School::whereId($schoolArr[$i]);
+
+                    if ($school == null) {
+                        echo json_encode(["status" => "nok", "msg" => "کد مدرسه " . $schoolArr[$i] . " اشتباه است"]);
+                        return;
+                    }
+
+                    $schoolCity = $school->cityId;
+
+                    $condition = ['nId' => $user->id, 'sId' => $school->uId];
+                    if (NamayandeSchool::where($condition)->count() == 0) {
+                        echo json_encode(["status" => "nok", "msg" => "شما دسترسی به مدرسه " . $schoolArr[$i] . " ندارید"]);
+                        return;
+                    }
+
+                    if (User::whereNID($NIDArr[$i])->count() > 0 || !_custom_check_national_code($NIDArr[$i])) {
+                        echo json_encode(["status" => "nok", "msg" => "کد ملی " . $NIDArr[$i] . " یا معتبر نیست و یا در سامانه موجود است"]);
+                        return;
+                    }
+                }
+
+                for ($i = 0; $i < count($firstNameArr); $i++) {
+                    $tmp = new User();
+                    $tmp->firstName = $firstNameArr[$i];
+                    $tmp->lastName = $lastNameArr[$i];
+                    $tmp->level = getValueInfo("studentLevel");
+                    $pas = generateActivationCode();
+                    $username = $this->generateUserName();
+                    $tmp->invitationCode = $pas;
+                    $tmp->username = $username;
+                    $tmp->password = Hash::make($pas);
+                    $tmp->status = 1;
+                    $tmp->sex = $sexArr[$i];
+                    $tmp->NID = $NIDArr[$i];
+                    $redundantInfo = new RedundantInfo1();
+
+                    try {
+                        $tmp->save();
+
+                        charge(PointConfig::first()->init, $tmp->id, getValueInfo('initTransaction'), getValueInfo('money2'));
+
+                        $redundantInfo->gradeId = $gradeArr[$i];
+                        $redundantInfo->cityId = $schoolCity;
+                        $redundantInfo->email = "";
+                        $redundantInfo->uId = $tmp->id;
+                        $redundantInfo->save();
+
+                        $namayande = new SchoolStudent();
+                        $namayande->uId = $tmp->id;
+                        $namayande->sId = $school->uId;
+                        $namayande->save();
+
+                        $out[$counter++] = "نام کاربری دانش آموز " . $firstNameArr[$i] . ' ' . $lastNameArr[$i] . " :" . $username . " - رمز عبور: " . $pas;
+                    }
+                    catch (Exception $x) {
+                        $tmp->delete();
+                        $redundantInfo->delete();
+                    }
+                }
+
+                echo json_encode(["status" => "ok", "msg" => $out]);
+                return;
+            }
+        }
+        else {
+            if(isset($_POST["firstNameArr"]) && isset($_POST["lasNameArr"]) &&
+                isset($_POST["NIDArr"]) && isset($_POST["sexArr"]) && isset($_POST["gradeArr"])) {
+
+                $firstNameArr = $_POST["firstNameArr"];
+                $lastNameArr = $_POST["lasNameArr"];
+                $NIDArr = $_POST["NIDArr"];
+                $sexArr = $_POST["sexArr"];
+                $gradeArr = $_POST["gradeArr"];
+                $school = School::whereUId($user->id)->first();
+
+                for ($i = 0; $i < count($firstNameArr); $i++) {
+
+                    if (User::whereNID($NIDArr[$i])->count() > 0 || !_custom_check_national_code($NIDArr[$i])) {
+                        echo json_encode(["status" => "nok", "msg" => "کد ملی " . $NIDArr[$i] . " یا معتبر نیست و یا در سامانه موجود است"]);
+                        return;
+                    }
+                }
+
+                for ($i = 0; $i < count($firstNameArr); $i++) {
+                    $tmp = new User();
+                    $tmp->firstName = $firstNameArr[$i];
+                    $tmp->lastName = $lastNameArr[$i];
+                    $tmp->level = getValueInfo("studentLevel");
+                    $pas = generateActivationCode();
+                    $username = $this->generateUserName();
+                    $tmp->invitationCode = $pas;
+                    $tmp->username = $username;
+                    $tmp->password = Hash::make($pas);
+                    $tmp->status = 1;
+                    $tmp->sex = $sexArr[$i];
+                    $tmp->NID = $NIDArr[$i];
+                    $redundantInfo = new RedundantInfo1();
+
+                    try {
+                        $tmp->save();
+
+                        charge(PointConfig::first()->init, $tmp->id, getValueInfo('initTransaction'), getValueInfo('money2'));
+
+                        $redundantInfo->gradeId = $gradeArr[$i];
+                        $redundantInfo->cityId = $school->cityId;
+                        $redundantInfo->email = "";
+                        $redundantInfo->uId = $tmp->id;
+                        $redundantInfo->save();
+
+                        $namayande = new SchoolStudent();
+                        $namayande->uId = $tmp->id;
+                        $namayande->sId = $user->id;
+                        $namayande->save();
+
+                        $out[$counter++] = "نام کاربری دانش آموز " . $firstNameArr[$i] . ' ' . $lastNameArr[$i] . " :" . $username . " - رمز عبور: " . $pas;
+                    }
+                    catch (Exception $x) {
+                        $tmp->delete();
+                        $redundantInfo->delete();
+                    }
+                }
+                echo json_encode(["status" => "ok", "msg" => $out]);
+                return;
+            }
+        }
     }
 
     public function groupRegistration($err = "") {

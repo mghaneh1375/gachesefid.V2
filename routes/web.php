@@ -84,6 +84,10 @@ Route::group(array('middleware' => ['nothing', 'auth', 'schoolLevel']), function
 
 	Route::get('groupRegistration', array('as' => 'groupRegistration', 'uses' => 'RegistrationController@groupRegistration'));
 
+	Route::get('oneByOneRegistration', array('as' => 'oneByOneRegistration', 'uses' => 'RegistrationController@oneByOneRegistration'));
+
+	Route::post('doOneByOneRegistration', array('as' => 'doOneByOneRegistration', 'uses' => 'RegistrationController@doOneByOneRegistration'));
+	
 	Route::post('doGroupRegistry', array('as' => 'doGroupRegistry', 'uses' => 'RegistrationController@doGroupRegistry'));
 
 	Route::get('groupQuizRegistration', array('as' => 'groupQuizRegistration', 'uses' => 'RegistrationController@groupQuizRegistration'));
@@ -153,6 +157,8 @@ Route::group(array('middleware' => ['nothing', 'auth']), function () {
 
 	Route::get('userInfo', array('as' => 'userInfo', 'uses' => 'HomeController@userInfo'));
 
+	Route::post('setAsMySchool', array('as' => 'setAsMySchool', 'uses' => 'HomeController@setAsMySchool'));
+	
 	Route::get('userInfo/{selectedPart}', array('as' => 'userInfo2', 'uses' => 'HomeController@userInfo2'));
 
 	Route::get('logout', array('as' => 'logout', 'uses' => 'HomeController@logout'));
@@ -235,7 +241,7 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 	Route::get('studentReport/{mode?}/{key?}/{page?}', array('as' => 'studentReport', 'uses' => 'ReportController@studentReport'));
 
 	Route::post('doEditUser', array('as' => 'doEditUser', 'uses' => 'ReportController@doEditUser'));
-	
+
 	Route::post('doRemoveUser', array('as' => 'doRemoveUser', 'uses' => 'ReportController@doRemoveUser'));
 
 	Route::get('studentReportPage/{page}', array('as' => 'studentReportPage', 'uses' => 'ReportController@studentReport'));

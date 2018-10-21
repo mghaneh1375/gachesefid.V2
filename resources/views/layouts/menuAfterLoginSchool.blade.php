@@ -7,6 +7,9 @@
             <li id="menu-item-1982" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-icon menu-item-1982"><a href="{{route('groupRegistration')}}" ><i class="menu-item-icon fa fa-check-square-o" ></i>ثبت لیست دانش‌آموزان<i
                             class="seoicon-right-arrow"
                     ></i></a></li>
+            <li id="menu-item-23001" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-icon menu-item-1982"><a href="{{route('oneByOneRegistration')}}" ><i class="menu-item-icon fa fa-edit" ></i>ثبت تکی تکی دانش‌آموزان<i
+                            class="seoicon-right-arrow"
+                    ></i></a></li>
             <li id="menu-item-1983" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-icon menu-item-1983"><a href="{{route('schoolStudent', ['sId' => Auth::user()->id])}}" ><i class="menu-item-icon fa fa-edit" ></i>گزارش گیری از دانش آموزان<i class="seoicon-right-arrow"
                     ></i></a></li>
 

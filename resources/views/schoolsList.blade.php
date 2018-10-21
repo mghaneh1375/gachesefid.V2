@@ -11,6 +11,7 @@
             background-color: #dddddd;
         }
     </style>
+
 @stop
 
 @section('caption')
@@ -20,6 +21,11 @@
 @stop
 
 @section('main')
+    
+    <?php
+        $allowShowSchoolCode = \Illuminate\Support\Facades\Auth::check() && (\Illuminate\Support\Facades\Auth::user()->level != getValueInfo('studentLevel'));
+    ?>
+    
     <center style="margin-top: 50px">
             <table id="table">
                 <tr>
@@ -29,17 +35,21 @@
                     <td data-sort="asc" data-col="3" style="cursor: pointer" class="alphabeticallySortable"><span>نوع مدرسه</span><span class="sortIcon" id="sortIcon_3"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
                     <td data-sort="asc" data-col="4" style="cursor: pointer" class="alphabeticallySortable"><span>مقطع</span><span class="sortIcon" id="sortIcon_4"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
                     <td data-sort="asc" data-col="5" style="cursor: pointer" class="alphabeticallySortable"><span>جنسیت</span><span class="sortIcon" id="sortIcon_5"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
-                    <td>کد مدرسه</td>
+                    @if($allowShowSchoolCode)
+                        <td>کد مدرسه</td>
+                    @endif
                 </tr>
                 @foreach($users as $user)
                     <tr>
-                        <td class="schoolName">{{$user->schoolName}}</td>
+                        <td onclick="setAsMySchool('{{$user->id}}')" style="cursor: pointer" data-toggle="tooltip" title="انتخاب به عنوان مدرسه من" class="myTooltip schoolName">{{$user->schoolName}}</td>
                         <td>{{$user->schoolCity}}</td>
                         <td>{{$user->schoolState}}</td>
                         <td>{{$user->schoolKind}}</td>
                         <td>{{$user->schoolLevel}}</td>
                         <td>{{($user->sex == 0) ? 'دخترانه' : 'پسرانه'}}</td>
-                        <td>{{$user->invitationCode}}</td>
+                        @if($allowShowSchoolCode)
+                            <td>{{$user->invitationCode}}</td>
+                        @endif
                     </tr>
                 @endforeach
             </table>
@@ -99,5 +109,22 @@
                 $(this).attr('data-sort', 'asc');
             }
         });
+
+        function setAsMySchool(sId) {
+
+            $.ajax({
+                type: 'post',
+                url: '{{route('setAsMySchool')}}',
+                data: {
+                    'sId': sId
+                },
+                success: function (response) {
+                    if(response == "ok")
+                        document.location.href = '{{route('profile')}}';
+                }
+            });
+
+        }
+
     </script>
 @stop
