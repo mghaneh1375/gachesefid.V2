@@ -75,8 +75,12 @@ class ReportController extends Controller {
 
             $school->schoolLevelId = $school->schoolLevel;
 
-            $school->schoolLevel = ($school->schoolLevel == getValueInfo('motevaseteAval')) ? 'متوسطه اول' :
-                ($school->schoolLevel == getValueInfo('motevaseteDovom')) ? 'متوسطه دوم' : 'دبستان';
+            if($school->schoolLevel == getValueInfo('motevaseteAval'))
+                $school->schoolLevel = 'متوسطه اول';
+            else if($school->schoolLevel == getValueInfo('motevaseteDovom'))
+                $school->schoolLevel = 'متوسطه دوم';
+            else
+                $school->schoolLevel = 'دبستان';
         }
 
         return view('Reports.namayandeSchool', array('schools' => $schools, 'states' => State::all()));

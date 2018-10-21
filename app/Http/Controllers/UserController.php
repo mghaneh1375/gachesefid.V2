@@ -355,6 +355,7 @@ class UserController extends Controller {
                 return Redirect::to('profile');
 
             $user->schoolName = $tmp->name;
+            $user->cityId = $tmp->cityId;
             switch ($tmp->kind) {
                 case getValueInfo('sampadSch'):
                 default:
@@ -379,9 +380,16 @@ class UserController extends Controller {
                     $user->schoolKind = 'هیئت امنایی';
                     break;
             }
+
+            $user->schoolKindId = $tmp->kind;
+            if($tmp->level == getValueInfo('motevaseteAval'))
+                $user->schoolLevel = 'متوسطه اول';
+            else if($tmp->level == getValueInfo('motevaseteDovom'))
+                $user->schoolLevel = 'متوسطه دوم';
+            else
+                $user->schoolLevel = 'دبستان';
             
-            $user->schoolLevel = ($tmp->level == getValueInfo('motevaseteAval')) ? 'متوسطه اول' :
-                ($tmp->level == getValueInfo('motevaseteDovom')) ? 'متوسطه دوم' : 'دبستان';
+            $user->schoolLevelId = $tmp->level;
 
             $tmpCity = City::whereId($tmp->cityId);
             $user->schoolCity = $tmpCity->name;
@@ -394,7 +402,7 @@ class UserController extends Controller {
             $user->schoolNamayande = User::whereId($tmp->nId)->username;
         }
         
-        return view('users', array('mode' => $val, 'users' => $users));
+        return view('users', array('mode' => $val, 'users' => $users, 'states' => State::all()));
     }
 
     public function schoolsExcel() {
@@ -771,6 +779,19 @@ class UserController extends Controller {
 
         }
         return Redirect::to('advisers');
+    }
+
+    public function disableUser() {
+
+        if(isset($_POST["uId"])) {
+
+            $user = User::whereId(makeValidInput($_POST["uId"]));
+
+            if($user != null) {
+                $user->status = 2;
+                $user->save();
+            }
+        }
     }
 
     public function advisers() {

@@ -6,7 +6,7 @@
 
 
 @section('caption')
-    <div class="title">ثبت نام تکی تکی</div>
+    <div class="title">ثبت نام تک تک</div>
     <style>
         input {
             max-width: 200px;
@@ -36,7 +36,11 @@
             <center id="msgPane"></center>
         </div>
 
-
+        <div class="col-xs-12 hidden" id="downloadPane" style="margin: 20px; padding: 10px">
+            <center>
+                <div style="padding: 10px" class="btn btn-danger"><a style="color: white" href='{{URL::asset('registrations/report_' . Auth::user()->id . '.xlsx')}}' download>دانلود فایل اکسل گزارش ثبت نام</a></div>
+            </center>
+        </div>
     </div>
 
 
@@ -185,7 +189,6 @@
                         response = JSON.parse(response);
 
                         if(response.status == "ok"){
-
                             newElement = "";
                             msg = response.msg;
 
@@ -194,6 +197,7 @@
                             }
 
                             $("#msgPane").empty().append(newElement);
+                            $("#downloadPane").removeClass('hidden');
                         }
                         else {
                             $("#msgPane").empty().append(response.msg);
@@ -235,6 +239,7 @@
                         }
 
                         $("#msgPane").empty().append(newElement);
+                        $("#downloadPane").removeClass('hidden');
                     }
                     else {
                         $("#msgPane").empty().append(response.msg);

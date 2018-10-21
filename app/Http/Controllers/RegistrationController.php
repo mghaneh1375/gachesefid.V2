@@ -333,7 +333,23 @@ class RegistrationController extends Controller {
         $user = Auth::user();
         $out = [];
         $counter = 0;
+        $counter2 = 2;
         include_once 'MoneyController.php';
+
+
+        $objPHPExcel = new PHPExcel();
+        $objPHPExcel->getProperties()->setCreator("Gachesefid");
+        $objPHPExcel->getProperties()->setLastModifiedBy("Gachesefid");
+        $objPHPExcel->getProperties()->setTitle("Office 2007 XLSX Test Document");
+        $objPHPExcel->getProperties()->setSubject("Office 2007 XLSX Test Document");
+        $objPHPExcel->getProperties()->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.");
+
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'رمز عبور');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'نام کاربری');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'نام خانوادگی');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام');
 
         if($user->level == getValueInfo('namayandeLevel')) {
             if(isset($_POST["firstNameArr"]) && isset($_POST["lasNameArr"]) &&
@@ -402,12 +418,25 @@ class RegistrationController extends Controller {
                         $namayande->save();
 
                         $out[$counter++] = "نام کاربری دانش آموز " . $firstNameArr[$i] . ' ' . $lastNameArr[$i] . " :" . $username . " - رمز عبور: " . $pas;
+
+                        $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter2), $firstNameArr[$i]);
+                        $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter2), $lastNameArr[$i]);
+                        $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter2), $username);
+                        $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter2), $pas);
+                        $counter2++;
                     }
                     catch (Exception $x) {
                         $tmp->delete();
                         $redundantInfo->delete();
                     }
                 }
+
+                $fileName = __DIR__ . "/../../../public/registrations/report_" . $user->id . ".xlsx";
+
+                $objPHPExcel->getActiveSheet()->setTitle('اطلاعات ثبت نام');
+
+                $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+                $objWriter->save($fileName);
 
                 echo json_encode(["status" => "ok", "msg" => $out]);
                 return;
@@ -464,16 +493,32 @@ class RegistrationController extends Controller {
                         $namayande->save();
 
                         $out[$counter++] = "نام کاربری دانش آموز " . $firstNameArr[$i] . ' ' . $lastNameArr[$i] . " :" . $username . " - رمز عبور: " . $pas;
+
+                        $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter2), $firstNameArr[$i]);
+                        $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter2), $lastNameArr[$i]);
+                        $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter2), $username);
+                        $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter2), $pas);
+                        $counter2++;
+
                     }
                     catch (Exception $x) {
                         $tmp->delete();
                         $redundantInfo->delete();
                     }
                 }
+
+                $fileName = __DIR__ . "/../../../public/registrations/report_" . $user->id . ".xlsx";
+
+                $objPHPExcel->getActiveSheet()->setTitle('اطلاعات ثبت نام');
+
+                $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+                $objWriter->save($fileName);
+
                 echo json_encode(["status" => "ok", "msg" => $out]);
                 return;
             }
         }
+
     }
 
     public function groupRegistration($err = "") {

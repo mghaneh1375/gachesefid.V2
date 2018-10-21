@@ -241,7 +241,7 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 	Route::get('studentReport/{mode?}/{key?}/{page?}', array('as' => 'studentReport', 'uses' => 'ReportController@studentReport'));
 
 	Route::post('doEditUser', array('as' => 'doEditUser', 'uses' => 'ReportController@doEditUser'));
-
+	
 	Route::post('doRemoveUser', array('as' => 'doRemoveUser', 'uses' => 'ReportController@doRemoveUser'));
 
 	Route::get('studentReportPage/{page}', array('as' => 'studentReportPage', 'uses' => 'ReportController@studentReport'));
@@ -566,6 +566,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 	Route::post('confirmAdviser', array('as' => 'confirmAdviser', 'uses' => 'UserController@confirmAdviser'));
 
+	Route::post('disableUser', array('as' => 'disableUser', 'uses' => 'UserController@disableUser'));
+	
 	Route::post('removeUser/{mode}', array('as' => 'removeUser', 'uses' => 'UserController@removeUser'));
 
 	Route::get('assignControllers', array('as' => 'assignControllers', 'uses' => 'UserController@assignControllers'));
