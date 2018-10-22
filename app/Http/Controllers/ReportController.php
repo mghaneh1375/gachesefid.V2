@@ -113,7 +113,7 @@ class ReportController extends Controller {
         if($adviser == null || $adviser->level != getValueInfo('adviserLevel'))
             return Redirect::route('home');
 
-        if($adviser->status != 1 && Auth::user()->level != getValueInfo('adminLevel'))
+        if($adviser->status != 1 && Auth::user()->level != getValueInfo('adminLevel') && Auth::user()->level != getValueInfo('superAdminLevel'))
             return Redirect::route('home');
 
         $adviserFields = AdviserFields::whereUID($adviserId)->get();

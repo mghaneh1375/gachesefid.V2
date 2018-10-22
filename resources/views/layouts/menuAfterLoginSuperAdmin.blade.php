@@ -154,7 +154,7 @@
     <li id="menu-item-2020" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-has-icon menu-item-2020">
         <a href="#"><i class="menu-item-icon fa fa-envelope"></i>پیام ها</a>
         <ul class="sub-menu sub-menu-has-icons">
-            <li id="menu-item-1954" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1954"><a href="{{route('message')}}" ><i class="menu-item-icon fa fa-edit"></i>صندوق پیام ها<i class="seoicon-right-arrow" ></i></a></li>
+            <li id="menu-item-1954" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1954"><a href="{{route('smsPanel')}}" ><i class="menu-item-icon fa fa-edit"></i>ارسال پیام های گروهی<i class="seoicon-right-arrow" ></i></a></li>
             <li id="menu-item-1975" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1975"><a href="{{route('controlMsg')}}" ><i class="menu-item-icon fa fa-edit"></i>نظارت بر پیام ها<i class="seoicon-right-arrow" ></i></a></li>
         </ul>
     </li>

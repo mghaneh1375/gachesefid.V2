@@ -51,7 +51,7 @@
                             <td><center>شماره همراه</center></td>
                             <td><center>شماره ثابت</center></td>
                             <td><center>کد مدرسه</center></td>
-                            <td><center>حذف</center></td>
+                            <td><center>عملیات</center></td>
                         </tr>
                         @foreach($users as $user)
                             <tr>
@@ -73,7 +73,7 @@
                                             <span class="glyphicon glyphicon-remove" style="margin-left: 30%"></span>
                                         </button>
 
-                                        <span data-toggle="tooltip" title="ویرایش" onclick="editSchool('{{$user->id}}', '{{$user->firstName}}', '{{$user->lastName}}', '{{$user->sex}}', '{{$user->schoolName}}', '{{$user->schoolKindId}}', '{{$user->cityId}}', '{{$user->phoneNum}}', '{{$user->introducer}}', '{{$user->schoolLevelId}}', '{{$user->username}}')" class="btn btn-primary">
+                                        <span data-toggle="tooltip" title="ویرایش" onclick="editSchool('{{$user->id}}', '{{$user->firstName}}', '{{$user->lastName}}', '{{$user->sex}}', '{{$user->schoolName}}', '{{$user->schoolKindId}}', '{{$user->cityId}}', '{{$user->phoneNum}}', '{{$user->introducer}}', '{{$user->schoolLevelId}}', '{{$user->username}}', '{{$user->namayandeCode}}')" class="btn btn-primary">
                                             <span class="glyphicon glyphicon-edit" style="margin-left: 30%"></span>
                                         </span>
                                     </center>
@@ -290,6 +290,11 @@
                 </div>
 
                 <div class="col-xs-12">
+                    <label for="namayandeCode">کد نمایندگی</label>
+                    <input id="namayandeCode" type="tel">
+                </div>
+
+                <div class="col-xs-12">
                     <label for="usernameSch">نام کاربری</label>
                     <input id="usernameSch" type="text">
                 </div>
@@ -401,9 +406,9 @@
             }
         }
 
-        function editSchool(id, f, l, s, sN, kS, c, p, tP, sL, u) {
+        function editSchool(id, f, l, s, sN, kS, c, p, tP, sL, u, nC) {
             selectedUId = id;
-            getStateCity(c, f, l, s, sN, kS, p, tP, sL, u);
+            getStateCity(c, f, l, s, sN, kS, p, tP, sL, u, nC);
         }
 
         function doEditSchool() {
@@ -424,13 +429,17 @@
                         'lastName': $("#lastNameSch").val(),
                         'schoolCity': $("#city").val(),
                         'sex': $("#sex").val(),
-                        'username': $("#usernameSch").val()
+                        'username': $("#usernameSch").val(),
+                        'namayandeCode': $("#namayandeCode").val()
                     },
                     success: function (response) {
                         if(response == "ok")
                             location.reload();
                         else if (response == "nok1") {
                             $("#msg").empty().append('نام کاربری وارد شده در سامانه موجود است').removeClass('hidden');
+                        }
+                        else if (response == "nok3") {
+                            $("#msg").empty().append('کد نمایندگی وارد شده معتبر نمی باشد').removeClass('hidden');
                         }
                         else {
                             $("#msg").empty().append('مشکلی در انجام عملیات مورد نظر رخ داده است').removeClass('hidden');
@@ -456,7 +465,8 @@
                         'sex': $("#sex").val(),
                         'password': $("#passSch").val(),
                         'confirm': $("#rpassSch").val(),
-                        'username': $("#usernameSch").val()
+                        'username': $("#usernameSch").val(),
+                        'namayandeCode': $("#namayandeCode").val()
                     },
                     success: function (response) {
                         if(response == "ok")
@@ -466,6 +476,9 @@
                         }
                         else if (response == "nok2") {
                             $("#msg").empty().append('رمزعبور وارد شده و تکرار آن یکی نیستند').removeClass('hidden');
+                        }
+                        else if (response == "nok3") {
+                            $("#msg").empty().append('کد نمایندگی وارد شده معتبر نمی باشد').removeClass('hidden');
                         }
                         else {
                             $("#msg").empty().append('مشکلی در انجام عملیات مورد نظر رخ داده است').removeClass('hidden');
@@ -508,7 +521,7 @@
             });
         }
 
-        function getStateCity(cityId, f, l, s, sN, kS, p, tP, sL, u) {
+        function getStateCity(cityId, f, l, s, sN, kS, p, tP, sL, u, nC) {
 
             $.ajax({
                 type: 'post',
@@ -529,6 +542,7 @@
                     $("#telPhone").val(tP);
                     $("#sex").val(s);
                     $("#usernameSch").val(u);
+                    $("#namayandeCode").val(nC);
 
                     $("#editSchool").removeClass('hidden');
                 }

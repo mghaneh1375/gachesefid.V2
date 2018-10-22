@@ -32,21 +32,38 @@ class UserController extends Controller {
         if(isset($_POST["firstName"]) && isset($_POST["lastName"]) && isset($_POST["schoolName"]) &&
             isset($_POST["schoolLevel"]) && isset($_POST["kindSchool"]) && isset($_POST["uId"]) && 
             isset($_POST["schoolCity"]) && isset($_POST["phone"]) && isset($_POST["telPhone"]) &&
-            isset($_POST["sex"]) && isset($_POST["username"])) {
+            isset($_POST["sex"])) {
 
-            $tmp2 = School::whereUId(makeValidInput($_POST["uId"]))->first();
+            $uId = makeValidInput($_POST["uId"]);
+
+            $tmp2 = School::whereUId($uId)->first();
 
             if($tmp2 == null)
                 return;
 
-            $user = User::whereId(makeValidInput($_POST["uId"]));
+            $tmpNamayande = null;
+
+            if(isset($_POST["namayandeCode"])) {
+                $nC = makeValidInput($_POST["namayandeCode"]);
+                $namayande = User::whereInvitationCode($nC)->first();
+                if($namayande == null) {
+                    echo "nok3";
+                    return;
+                }
+                NamayandeSchool::whereSId($uId)->delete();
+                $tmpNamayande = new NamayandeSchool();
+                $tmpNamayande->sId = $uId;
+                $tmpNamayande->nId = $namayande->id;
+            }
+
+            $user = User::whereId($uId);
             $user->firstName = makeValidInput($_POST["firstName"]);
             $user->lastName = makeValidInput($_POST["lastName"]);
             $user->phoneNum = makeValidInput($_POST["phone"]);
             $user->sex = makeValidInput($_POST["sex"]);
             $user->introducer = makeValidInput($_POST["telPhone"]);
 
-            if($user->username != makeValidInput($_POST["username"]))
+            if(isset($_POST["username"]) && $user->username != makeValidInput($_POST["username"]))
                 $user->username = makeValidInput($_POST["username"]);
 
             if(isset($_POST["confirm"]) && isset($_POST["password"])) {
@@ -62,11 +79,14 @@ class UserController extends Controller {
 
             try {
                 $user->save();
+                if($tmpNamayande != null)
+                    $tmpNamayande->save();
                 $tmp2->name = makeValidInput($_POST["schoolName"]);
                 $tmp2->level = makeValidInput($_POST["schoolLevel"]);
                 $tmp2->kind = makeValidInput($_POST["kindSchool"]);
                 $tmp2->cityId = makeValidInput($_POST["schoolCity"]);
                 $tmp2->save();
+
                 echo "ok";
             }
             catch (Exception $x) {
@@ -417,7 +437,9 @@ class UserController extends Controller {
             if($tmp == null)
                 return Redirect::to('profile');
 
-            $user->schoolNamayande = User::whereId($tmp->nId)->username;
+            $tmpUser = User::whereId($tmp->nId);
+            $user->schoolNamayande = $tmpUser->username;
+            $user->namayandeCode = $tmpUser->invitationCode;
         }
         
         return view('users', array('mode' => $val, 'users' => $users, 'states' => State::all()));
