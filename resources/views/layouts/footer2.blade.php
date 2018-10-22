@@ -86,7 +86,7 @@
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<span class="site-copyright-text">
-							کلیه حقوق برای <a href="https://gachpub.com">انتشارات گچ </a>محفوظ است، یکی از سایت‌های مجموعه <a href="https://irysc.com">آیریسک </a>که توسط نخبگان علمی ایران اداره می‌شود.
+							کلیه حقوق برای <a href="http://gachpub.com">انتشارات گچ </a>محفوظ است، یکی از سایت‌های مجموعه <a href="https://irysc.com">آیریسک </a>که توسط نخبگان علمی ایران اداره می‌شود.
                         </span>
                     <svg class="back-to-top"></svg>
 
