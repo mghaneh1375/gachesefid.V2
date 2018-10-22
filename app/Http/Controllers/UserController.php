@@ -32,7 +32,7 @@ class UserController extends Controller {
         if(isset($_POST["firstName"]) && isset($_POST["lastName"]) && isset($_POST["schoolName"]) &&
             isset($_POST["schoolLevel"]) && isset($_POST["kindSchool"]) && isset($_POST["uId"]) && 
             isset($_POST["schoolCity"]) && isset($_POST["phone"]) && isset($_POST["telPhone"]) &&
-            isset($_POST["sex"])) {
+            isset($_POST["sex"]) && isset($_POST["username"])) {
 
             $tmp2 = School::whereUId(makeValidInput($_POST["uId"]))->first();
 
@@ -46,17 +46,35 @@ class UserController extends Controller {
             $user->sex = makeValidInput($_POST["sex"]);
             $user->introducer = makeValidInput($_POST["telPhone"]);
 
-            $user->save();
+            if($user->username != makeValidInput($_POST["username"]))
+                $user->username = makeValidInput($_POST["username"]);
 
-            $tmp2->name = makeValidInput($_POST["schoolName"]);
-            $tmp2->level = makeValidInput($_POST["schoolLevel"]);
-            $tmp2->kind = makeValidInput($_POST["kindSchool"]);
-            $tmp2->cityId = makeValidInput($_POST["schoolCity"]);
-            $tmp2->save();
+            if(isset($_POST["confirm"]) && isset($_POST["password"])) {
+                $pas = makeValidInput($_POST["password"]);
+                $confirm = makeValidInput($_POST["confirm"]);
+                if($pas == $confirm)
+                    $user->password = Hash::make($pas);
+                else {
+                    echo "nok2";
+                    return;
+                }
+            }
 
-            echo "ok";
-            
+            try {
+                $user->save();
+                $tmp2->name = makeValidInput($_POST["schoolName"]);
+                $tmp2->level = makeValidInput($_POST["schoolLevel"]);
+                $tmp2->kind = makeValidInput($_POST["kindSchool"]);
+                $tmp2->cityId = makeValidInput($_POST["schoolCity"]);
+                $tmp2->save();
+                echo "ok";
+            }
+            catch (Exception $x) {
+                echo "nok1";
+            }
+            return;
         }
+        echo "nok2";
     }
 
     public function changeSchoolCode() {

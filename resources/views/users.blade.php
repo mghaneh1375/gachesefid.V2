@@ -73,7 +73,7 @@
                                             <span class="glyphicon glyphicon-remove" style="margin-left: 30%"></span>
                                         </button>
 
-                                        <span data-toggle="tooltip" title="ویرایش" onclick="editSchool('{{$user->id}}', '{{$user->firstName}}', '{{$user->lastName}}', '{{$user->sex}}', '{{$user->schoolName}}', '{{$user->schoolKindId}}', '{{$user->cityId}}', '{{$user->phoneNum}}', '{{$user->introducer}}', '{{$user->schoolLevelId}}')" class="btn btn-primary">
+                                        <span data-toggle="tooltip" title="ویرایش" onclick="editSchool('{{$user->id}}', '{{$user->firstName}}', '{{$user->lastName}}', '{{$user->sex}}', '{{$user->schoolName}}', '{{$user->schoolKindId}}', '{{$user->cityId}}', '{{$user->phoneNum}}', '{{$user->introducer}}', '{{$user->schoolLevelId}}', '{{$user->username}}')" class="btn btn-primary">
                                             <span class="glyphicon glyphicon-edit" style="margin-left: 30%"></span>
                                         </span>
                                     </center>
@@ -199,6 +199,16 @@
             </div>
 
             <div class="col-xs-12">
+                <label for="pass">رمزعبور جدید</label>
+                <input id="pass" type="password">
+            </div>
+
+            <div class="col-xs-12">
+                <label for="rpass">تکرار رمزعبور جدید</label>
+                <input id="rpass" type="password">
+            </div>
+
+            <div class="col-xs-12">
                 <input type="submit" value="تایید" class="btn btn-primary" onclick="doEditUser()">
                 <p class="errorText hidden" id="msg2"></p>
             </div>
@@ -253,6 +263,7 @@
                         @endforeach
                     </select>
                 </div>
+
                 <div class="col-xs-12">
                     <label for="city">شهر</label>
                     <select name="city" class="mySelect" id="city"></select>
@@ -279,9 +290,25 @@
                 </div>
 
                 <div class="col-xs-12">
+                    <label for="usernameSch">نام کاربری</label>
+                    <input id="usernameSch" type="text">
+                </div>
+
+                <div class="col-xs-12">
+                    <label for="passSch">رمزعبور جدید</label>
+                    <input id="passSch" type="password">
+                </div>
+
+                <div class="col-xs-12">
+                    <label for="rpassSch">تکرار رمزعبور جدید</label>
+                    <input id="rpassSch" type="password">
+                </div>
+
+                <div class="col-xs-12">
                     <input type="submit" value="تایید" class="btn btn-primary" onclick="doEditSchool()">
                     <p class="errorText hidden" id="msg"></p>
                 </div>
+
             </div>
         </span>
     @endif
@@ -317,58 +344,138 @@
 
         function doEditUser() {
 
-            $.ajax({
-                type: 'post',
-                url: '{{route('doEditUser')}}',
-                data: {
-                    'uId': selectedUId,
-                    'firstName': $("#firstName").val(),
-                    'lastName': $("#lastName").val(),
-                    'phone': $("#phone").val(),
-                    'username': $("#username").val()
-                },
-                success: function (response) {
-                    if(response == "ok") {
-                        location.reload();
+            if($("#pass").val().length == 0 || $("#rpass").val().length == 0) {
+
+                $.ajax({
+                    type: 'post',
+                    url: '{{route('doEditUser')}}',
+                    data: {
+                        'uId': selectedUId,
+                        'firstName': $("#firstName").val(),
+                        'lastName': $("#lastName").val(),
+                        'phone': $("#phone").val(),
+                        'username': $("#username").val()
+                    },
+                    success: function (response) {
+                        if (response == "ok") {
+                            location.reload();
+                        }
+                        else if (response == "nok1") {
+                            $("#msg2").empty().append('نام کاربری وارد شده در سامانه موجود است').removeClass('hidden');
+                        }
+                        else {
+                            $("#msg2").empty().append('مشکلی در انجام عملیات مورد نظر رخ داده است').removeClass('hidden');
+                        }
                     }
-                    else if(response == "nok1"){
-                        $("#msg2").empty().append('نام کاربری وارد شده در سامانه موجود است').removeClass('hidden');
+                });
+            }
+            else {
+
+                $.ajax({
+                    type: 'post',
+                    url: '{{route('doEditUser')}}',
+                    data: {
+                        'uId': selectedUId,
+                        'firstName': $("#firstName").val(),
+                        'lastName': $("#lastName").val(),
+                        'phone': $("#phone").val(),
+                        'username': $("#username").val(),
+                        'password': $("#pass").val(),
+                        'confirm': $("#rpass").val()
+                    },
+                    success: function (response) {
+                        if (response == "ok") {
+                            location.reload();
+                        }
+                        else if (response == "nok1") {
+                            $("#msg2").empty().append('نام کاربری وارد شده در سامانه موجود است').removeClass('hidden');
+                        }
+                        else if (response == "nok2") {
+                            $("#msg2").empty().append('رمزعبور وارد شده و تکرار آن یکی نیستند').removeClass('hidden');
+                        }
+                        else {
+                            $("#msg2").empty().append('مشکلی در انجام عملیات مورد نظر رخ داده است').removeClass('hidden');
+                        }
                     }
-                    else {
-                        $("#msg2").empty().append('مشکلی در انجام عملیات مورد نظر رخ داده است').removeClass('hidden');
-                    }
-                }
-            });
+                });
+            }
         }
 
-        function editSchool(id, f, l, s, sN, kS, c, p, tP, sL) {
+        function editSchool(id, f, l, s, sN, kS, c, p, tP, sL, u) {
             selectedUId = id;
-            getStateCity(c, f, l, s, sN, kS, p, tP, sL);
+            getStateCity(c, f, l, s, sN, kS, p, tP, sL, u);
         }
 
         function doEditSchool() {
 
-            $.ajax({
-                type: 'post',
-                url: '{{route('editSchool')}}',
-                data: {
-                    'uId': selectedUId,
-                    'firstName': $("#firstNameSch").val(),
-                    'schoolName': $("#schoolName").val(),
-                    'phone': $("#phoneSch").val(),
-                    'telPhone': $("#telPhone").val(),
-                    'kindSchool': $("#kindSchool").val(),
-                    'schoolLevel': $("#schoolLevel").val(),
-                    'lastName': $("#lastNameSch").val(),
-                    'schoolCity': $("#city").val(),
-                    'sex': $("#sex").val()
-                },
-                success: function (response) {
-                    if(response == "ok")
-                        location.reload();
-                }
-            });
+            if($("#passSch").val().length == 0 || $("#rpassSch").val().length == 0) {
+
+                $.ajax({
+                    type: 'post',
+                    url: '{{route('editSchool')}}',
+                    data: {
+                        'uId': selectedUId,
+                        'firstName': $("#firstNameSch").val(),
+                        'schoolName': $("#schoolName").val(),
+                        'phone': $("#phoneSch").val(),
+                        'telPhone': $("#telPhone").val(),
+                        'kindSchool': $("#kindSchool").val(),
+                        'schoolLevel': $("#schoolLevel").val(),
+                        'lastName': $("#lastNameSch").val(),
+                        'schoolCity': $("#city").val(),
+                        'sex': $("#sex").val(),
+                        'username': $("#usernameSch").val()
+                    },
+                    success: function (response) {
+                        if(response == "ok")
+                            location.reload();
+                        else if (response == "nok1") {
+                            $("#msg").empty().append('نام کاربری وارد شده در سامانه موجود است').removeClass('hidden');
+                        }
+                        else {
+                            $("#msg").empty().append('مشکلی در انجام عملیات مورد نظر رخ داده است').removeClass('hidden');
+                        }
+                    }
+                });
+            }
+            else {
+
+                $.ajax({
+                    type: 'post',
+                    url: '{{route('editSchool')}}',
+                    data: {
+                        'uId': selectedUId,
+                        'firstName': $("#firstNameSch").val(),
+                        'schoolName': $("#schoolName").val(),
+                        'phone': $("#phoneSch").val(),
+                        'telPhone': $("#telPhone").val(),
+                        'kindSchool': $("#kindSchool").val(),
+                        'schoolLevel': $("#schoolLevel").val(),
+                        'lastName': $("#lastNameSch").val(),
+                        'schoolCity': $("#city").val(),
+                        'sex': $("#sex").val(),
+                        'password': $("#passSch").val(),
+                        'confirm': $("#rpassSch").val(),
+                        'username': $("#usernameSch").val()
+                    },
+                    success: function (response) {
+                        if(response == "ok")
+                            location.reload();
+                        else if (response == "nok1") {
+                            $("#msg").empty().append('نام کاربری وارد شده در سامانه موجود است').removeClass('hidden');
+                        }
+                        else if (response == "nok2") {
+                            $("#msg").empty().append('رمزعبور وارد شده و تکرار آن یکی نیستند').removeClass('hidden');
+                        }
+                        else {
+                            $("#msg").empty().append('مشکلی در انجام عملیات مورد نظر رخ داده است').removeClass('hidden');
+                        }
+                    }
+                });
+
+            }
         }
+
         function getCities(cityId) {
 
             if($("#state").val() == -1) {
@@ -401,7 +508,7 @@
             });
         }
 
-        function getStateCity(cityId, f, l, s, sN, kS, p, tP, sL) {
+        function getStateCity(cityId, f, l, s, sN, kS, p, tP, sL, u) {
 
             $.ajax({
                 type: 'post',
@@ -421,6 +528,7 @@
                     $("#phoneSch").val(p);
                     $("#telPhone").val(tP);
                     $("#sex").val(s);
+                    $("#usernameSch").val(u);
 
                     $("#editSchool").removeClass('hidden');
                 }
