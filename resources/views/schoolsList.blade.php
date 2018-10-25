@@ -16,7 +16,7 @@
 
 @section('caption')
     <div class="title" style="width: 500px !important;">
-        لیست کل مدارس
+        لیست مدارس همکار آیریسک
     </div>
 @stop
 
@@ -27,6 +27,9 @@
     ?>
     
     <center style="margin-top: 50px">
+        <p>
+            برای انتخاب مدرسه خود، روی نام آن کلیک کنید
+        </p>
             <table id="table">
                 <tr>
                     <td data-sort="asc" data-col="0" class="alphabeticallySortable" style="cursor: pointer"><span>نام مدرسه</span><span class="sortIcon" id="sortIcon_0"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
