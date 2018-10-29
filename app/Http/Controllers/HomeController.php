@@ -139,10 +139,17 @@ class HomeController extends Controller {
 			$val = makeValidInput($_POST["val"]);
 			$mode = makeValidInput($_POST["mode"]); // 1 : email - 2 : phone
 			$user = User::whereUsername($username)->first();
-			if ($user == null || empty($user)) {
-				echo "نام کاربری وارد شده معتبر نمی باشد";
-				return;
+			if ($user == null) {
+				$user = User::whereNID($username)->first();
+				if ($user == null) {
+					$user = User::wherePhoneNum($username)->first();
+					if ($user == null) {
+						echo "نام کاربری وارد شده معتبر نمی باشد";
+						return;
+					}
+				}
 			}
+
 			if ($mode == 1) {
 				if (RedundantInfo1::whereUId($user->id)->first()->email != $val) {
 					echo "ایمیل وارد شده صحیح نمی باشد";

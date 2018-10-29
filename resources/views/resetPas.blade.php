@@ -105,7 +105,7 @@
                 <div style="padding-right: 15px;padding-top: 17px;text-align: right;" class="col one">
 
                     <div style="padding: 10px; padding-right: 0; border-bottom: 2px dotted black">
-                        <label style="min-width: 100px">نام کاربری</label>
+                        <label style="min-width: 100px">نام کاربری یا کد ملی یا شماره همراه</label>
                         <input type="text" id="username" name="username" maxlength="40" required><span class="required">*</span>
                     </div>
 
