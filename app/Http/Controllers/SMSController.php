@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\models\QuizRegistry;
 use App\models\RegularQuiz;
 use App\models\SMSQueue;
 use App\models\SMSTemplate;
@@ -145,7 +146,15 @@ class SMSController extends Controller {
                 else
                     $quiz = SystemQuiz::whereId($quiz);
 
+                if($quiz == null) {
+                    echo "nok2";
+                    return;
+                }
+
                 foreach ($uIds as $itr) {
+
+                    if(QuizRegistry::whereUId($itr->id)->whereQId($quiz->id)->whereQuizMode($quizMode)->count() == 0)
+                        continue;
 
                     $user = User::whereId($itr->id);
 
