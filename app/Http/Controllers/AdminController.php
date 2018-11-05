@@ -6,10 +6,14 @@ use App\models\AdviserQuestion;
 use App\models\AnswerSheetTemplates;
 use App\models\AnswerAnswerSheetTemplates;
 use App\models\AnswerTemplate;
+use App\models\City;
+use App\models\RedundantInfo1;
 use App\models\RegularQOQ;
 use App\models\RegularQuiz;
 use App\models\QuizRegistry;
 use App\models\RegularQuizQueue;
+use App\models\School;
+use App\models\SchoolStudent;
 use App\models\Transaction;
 use App\models\User;
 use Exception;
@@ -18,6 +22,108 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 
 class AdminController extends Controller {
+
+    public function getExams() {
+
+        $exams = RegularQuiz::select('id', 'name', 'startDate')->get();
+
+        foreach ($exams as $exam) {
+
+            if ($exam->id < 100) {
+                if ($exam->id < 10)
+                    $exam->id = "00" . $exam->id;
+                else
+                    $exam->id = "0" . $exam->id;
+            }
+
+            $exam->startDate = convertStringToDate($exam->startDate);
+        }
+
+        echo json_encode($exams);
+    }
+
+    public function getMyStudents() {
+
+        if(isset($_POST["qId"]) && isset($_POST["username"]) && isset($_POST["password"])) {
+
+            $user = User::whereUsername(makeValidInput($_POST["username"]))->first();
+
+            if($user == null) {
+                echo "loginFailed";
+                return;
+            }
+
+            if(!Hash::check(makeValidInput($_POST["password"]), $user->password)) {
+                echo "loginFailed";
+                return;
+            }
+
+            if($user->level == getValueInfo('studentLevel')) {
+                echo "accessDenied";
+                return;
+            }
+
+            $qId = makeValidInput($_POST["qId"]);
+
+            if($user->level == getValueInfo('namayandeLevel'))
+                echo json_encode(DB::select("select u.firstName, u.lastName, s.name as school, c.name as city from city c, school s, namayandeSchool nS, users u, schoolStudent sS, quizRegistry q WHERE q.quizMode = " . getValueInfo('regularQuiz') . " and c.id = s.cityId and sS.sId = s.uId and u.id = sS.uId and nS.sId = sS.sId and sS.uId = q.uId and q.qId = " . $qId . " and nS.nId = " . $user->id));
+
+            else if($user->level == getValueInfo('schoolLevel'))
+                echo json_encode(DB::select("select u.firstName, u.lastName, s.name as school, c.name as city from city c, school s, users u, schoolStudent sS, quizRegistry q WHERE q.quizMode = " . getValueInfo('regularQuiz') . " and c.id = s.cityId and sS.sId = s.uId and u.id = sS.uId and sS.uId = q.uId and q.qId = " . $qId . " and sS.sId = " . $user->id));
+
+            else if($user->level == getValueInfo('adminLevel') || $user->level == getValueInfo('superAdminLevel')) {
+
+                $usersTmp = DB::select("select u.id, u.firstName, u.lastName from users u, quizRegistry q WHERE q.quizMode = " . getValueInfo('regularQuiz') . " and q.uId = u.id and q.qId = " . $qId);
+
+                if($usersTmp != null && count($usersTmp) > 0) {
+
+                    foreach ($usersTmp as $itr) {
+
+                        $r = RedundantInfo1::whereUId($itr->id)->first();
+
+                        if ($r != null)
+                            $itr->city = City::whereId($r->cityId)->name;
+                        else
+                            $itr->city = "نامشخص";
+
+                        $s = SchoolStudent::whereUId($itr->id)->first();
+                        if($s != null)
+                            $itr->school = School::whereUId($s->sId)->first()->name;
+                        else
+                            $itr->school = "نامشخص";
+                    }
+
+                    echo json_encode($usersTmp);
+                }
+            }
+
+            else if($user->level == getValueInfo('adviserLevel')) {
+
+                $usersTmp = DB::select("select u.id, u.firstName, u.lastName from users u, quizRegistry q, studentsAdviser sA WHERE sA.studentId = u.id and sA.adviserId = " . $user->id . " and q.quizMode = " . getValueInfo('regularQuiz') . " and q.uId = u.id and q.qId = " . $qId);
+
+                if($usersTmp != null && count($usersTmp) > 0) {
+
+                    foreach ($usersTmp as $itr) {
+
+                        $r = RedundantInfo1::whereUId($itr->id)->first();
+
+                        if ($r != null)
+                            $itr->city = City::whereId($r->cityId)->name;
+                        else
+                            $itr->city = "نامشخص";
+
+                        $s = SchoolStudent::whereUId($itr->id)->first();
+                        if($s != null)
+                            $itr->school = School::whereUId($s->sId)->first()->name;
+                        else
+                            $itr->school = "نامشخص";
+                    }
+
+                    echo json_encode($usersTmp);
+                }
+            }
+        }
+    }
 
     public function answer_sheet_templates() {
 

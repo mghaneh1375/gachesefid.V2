@@ -18,7 +18,9 @@ class VerifyCsrfToken extends Middleware
         'getROQ',
         'checkAuth',
         'multiPaymentPostQuiz/*',
-        'paymentPostQuiz/*'
+        'paymentPostQuiz/*',
+        'getExams',
+        'getMyStudents'
     ];
 }
 

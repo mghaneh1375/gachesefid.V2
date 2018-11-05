@@ -6,6 +6,10 @@ Route::post('doRegistration', 'RegistrationController@doRegistration')->name('do
 
 Route::post('get_exam_answer_sheet_template/{exam_id}', array('as' => 'get_exam_answer_sheet_template', 'uses' => 'AdminController@get_exam_answer_sheet_template'));
 
+Route::post('getExams', ['as' => 'getExams', 'uses' => 'AdminController@getExams']);
+
+Route::post('getMyStudents', ['as' => 'getMyStudents', 'uses' => 'AdminController@getMyStudents']);
+
 Route::get('alaki', function () {
 	return view('alaki');
 });
