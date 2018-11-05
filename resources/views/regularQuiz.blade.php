@@ -41,6 +41,8 @@
             }
         }
 
+        var tryCounter = 0;
+
         function submitC(val) {
 
             answer[qIdx].result = val;
@@ -57,9 +59,50 @@
                     'newVal': answer[qIdx].result
                 },
                 error: function (response) {
-                    alert('Something went wrong' + response.responseText);
+                    submitCBackUp(questionArr[qIdx].id, val);
                 }
             });
+        }
+
+        function submitCBackUp(qId, res) {
+
+            if(tryCounter >= 100) {
+
+                setTimeout(function () {
+
+                    $.ajax({
+                        type: 'post',
+                        url: submitAns,
+                        data: {
+                            'questionId': qId,
+                            'quizId': quizId,
+                            'newVal': res
+                        },
+                        error: function (response) {
+                            submitCBackUp(qId, res);
+                        }
+                    });
+
+                    tryCounter = 0;
+
+                }, 30 * 1000);
+                return;
+            }
+
+            $.ajax({
+                type: 'post',
+                url: submitAns,
+                data: {
+                    'questionId': qId,
+                    'quizId': quizId,
+                    'newVal': res
+                },
+                error: function (response) {
+                    submitCBackUp(qId, res);
+                }
+            });
+
+            tryCounter++;
         }
 
         function incQ() {

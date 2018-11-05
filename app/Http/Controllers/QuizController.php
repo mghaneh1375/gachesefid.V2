@@ -2335,7 +2335,7 @@ sumTaraz DESC');
             $quizId = makeValidInput($_POST["quizId"]);
 
             if($question == null) {
-                echo "nok";
+                echo "nok2";
                 return;
             }
 
@@ -2351,12 +2351,13 @@ sumTaraz DESC');
                 if($roq->status == 0) {
 
                     if($question->kindQ == 1 && ($newVal > $question->choicesCount || $newVal < 0)) {
-                        echo "nok2";
+                        echo "nok3";
                         return;
                     }
 
                     $roq->result = $newVal;
                     $roq->save();
+                    echo "ok";
                 }
                 else
                     echo "noAccess";
@@ -2365,7 +2366,7 @@ sumTaraz DESC');
             }
         }
 
-        echo "nok";
+        echo "nok2";
     }
 
     public function submitAnsSelfQuiz() {
