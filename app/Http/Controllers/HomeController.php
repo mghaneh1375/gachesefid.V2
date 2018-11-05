@@ -543,18 +543,27 @@ class HomeController extends Controller {
 			$username = makeValidInput($_POST["username"]);
 			$NID = makeValidInput($_POST["NID"]);
 
-			if($user->username != $username && User::whereUsername($username)->count() > 0) {
+			if($user->username != $username && User::whereUsername($username)->count() > 0)
 				$msg = "نام کاربری وارد شده در سیستم موجود است";
-			}
 			else {
 
 				$user->firstName = makeValidInput($_POST["firstName"]);
 				$user->lastName = makeValidInput($_POST["lastName"]);
 
-				if(User::whereNID($NID)->count() > 0 || !_custom_check_national_code($NID))
-					$msg = "کد ملی وارد شده معتبر نمی باشد";
+				$allow = true;
 
-				else {
+				if($user->NID != $NID) {
+					if(User::whereNID($NID)->count() > 0) {
+						$msg = "کد ملی وارد شده در سامانه موجود است";
+						$allow = false;
+					}
+					if (!_custom_check_national_code($NID)) {
+						$msg = "کد ملی وارد شده معتبر نمی باشد";
+						$allow = false;
+					}
+				}
+
+				if($allow) {
 					$user->NID = $NID;
 					$user->username = $username;
 					$user->save();
@@ -597,9 +606,8 @@ class HomeController extends Controller {
 				}
 			}
 		}
-		else {
+		else
 			$msg = "خطایی در انجام عملیات مورد نظر رخ داده است";
-		}
 
 		if(empty($msg))
 			return Redirect::to('userInfo');
@@ -610,7 +618,7 @@ class HomeController extends Controller {
 	public function editRedundantInfo1() {
 
 		if(isset($_POST['fatherName']) && isset($_POST['cityId']) &&
-			isset($_POST['schoolName']) && isset($_POST["gradeId"]) && isset($_POST["email"])) {
+			isset($_POST["gradeId"]) && isset($_POST["email"])) {
 
 			$uId = Auth::user()->id;
 			$redundant1 = RedundantInfo1::whereUId($uId)->first();
@@ -625,7 +633,7 @@ class HomeController extends Controller {
 			$redundant1->fatherName = makeValidInput($_POST["fatherName"]);
 			$redundant1->cityId = makeValidInput($_POST["cityId"]);
 			$redundant1->gradeId = makeValidInput($_POST["gradeId"]);
-			$redundant1->schoolName = makeValidInput($_POST["schoolName"]);
+//			$redundant1->schoolName = makeValidInput($_POST["schoolName"]);
 			$redundant1->email = makeValidInput($_POST["email"]);
 
 			$redundant1->save();
@@ -643,7 +651,7 @@ class HomeController extends Controller {
 	public function editRedundantInfo2() {
 
 		if(isset($_POST['address']) && isset($_POST['homePhone']) && isset($_POST['fatherPhone']) &&
-			isset($_POST['motherPhone']) && isset($_POST["homePostCode"]) && isset($_POST["kindSchool"])) {
+			isset($_POST['motherPhone']) && isset($_POST["homePostCode"])) {
 
 			$uId = Auth::user()->id;
 			$redundant2 = RedundantInfo2::whereUId($uId)->first();
@@ -660,7 +668,7 @@ class HomeController extends Controller {
 			$redundant2->fatherPhone = makeValidInput($_POST["fatherPhone"]);
 			$redundant2->motherPhone = makeValidInput($_POST["motherPhone"]);
 			$redundant2->homePostCode = makeValidInput($_POST["homePostCode"]);
-			$redundant2->kindSchool = makeValidInput($_POST["kindSchool"]);
+//			$redundant2->kindSchool = makeValidInput($_POST["kindSchool"]);
 
 			$redundant2->save();
 		}

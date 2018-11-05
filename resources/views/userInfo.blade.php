@@ -202,7 +202,7 @@
                                     <input type="text" readonly value="{{$user->invitationCode}}" required>
                                 </div>
                                 <div class="col-xs-5">
-                                    <span  class="help" data-toggle="tooltip" data-placement="top" title="کد معرفیِ دیگران">
+                                    <span  class="help" data-toggle="tooltip" data-placement="top" title="اگر دیگر دانش آموزان هنگام عضویت این کد را وارد کنند، حساب هر دوی شما 5000 تومان شارژ می شود">
                                         <img src="{{URL::asset('images/help.png')}}" alt="FirstName">
                                     </span>
                                     <span>کد معرفیِ دیگران</span>
@@ -309,14 +309,14 @@
                             </div>
                         </div>
 
-                        <div class="col-xs-12">
-                            <div class="col-xs-7">
-                                <input style="min-width: 200px" type="text" name="schoolName" value="{{(isset($redundant1) && !empty($redundant1->schoolName)) ? $redundant1->schoolName : ''}}" required>
-                            </div>
-                            <div class="col-xs-5">
-                                <span>نام مدرسه</span>
-                            </div>
-                        </div>
+                        {{--<div class="col-xs-12">--}}
+                            {{--<div class="col-xs-7">--}}
+                                {{--<input style="min-width: 200px" type="text" name="schoolName" value="{{(isset($redundant1) && !empty($redundant1->schoolName)) ? $redundant1->schoolName : ''}}" required>--}}
+                            {{--</div>--}}
+                            {{--<div class="col-xs-5">--}}
+                                {{--<span>نام مدرسه</span>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
 
                         <div class="col-xs-12">
                             <div class="col-xs-7">
@@ -407,62 +407,62 @@
                             </div>
                         </div>
 
-                        <div class="col-xs-12">
-                            <div class="col-xs-7">
-                                <select class="mySelect" name="kindSchool" style="min-width: 200px !important;">
-                                    @if(isset($redundant2) && !empty($redundant2->kindSchool)
-                                        && $redundant2->kindSchool == getValueInfo('sampadSch'))
-                                        <option selected value="{{getValueInfo('sampadSch')}}">سمپاد</option>
-                                    @else
-                                        <option value="{{getValueInfo('sampadSch')}}">سمپاد</option>
-                                    @endif
+                        {{--<div class="col-xs-12">--}}
+                            {{--<div class="col-xs-7">--}}
+                                {{--<select class="mySelect" name="kindSchool" style="min-width: 200px !important;">--}}
+                                    {{--@if(isset($redundant2) && !empty($redundant2->kindSchool)--}}
+                                        {{--&& $redundant2->kindSchool == getValueInfo('sampadSch'))--}}
+                                        {{--<option selected value="{{getValueInfo('sampadSch')}}">سمپاد</option>--}}
+                                    {{--@else--}}
+                                        {{--<option value="{{getValueInfo('sampadSch')}}">سمپاد</option>--}}
+                                    {{--@endif--}}
 
-                                    @if(isset($redundant2) && !empty($redundant2->kindSchool)
-                                        && $redundant2->kindSchool == getValueInfo('gheyrSch'))
-                                        <option selected value="{{getValueInfo('gheyrSch')}}">غیر انتفاعی</option>
-                                    @else
-                                        <option value="{{getValueInfo('gheyrSch')}}">غیر انتفاعی</option>
-                                    @endif
+                                    {{--@if(isset($redundant2) && !empty($redundant2->kindSchool)--}}
+                                        {{--&& $redundant2->kindSchool == getValueInfo('gheyrSch'))--}}
+                                        {{--<option selected value="{{getValueInfo('gheyrSch')}}">غیر انتفاعی</option>--}}
+                                    {{--@else--}}
+                                        {{--<option value="{{getValueInfo('gheyrSch')}}">غیر انتفاعی</option>--}}
+                                    {{--@endif--}}
 
-                                    @if(isset($redundant2) && !empty($redundant2->kindSchool)
-                                        && $redundant2->kindSchool == getValueInfo('nemoneSch'))
-                                        <option selected value="{{getValueInfo('nemoneSch')}}">نمونه دولتی</option>
-                                    @else
-                                        <option value="{{getValueInfo('nemoneSch')}}">نمونه دولتی</option>
-                                    @endif
+                                    {{--@if(isset($redundant2) && !empty($redundant2->kindSchool)--}}
+                                        {{--&& $redundant2->kindSchool == getValueInfo('nemoneSch'))--}}
+                                        {{--<option selected value="{{getValueInfo('nemoneSch')}}">نمونه دولتی</option>--}}
+                                    {{--@else--}}
+                                        {{--<option value="{{getValueInfo('nemoneSch')}}">نمونه دولتی</option>--}}
+                                    {{--@endif--}}
 
-                                    @if(isset($redundant2) && !empty($redundant2->kindSchool)
-                                        && $redundant2->kindSchool == getValueInfo('shahedSch'))
-                                        <option selected value="{{getValueInfo('shahedSch')}}">شاهد</option>
-                                    @else
-                                        <option value="{{getValueInfo('shahedSch')}}">شاهد</option>
-                                    @endif
+                                    {{--@if(isset($redundant2) && !empty($redundant2->kindSchool)--}}
+                                        {{--&& $redundant2->kindSchool == getValueInfo('shahedSch'))--}}
+                                        {{--<option selected value="{{getValueInfo('shahedSch')}}">شاهد</option>--}}
+                                    {{--@else--}}
+                                        {{--<option value="{{getValueInfo('shahedSch')}}">شاهد</option>--}}
+                                    {{--@endif--}}
 
-                                    @if(isset($redundant2) && !empty($redundant2->kindSchool)
-                                        && $redundant2->kindSchool == getValueInfo('HeyatSch'))
-                                        <option selected value="{{getValueInfo('HeyatSch')}}">هیات امنایی</option>
-                                    @else
-                                        <option value="{{getValueInfo('HeyatSch')}}">هیات امنایی</option>
-                                    @endif
+                                    {{--@if(isset($redundant2) && !empty($redundant2->kindSchool)--}}
+                                        {{--&& $redundant2->kindSchool == getValueInfo('HeyatSch'))--}}
+                                        {{--<option selected value="{{getValueInfo('HeyatSch')}}">هیات امنایی</option>--}}
+                                    {{--@else--}}
+                                        {{--<option value="{{getValueInfo('HeyatSch')}}">هیات امنایی</option>--}}
+                                    {{--@endif--}}
 
-                                    @if(isset($redundant2) && !empty($redundant2->kindSchool)
-                                        && $redundant2->kindSchool == getValueInfo('dolatiSch'))
-                                        <option selected value="{{getValueInfo('dolatiSch')}}">دولتی</option>
-                                    @else
-                                        <option value="{{getValueInfo('dolatiSch')}}">دولتی</option>
-                                    @endif
-                                    @if(isset($redundant2) && !empty($redundant2->kindSchool)
-                                        && $redundant2->kindSchool == getValueInfo('sayerSch'))
-                                        <option selected value="{{getValueInfo('sayerSch')}}">سایر</option>
-                                    @else
-                                        <option value="{{getValueInfo('sayerSch')}}">سایر</option>
-                                    @endif
-                                </select>
-                            </div>
-                            <div class="col-xs-5">
-                                <span>نوع مدرسه</span>
-                            </div>
-                        </div>
+                                    {{--@if(isset($redundant2) && !empty($redundant2->kindSchool)--}}
+                                        {{--&& $redundant2->kindSchool == getValueInfo('dolatiSch'))--}}
+                                        {{--<option selected value="{{getValueInfo('dolatiSch')}}">دولتی</option>--}}
+                                    {{--@else--}}
+                                        {{--<option value="{{getValueInfo('dolatiSch')}}">دولتی</option>--}}
+                                    {{--@endif--}}
+                                    {{--@if(isset($redundant2) && !empty($redundant2->kindSchool)--}}
+                                        {{--&& $redundant2->kindSchool == getValueInfo('sayerSch'))--}}
+                                        {{--<option selected value="{{getValueInfo('sayerSch')}}">سایر</option>--}}
+                                    {{--@else--}}
+                                        {{--<option value="{{getValueInfo('sayerSch')}}">سایر</option>--}}
+                                    {{--@endif--}}
+                                {{--</select>--}}
+                            {{--</div>--}}
+                            {{--<div class="col-xs-5">--}}
+                                {{--<span>نوع مدرسه</span>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
 
                         <div class="col-xs-12" style="margin-bottom: 10px">
                             <center>
