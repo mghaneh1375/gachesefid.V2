@@ -6,8 +6,7 @@
 
 
 @section('caption')
-    <div class="title">رتبه بندی دانش آموزان
-    </div>
+    <div class="title">50 دانش آموز گچی با بیشترین امتیاز</div>
 @stop
 
 @section('main')
