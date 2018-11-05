@@ -22,7 +22,7 @@
         <table style="padding: 10px">
             <tr>
                 <td><center>نام</center></td>
-                <td><center>میانگین امتیاز</center></td>
+                <td><center>میانگین امتیاز (از 100)</center></td>
                 <td><center>تعداد دانش آموزان</center></td>
                 <td><center>کد مشاور</center></td>
             </tr>

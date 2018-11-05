@@ -50,11 +50,11 @@
             @endforeach
         </table>
 
-        <script src="{{URL::asset('js/paging.js')}}"></script>
+{{--        <script src="{{URL::asset('js/paging.js')}}"></script>--}}
 
-        <div class="col-xs-12" id="pageBar"></div>
-        <script>
-            init('{{route('studentsRanking')}}', '{{$total}}', 10, '{{$page}}', 'pageBar');
-        </script>
+        {{--<div class="col-xs-12" id="pageBar"></div>--}}
+        {{--<script>--}}
+            {{--init('{{route('studentsRanking')}}', '{{$total}}', 10, '{{$page}}', 'pageBar');--}}
+        {{--</script>--}}
     </center>
 @stop

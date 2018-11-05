@@ -95,6 +95,8 @@ class ReportController extends Controller {
         foreach ($advisers as $adviser) {
             if(empty($adviser->rate))
                 $adviser->rate = 'بدون امتیاز';
+            else
+                $adviser->rate = round($adviser->rate * 20, 1);
         }
 
         $myAdvisers = [];
@@ -184,9 +186,11 @@ class ReportController extends Controller {
 
     public function studentsRanking($page = 1) {
 
+        $page = 1;
+
         $users = DB::select('select users.id, firstName, lastName, sum(q.level) * 5 as totalSum from users, ROQ, question q'.
             ' where users.id = uId and q.id = questionId and q.ans = result and users.level = ' . getValueInfo('studentLevel') .
-            ' group by(uId) order by totalSum DESC limit ' . (($page - 1) * 10) . ', 10');
+            ' group by(uId) order by totalSum DESC limit ' . (($page - 1) * 50) . ', 50');
 
         $k = 0;
 
