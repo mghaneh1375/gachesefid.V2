@@ -19,6 +19,7 @@ class VerifyCsrfToken extends Middleware
         'checkAuth',
         'multiPaymentPostQuiz/*',
         'paymentPostQuiz/*',
+        'chargeAccountPost/*',
         'getExams',
         'getMyStudents'
     ];
