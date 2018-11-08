@@ -121,7 +121,7 @@
                         <input type="text" onkeypress="validate(event)" id="phone"/>
                     </div>
                     <center>
-                        <input type="submit" style="margin-top: 20px" onclick="resetPas('notice')" class="btn btn-success" value="بازیابی رمز عبور">
+                        <input type="submit" style="margin-top: 20px; padding: 10px" onclick="resetPas('notice')" class="btn btn-success" value="بازیابی رمز عبور">
                         <div id="msg" class="errorText"  style="visibility: hidden"></div>
                     </center>
                 </div>

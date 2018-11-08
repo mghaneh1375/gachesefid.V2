@@ -45,13 +45,14 @@ function resetPas(noticePane) {
         },
         success: function (response) {
 
-            $(".animatedContainer").removeClass('hidden');
+            $(".animatedContainer").addClass('hidden');
 
-            if(response == "ok")
-                $("#" + noticePane).removeClass('hidden');
-            else {
+            if(response != "ok") {
                 $(".dark").removeClass('hidden');
                 $("#msg").empty().append(response);
+            }
+            else {
+                $("#notice").removeClass('hidden');
             }
         }
     });

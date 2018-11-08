@@ -7,21 +7,20 @@
 
 @section('main')
 
-    <span class="ui_overlay item" style="position: fixed; left: 40%; right: auto; top: 174px; bottom: auto">
-        <div class="header_text">شماره تماس</div>
+    <center class="col-xs-12">
+        <div style="max-width: 500px !important;" class="header_text">شماره تماس</div>
             <div class="body_text">
                 <form method="post" action="{{route('getActivation')}}">
                     {{csrf_field()}}
                     <input type="text" name="phoneNum" maxlength="50" autofocus>
-                    <div class="submitOptions" style="margin-top: 10px">
+                    <center class="submitOptions" style="margin-top: 10px">
                         <input type="submit" class="btn btn-success" value="تایید">
                         @if(!empty($err))
-                            <p style="padding: 10px" class="errorText">{{$err}}</p>
+                            <p style="padding: 10px; margin-top: 10px" class="errorText">{{$err}}</p>
                         @endif
-                    </div>
+                    </center>
                 </form>
             </div>
-    </span>
-
+    </center>
 
 @stop

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\models\AdviserFields;
 use App\models\AdviserInfo;
 use App\models\NamayandeSchool;
+use App\models\RedundantInfo2;
 use App\models\SystemQOQ;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -574,6 +575,12 @@ class ReportController extends Controller {
 
             $user->city = getStdCityAndState($user->id)["city"];
             $user->school = getStdSchoolName($user->id);
+
+            $tmp = RedundantInfo2::whereUId($user->id)->first();
+            if($tmp != null)
+                $user->address = $tmp->address;
+            else
+                $user->address = "نامشخص";
         }
 
         return view('Reports.studentReport', array('users' => $users, 'username' => $username,

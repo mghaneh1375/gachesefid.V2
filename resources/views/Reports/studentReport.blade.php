@@ -82,6 +82,11 @@
                                 <button onclick="showConfirmationPane('{{$user->id}}')" class="btn btn-danger" data-toggle="tooltip" title="حذف">
                                     <span class="glyphicon glyphicon-remove"></span>
                                 </button>
+
+                                <button class="btn btn-default" data-toggle="tooltip" title="{{$user->address}}">
+                                    <span class="glyphicon glyphicon-road"></span>
+                                </button>
+
                             </center>
                         </td>
                     </tr>

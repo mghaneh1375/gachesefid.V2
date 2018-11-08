@@ -178,7 +178,12 @@ Route::group(array('middleware' => ['nothing', 'auth']), function () {
 	Route::post('doChangePassword', array('as' => 'doChangePas', 'uses' => 'HomeController@doChangePas'));
 });
 
-Route::get('profile', array('as' => 'profile', 'uses' => 'HomeController@profile'));
+
+Route::group(array('middleware' => ['nothing', 'auth']), function () {
+
+	Route::get('profile', array('as' => 'profile', 'uses' => 'HomeController@profile'));
+
+});
 
 Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 
