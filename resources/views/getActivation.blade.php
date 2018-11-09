@@ -17,6 +17,7 @@
                         <input type="submit" class="btn btn-success" value="تایید">
                         @if(!empty($err))
                             <p style="padding: 10px; margin-top: 10px" class="errorText">{{$err}}</p>
+                            <a href="{{route('resetPas')}}">رمز عبور خود را فراموش کرده اید!</a>
                         @endif
                     </center>
                 </form>

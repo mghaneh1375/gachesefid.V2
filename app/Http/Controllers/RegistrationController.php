@@ -70,7 +70,7 @@ class RegistrationController extends Controller {
             $activation = Activation::wherePhoneNum( $phoneNum)->first();
 
             if($activation == null)
-                return $this->getActivation('شماره وارد شده در سیستم وجود ندارد');
+                return $this->getActivation('شماره شما قبلاً فعال شده و یا با این شماره ثبت نامی انجام نشده است.');
 
             $user = User::wherePhoneNum($phoneNum)->first();
             if($user == null)
