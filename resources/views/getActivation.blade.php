@@ -14,6 +14,7 @@
                     {{csrf_field()}}
                     <input type="text" name="phoneNum" maxlength="50" autofocus>
                     <center class="submitOptions" style="margin-top: 10px">
+                        <p>شماره تلفن همراه خود را وارد کنید تا کد فعال‌سازی دوباره برای شما ارسال شود.</p>
                         <input type="submit" class="btn btn-success" value="تایید">
                         @if(!empty($err))
                             <p style="padding: 10px; margin-top: 10px" class="errorText">{{$err}}</p>

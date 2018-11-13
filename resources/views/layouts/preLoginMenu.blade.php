@@ -11,7 +11,7 @@
             <li id="menu-item-1983" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-icon menu-item-1983"><a href="{{route('registration')}}" ><i class="menu-item-icon fa fa-edit" ></i>ثبت‌نام<i class="seoicon-right-arrow"
                     ></i></a></li>
 
-            <li id="menu-item-19812" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-icon menu-item-1983"><a href="{{route('getActivation')}}" ><i class="menu-item-icon fa fa-edit" ></i>دریافت کد فعال سازی<i class="seoicon-right-arrow"
+            <li id="menu-item-19812" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-icon menu-item-1983"><a href="{{route('getActivation')}}" ><i class="menu-item-icon fa fa-edit" ></i>دریافت مجدد کد فعال‌سازی<i class="seoicon-right-arrow"
                     ></i></a></li>
         </ul>
     </li>
