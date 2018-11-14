@@ -16,18 +16,14 @@
         </ul>
     </li>
 
-    <li id="menu-item-254" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-has-mega-menu menu-item-has-icon menu-item-254"><a href="#" ><i class="menu-item-icon fa fa-bar-chart-o" ></i>آمار و اطلاعات</a><div class="megamenu" style="">
-            <ul class="mega-menu-row">
-                <li id="menu-item-1985" class="menu-item menu-item-type-custom menu-item-object-custom mega-menu-col menu-item-1985"><a href="#" >برنامه‌ریزی<i class="seoicon-right-arrow" ></i></a><div class="megamenu-item-info-text" >برنامه‌ریزی سال 97-1398</div></li>
-                <li id="menu-item-1984" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children mega-menu-col menu-item-1984"><a href="#" >آمار گچ سفید<i class="seoicon-right-arrow" ></i></a><div class="megamenu-item-info-text" >اعداد و آمار گچ سفید</div>
-                    <ul class="sub-menu sub-menu-has-icons">
-                        <li id="menu-item-1954" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1954"><a href="http://exam.gachesefid.com/ranking1" ><i class="menu-item-icon fa fa-edit" ></i>رتبه‌بندی آزمون‌ها<i class="seoicon-right-arrow" ></i></a></li>
-                        <li id="menu-item-1975" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1975"><a href="http://exam.gachesefid.com/schoolsList" ><i class="menu-item-icon fa fa-edit" ></i>لیست کل مدارس همکار<i class="seoicon-right-arrow" ></i></a></li>
-                        <li id="menu-item-1976" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1976"><a href="#"><i class="menu-item-icon fa fa-edit" ></i>عددبازی در گچ<i class="seoicon-right-arrow" ></i></a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
+    <li id="menu-item-119970" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-has-icon menu-item-1970">
+        <a href="#" ><i class="menu-item-icon fa fa-stack-overflow" ></i>آمار و اطلاعات</a>
+        <ul class="sub-menu sub-menu-has-icons">
+            <li id="menu-item-1954" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1954"><a href="http://exam.gachesefid.com/ranking1" ><i class="menu-item-icon fa fa-edit" ></i>رتبه‌بندی آزمون‌ها<i class="seoicon-right-arrow" ></i></a></li>
+            <li id="menu-item-1975" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1975"><a href="http://exam.gachesefid.com/schoolsList" ><i class="menu-item-icon fa fa-edit" ></i>لیست کل مدارس همکار<i class="seoicon-right-arrow" ></i></a></li>
+            <li id="menu-item-1976" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1976"><a href="https://gachesefid.com/irysc-olympiad/"><i class="menu-item-icon fa fa-edit" ></i>شبیه ساز المپیاد آیریسک<i class="seoicon-right-arrow" ></i></a></li>
+        </ul>
+
     </li>
 
 
@@ -37,7 +33,7 @@
 
         <ul class="sub-menu sub-menu-has-icons">
             <li id="menu-item-1974" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1974">
-                <a href="http://uitest.gachesefid.com/%d8%b1%d8%a7%d9%87%d9%86%d9%85%d8%a7%db%8c-%d8%af%d8%a7%d9%86%d8%b4%e2%80%8c%d8%a2%d9%85%d9%88%d8%b2%d8%a7%d9%86/" >
+                <a href="http://gachesefid.com/%d8%b1%d8%a7%d9%87%d9%86%d9%85%d8%a7%db%8c-%d8%af%d8%a7%d9%86%d8%b4%e2%80%8c%d8%a2%d9%85%d9%88%d8%b2%d8%a7%d9%86/" >
                     <i class="menu-item-icon fa fa-edit"></i>
                     راهنمای دانش‌آموزان
                     <i class="seoicon-right-arrow"></i>
@@ -46,7 +42,7 @@
             </li>
 
             <li id="menu-item-1971" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1971">
-                <a href="http://uitest.gachesefid.com/%d8%b1%d8%a7%d9%87%d9%86%d9%85%d8%a7%db%8c-%d9%85%d8%b4%d8%a7%d9%88%d8%b1%d8%a7%d9%86/">
+                <a href="http://gachesefid.com/%d8%b1%d8%a7%d9%87%d9%86%d9%85%d8%a7%db%8c-%d9%85%d8%b4%d8%a7%d9%88%d8%b1%d8%a7%d9%86/">
                     <i class="menu-item-icon fa fa-edit"></i>
                     راهنمای مشاوران
                     <i class="seoicon-right-arrow"></i>
@@ -54,7 +50,7 @@
                 <div class="megamenu-item-info-text"> </div>
             </li>
             <li id="menu-item-1973" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1973">
-                <a href="http://uitest.gachesefid.com/%d8%b1%d8%a7%d9%87%d9%86%d9%85%d8%a7%db%8c-%d9%85%d8%af%db%8c%d8%b1%d8%a7%d9%86-%d9%85%d8%af%d8%a7%d8%b1%d8%b3/" >
+                <a href="http://gachesefid.com/%d8%b1%d8%a7%d9%87%d9%86%d9%85%d8%a7%db%8c-%d9%85%d8%af%db%8c%d8%b1%d8%a7%d9%86-%d9%85%d8%af%d8%a7%d8%b1%d8%b3/" >
                     <i class="menu-item-icon fa fa-edit"></i>
                     راهنمای مدیران مدارس
                     <i class="seoicon-right-arrow"></i>
@@ -63,7 +59,7 @@
             </li>
 
             <li id="menu-item-1972" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1972">
-                <a href="http://uitest.gachesefid.com/%d8%b1%d8%a7%d9%87%d9%86%d9%85%d8%a7%db%8c-%d9%86%d9%85%d8%a7%db%8c%d9%86%d8%af%da%af%db%8c%e2%80%8c%d9%87%d8%a7/" >
+                <a href="http://gachesefid.com/%d8%b1%d8%a7%d9%87%d9%86%d9%85%d8%a7%db%8c-%d9%86%d9%85%d8%a7%db%8c%d9%86%d8%af%da%af%db%8c%e2%80%8c%d9%87%d8%a7/" >
                     <i class="menu-item-icon fa fa-edit"></i>
                     راهنمای نمایندگی‌ها
                     <i class="seoicon-right-arrow" ></i>

@@ -91,9 +91,9 @@ class SMSController extends Controller {
                     $uIds = DB::select('select users.id from users, redundantInfo1, city WHERE users.id IN ' . $query . ' and users.id = uId and cityId = city.id and stateId = ' . $stateId);
                 else
                     $uIds = DB::select('select users.id from users, redundantInfo1 WHERE users.id IN ' . $query . ' and users.id = uId and cityId = ' . $cityId);
-            }
 
-            $query = $this->queryBuilder($uIds);
+                $query = $this->queryBuilder($uIds);
+            }
 
             if(($level == 1 || $level == 2) && $quiz != -1) {
                 if($level == 1) {
@@ -129,15 +129,23 @@ class SMSController extends Controller {
             $template->save();
 
             if($templateId == -1) {
+
                 foreach ($uIds as $itr) {
 
-                    if(empty($itr->phoneNum))
+                    $phone = User::whereId($itr->id)->phoneNum;
+
+                    if(empty($phone))
                         continue;
 
                     $tmp = new SMSQueue();
-                    $tmp->phoneNum = User::whereId($itr->id)->phoneNum;
+                    $tmp->phoneNum = $phone;
                     $tmp->templateId = $template->id;
-                    $tmp->save();
+                    try {
+                        $tmp->save();
+                    }
+                    catch (\Exception $x) {
+                        dd($x->getMessage());
+                    }
                 }
             }
             else{
