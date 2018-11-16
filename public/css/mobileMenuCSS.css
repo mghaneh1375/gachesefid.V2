@@ -18,7 +18,7 @@
 .menuBtn{
     margin-top: 10px;
     background-color: #3b6656;
-    color: white;
+    color: white !important;
     border-radius: 10px;
     padding: 10px;
     font-size: 16px;

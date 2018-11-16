@@ -292,17 +292,21 @@
                     ?>
 
                     @if($level == getValueInfo('adminLevel') || $level == getValueInfo('superAdminLevel'))
-                        @include('layouts.menuAfterLoginSuperAdmin')
+                        @include('layouts.menuAfterLoginSuperAdminMobile')
+                    @elseif($level == getValueInfo('namayandeLevel'))
+                        @include('layouts.menuAfterLoginNamayandeMobile')
                     @elseif($level == getValueInfo('adviserLevel'))
-                        @include('layouts.menuAfterLoginAdviser')
+                        @include('layouts.menuAfterLoginAdviserMobile')
+                    @elseif($level == getValueInfo('schoolLevel'))
+                        @include('layouts.menuAfterLoginSchoolMobile')
                     @elseif($level == getValueInfo('studentLevel'))
                         @include('layouts.menuAfterLoginMobile')
                     @elseif($level == getValueInfo('operator2Level'))
-                        @include('layouts.menuAfterLoginOperator2')
+                        {{--                            @include('layouts.menuAfterLoginOperator2Mobile')--}}
                     @elseif($level == getValueInfo('operator1Level'))
-                        @include('layouts.menuAfterLoginOperator2')
+                        {{--@include('layouts.menuAfterLoginOperator2Mobile')--}}
                     @elseif($level == getValueInfo('controllerLevel'))
-                        @include('layouts.menuAfterLoginController')
+                        {{--                            @include('layouts.menuAfterLoginControllerMobile')--}}
                     @else
                         @include('layouts.preLoginMenuMobile')
                     @endif

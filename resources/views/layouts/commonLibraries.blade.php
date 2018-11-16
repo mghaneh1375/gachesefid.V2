@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="{{URL::asset('css/commonCSS.css')}}">
+<link rel="stylesheet" href="{{URL::asset('css/commonCSS.css') . '?ver=1.2'}}">
 <link href="{{URL::asset('css/myFont.css')}}" rel="stylesheet" type="text/css">
 <link rel="icon" href="{{URL::asset('images/ICON-GACH-50.png')}}">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">

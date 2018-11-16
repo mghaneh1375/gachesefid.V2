@@ -44,6 +44,8 @@ class AdminController extends Controller {
 
     public function getMyStudents() {
 
+        $users = null;
+
         if(isset($_POST["qId"]) && isset($_POST["username"]) && isset($_POST["password"])) {
 
             $user = User::whereUsername(makeValidInput($_POST["username"]))->first();
@@ -66,10 +68,10 @@ class AdminController extends Controller {
             $qId = makeValidInput($_POST["qId"]);
 
             if($user->level == getValueInfo('namayandeLevel'))
-                echo json_encode(DB::select("select u.firstName, u.lastName, s.name as school, c.name as city from city c, school s, namayandeSchool nS, users u, schoolStudent sS, quizRegistry q WHERE q.quizMode = " . getValueInfo('regularQuiz') . " and c.id = s.cityId and sS.sId = s.uId and u.id = sS.uId and nS.sId = sS.sId and sS.uId = q.uId and q.qId = " . $qId . " and nS.nId = " . $user->id));
+                $users = DB::select("select u.id, u.firstName, u.lastName, s.name as school, c.name as city from city c, school s, namayandeSchool nS, users u, schoolStudent sS, quizRegistry q WHERE q.quizMode = " . getValueInfo('regularQuiz') . " and c.id = s.cityId and sS.sId = s.uId and u.id = sS.uId and nS.sId = sS.sId and sS.uId = q.uId and q.qId = " . $qId . " and nS.nId = " . $user->id);
 
             else if($user->level == getValueInfo('schoolLevel'))
-                echo json_encode(DB::select("select u.firstName, u.lastName, s.name as school, c.name as city from city c, school s, users u, schoolStudent sS, quizRegistry q WHERE q.quizMode = " . getValueInfo('regularQuiz') . " and c.id = s.cityId and sS.sId = s.uId and u.id = sS.uId and sS.uId = q.uId and q.qId = " . $qId . " and sS.sId = " . $user->id));
+                $users = DB::select("select u.id, u.firstName, u.lastName, s.name as school, c.name as city from city c, school s, users u, schoolStudent sS, quizRegistry q WHERE q.quizMode = " . getValueInfo('regularQuiz') . " and c.id = s.cityId and sS.sId = s.uId and u.id = sS.uId and sS.uId = q.uId and q.qId = " . $qId . " and sS.sId = " . $user->id);
 
             else if($user->level == getValueInfo('adminLevel') || $user->level == getValueInfo('superAdminLevel')) {
 
@@ -92,9 +94,9 @@ class AdminController extends Controller {
                         else
                             $itr->school = "نامشخص";
                     }
-
-                    echo json_encode($usersTmp);
                 }
+
+                $users = $usersTmp;
             }
 
             else if($user->level == getValueInfo('adviserLevel')) {
@@ -119,9 +121,30 @@ class AdminController extends Controller {
                             $itr->school = "نامشخص";
                     }
 
-                    echo json_encode($usersTmp);
+                    $users = $usersTmp;
                 }
             }
+
+            if($users != null) {
+
+                foreach ($users as $user) {
+                    if ($user->id < 10) {
+                        $user->id = "00000" . $user->id;
+                    } else if ($user->id < 100) {
+                        $user->id = "0000" . $user->id;
+                    } else if ($user->id < 1000) {
+                        $user->id = "000" . $user->id;
+                    } else if ($user->id < 10000) {
+                        $user->id = "00" . $user->id;
+                    } else if ($user->id < 100000) {
+                        $user->id = "0" . $user->id;
+                    }
+                }
+
+
+                echo json_encode($users);
+            }
+
         }
     }
 
