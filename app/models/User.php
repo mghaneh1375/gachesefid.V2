@@ -4,11 +4,8 @@ namespace App\models;
 
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Database\Eloquent\Model;
-//use Illuminate\Auth\UserTrait;
-//use Illuminate\Auth\UserInterface;
-//use Illuminate\Auth\Reminders\RemindableTrait;
-//use Illuminate\Auth\Reminders\RemindableInterface;
 
+use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -42,7 +39,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable{
 
-	use Notifiable;
+	use HasApiTokens, Notifiable;
 
 	/**
 	 * The attributes that are mass assignable.
