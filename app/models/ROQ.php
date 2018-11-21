@@ -7,4 +7,9 @@ class ROQ extends Model {
 
     protected $table = 'ROQ';
     public $timestamps = false;
+
+    public static function whereId($target) {
+        return ROQ::find($target);
+    }
+
 }

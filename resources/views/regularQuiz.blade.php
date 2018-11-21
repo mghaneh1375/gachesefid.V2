@@ -54,17 +54,16 @@
                 type: 'post',
                 url: submitAns,
                 data: {
-                    'questionId': questionArr[qIdx].id,
-                    'quizId': quizId,
+                    'roqId': answer[qIdx].id,
                     'newVal': answer[qIdx].result
                 },
                 error: function (response) {
-                    submitCBackUp(questionArr[qIdx].id, val);
+                    submitCBackUp(answer[qIdx].id, val);
                 }
             });
         }
 
-        function submitCBackUp(qId, res) {
+        function submitCBackUp(roqId, res) {
 
             if(tryCounter >= 100) {
 
@@ -74,12 +73,11 @@
                         type: 'post',
                         url: submitAns,
                         data: {
-                            'questionId': qId,
-                            'quizId': quizId,
+                            'roqId': roqId,
                             'newVal': res
                         },
                         error: function (response) {
-                            submitCBackUp(qId, res);
+                            submitCBackUp(roqId, res);
                         }
                     });
 
@@ -89,20 +87,21 @@
                 return;
             }
 
-            $.ajax({
-                type: 'post',
-                url: submitAns,
-                data: {
-                    'questionId': qId,
-                    'quizId': quizId,
-                    'newVal': res
-                },
-                error: function (response) {
-                    submitCBackUp(qId, res);
-                }
-            });
+            else {
+                $.ajax({
+                    type: 'post',
+                    url: submitAns,
+                    data: {
+                        'roqId': roqId,
+                        'newVal': res
+                    },
+                    error: function (response) {
+                        submitCBackUp(roqId, res);
+                    }
+                });
 
-            tryCounter++;
+                tryCounter++;
+            }
         }
 
         function incQ() {

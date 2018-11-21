@@ -2216,21 +2216,14 @@ sumTaraz DESC');
         if($reminder <= 0)
             return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]));
 
-        $roqs = DB::select('select ROQ.result, question.ans as status from ROQ, question where quizId = ' . $quizId . " and uId = " . $uId . " and 
+        $roqs = DB::select('select ROQ.result, ROQ.id from ROQ, question where quizId = ' . $quizId . " and uId = " . $uId . " and 
                 quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ.questionId");
 
         if($roqs == null || count($roqs) == 0) {
             $this->fillRegularROQ($quizId);
 
-            $roqs = DB::select('select ROQ.result, question.ans as status from ROQ, question where quizId = ' . $quizId . " and uId = " . $uId . " and 
+            $roqs = DB::select('select ROQ.result, ROQ.id from ROQ, question where quizId = ' . $quizId . " and uId = " . $uId . " and 
                 quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ.questionId");
-        }
-
-        foreach ($roqs as $roq) {
-            if($roq->status == $roq->result)
-                $roq->status = 1;
-            else
-                $roq->status = 0;
         }
 
         $questions = DB::select('select choicesCount, question.id, question.questionFile, question.kindQ, question.neededTime as qoqId from question, regularQOQ WHERE questionId = question.id and quizId = ' . $quizId . ' order by regularQOQ.qNo ASC');
@@ -2328,32 +2321,22 @@ sumTaraz DESC');
 
     public function submitAnsRegularQuiz() {
 
-        if(isset($_POST["questionId"]) && isset($_POST["quizId"]) && isset($_POST["newVal"])) {
+        if(isset($_POST["roqId"]) && isset($_POST["newVal"])) {
 
-            $questionId = makeValidInput($_POST["questionId"]);
-            $question = Question::whereId($questionId);
-            $quizId = makeValidInput($_POST["quizId"]);
+            $roqId = makeValidInput($_POST["roqId"]);
 
-            if($question == null) {
-                echo "nok2";
-                return;
-            }
-
-            $condition = ['questionId' => $questionId, 'uId' => Auth::user()->id,
-                'quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')];
-
-            $roq = ROQ::where($condition)->first();
+            $roq = ROQ::whereId($roqId);
 
             if($roq != null) {
 
                 $newVal = makeValidInput($_POST["newVal"]);
-
+                
                 if($roq->status == 0) {
 
-                    if($question->kindQ == 1 && ($newVal > $question->choicesCount || $newVal < 0)) {
-                        echo "nok3";
-                        return;
-                    }
+//                    if($question->kindQ == 1 && ($newVal > $question->choicesCount || $newVal < 0)) {
+//                        echo "nok3";
+//                        return;
+//                    }
 
                     $roq->result = $newVal;
                     $roq->save();
