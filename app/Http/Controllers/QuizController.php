@@ -10,6 +10,7 @@ use App\models\OffCode;
 use App\models\QuizStatus;
 use App\models\RegularQOQ;
 use App\models\RegularQuiz;
+use App\models\ROQ2;
 use App\models\SoldQuestion;
 use App\models\SystemQOQ;
 use App\models\User;
@@ -2216,14 +2217,14 @@ sumTaraz DESC');
         if($reminder <= 0)
             return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]));
 
-        $roqs = DB::select('select ROQ.result, ROQ.id from ROQ, question where quizId = ' . $quizId . " and uId = " . $uId . " and 
-                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ.questionId");
+        $roqs = DB::select('select ROQ2.result, ROQ2.id from ROQ2, question where quizId = ' . $quizId . " and uId = " . $uId . " and 
+                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ2.questionId");
 
         if($roqs == null || count($roqs) == 0) {
             $this->fillRegularROQ($quizId);
 
-            $roqs = DB::select('select ROQ.result, ROQ.id from ROQ, question where quizId = ' . $quizId . " and uId = " . $uId . " and 
-                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ.questionId");
+            $roqs = DB::select('select ROQ2.result, ROQ2.id from ROQ2, question where quizId = ' . $quizId . " and uId = " . $uId . " and 
+                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ2.questionId");
         }
 
         $questions = DB::select('select choicesCount, question.id, question.questionFile, question.kindQ, question.neededTime as qoqId from question, regularQOQ WHERE questionId = question.id and quizId = ' . $quizId . ' order by regularQOQ.qNo ASC');
@@ -2325,7 +2326,7 @@ sumTaraz DESC');
 
             $roqId = makeValidInput($_POST["roqId"]);
 
-            $roq = ROQ::whereId($roqId);
+            $roq = ROQ2::whereId($roqId);
 
             if($roq != null) {
 
