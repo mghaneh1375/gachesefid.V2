@@ -517,6 +517,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 
 	Route::post('submitAnsRegularQuiz', array('as' => 'submitAnsRegularQuiz', 'uses' => 'QuizController@submitAnsRegularQuiz'));
 
+	Route::post('submitAllAnsRegularQuiz', array('as' => 'submitAllAnsRegularQuiz', 'uses' => 'QuizController@submitAllAnsRegularQuiz'));
+	
 	Route::post('submitAnsSelfQuiz', array('as' => 'submitAnsSelfQuiz', 'uses' => 'QuizController@submitAnsSelfQuiz'));
 
 	Route::post('getOnlineStanding', array('as' => 'getOnlineStanding', 'uses' => 'QuizController@getOnlineStanding'));

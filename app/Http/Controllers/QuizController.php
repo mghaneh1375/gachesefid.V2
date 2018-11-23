@@ -2217,14 +2217,45 @@ sumTaraz DESC');
         if($reminder <= 0)
             return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]));
 
-        $roqs = DB::select('select ROQ2.result, ROQ2.id from ROQ2, question where quizId = ' . $quizId . " and uId = " . $uId . " and 
-                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ2.questionId");
+//        $roqs = DB::select('select ROQ2.result, ROQ2.id from ROQ2, question where quizId = ' . $quizId . " and uId = " . $uId . " and
+//                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ2.questionId");
 
-        if($roqs == null || count($roqs) == 0) {
-            $this->fillRegularROQ($quizId);
+        $roqs = ROQ2::whereUId($uId)->whereQuizId($quizId)->first();
 
-            $roqs = DB::select('select ROQ2.result, ROQ2.id from ROQ2, question where quizId = ' . $quizId . " and uId = " . $uId . " and 
-                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ2.questionId");
+//        if($roqs == null || count($roqs) == 0) {
+//            $this->fillRegularROQ($quizId);
+//
+//            $roqs = DB::select('select ROQ2.result, ROQ2.id from ROQ2, question where quizId = ' . $quizId . " and uId = " . $uId . " and
+//                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ2.questionId");
+//        }
+
+        if($roqs == null) {
+            
+            $quizQuestionsNo = RegularQOQ::whereQuizId($quizId)->count();
+
+            $tmpResult = "";
+            $roqs = [];
+
+            for ($i = 0; $i < $quizQuestionsNo; $i++) {
+                $tmpResult .= "0";
+                $roqs[$i] = 0;
+            }
+
+            $tmpROQ2 = new ROQ2();
+            $tmpROQ2->uId = $uId;
+            $tmpROQ2->quizId = $quizId;
+            $tmpROQ2->result = $tmpResult;
+            $tmpROQ2->save();
+
+        }
+        else {
+            $tmpROQ2 = [];
+            $tmpResult = $roqs->result;
+            for ($i = 0; $i < strlen($tmpResult); $i++) {
+                $tmpROQ2[$i] = $tmpResult[$i];
+            }
+
+            $roqs = $tmpROQ2;
         }
 
         $questions = DB::select('select choicesCount, question.id, question.questionFile, question.kindQ, question.neededTime as qoqId from question, regularQOQ WHERE questionId = question.id and quizId = ' . $quizId . ' order by regularQOQ.qNo ASC');
@@ -2318,6 +2349,23 @@ sumTaraz DESC');
             }
         }
         echo "nok";
+    }
+
+    public function submitAllAnsRegularQuiz() {
+
+        if(isset($_POST["newVals"]) && isset($_POST["quizId"])) {
+
+            $roq = ROQ2::whereUId(Auth::user()->id)->whereQuizId(makeValidInput($_POST["quizId"]))->first();
+
+            if($roq != null) {
+                $roq->result = makeValidInput($_POST["newVals"]);
+                $roq->save();
+                echo "ok";
+                return;
+            }
+        }
+
+        echo "nok2";
     }
 
     public function submitAnsRegularQuiz() {

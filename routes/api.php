@@ -20,5 +20,5 @@ Route::group(['namespace' => 'api'], function () {
 
 
 Route::group(['middleware' => 'auth:api'], function () {
-    Route::post('submitAnsRegularQuiz', array('as' => 'submitAnsRegularQuiz', 'uses' => 'QuizController@submitAnsRegularQuiz'));
+    Route::post('submitAllAnsRegularQuiz', array('as' => 'submitAllAnsRegularQuiz', 'uses' => 'QuizController@submitAllAnsRegularQuiz'));
 });

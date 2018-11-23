@@ -18,6 +18,7 @@
         var questionArr = {!! json_encode($questions) !!};
         var quizId = "{{$quiz->id}}";
         var submitAns = '{{route('submitAnsRegularQuiz')}}';
+        var submitAllAnsURL = '{{route('submitAllAns')}}';
 
         $(document).ready(function () {
             SUQ();
@@ -43,66 +44,67 @@
 
         var tryCounter = 0;
 
-        function submitC(val) {
+//        function submitC(val) {
+//
+//            answer[qIdx].result = val;
+//            return;
+//
+//            if(mode == "special")
+//                return;
+//
+//            $.ajax({
+//                type: 'post',
+//                url: submitAns,
+//                data: {
+//                    'roqId': answer[qIdx].id,
+//                    'newVal': answer[qIdx].result
+//                },
+//                error: function (response) {
+//                    submitCBackUp(answer[qIdx].id, val);
+//                }
+//            });
+//        }
 
-            answer[qIdx].result = val;
-
-            if(mode == "special")
-                return;
-
-            $.ajax({
-                type: 'post',
-                url: submitAns,
-                data: {
-                    'roqId': answer[qIdx].id,
-                    'newVal': answer[qIdx].result
-                },
-                error: function (response) {
-                    submitCBackUp(answer[qIdx].id, val);
-                }
-            });
-        }
-
-        function submitCBackUp(roqId, res) {
-
-            if(tryCounter >= 100) {
-
-                setTimeout(function () {
-
-                    $.ajax({
-                        type: 'post',
-                        url: submitAns,
-                        data: {
-                            'roqId': roqId,
-                            'newVal': res
-                        },
-                        error: function (response) {
-                            submitCBackUp(roqId, res);
-                        }
-                    });
-
-                    tryCounter = 0;
-
-                }, 30 * 1000);
-                return;
-            }
-
-            else {
-                $.ajax({
-                    type: 'post',
-                    url: submitAns,
-                    data: {
-                        'roqId': roqId,
-                        'newVal': res
-                    },
-                    error: function (response) {
-                        submitCBackUp(roqId, res);
-                    }
-                });
-
-                tryCounter++;
-            }
-        }
+//        function submitCBackUp(roqId, res) {
+//
+//            if(tryCounter >= 100) {
+//
+//                setTimeout(function () {
+//
+//                    $.ajax({
+//                        type: 'post',
+//                        url: submitAns,
+//                        data: {
+//                            'roqId': roqId,
+//                            'newVal': res
+//                        },
+//                        error: function (response) {
+//                            submitCBackUp(roqId, res);
+//                        }
+//                    });
+//
+//                    tryCounter = 0;
+//
+//                }, 30 * 1000);
+//                return;
+//            }
+//
+//            else {
+//                $.ajax({
+//                    type: 'post',
+//                    url: submitAns,
+//                    data: {
+//                        'roqId': roqId,
+//                        'newVal': res
+//                    },
+//                    error: function (response) {
+//                        submitCBackUp(roqId, res);
+//                    }
+//                });
+//
+//                tryCounter++;
+//            }
+//        }
 
         function incQ() {
             if(qIdx + 1 < questionArr.length) {
@@ -125,8 +127,15 @@
 
         function SUQ() {
 
+//            for(i = 0; i < answer.length; i++) {
+//                if(answer[i].result == 0)
+//                    document.getElementById("td_" + i).style.backgroundColor = "white";
+//                else
+//                    document.getElementById("td_" + i).style.backgroundColor = "gray";
+//            }
+
             for(i = 0; i < answer.length; i++) {
-                if(answer[i].result == 0)
+                if(answer[i] == 0)
                     document.getElementById("td_" + i).style.backgroundColor = "white";
                 else
                     document.getElementById("td_" + i).style.backgroundColor = "gray";
@@ -151,13 +160,22 @@
             if(questionArr[qIdx].kindQ == "1") {
                 newNode = "<center style='margin-top: 20px;'><span style='font-size: 20px; color: #ff0000'>پاسخ : </span><select class='mySelect' style='width: 60px; font-size: 14px' id='choices' onchange='submitC(this.value)'>";
 
-                if (answer[qIdx].result == 0)
+//                if (answer[qIdx].result == 0)
+//                    newNode = newNode + "<option value='0' selected>سفید</option>";
+//                else
+//                    newNode = newNode + "<option value='0'>سفید</option>";
+
+                if (answer[qIdx] == 0)
                     newNode = newNode + "<option value='0' selected>سفید</option>";
                 else
                     newNode = newNode + "<option value='0'>سفید</option>";
 
                 for(i = 1; i <= questionArr[qIdx].choicesCount; i++) {
-                    if (answer[qIdx].result == i)
+//                    if (answer[qIdx].result == i)
+//                        newNode = newNode + "<option value='" + i + "' selected>گزینه " + i + "</option>";
+//                    else
+//                        newNode = newNode + "<option value='" + i + "'>گزینه " + i + "</option>";
+                    if (answer[qIdx] == i)
                         newNode = newNode + "<option value='" + i + "' selected>گزینه " + i + "</option>";
                     else
                         newNode = newNode + "<option value='" + i + "'>گزینه " + i + "</option>";
@@ -168,7 +186,8 @@
             }
 
             else {
-                newNode = "<center style='margin-top: 20px'><label for='yourAns'>پاسخ شما:</label><input style='max-width: 100px' onchange='submitC(this.value)' type='text' value='" + answer[qIdx].result + "'></center>";
+//                newNode = "<center style='margin-top: 20px'><label for='yourAns'>پاسخ شما:</label><input style='max-width: 100px' onchange='submitC(this.value)' type='text' value='" + answer[qIdx].result + "'></center>";
+                newNode = "<center style='margin-top: 20px'><label for='yourAns'>پاسخ شما:</label><input style='max-width: 100px' onchange='submitC(this.value)' type='text' value='" + answer[qIdx] + "'></center>";
             }
             $("#BQ").append(newNode);
         }
@@ -289,12 +308,42 @@ if ($questions == null || $numQ == 0) {
 
     <script>
 
+        function submitAllAns(url) {
+
+            if(mode == "special") {
+                document.location.href = url;
+                return;
+            }
+
+            var finalResult = "";
+            for(i = 0; i < answer.length; i++) {
+                finalResult += answer[i];
+            }
+
+            $.ajax({
+                type: 'post',
+                url: submitAllAnsURL,
+                data: {
+                    'newVals': finalResult,
+                    'quizId': quizId
+                },
+                success: function (response) {
+                    if(response == "ok") {
+                        document.location.href = url;
+                    }
+                },
+                error: function (response) {
+                    submitAllAns(url);
+                }
+            });
+        }
+
         function goToProfile() {
-            document.location.href = '{{route('profile')}}';
+            submitAllAns('{{route('profile')}}');
         }
 
         function goToQuizEntry() {
-            document.location.href = '{{route('myQuizes')}}';
+            submitAllAns('{{route('myQuizes')}}');
         }
 
         function showConfirmationPane() {
