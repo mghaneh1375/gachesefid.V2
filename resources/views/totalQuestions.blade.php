@@ -17,6 +17,7 @@
         var selectedQId = -1;
         var changeQuestionPicDir = '{{route('home') . '/doChangeQuestionPic/'}}';
         var changeAnsPicDir = '{{route('home') . '/doChangeAnsPic/'}}';
+        var getQuestionByOrganizationId  = '{{route('getQuestionByOrganizationId')}}';
     </script>
     <script src="{{URL::asset('js/jsNeededForEditQuestions.js')}}"></script>
 

@@ -2642,7 +2642,7 @@ sumTaraz DESC');
             foreach ($compose->registerable as $quiz) {
                 $quiz->startDate = convertStringToDate($quiz->startDate);
                 $quiz->startTime = convertStringToTime($quiz->startTime);
-                $quiz->endDate = convertStringToTime($quiz->endDate);
+                $quiz->endDate = convertStringToDate($quiz->endDate);
                 $quiz->startReg = convertStringToDate($quiz->startReg);
                 $quiz->endReg = convertStringToDate($quiz->endReg);
                 $quiz->endTime = convertStringToTime($quiz->endTime);

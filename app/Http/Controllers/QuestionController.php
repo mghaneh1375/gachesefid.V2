@@ -29,6 +29,34 @@ use soapclient;
 
 class QuestionController extends Controller {
 
+    public function getQuestionByOrganizationId() {
+
+        if(isset($_POST["organizationId"])) {
+
+            $q = DB::select('select question.id, question.organizationId, question.choicesCount, users.level as authorLevel, question.questionFile, ' .
+                'question.ansFile, question.level, question.neededTime, question.telorance, question.choicesCount, ' .
+                'question.kindQ, question.ans from question, users where author = users.id and `organizationId` = "' . makeValidInput($_POST["organizationId"]) . '"');
+
+            if($q != null && count($q) > 0) {
+
+                foreach ($q as $question) {
+                    if ($question->authorLevel == getValueInfo('adminLevel') || $question->authorLevel == getValueInfo('superAdminLevel')) {
+                        $question->questionFile = URL::asset('images/questions/system/' . $question->questionFile);
+                        $question->ansFile = URL::asset('images/answers/system/' . $question->ansFile);
+                    } else {
+                        $question->questionFile = URL::asset('images/questions/students/' . $question->questionFile);
+                        $question->ansFile = URL::asset('images/answers/students/' . $question->ansFile);
+                    }
+                }
+
+                echo \GuzzleHttp\json_encode(['status' => 'ok', 'question' => $q[0]]);
+            }
+            else
+                echo \GuzzleHttp\json_encode(['status' => 'nok']);
+        }
+        
+    }
+    
     public function preTransactionQuestion() {
 
         if(isset($_POST["toPay"]) && isset($_POST["qIds"])) {

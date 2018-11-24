@@ -535,8 +535,11 @@ class ReportController extends Controller {
 
         return Redirect::to('quizReport');
     }
-
+    
     public function studentReport($mode = "", $key = "", $page = 1) {
+
+        if($mode != "" && $mode != "name" && $mode != "username")
+            $page = $mode;
 
         $start = ($page - 1) * 20;
         $name = $username = "";

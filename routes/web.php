@@ -193,6 +193,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 
 Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
+	Route::post('getQuestionByOrganizationId', array('as' => 'getQuestionByOrganizationId', 'uses' => 'QuestionController@getQuestionByOrganizationId'));
+
 	Route::get('chooseSystemQuiz', array('as' => 'chooseSystemQuiz', 'uses' => 'ReportController@chooseSystemQuiz'));
 
 	Route::get('getSystemQuizReport', array('as' => 'getSystemQuizReport', 'uses' => 'ReportController@getSystemQuizReport'));

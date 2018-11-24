@@ -3,6 +3,15 @@
 namespace App\models;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * An Eloquent Model: 'Question'
+ *
+ * @property integer $id
+ * @property integer $organizationId
+ * @mixin \Eloquent
+ * @method static \Illuminate\Database\Query\Builder|\App\models\Question whereOrganizationId($value)
+ */
+
 class Question extends Model {
 
     protected $table = 'question';

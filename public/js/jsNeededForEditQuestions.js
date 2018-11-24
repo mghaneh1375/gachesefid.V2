@@ -85,13 +85,22 @@ function jumpToSpecificQuestion() {
 
     var jumpVal = $("#jumpVal").val();
 
-    for (i = 0; i < questions.length; i++) {
-        if(jumpVal == questions[i].organizationId)
-            currIdx = i;
-    }
-
-    showQuestion();
-
+    $.ajax({
+        type: 'post',
+        url: getQuestionByOrganizationId,
+        data: {
+            'organizationId': jumpVal
+        },
+        success: function (response) {
+            response = JSON.parse(response);
+            if(response.status == "ok") {
+                questions = [];
+                questions[0] = response.question;
+                currIdx = 0;
+                showQuestion();
+            }
+        }
+    });
 }
 
 function prevQ() {
@@ -456,8 +465,7 @@ function showQuestion() {
         for (i = 1; i <= limit; i++) {
             newElement += "<option value='" + i + "'>گزینه ی " + i + "</option>";
         }
-        $("#ans").append(newElement);
-        $("#ans").val(questions[currIdx].ans);
+        $("#ans").append(newElement).val(questions[currIdx].ans);
     }
     else {
         $("#choice").addClass('hidden');
