@@ -18,9 +18,12 @@
         var questionArr = {!! json_encode($questions) !!};
         var quizId = "{{$quiz->id}}";
         var submitAns = '{{route('submitAnsRegularQuiz')}}';
-        var submitAllAnsURL = '{{route('submitAllAns')}}';
+        var submitAllAnsURL = '{{route('submitAllAnsRegularQuiz')}}';
 
         $(document).ready(function () {
+
+            setTimeout("saveAnsAuto()", 1000 * 60 * 30);
+
             SUQ();
             if(mode == "normal") {
                 if (total_time > 0)
@@ -30,6 +33,25 @@
             }
         });
 
+        function saveAnsAuto() {
+
+            var finalResult = "";
+            for(i = 0; i < answer.length; i++) {
+                finalResult += answer[i];
+            }
+
+            $.ajax({
+                type: 'post',
+                url: submitAllAnsURL,
+                data: {
+                    'newVals': finalResult,
+                    'quizId': quizId
+                }
+            });
+
+            setTimeout("saveAnsAuto()", 1000 * 60 * 30);
+        }
+        
         function checkTime() {
             document.getElementById("quiz_time").innerHTML = "زمان باقی مانده : " + c_seconds + " : " + c_minutes;
             if (total_time <= 0)
@@ -43,6 +65,11 @@
         }
 
         var tryCounter = 0;
+
+        function submitC(val) {
+            answer[qIdx] = val;
+            return;
+        }
 
 //        function submitC(val) {
 //
@@ -214,6 +241,8 @@ if ($questions == null || $numQ == 0) {
         <div class="row" id="reminder">
             <div class="col-xs-12">
                 <center style="margin-top: 20px">
+                    <p>لطفا تا پایان آزمون از به روز رسانی صفحه (refresh) و یا بستن آن خودداری فرمایید. در غیر این صورت پاسخ های شما ذخیره نخواهد شد</p>
+                    <p></p>
                     <div id="quiz_time" style='font-size: 14px;'></div>
                 </center>
             </div>

@@ -574,6 +574,19 @@ class UserController extends Controller {
 
                 $NID = makeValidInput($_POST["NID"]);
 
+                if(isset($_POST["pass"]) && isset($_POST["rpass"])) {
+
+                    $pass = makeValidInput($_POST["pass"]);
+                    $rpass = makeValidInput($_POST["rpass"]);
+
+                    if($pass == $rpass)
+                        $user->password = Hash::make($pass);
+                    else {
+                        echo "رمزعبور و تکرار آن یکی نیستند";
+                        return;
+                    }
+                }
+
                 if(!_custom_check_national_code($NID)) {
                     echo "کد ملی وارد شده معتبر نمی باشد";
                     return;

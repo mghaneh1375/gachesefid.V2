@@ -98,6 +98,16 @@
                     <option value="0">دختر</option>
                 </select>
             </div>
+
+            <div class="col-xs-12">
+                <label for="pass">رمزعبور</label>
+                <input id="pass" type="password">
+            </div>
+
+            <div class="col-xs-12">
+                <label for="rpass">تکرار رمزعبور</label>
+                <input id="rpass" type="password">
+            </div>
             <div class="col-xs-12">
                 <input type="submit" value="تایید" class="btn btn-primary" onclick="doEditStudent()">
                 <p class="errorText hidden" id="msg"></p>
@@ -136,6 +146,8 @@
             $("#lastName").val(l);
             $("#sex").val(s);
             $("#NID").val(n);
+            $("#pass").val("");
+            $("#rpass").val("");
 
             $("#editStudent").removeClass('hidden');
 
@@ -151,7 +163,9 @@
                     'firstName': $("#firstName").val(),
                     'lastName': $("#lastName").val(),
                     'sex': $("#sex").val(),
-                    'NID': $("#NID").val()
+                    'NID': $("#NID").val(),
+                    'pass': $("#pass").val(),
+                    'rpass': $("#rpass").val()
                 },
                 success: function (response) {
                     if(response == "ok") {
