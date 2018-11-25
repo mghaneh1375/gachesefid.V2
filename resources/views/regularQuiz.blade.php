@@ -329,7 +329,7 @@ if ($questions == null || $numQ == 0) {
 بله
                     </button>
                     <button onclick="hideElement()" class="btn btn-danger">خیر</button>
-                    <p style="margin-top: 5px" class="errorText" id="errMsgConfirm"></p>
+                    <p style="margin-top: 5px" class="errorText" id="errMsgConfirm2"></p>
                 </center>
             </div>
         </div>
@@ -349,6 +349,9 @@ if ($questions == null || $numQ == 0) {
                 finalResult += answer[i];
             }
 
+            $("#errMsgConfirm").empty().append("در حال ارسال پاسخ برگ به سرور لطفا شکیبا باشید");
+            $("#errMsgConfirm2").empty().append("در حال ارسال پاسخ برگ به سرور لطفا شکیبا باشید");
+
             $.ajax({
                 type: 'post',
                 url: submitAllAnsURL,
@@ -359,6 +362,10 @@ if ($questions == null || $numQ == 0) {
                 success: function (response) {
                     if(response == "ok") {
                         document.location.href = url;
+                    }
+                    else {
+                        $("#errMsgConfirm").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا با پشتیبان (09214915905) تماس بگیرید");
+                        $("#errMsgConfirm2").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا با پشتیبان (09214915905) تماس بگیرید");
                     }
                 },
                 error: function (response) {
