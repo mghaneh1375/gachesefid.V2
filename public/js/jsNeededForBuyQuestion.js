@@ -209,7 +209,7 @@ function changeLevel(id, newVal) {
 
 function addNewEntry(name, id) {
 
-    newElement = "<p id='addedBox_" + id + "'><span> " + name + " - </span>تعداد: <input id='needed_" + id + "' style='max-width: 60px' onchange='changeQNo(\"" + id + "\", this.value)' type='number' min='0' value='0'>";
+    newElement = "<p id='addedBox_" + id + "'><span> " + name + " - </span>تعداد: <input id='needed_" + id + "' style='max-width: 100px' onchange='changeQNo(\"" + id + "\", this.value)' type='number' min='0' value='0'>";
     newElement += "<span>&nbsp;</span><span>سطح سختی: <select onchange='changeLevel(\"" + id + "\", this.value)'>";
     newElement += "<option value='-1'>انتخاب تصادفی</option><option value='1'>ساده</option><option value='2'>متوسط</option><option value='3'>دشوار</option></select></span>";
     newElement += "<span>&nbsp;&nbsp;</span><span onclick='removeBox(\"" + id + "\")' class='btn btn-danger' data-toggle='tooltip' title='حذف از لیست'><span class='glyphicon glyphicon-remove'></span></span></p>";

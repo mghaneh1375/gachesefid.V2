@@ -23,14 +23,17 @@ function studentsOfAdviserInQuiz(adviserId) {
                 if(response.length == 0)
                     newElement = "دانش آموزی موجود نیست";
                 else
-                    newElement = "<p><span>تعداد کل:</span><span>&nbsp;</span><span>" + response.length + "</span></p>";
+                    newElement = "<table><tr><td><center>تعداد کل:</center></td><td><center>" + response.length + "</center></td></tr>";
 
                 for(i = 0; i < response.length; i++) {
                     if(response[i].online == 1)
-                        newElement += "<center><span>" + response[i].firstName + " " + response[i].lastName + "</span> - <span>" + response[i].phoneNum + "</span> - <span>آنلاین</span></center>";
+                        newElement += "<tr><td><center>" + response[i].firstName + " " + response[i].lastName + "</center></td><td><center>" + response[i].phoneNum + "</center></td><td><center>آنلاین</center></td></tr>";
                     else
-                        newElement += "<center><span>" + response[i].firstName + " " + response[i].lastName + "</span> - <span>" + response[i].phoneNum + "</span> - <span>حضوری</span></center>";
+                        newElement += "<tr><td><center>" + response[i].firstName + " " + response[i].lastName + "</center></td><td><center>" + response[i].phoneNum + "</center></td><td><center>حضوری</center></td></tr>";
                 }
+
+                if(response.length > 0)
+                    newElement += "</table>";
             }
 
             $("#students").empty().append(newElement);
@@ -59,8 +62,10 @@ function register() {
             'totalPrice': $("#totalPrice").val()
         },
         success: function (response) {
-            if(response == "ok")
+            if(response == "ok") {
                 hideElement();
+                location.reload();
+            }
         }
     });
     

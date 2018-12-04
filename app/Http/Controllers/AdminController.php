@@ -68,14 +68,14 @@ class AdminController extends Controller {
             $qId = makeValidInput($_POST["qId"]);
 
             if($user->level == getValueInfo('namayandeLevel'))
-                $users = DB::select("select u.id, u.firstName, u.lastName, s.name as school, c.name as city from city c, school s, namayandeSchool nS, users u, schoolStudent sS, quizRegistry q WHERE q.quizMode = " . getValueInfo('regularQuiz') . " and c.id = s.cityId and sS.sId = s.uId and u.id = sS.uId and nS.sId = sS.sId and sS.uId = q.uId and q.qId = " . $qId . " and nS.nId = " . $user->id);
+                $users = DB::select("select u.id, u.firstName, u.lastName, s.name as school, c.name as city from city c, school s, namayandeSchool nS, users u, schoolStudent sS, quizRegistry q WHERE q.online = 0 and q.quizMode = " . getValueInfo('regularQuiz') . " and c.id = s.cityId and sS.sId = s.uId and u.id = sS.uId and nS.sId = sS.sId and sS.uId = q.uId and q.qId = " . $qId . " and nS.nId = " . $user->id);
 
             else if($user->level == getValueInfo('schoolLevel'))
-                $users = DB::select("select u.id, u.firstName, u.lastName, s.name as school, c.name as city from city c, school s, users u, schoolStudent sS, quizRegistry q WHERE q.quizMode = " . getValueInfo('regularQuiz') . " and c.id = s.cityId and sS.sId = s.uId and u.id = sS.uId and sS.uId = q.uId and q.qId = " . $qId . " and sS.sId = " . $user->id);
+                $users = DB::select("select u.id, u.firstName, u.lastName, s.name as school, c.name as city from city c, school s, users u, schoolStudent sS, quizRegistry q WHERE q.online = 0 and q.quizMode = " . getValueInfo('regularQuiz') . " and c.id = s.cityId and sS.sId = s.uId and u.id = sS.uId and sS.uId = q.uId and q.qId = " . $qId . " and sS.sId = " . $user->id);
 
             else if($user->level == getValueInfo('adminLevel') || $user->level == getValueInfo('superAdminLevel')) {
 
-                $usersTmp = DB::select("select u.id, u.firstName, u.lastName from users u, quizRegistry q WHERE q.quizMode = " . getValueInfo('regularQuiz') . " and q.uId = u.id and q.qId = " . $qId);
+                $usersTmp = DB::select("select u.id, u.firstName, u.lastName from users u, quizRegistry q WHERE q.online = 0 and q.quizMode = " . getValueInfo('regularQuiz') . " and q.uId = u.id and q.qId = " . $qId);
 
                 if($usersTmp != null && count($usersTmp) > 0) {
 
@@ -101,7 +101,7 @@ class AdminController extends Controller {
 
             else if($user->level == getValueInfo('adviserLevel')) {
 
-                $usersTmp = DB::select("select u.id, u.firstName, u.lastName from users u, quizRegistry q, studentsAdviser sA WHERE sA.studentId = u.id and sA.adviserId = " . $user->id . " and q.quizMode = " . getValueInfo('regularQuiz') . " and q.uId = u.id and q.qId = " . $qId);
+                $usersTmp = DB::select("select u.id, u.firstName, u.lastName from users u, quizRegistry q, studentsAdviser sA WHERE q.online = 0 and sA.studentId = u.id and sA.adviserId = " . $user->id . " and q.quizMode = " . getValueInfo('regularQuiz') . " and q.uId = u.id and q.qId = " . $qId);
 
                 if($usersTmp != null && count($usersTmp) > 0) {
 
@@ -353,7 +353,7 @@ class AdminController extends Controller {
         if($quiz == null)
             return Redirect::to(route('profile'));
 
-        return view('groupQuizRegistrationController', array('quiz' => $quiz, 'advisers' => DB::select("select DISTINCT u.id, u.firstName, u.lastName, u.phoneNum from regularQuizQueue rQ, namayandeSchool nS, users u, schoolStudent sS WHERE u.id = nS.nId and nS.sId = sS.sId and sS.uId = rQ.studentId and rQ.qId = " . $qId)));
+        return view('groupQuizRegistrationController', array('quiz' => $quiz, 'advisers' => DB::select("select DISTINCT u.id, concat(u.firstName, ' ', u.lastName) as  firstName, concat(s.name, ' در ', c.name) as lastName,  u.phoneNum from city c, regularQuizQueue rQ, school s, users u, schoolStudent sS WHERE c.id = s.cityId and s.uId = u.id and u.id = sS.sId and sS.uId = rQ.studentId and rQ.qId = " . $qId)));
     }
 
     public function adviserQuestions() {
@@ -418,7 +418,7 @@ class AdminController extends Controller {
 
     public function studentsOfAdviserInQuiz() {
         if(isset($_POST["qId"]) && isset($_POST["adviserId"])) {
-            echo json_encode(DB::select("select u.firstName, u.lastName, u.phoneNum, rQ.online from regularQuizQueue rQ, namayandeSchool nS, users u, schoolStudent sS WHERE u.id = sS.uId and nS.sId = sS.sId and sS.uId = rQ.studentId and rQ.qId = " . makeValidInput($_POST["qId"]) . " and nS.nId = " . makeValidInput($_POST['adviserId'])));
+            echo json_encode(DB::select("select u.firstName, u.lastName, u.phoneNum, rQ.online from regularQuizQueue rQ, users u, schoolStudent sS WHERE u.id = sS.uId and sS.uId = rQ.studentId and rQ.qId = " . makeValidInput($_POST["qId"]) . " and sS.sId = " . makeValidInput($_POST['adviserId'])));
         }
     }
 
@@ -433,7 +433,7 @@ class AdminController extends Controller {
             try{
                 DB::transaction(function () use ($adviserId, $qId, $totalPrice){
 
-                    $students = DB::select('select rQ.id, rQ.studentId as stdId, rQ.online from regularQuizQueue rQ, namayandeSchool nS, users u, schoolStudent sS WHERE u.id = sS.uId and nS.sId = sS.sId and sS.uId = rQ.studentId and rQ.qId = ' . makeValidInput($_POST["qId"]) . " and nS.nId = " . $adviserId);
+                    $students = DB::select('select rQ.id, rQ.studentId as stdId, rQ.online from regularQuizQueue rQ, users u, schoolStudent sS WHERE u.id = sS.uId and sS.uId = rQ.studentId and rQ.qId = ' . makeValidInput($_POST["qId"]) . " and sS.sId = " . $adviserId);
                     $regularQuizMode = getValueInfo('regularQuiz');
 
                     foreach ($students as $student) {

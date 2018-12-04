@@ -25,11 +25,13 @@ use App\models\Activation;
 use DOMDocument;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 
@@ -45,10 +47,23 @@ class HomeController extends Controller {
 //		foreach ($sliders as $slider) {
 //			$slider->pic = URL::asset('images/slideBar/' . $slider->pic);
 //		}
+//		if(Cache::has("name"))
+//			dd(Cache::get("name"));
+//		else
+//			Cache::remember("name", 60 * 60 * 24, function () {
+//				return "ali";
+//			});
 
-		return view('home', ['qNos' => Question::accepted()->count(),
-			'usersNo' => User::students()->count(), 'schoolsNo' => School::count(), 'composeNo' => ComposeQuiz::count(),
-			'quizNo' => RegularQuiz::count(), 'adviserNos' => User::advisers()->whereStatus(1)->count()]);
+		
+//		return view('home', ['qNos' => Question::accepted()->count(),
+//			'usersNo' => User::students()->count(), 'schoolsNo' => School::count(), 'composeNo' => ComposeQuiz::count(),
+//			'quizNo' => RegularQuiz::count(), 'adviserNos' => User::advisers()->whereStatus(1)->count()]);
+
+		
+
+		return view('home', ['qNos' => 1953,
+			'usersNo' => 2792, 'schoolsNo' => 221, 'composeNo' => 11,
+			'quizNo' => 32, 'adviserNos' => 7]);
 	}
 
 	public function login() {

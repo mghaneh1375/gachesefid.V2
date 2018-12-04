@@ -2359,13 +2359,41 @@ sumTaraz DESC');
 
             if($roq != null) {
                 $roq->result = makeValidInput($_POST["newVals"]);
-                $roq->save();
-                echo "ok";
+                try {
+                    $roq->save();
+                    echo "ok";
+                }
+                catch (\Exception $x) {
+                    echo $x->getMessage();
+                }
                 return;
             }
         }
 
         echo "nok2";
+    }
+
+    public function transfer() {
+
+        $roq2 = ROQ2::all();
+
+        foreach ($roq2 as $itr) {
+
+            $str = $itr->result;
+            $counter = 1;
+            for($i = 0; $i < strlen($str); $i++) {
+                $tmp = new ROQ;
+                $tmp->uId = $itr->uId;
+                $tmp->result = $str[$i];
+                $tmp->questionId = RegularQOQ::whereQuizId($itr->quizId)->whereQNo($counter++)->first()->questionId;
+                $tmp->quizId = $itr->quizId;
+                $tmp->status = 1;
+                $tmp->quizMode = 2;
+                $tmp->save();
+            }
+
+        }
+
     }
 
     public function submitAnsRegularQuiz() {

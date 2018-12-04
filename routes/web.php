@@ -199,6 +199,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 	Route::get('getSystemQuizReport', array('as' => 'getSystemQuizReport', 'uses' => 'ReportController@getSystemQuizReport'));
 
+	Route::get('transfer', array('as' => 'transfer', 'uses' => 'QuizController@transfer'));
+
 	Route::get('smsPanel', array('as' => 'smsPanel', 'uses' => 'SMSController@smsPanel'));
 
 	Route::post('sendSMS', array('as' => 'sendSMS', 'uses' => 'SMSController@sendSMS'));

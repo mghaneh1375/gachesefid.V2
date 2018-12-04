@@ -624,7 +624,7 @@ class RegistrationController extends Controller {
                         continue;
                 }
 
-                $condition = ['online' => $mode, 'qId' => $qId, 'studentId' => $std];
+                $condition = ['qId' => $qId, 'studentId' => $std];
                 if(RegularQuizQueue::where($condition)->count() > 0)
                     continue;
 
