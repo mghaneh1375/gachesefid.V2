@@ -14,7 +14,7 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         'showRSSGach',
         'showRSSIrysc',
-        'get_exam_answer_sheet_template',
+        'get_exam_answer_sheet_template/*',
         'getROQ',
         'checkAuth',
         'multiPaymentPostQuiz/*',

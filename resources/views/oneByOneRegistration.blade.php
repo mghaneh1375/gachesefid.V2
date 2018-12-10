@@ -58,20 +58,20 @@
         function addStudent() {
 
             var newElement = '<div id="row_' + row + '" class="col-xs-12" style="margin: 20px; padding: 10px; border-bottom: 3px dotted black">';
-            newElement += '<div class="col-xs-4"><label>پایه تحصیلی</label><select name="grade[]">';
+            newElement += '<div class="col-xs-4"><label>پایه تحصیلی</label><select tabindex="' + (3 + 6 * row) + '" name="grade[]">';
 
             for(i = 0; i < grades.length; i++)
                 newElement += "<option value='" + grades[i].id + "'>" + grades[i].name + "</option>";
 
             newElement += '</select></div>';
 
-            newElement += '<div class="col-xs-4"><label>نام خانوادگی</label><input type="text" name="lastName[]"></div>';
-            newElement += '<div class="col-xs-4"><label>نام</label><input type="text" name="firstName[]"></div>';
-            newElement += '<div class="col-xs-4"><label>کد ملی</label><input type="tel" name="NID[]"></div>';
-            newElement += '<div class="col-xs-4"><label>جنسیت</label><select style="width: 100px !important;" name="sex[]"><option value="0">خانم</option><option value="1">آقا</option></select></div>';
+            newElement += '<div class="col-xs-4"><label>نام خانوادگی</label><input tabindex="' + (2 + 6 * row) + '" type="text" name="lastName[]"></div>';
+            newElement += '<div class="col-xs-4"><label>نام</label><input tabindex="' + (1 + 6 * row)  + '" type="text" name="firstName[]"></div>';
+            newElement += '<div class="col-xs-4"><label>کد ملی</label><input type="tel" tabindex="' + (6 + 6 * row) + '" name="NID[]"></div>';
+            newElement += '<div class="col-xs-4"><label>جنسیت</label><select tabindex="' + (5 + 6 * row) + '" style="width: 100px !important;" name="sex[]"><option value="0">خانم</option><option value="1">آقا</option></select></div>';
             newElement += '<div class="col-xs-4">';
             if(level) {
-                newElement += '<label>مدرسه</label><select name="school[]">';
+                newElement += '<label>مدرسه</label><select tabindex="' + (4 + 6 * row) + '" name="school[]">';
                 for(i = 0; i < schools.length; i++)
                     newElement += "<option value='" + schools[i].id + "'>" + schools[i].name + "-" + schools[i].cityId + "</option>";
             }
@@ -83,7 +83,7 @@
         }
 
         function deleteRow(idx) {
-            $("#row_" + idx).addClass('hidden');
+            $("#row_" + idx).addClass('hidden').remove();
         }
 
         var firstNameArr = [];
