@@ -2352,7 +2352,7 @@ sumTaraz DESC');
 
         $questions = DB::select('select choicesCount, question.id, question.questionFile, question.kindQ, question.neededTime as qoqId from question, regularQOQ WHERE questionId = question.id and quizId = ' . $quizId . ' order by regularQOQ.qNo ASC');
 
-        return view('regularQuiz', array('quiz' => $quiz, 'mode' => 'normal', 'questions' => $questions,
+        return view('regularQuiz', array('quiz' => $quiz, 'mode' => 'normal', 'questions' => $questions, 'uId' => $uId,
             'reminder' => $reminder, 'roqs' => $roqs));
 
     }

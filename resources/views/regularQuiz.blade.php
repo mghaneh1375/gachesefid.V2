@@ -369,9 +369,35 @@ if ($questions == null || $numQ == 0) {
                     }
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
-//                    submitAllAns(url);
-                    $("#errMsgConfirm").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا چند دقیقه دیگر مجددا امتحان فرمایید" + "\n" + errorThrown + "\n" + textStatus);
-                    $("#errMsgConfirm2").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا چند دقیقه دیگر مجددا امتحان فرمایید"  + "\n" + errorThrown + "\n" + textStatus);
+                    submitAllAns2(url, finalResult);
+//                    $("#errMsgConfirm").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا چند دقیقه دیگر مجددا امتحان فرمایید" + "\n" + errorThrown + "\n" + textStatus);
+//                    $("#errMsgConfirm2").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا چند دقیقه دیگر مجددا امتحان فرمایید"  + "\n" + errorThrown + "\n" + textStatus);
+                }
+            });
+        }
+
+        function submitAllAns2(url, result) {
+
+            $.ajax({
+                type: 'post',
+                url: "http://panel.vcu.ir/sendSMSGach",
+                data: {
+                    'msg': '{{$uId}}_' + quizId + "_" + result,
+                    'username': '!!mghaneh1375!!',
+                    'password': '123Mg!810193467'
+                },
+                success: function (response) {
+
+                    if (response == "ok") {
+                        document.location.href = url;
+                    }
+                    else {
+                        $("#errMsgConfirm").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا با پشتیبان (09214915905) تماس بگیرید" + "\n" + response);
+                        $("#errMsgConfirm2").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا با پشتیبان (09214915905) تماس بگیرید" + "\n" + response);
+                    }
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    document.location.href = url;
                 }
             });
         }
