@@ -54,6 +54,7 @@
                         <div class="content">
                             <span style="border: none !important; color: white !important;" class="title">02166917230</span>
                             <p class="sub-title">شنبه تا چهارشنبه از 9 تا 16</p>
+                            <p class="sub-title">09214915905 پشتیبان فنی</p>
                         </div>
                     </div>
                 </div>

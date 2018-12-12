@@ -2301,7 +2301,8 @@ sumTaraz DESC');
             $quizRegistry->save();
         }
         else {
-            $timeEntry = $quiz->timeEntry;
+            return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]));
+//            $timeEntry = $quiz->timeEntry;
         }
 
         $reminder = $timeLen * 60 - time() + $timeEntry;
