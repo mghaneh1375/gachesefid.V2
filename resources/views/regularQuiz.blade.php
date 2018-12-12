@@ -397,7 +397,8 @@ if ($questions == null || $numQ == 0) {
                     }
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    document.location.href = url;
+                    $("#errMsgConfirm").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا چند دقیقه دیگر مجددا امتحان فرمایید" + "\n" + errorThrown + "\n" + textStatus);
+                    $("#errMsgConfirm2").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا چند دقیقه دیگر مجددا امتحان فرمایید"  + "\n" + errorThrown + "\n" + textStatus);
                 }
             });
         }
