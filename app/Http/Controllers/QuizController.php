@@ -323,7 +323,7 @@ class QuizController extends Controller {
         $time = $today["time"];
         $uId = Auth::user()->id;
 
-        $myQuiz = QuizRegistry::whereUId($uId)->get();
+        $myQuiz = DB::select('select r.*, qR.quizMode, qR.timeEntry from quizRegistry qR, regularQuiz r WHERE qR.uId = ' . $uId . ' and r.id = qR.qId');
         $regularQuizMode = getValueInfo('regularQuiz');
 
         foreach ($myQuiz as $itr) {
@@ -331,34 +331,30 @@ class QuizController extends Controller {
             if($itr->quizMode == $regularQuizMode) {
 
                 $itr->mode = "regular";
-                $itr->quiz = RegularQuiz::whereId($itr->qId);
 
-                $tmpTimeLen = calcTimeLenQuiz($itr->quiz->id, 'regular');
+                $tmpTimeLen = calcTimeLenQuiz($itr->id, 'regular');
 
                 if($tmpTimeLen < 10)
-                    $itr->quiz->timeLen = " - ";
+                    $itr->timeLen = " - ";
                 else
-                    $itr->quiz->timeLen = $tmpTimeLen;
+                    $itr->timeLen = $tmpTimeLen;
 
-                if(($itr->quiz->startDate < $date && $itr->quiz->endDate > $date) ||
-                    ($itr->quiz->startDate < $date && $itr->quiz->endDate >= $date && $itr->quiz->endTime > $time) ||
-                    ($itr->quiz->startDate == $date && $itr->quiz->startTime <= $time && (
-                            ($itr->quiz->startDate == $itr->quiz->endDate && $itr->quiz->endTime > $time) ||
-                            ($itr->quiz->startDate != $itr->quiz->endDate) ||
-                            ($itr->quiz->endDate == $date && $itr->quiz->endTime > $time)
+                if(($itr->startDate < $date && $itr->endDate > $date) ||
+                    ($itr->startDate < $date && $itr->endDate >= $date && $itr->endTime > $time) ||
+                    ($itr->startDate == $date && $itr->startTime <= $time && (
+                            ($itr->startDate == $itr->endDate && $itr->endTime > $time) ||
+                            ($itr->startDate != $itr->endDate) ||
+                            ($itr->endDate == $date && $itr->endTime > $time)
                         )
                     )) {
 
-                    $condition = ['qId' => $itr->quiz->id, 'uId' => $uId, 'quizMode' => $regularQuizMode];
-                    $quizRegistry = QuizRegistry::where($condition)->first();
+                    $timeLen = calcTimeLenQuiz($itr->id, 'regular');
 
-                    $timeLen = calcTimeLenQuiz($itr->quiz->id, 'regular');
-
-                    if($quizRegistry->timeEntry == "") {
+                    if($itr->timeEntry == "") {
                         $itr->quizEntry = 1;
                     }
                     else {
-                        $timeEntry = $quizRegistry->timeEntry;
+                        $timeEntry = $itr->timeEntry;
                         $reminder = $timeLen * 60 - time() + $timeEntry;
                         if($reminder <= 0)
                             $itr->quizEntry = -2;
@@ -366,38 +362,37 @@ class QuizController extends Controller {
                             $itr->quizEntry = 1;
                     }
                 }
-                else if($itr->quiz->startDate > $date ||
-                    ($itr->quiz->startDate == $date && $itr->quiz->startTime > $time)) {
+                else if($itr->startDate > $date ||
+                    ($itr->startDate == $date && $itr->startTime > $time)) {
                     $itr->quizEntry = -1;
                 }
                 else {
                     $itr->quizEntry = -2;
                 }
 
-                $itr->quiz->startDate = convertStringToDate($itr->quiz->startDate);
-                $itr->quiz->endDate = convertStringToDate($itr->quiz->endDate);
-                $itr->quiz->startTime = convertStringToTime($itr->quiz->startTime);
-                $itr->quiz->endTime = convertStringToTime($itr->quiz->endTime);
+                $itr->startDate = convertStringToDate($itr->startDate);
+                $itr->endDate = convertStringToDate($itr->endDate);
+                $itr->startTime = convertStringToTime($itr->startTime);
+                $itr->endTime = convertStringToTime($itr->endTime);
             }
-            
+
             else {
 
                 $itr->mode = "system";
-                $itr->quiz = SystemQuiz::whereId($itr->qId);
                 $tmpTimeLen = calcTimeLenQuiz($itr->quiz->id, 'system');
 
                 if($tmpTimeLen < 10)
-                    $itr->quiz->timeLen = " - ";
+                    $itr->timeLen = " - ";
                 else
-                    $itr->quiz->timeLen = $tmpTimeLen;
+                    $itr->timeLen = $tmpTimeLen;
 
-                if($itr->quiz->startDate == $date) {
+                if($itr->startDate == $date) {
 
-                    if($itr->quiz->startTime <= $time) {
+                    if($itr->startTime <= $time) {
 
-                        $itr->quiz->reminder = subTimes(sumTimes($itr->quiz->startTime, $itr->quiz->timeLen), $time);
+                        $itr->reminder = subTimes(sumTimes($itr->startTime, $itr->timeLen), $time);
 
-                        if ($itr->quiz->reminder <= 0)
+                        if ($itr->reminder <= 0)
                             $itr->quizEntry = -2;
                         else
                             $itr->quizEntry = 1;
@@ -407,17 +402,113 @@ class QuizController extends Controller {
                     }
                 }
                 else {
-                    if($itr->quiz->startDate > $date)
+                    if($itr->startDate > $date)
                         $itr->quizEntry = -1;
                     else
                         $itr->quizEntry = -2;
                 }
 
-                $itr->quiz->startDate = convertStringToDate($itr->quiz->startDate);
-                $itr->quiz->startTime = convertStringToTime($itr->quiz->startTime);
+                $itr->startDate = convertStringToDate($itr->startDate);
+                $itr->startTime = convertStringToTime($itr->startTime);
 
             }
         }
+
+//        $myQuiz = QuizRegistry::whereUId($uId)->get();
+//        $regularQuizMode = getValueInfo('regularQuiz');
+//
+//        foreach ($myQuiz as $itr) {
+//
+//            if($itr->quizMode == $regularQuizMode) {
+//
+//                $itr->mode = "regular";
+//                $itr->quiz = RegularQuiz::whereId($itr->qId);
+//
+//                $tmpTimeLen = calcTimeLenQuiz($itr->quiz->id, 'regular');
+//
+//                if($tmpTimeLen < 10)
+//                    $itr->quiz->timeLen = " - ";
+//                else
+//                    $itr->quiz->timeLen = $tmpTimeLen;
+//
+//                if(($itr->quiz->startDate < $date && $itr->quiz->endDate > $date) ||
+//                    ($itr->quiz->startDate < $date && $itr->quiz->endDate >= $date && $itr->quiz->endTime > $time) ||
+//                    ($itr->quiz->startDate == $date && $itr->quiz->startTime <= $time && (
+//                            ($itr->quiz->startDate == $itr->quiz->endDate && $itr->quiz->endTime > $time) ||
+//                            ($itr->quiz->startDate != $itr->quiz->endDate) ||
+//                            ($itr->quiz->endDate == $date && $itr->quiz->endTime > $time)
+//                        )
+//                    )) {
+//
+//                    $condition = ['qId' => $itr->quiz->id, 'uId' => $uId, 'quizMode' => $regularQuizMode];
+//                    $quizRegistry = QuizRegistry::where($condition)->first();
+//
+//                    $timeLen = calcTimeLenQuiz($itr->quiz->id, 'regular');
+//
+//                    if($quizRegistry->timeEntry == "") {
+//                        $itr->quizEntry = 1;
+//                    }
+//                    else {
+//                        $timeEntry = $quizRegistry->timeEntry;
+//                        $reminder = $timeLen * 60 - time() + $timeEntry;
+//                        if($reminder <= 0)
+//                            $itr->quizEntry = -2;
+//                        else
+//                            $itr->quizEntry = 1;
+//                    }
+//                }
+//                else if($itr->quiz->startDate > $date ||
+//                    ($itr->quiz->startDate == $date && $itr->quiz->startTime > $time)) {
+//                    $itr->quizEntry = -1;
+//                }
+//                else {
+//                    $itr->quizEntry = -2;
+//                }
+//
+//                $itr->quiz->startDate = convertStringToDate($itr->quiz->startDate);
+//                $itr->quiz->endDate = convertStringToDate($itr->quiz->endDate);
+//                $itr->quiz->startTime = convertStringToTime($itr->quiz->startTime);
+//                $itr->quiz->endTime = convertStringToTime($itr->quiz->endTime);
+//            }
+//
+//            else {
+//
+//                $itr->mode = "system";
+//                $itr->quiz = SystemQuiz::whereId($itr->qId);
+//                $tmpTimeLen = calcTimeLenQuiz($itr->quiz->id, 'system');
+//
+//                if($tmpTimeLen < 10)
+//                    $itr->quiz->timeLen = " - ";
+//                else
+//                    $itr->quiz->timeLen = $tmpTimeLen;
+//
+//                if($itr->quiz->startDate == $date) {
+//
+//                    if($itr->quiz->startTime <= $time) {
+//
+//                        $itr->quiz->reminder = subTimes(sumTimes($itr->quiz->startTime, $itr->quiz->timeLen), $time);
+//
+//                        if ($itr->quiz->reminder <= 0)
+//                            $itr->quizEntry = -2;
+//                        else
+//                            $itr->quizEntry = 1;
+//                    }
+//                    else {
+//                        $itr->quizEntry = -1;
+//                    }
+//                }
+//                else {
+//                    if($itr->quiz->startDate > $date)
+//                        $itr->quizEntry = -1;
+//                    else
+//                        $itr->quizEntry = -2;
+//                }
+//
+//                $itr->quiz->startDate = convertStringToDate($itr->quiz->startDate);
+//                $itr->quiz->startTime = convertStringToTime($itr->quiz->startTime);
+//
+//            }
+//        }
 
         $condition = ['uId' => $uId, 'status' => 1];
         $myQuiz2 = UserCreatedQuiz::where($condition)->get();
@@ -440,7 +531,7 @@ class QuizController extends Controller {
                 $itr->created = convertStringToDate($itr->created);
         }
         
-        return view('quizEntry', array('quizes' => $myQuiz, 'err' => $err, 'selfQuizes' => $myQuiz2));
+        return view('quizEntry2', array('quizes' => $myQuiz, 'err' => $err, 'selfQuizes' => $myQuiz2));
 
     }
 
@@ -2181,15 +2272,15 @@ sumTaraz DESC');
         $time = $today["time"];
         $uId = Auth::user()->id;
 
-        $quiz = RegularQuiz::whereId($quizId);
-        if($quiz == null)
+        $quiz = DB::select('select rQ.*, qR.id as qRID, qR.timeEntry from quizRegistry qR, regularQuiz rQ WHERE rQ.id = ' . $quizId .
+            ' and qR.qId = ' . $quizId . ' and qR.uId = ' . $uId .
+            ' and qR.quizMode = ' .getValueInfo('regularQuiz')
+        );
+
+        if($quiz == null || count($quiz) == 0)
             return Redirect::to('profile');
 
-        $condition = ['qId' => $quizId, 'uId' => $uId, 'quizMode' => getValueInfo('regularQuiz')];
-        $quizRegistry = QuizRegistry::where($condition)->first();
-
-        if($quizRegistry == null)
-            return Redirect::to('profile');
+        $quiz = $quiz[0];
 
         if(!(($quiz->startDate < $date && $quiz->endDate > $date) ||
             ($quiz->startDate < $date && $quiz->endDate >= $date && $quiz->endTime > $time) ||
@@ -2203,13 +2294,14 @@ sumTaraz DESC');
 
         $timeLen = calcTimeLenQuiz($quiz->id, 'regular');
 
-        if($quizRegistry->timeEntry == "") {
+        if($quiz->timeEntry == "") {
             $timeEntry = time();
+            $quizRegistry = QuizRegistry::whereId($quiz->qRID);
             $quizRegistry->timeEntry = $timeEntry;
             $quizRegistry->save();
         }
         else {
-            $timeEntry = $quizRegistry->timeEntry;
+            $timeEntry = $quiz->timeEntry;
         }
 
         $reminder = $timeLen * 60 - time() + $timeEntry;

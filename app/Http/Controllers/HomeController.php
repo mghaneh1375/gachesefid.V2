@@ -47,12 +47,17 @@ class HomeController extends Controller {
 //		foreach ($sliders as $slider) {
 //			$slider->pic = URL::asset('images/slideBar/' . $slider->pic);
 //		}
-//		if(Cache::has("name"))
-//			dd(Cache::get("name"));
-//		else
-//			Cache::remember("name", 60 * 60 * 24, function () {
-//				return "ali";
-//			});
+
+//		if(Auth::check() &&
+//			(Auth::user()->level == getValueInfo('adminLevel') || Auth::user()->level == getValueInfo('superAdminLevel'))) {
+//
+//			if (Cache::has("name2"))
+//				dd(Cache::get("name"));
+//			else
+//				Cache::remember("name2", 60 * 60 * 24, function () {
+//					return "ali";
+//				});
+//		}
 
 		
 //		return view('home', ['qNos' => Question::accepted()->count(),
