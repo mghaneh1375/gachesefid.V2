@@ -64,7 +64,7 @@
                         <td><center>بیشترین درصد پاسخ گویی</center></td>
                     @endif
                     @if($kindKarname->subjectCityRank)
-                        <td><center>رتبه در شهر</center></td>
+                        <td><center>رتبه در شهر/منطقه</center></td>
                     @endif
                     @if($kindKarname->subjectStateRank)
                         <td><center>رتبه در استان</center></td>

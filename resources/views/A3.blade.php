@@ -126,7 +126,7 @@
 
                     <td><center>رتبه در کشور</center></td>
                     <td><center>رتبه در استان</center></td>
-                    <td><center>رتبه در شهر</center></td>
+                    <td><center>رتبه در شهر/منطقه</center></td>
                     <td><center>تراز</center></td>
                     <td><center>وضعیت</center></td>
                 </tr>
@@ -170,7 +170,7 @@
                     <td><center>میانگین تراز</center></td>
                     <td><center>رتبه در کشور</center></td>
                     <td><center>رتبه در استان</center></td>
-                    <td><center>رتبه در شهر</center></td>
+                    <td><center>رتبه در شهر/منطقه</center></td>
                 </tr>
                 <tr>
                     <td><center>{{round(($sum / $total), 0)}}</center></td>

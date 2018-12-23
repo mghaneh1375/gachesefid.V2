@@ -65,7 +65,7 @@
 
             <div class="col-xs-2 hiddenOnMobile" style="min-width: 174px !important; float: right">
                 <div onclick="document.location.href = '{{route('home')}}'" class="SiteName" style="position: fixed; z-index: 10001; cursor: pointer">
-                    <a><img src="{{URL::asset('images/banner-gach-4.png')}}"></a>
+                    <a href="http://gachesefid.com"><img src="{{URL::asset('images/banner-gach-4.png')}}"></a>
                 </div>
                 @if(Auth::check())
                     <?php

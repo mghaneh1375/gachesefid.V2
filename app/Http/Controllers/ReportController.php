@@ -740,7 +740,8 @@ class ReportController extends Controller {
 
         $quizName = RegularQuiz::whereId($quizId)->name;
 
-        $users = DB::select('select users.id, firstName, lastName, g.name as gradeId, ci.name as schoolCity, sa.name as stateName, s.name as schoolName, (SELECT u5.invitationCode from users u5 WHERE u5.id = sS.sId) as schoolCode, (SELECT concat(u3.firstName, " ", u3.lastName) from users u3 WHERE u3.id = nS.nId) as namayandeName, (SELECT u4.invitationCode from users u4 WHERE u4.id = nS.nId) as namayandeCode from schoolStudent sS, namayandeSchool nS, quizRegistry qR, users, redundantInfo1 rd, grade g, city ci, state sa, school s WHERE s.uId = sS.sId and ci.id = s.cityId and ci.stateId = sa.id and rd.gradeId = g.id and nS.sId = sS.sId and sS.uId = users.id and rd.uId = users.id and quizMode = ' . getValueInfo('regularQuiz') . ' and online = 0 and qR.qId = ' . $quizId . ' and users.id = qR.uId');
+//        $users = DB::select('select users.id, firstName, lastName, g.name as gradeId, ci.name as schoolCity, sa.name as stateName, s.name as schoolName, (SELECT u5.invitationCode from users u5 WHERE u5.id = sS.sId) as schoolCode, (SELECT concat(u3.firstName, " ", u3.lastName) from users u3 WHERE u3.id = nS.nId) as namayandeName, (SELECT u4.invitationCode from users u4 WHERE u4.id = nS.nId) as namayandeCode from schoolStudent sS, namayandeSchool nS, quizRegistry qR, users, redundantInfo1 rd, grade g, city ci, state sa, school s WHERE s.uId = sS.sId and ci.id = s.cityId and ci.stateId = sa.id and rd.gradeId = g.id and nS.sId = sS.sId and sS.uId = users.id and rd.uId = users.id and quizMode = ' . getValueInfo('regularQuiz') . ' and online = 0 and qR.qId = ' . $quizId . ' and users.id = qR.uId');
+        $users = DB::select('select users.id, firstName, lastName, ci.name as schoolCity, sa.name as stateName, s.name as schoolName, (SELECT u5.invitationCode from users u5 WHERE u5.id = sS.sId) as schoolCode, (SELECT concat(u3.firstName, " ", u3.lastName) from users u3 WHERE u3.id = nS.nId) as namayandeName, (SELECT u4.invitationCode from users u4 WHERE u4.id = nS.nId) as namayandeCode from schoolStudent sS, namayandeSchool nS, quizRegistry qR, users, city ci, state sa, school s WHERE s.uId = sS.sId and ci.id = s.cityId and ci.stateId = sa.id and nS.sId = sS.sId and sS.uId = users.id and quizMode = ' . getValueInfo('regularQuiz') . ' and online = 0 and qR.qId = ' . $quizId . ' and users.id = qR.uId');
         $counter = 2;
 
         if($quizId < 100) {
@@ -776,7 +777,7 @@ class ReportController extends Controller {
             $objPHPExcel->getActiveSheet()->setCellValueExplicit('F' . ($counter), $user->schoolCode);
             $objPHPExcel->getActiveSheet()->setCellValueExplicit('E' . ($counter), $user->schoolName);
             $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter), $quizName);
-            $objPHPExcel->getActiveSheet()->setCellValueExplicit('C' . ($counter), $user->gradeId, PHPExcel_Cell_DataType::TYPE_STRING);
+//            $objPHPExcel->getActiveSheet()->setCellValueExplicit('C' . ($counter), $user->gradeId, PHPExcel_Cell_DataType::TYPE_STRING);
             $objPHPExcel->getActiveSheet()->setCellValueExplicit('B' . ($counter), $user->lastName, PHPExcel_Cell_DataType::TYPE_STRING);
             $objPHPExcel->getActiveSheet()->setCellValueExplicit('A' . ($counter), $user->firstName, PHPExcel_Cell_DataType::TYPE_STRING);
 

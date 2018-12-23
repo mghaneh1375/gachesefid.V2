@@ -139,7 +139,7 @@
                     <td><center>رتبه در استان</center></td>
                 @endif
                 @if($kindKarname->lessonCityRank)
-                    <td><center>رتبه در شهر</center></td>
+                    <td><center>رتبه در شهر/منطقه</center></td>
                 @endif
                 @if($kindKarname->partialTaraz)
                     <td><center>تراز</center></td>
@@ -204,7 +204,7 @@
                     <td><center>رتبه در استان</center></td>
                 @endif
                 @if($kindKarname->generalCityRank)
-                    <td><center>رتبه در شهر</center></td>
+                    <td><center>رتبه در شهر/منطقه</center></td>
                 @endif
             </tr>
             <tr>

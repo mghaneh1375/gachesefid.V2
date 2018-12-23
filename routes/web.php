@@ -693,6 +693,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'controllerLevel']), func
 
 Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
+	Route::get('transferFromROQ2ToROQ', 'QuizController@transferFromROQ2ToROQ');
+
 	Route::any('quizStatus', array('as' => 'quizStatus', 'uses' => 'QuizController@quizStatus'));
 
 	Route::get('onlineQuizes', array('as' => 'onlineQuizes', 'uses' => 'QuizController@onlineQuizes'));

@@ -60,15 +60,15 @@ class HomeController extends Controller {
 //		}
 
 		
-//		return view('home', ['qNos' => Question::accepted()->count(),
-//			'usersNo' => User::students()->count(), 'schoolsNo' => School::count(), 'composeNo' => ComposeQuiz::count(),
-//			'quizNo' => RegularQuiz::count(), 'adviserNos' => User::advisers()->whereStatus(1)->count()]);
+		return view('home', ['qNos' => Question::accepted()->count(),
+			'usersNo' => User::students()->count(), 'schoolsNo' => School::count(), 'composeNo' => ComposeQuiz::count(),
+			'quizNo' => RegularQuiz::count(), 'adviserNos' => User::advisers()->whereStatus(1)->count()]);
 
 		
-
-		return view('home', ['qNos' => 1953,
-			'usersNo' => 2792, 'schoolsNo' => 221, 'composeNo' => 11,
-			'quizNo' => 32, 'adviserNos' => 7]);
+//
+//		return view('home', ['qNos' => 1953,
+//			'usersNo' => 2792, 'schoolsNo' => 221, 'composeNo' => 11,
+//			'quizNo' => 32, 'adviserNos' => 7]);
 	}
 
 	public function login() {

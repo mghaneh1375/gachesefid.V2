@@ -564,7 +564,8 @@ class QuizController extends Controller {
             $tmp = DB::select('select count(*) as countNum from quizRegistry qR, taraz t where qR.uId = ' . $uId . ' and qR.quizMode = ' . getValueInfo('regularQuiz') . ' and qR.qId = ' . $quizId . " and qR.id = t.qEntryId");
 
             if($tmp == null || count($tmp) == 0 || empty($tmp[0]->countNum) || $tmp[0]->countNum = 0) {
-                $msg = "پاسخ برگ شما به سایت ارسال نشده است";
+//                $msg = "پاسخ برگ شما به سایت ارسال نشده است";
+                $msg = "پاسخ برگ شما به سایت ارسال نشده یا در حال بررسی است";
             }
             else {
 
@@ -3690,5 +3691,30 @@ sumTaraz DESC');
 
     public function createCustomQuiz() {
         return view('createCustomQuiz', array('grades' => Grade::all()));
+    }
+
+    public function transferFromROQ2ToROQ() {
+
+        $roq2 = ROQ2::all();
+
+        foreach ($roq2 as $itr) {
+
+            $str = $itr->result;
+
+            for($i = 0; $i < strlen($str); $i++) {
+                $tmp = new ROQ();
+                $tmp->uId = $itr->uId;
+                $tmp->quizId = $itr->quizId;
+                $tmp->result = $str[$i];
+                $tmp->questionId = RegularQOQ::whereQuizId($itr->quizId)->whereQNo(($i + 1))->first()->questionId;
+                $tmp->quizMode = 2;
+                $tmp->status = true;
+
+                $tmp->save();
+            }
+
+        }
+
+
     }
 }

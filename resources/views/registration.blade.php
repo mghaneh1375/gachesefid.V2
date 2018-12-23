@@ -80,7 +80,7 @@
 @section('main')
 
     <div class="col-md-2 col-xs-12 col-md-push-10 hiddenOnScreen">
-        <div onclick="document.location.href = '{{route('home')}}'" class="SiteName" style="position: fixed; z-index: 10001; cursor: pointer">
+        <div onclick="document.location.href = 'http://gachesefid.com'" class="SiteName" style="position: fixed; z-index: 10001; cursor: pointer">
             <img class="mobile-gach-icon" src="{{URL::asset('images/banner-gach-4.png')}}">
         </div>
     </div>

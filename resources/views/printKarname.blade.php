@@ -262,7 +262,7 @@
 
                             <td><center>رتبه در استان</center></td>
 
-                            <td><center>رتبه در شهر</center></td>
+                            <td><center>رتبه در شهر/منطقه</center></td>
 
                             <td><center>تراز</center></td>
 

@@ -529,7 +529,8 @@ class RegistrationController extends Controller {
 
         $date = getToday()["date"];
 
-        $quizes = DB::select('select * from regularQuiz WHERE startReg <= ' . $date . ' and endReg >= ' . $date);
+//        $quizes = DB::select('select * from regularQuiz WHERE startReg <= ' . $date . ' and endReg >= ' . $date);
+        $quizes = DB::select('select * from regularQuiz');
         foreach ($quizes as $quiz) {
             $quiz->startDate = convertStringToDate($quiz->startDate);
             $quiz->endDate = convertStringToDate($quiz->endDate);

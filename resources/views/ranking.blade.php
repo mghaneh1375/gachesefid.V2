@@ -35,7 +35,7 @@
                     <td><center>شهر</center></td>
                     <td><center>نام مدرسه</center></td>
                     <td><center>تراز کل</center></td>
-                    <td><center>رتبه در شهر</center></td>
+                    <td><center>رتبه در شهر/منطقه</center></td>
                     <td><center>رتبه در استان</center></td>
                     <td><center>رتبه در کشور</center></td>
                     <td><center>کارنامه</center></td>
@@ -102,7 +102,7 @@
             newElement += "<td><center>تراز</center></td>";
             newElement += "<td><center>رتبه در کشور</center></td>";
             newElement += "<td><center>رتبه در استان</center></td>";
-            newElement += "<td><center>رتبه در شهر</center></td>";
+            newElement += "<td><center>رتبه در شهر/منظقه</center></td>";
             newElement += "</tr>";
 
             newElement += "<tr>";
