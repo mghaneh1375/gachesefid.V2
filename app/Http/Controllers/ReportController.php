@@ -621,6 +621,24 @@ class ReportController extends Controller {
                 }
             }
 
+            if(isset($_POST["newSchoolCode"]) && !empty($_POST["newSchoolCode"])) {
+
+                $code = makeValidInput($_POST["newSchoolCode"]);
+                $school = User::whereInvitationCode($code)->first();
+
+                if($school != null) {
+                    $sS = SchoolStudent::whereUId($user->id)->first();
+
+                    if($sS == null) {
+                        $sS = new SchoolStudent();
+                        $sS->uId = $user->id;
+                    }
+
+                    $sS->sId = $school->id;
+                    $sS->save();
+                }
+            }
+
             try {
                 $user->save();
                 echo "ok";

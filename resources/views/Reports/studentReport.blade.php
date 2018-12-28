@@ -146,6 +146,11 @@
                 <input id="confirm" type="password">
             </div>
 
+            <div>
+                <label style="min-width: 150px" for="newSchoolCode">کد جدید مدرسه</label>
+                <input id="newSchoolCode" type="text">
+            </div>
+
             <center style="margin-top: 10px">
                 <span onclick="doEdit()" class="btn btn-success">تایید</span>
             </center>
@@ -186,7 +191,7 @@
         }
 
         function doEdit() {
-            
+
             $.ajax({
                 type: 'post',
                 url: '{{route('doEditUser')}}',
@@ -197,7 +202,8 @@
                     'username': $("#userName").val(),
                     'phone': $("#phone").val(),
                     'password': $("#password").val(),
-                    'confirm': $("#confirm").val()
+                    'confirm': $("#confirm").val(),
+                    'newSchoolCode': $("#newSchoolCode").val()
                 },
                 success: function (response) {
 
