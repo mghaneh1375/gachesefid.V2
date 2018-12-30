@@ -46,7 +46,7 @@
 
                     <center style="font-size: 20px; font-weight: 500">
                         <p><span>نام بسته: </span><span>{{$compose->name}}</span></p>
-                        <p><span>هرینه کل بسته: </span><span>{{$compose->totalPrice}} تومان</span></p>
+                        <p><span>هزینه کل بسته: </span><span>{{$compose->totalPrice}} تومان</span></p>
                         <span>
                             <button onclick="document.location.href = '{{route('doComposeQuizRegistry', ['composeId' => $compose->id])}}'" class="btn btn-primary">ثبت نام در تمامی موارد
                             </button>
@@ -96,7 +96,7 @@
 
                     <center style="font-size: 20px; font-weight: 500">
                         <p><span>نام بسته: </span><span>{{$compose->name}}</span></p>
-                        <p><span>هرینه کل بسته: </span><span>{{$compose->totalPrice}} تومان</span></p>
+                        <p><span>هزینه کل بسته: </span><span>{{$compose->totalPrice}} تومان</span></p>
                         <span>
                             <button onclick="document.location.href = '{{route('doComposeQuizRegistry', ['composeId' => $compose->id])}}'" class="btn btn-primary">ثبت نام در تمامی موارد
                             </button>
