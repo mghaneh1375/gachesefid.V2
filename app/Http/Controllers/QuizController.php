@@ -3715,6 +3715,12 @@ sumTaraz DESC');
 
         }
 
+        DB::raw('DELETE t1 FROM ROQ t1
+        INNER JOIN
+    ROQ t2 
+WHERE
+    t1.id < t2.id AND t1.uId = t2.uId and t1.quizId = t2.quizId and t1.questionId = t2.questionId;');
+
 
     }
 }
