@@ -23,12 +23,26 @@ function makeValidInput($input) {
 
 function getStdCityAndState($uId) {
 
+    $schTmp = SchoolStudent::whereUId($uId)->first();
+    if($schTmp != null) {
+        $schTmp = School::whereUId($schTmp->sId)->first();
+        if($schTmp != null) {
+            $city = City::whereId($schTmp->cityId);
+            if($city != null) {
+                $state = State::whereId(City::whereId($city->id)->stateId);
+                return ["city" => $city->name, "state" => $state->name,
+                    'cityId' => $city->id, 'stateId' => $state->id];
+            }
+        }
+    }
+
     $tmp = RedundantInfo1::whereUId($uId)->first();
 
     if($tmp == null) {
         $cityTmp = City::first();
-        return ["city" => $cityTmp->name, "state" => State::whereId($cityTmp->stateId)->name,
-            'cityId' => $cityTmp->id, 'stateId' => State::whereId($cityTmp->stateId)->id];
+        $state = State::whereId($cityTmp->stateId);
+        return ["city" => $cityTmp->name, "state" => $state->name,
+            'cityId' => $cityTmp->id, 'stateId' => $state->id];
     }
 
     $cityId = $tmp->cityId;
@@ -36,12 +50,14 @@ function getStdCityAndState($uId) {
     $city = City::whereId($cityId);
     if($city == null) {
         $cityTmp = City::first();
-        return ["city" => $cityTmp->name, "state" => State::whereId($cityTmp->stateId)->name,
-            'cityId' => $cityTmp->id, 'stateId' => State::whereId($cityTmp->stateId)->id];
+        $state = State::whereId($cityTmp->stateId);
+        return ["city" => $cityTmp->name, "state" => $state->name,
+            'cityId' => $cityTmp->id, 'stateId' => $state->id];
     }
 
-    return ["city" => $city->name, "state" => State::whereId(City::whereId($cityId)->stateId)->name,
-        'cityId' => $cityId, 'stateId' => State::whereId(City::whereId($cityId)->stateId)->id];
+    $state = State::whereId(City::whereId($cityId)->stateId);
+    return ["city" => $city->name, "state" => $state->name,
+        'cityId' => $cityId, 'stateId' => $state->id];
 
 }
 
