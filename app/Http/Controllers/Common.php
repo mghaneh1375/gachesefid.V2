@@ -23,18 +23,18 @@ function makeValidInput($input) {
 
 function getStdCityAndState($uId) {
 
-    $schTmp = SchoolStudent::whereUId($uId)->first();
-    if($schTmp != null) {
-        $schTmp = School::whereUId($schTmp->sId)->first();
-        if($schTmp != null) {
-            $city = City::whereId($schTmp->cityId);
-            if($city != null) {
-                $state = State::whereId(City::whereId($city->id)->stateId);
-                return ["city" => $city->name, "state" => $state->name,
-                    'cityId' => $city->id, 'stateId' => $state->id];
-            }
-        }
-    }
+//    $schTmp = SchoolStudent::whereUId($uId)->first();
+//    if($schTmp != null) {
+//        $schTmp = School::whereUId($schTmp->sId)->first();
+//        if($schTmp != null) {
+//            $city = City::whereId($schTmp->cityId);
+//            if($city != null) {
+//                $state = State::whereId(City::whereId($city->id)->stateId);
+//                return ["city" => $city->name, "state" => $state->name,
+//                    'cityId' => $city->id, 'stateId' => $state->id];
+//            }
+//        }
+//    }
 
     $tmp = RedundantInfo1::whereUId($uId)->first();
 
