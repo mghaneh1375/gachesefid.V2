@@ -2315,7 +2315,7 @@ sumTaraz DESC');
 //                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ2.questionId");
 
         $roqs = ROQ2::whereUId($uId)->whereQuizId($quizId)->first();
-
+        
 //        if($roqs == null || count($roqs) == 0) {
 //            $this->fillRegularROQ($quizId);
 //

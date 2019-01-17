@@ -6,6 +6,7 @@ use App\models\AdviserFields;
 use App\models\AdviserInfo;
 use App\models\NamayandeSchool;
 use App\models\RedundantInfo2;
+use App\models\ROQ2;
 use App\models\SystemQOQ;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -423,7 +424,7 @@ class ReportController extends Controller {
 
     public function moneyReport() {
 
-        $transactions = Transaction::where('amount', '<', 0)->orderBy('date', 'DESC')->paginate(300);
+        $transactions = Transaction::where('amount', '<', 0)->orderBy('date', 'DESC')->paginate(500);
 
         foreach ($transactions as $transaction) {
             switch ($transaction->kindTransactionId) {
@@ -1155,7 +1156,7 @@ class ReportController extends Controller {
             readfile($fileName);
             unlink($fileName);
         }
-
+        
         return view('reportA5', array('users' => $users, 'quizId' => $quizId));
 
     }
