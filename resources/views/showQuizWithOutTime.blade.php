@@ -99,7 +99,7 @@
             var newNode = "<span><img alt='در حال بارگذاری تصویر' style='max-width: 100%' src='{{URL::asset('images/questions/system')}}/" + questionArr[qIdx].questionFile + "'></span><br/>";
 
             if(questionArr[qIdx].kindQ == "1") {
-                newNode += "<center style='margin-top: 20px;'><span style='font-size: 20px; color: #ff0000'>پاسخ شما : </span><select disabled class='mySelect' style='width: 60px; font-size: 14px' id='choices' onchange='submitC(this.value)'>";
+                newNode += "<center style='margin-top: 20px;'><span style='font-size: 20px; color: #ff0000'>پاسخ شما : </span><select disabled class='mySelect' style='width: 60px; font-size: 14px' id='choices'>";
 
                 if (answer[qIdx].result == -1)
                     newNode = newNode + "<option selected value='0' selected>خطا</option>";
@@ -124,6 +124,12 @@
                     newNode = newNode + "<option value='4' selected>گزینه 4</option>";
                 else
                     newNode = newNode + "<option value='4'>گزینه 4</option>";
+
+                if (answer[qIdx].result == 5)
+                    newNode = newNode + "<option value='5' selected>گزینه 5</option>";
+                else
+                    newNode = newNode + "<option value='5'>گزینه 5</option>";
+
                 newNode = newNode + "</select></center>";
             }
             else {

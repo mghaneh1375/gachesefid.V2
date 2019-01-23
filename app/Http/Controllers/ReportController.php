@@ -386,7 +386,7 @@ class ReportController extends Controller {
             readfile($fileName);
             unlink($fileName);
         }
-
+        
         return Redirect::to('gradeReport');
     }
 
