@@ -265,7 +265,7 @@ class QuizController extends Controller {
                             continue;
                         }
                         
-                        $quizQuestions = DB::select('select questionId from regularQOQ WHERE mark = 1 and quizId = ' . $key . " order by qNo ASC");
+                        $quizQuestions = DB::select('select questionId, mark from regularQOQ WHERE mark = 1 and quizId = ' . $key . " order by qNo ASC");
 
                         foreach ($value as $k=>$v){
 
@@ -292,6 +292,10 @@ class QuizController extends Controller {
                             }
 
                             for($i = 0; $i < strlen($v); $i++) {
+
+                                if($quizQuestions[$i]->mark == 0)
+                                    continue;
+
                                 $roq = new ROQ();
                                 $roq->uId = $k;
                                 $roq->questionId = $quizQuestions[$i]->questionId;
