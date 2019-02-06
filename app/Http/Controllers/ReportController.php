@@ -422,6 +422,59 @@ class ReportController extends Controller {
 
     }
 
+    public function participantsQuizReport($quizId) {
+
+        $objPHPExcel = new PHPExcel();
+        $objPHPExcel->getProperties()->setCreator("Gachesefid");
+        $objPHPExcel->getProperties()->setLastModifiedBy("Gachesefid");
+        $objPHPExcel->getProperties()->setTitle("Office 2007 XLSX Test Document");
+        $objPHPExcel->getProperties()->setSubject("Office 2007 XLSX Test Document");
+        $objPHPExcel->getProperties()->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.");
+
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'آنلاین');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'شماره همراه');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'نام خانوادگی');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام');
+
+        $counter = 2;
+
+        $items = DB::select('select u.firstName, u.lastName, u.phoneNum, q.online from users u, quizRegistry q WHERE u.id = q.uId and q.qId = ' . $quizId);
+
+        foreach ($items as $itr) {
+
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter), $itr->online);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), $itr->phoneNum, PHPExcel_Cell_DataType::TYPE_STRING);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $itr->lastName);
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter), $itr->firstName);
+
+            $counter++;
+        }
+
+        $fileName = __DIR__ . "/../../../public/registrations/subjectReport.xlsx";
+
+        $objPHPExcel->getActiveSheet()->setTitle('گزارش گیری آزمون ها');
+
+        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save($fileName);
+
+
+        if (file_exists($fileName)) {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="'.basename($fileName).'"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($fileName));
+            readfile($fileName);
+            unlink($fileName);
+        }
+
+        return Redirect::to('quizReport');
+    }
+
     public function moneyReport() {
 
         $transactions = Transaction::where('amount', '<', 0)->orderBy('date', 'DESC')->paginate(500);

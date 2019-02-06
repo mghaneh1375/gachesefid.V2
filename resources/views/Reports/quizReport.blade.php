@@ -33,6 +33,7 @@
                 <td><center>تعداد ثبت نام ها</center></td>
                 <td><center>تاریخ برگزاری</center></td>
                 <td><center>ساعت برگزاری</center></td>
+                <td><center>عملیات</center></td>
             </tr>
 
             @foreach($regularQuizes as $itr)
@@ -43,6 +44,7 @@
                     <td><center> حضوری: {{$itr->nonOnlineRegistered}} - غیر حضوری:  {{$itr->onlineRegistered}} </center></td>
                     <td><center> شروع:  {{$itr->startDate}} - اتمام : {{$itr->endDate}} </center></td>
                     <td><center> شروع:  {{$itr->startTime}} - اتمام : {{$itr->endTime}} </center></td>
+                    <td style="cursor: pointer" onclick="document.location.href = '{{route('participantsQuizReport', ['quizId' => $itr->id])}}'"><center style="color: red">دانلود نفرات شرکت کننده</center></td>
                 </tr>
             @endforeach
 

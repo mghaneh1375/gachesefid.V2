@@ -117,6 +117,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'reportLevel']), function
 
 	Route::get('quizReports', array('as' => 'quizReports', 'uses' => 'ReportController@chooseQuiz'));
 
+	Route::get('participantsQuizReport/{quizId}', array('as' => 'participantsQuizReport', 'uses' => 'ReportController@participantsQuizReport'));
+
 	Route::get('chooseRegularQuiz', array('as' => 'chooseRegularQuiz', 'uses' => 'ReportController@chooseRegularQuiz'));
 
 	Route::get('A5/{quizId}', array('as' => 'A5', 'uses' => 'ReportController@A5'));
