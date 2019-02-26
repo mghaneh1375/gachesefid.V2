@@ -37,6 +37,34 @@ use soapclient;
 
 class QuizController extends Controller {
 
+    public function addToRegularQuiz() {
+
+        if(isset($_POST["online"]) && isset($_POST["nid"]) && isset($_POST["quizId"])) {
+
+            $uId = User::whereNID(makeValidInput($_POST["nid"]))->first();
+
+            if($uId != null) {
+
+                $uId = $uId->id;
+                $quizId = makeValidInput($_POST["quizId"]);
+
+                if(QuizRegistry::whereQId($quizId)->whereUId($uId)->whereQuizMode(getValueInfo('regularQuiz'))->first() == null) {
+
+                    $tmp = new QuizRegistry();
+                    $tmp->quizMode = getValueInfo('regularQuiz');
+                    $tmp->qId = $quizId;
+                    $tmp->uId = $uId;
+                    $tmp->online = (makeValidInput($_POST["online"]) == 1);
+                    $tmp->save();
+
+                    echo "ok";
+                }
+
+            }
+        }
+
+    }
+
     public function elseQuiz() {
 
         if(isset($_POST["quizId"])) {
@@ -2283,7 +2311,20 @@ sumTaraz DESC');
         return view('showQuizWithOutTime', array('quiz' => $quiz, 'questions' => $questions, 'quizMode' => $quizMode,
             'roqs' => $roqs));
     }
-    
+
+    public function deleteFromQuiz() {
+
+        if(isset($_POST["id"])) {
+
+            try {
+                QuizRegistry::destroy(makeValidInput($_POST["id"]));
+                echo "ok";
+            }
+            catch (\Exception $x) {}
+        }
+
+    }
+
     public function doRegularQuiz($quizId) {
 
         $today = getToday();
@@ -2320,8 +2361,8 @@ sumTaraz DESC');
             $quizRegistry->save();
         }
         else {
-            return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]));
-//            $timeEntry = $quiz->timeEntry;
+//            return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]));
+            $timeEntry = $quiz->timeEntry;
         }
 
         $reminder = $timeLen * 60 - time() + $timeEntry;

@@ -424,7 +424,7 @@ class ReportController extends Controller {
 
     public function participantsQuizReport($quizId) {
 
-        $items = DB::select('select q.id, u.firstName, u.lastName, u.phoneNum, q.online from users u, quizRegistry q WHERE u.id = q.uId and q.qId = ' . $quizId);
+        $items = DB::select('select q.id, u.firstName, u.lastName, u.NID, u.phoneNum, q.online from users u, quizRegistry q WHERE u.id = q.uId and q.qId = ' . $quizId);
         foreach ($items as $itr) {
             if($itr->online == 1)
                 $itr->online = "آنلاین";
@@ -445,19 +445,21 @@ class ReportController extends Controller {
 
         $objPHPExcel->setActiveSheetIndex(0);
 
-        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'آنلاین');
-        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'شماره همراه');
+        $objPHPExcel->getActiveSheet()->setCellValue('E1', 'آنلاین');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'شماره همراه');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'کد ملی');
         $objPHPExcel->getActiveSheet()->setCellValue('B1', 'نام خانوادگی');
         $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام');
 
         $counter = 2;
 
-        $items = DB::select('select u.firstName, u.lastName, u.phoneNum, q.online from users u, quizRegistry q WHERE u.id = q.uId and q.qId = ' . $quizId);
+        $items = DB::select('select u.firstName, u.lastName, u.NID, u.phoneNum, q.online from users u, quizRegistry q WHERE u.id = q.uId and q.qId = ' . $quizId);
 
         foreach ($items as $itr) {
 
-            $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter), $itr->online);
-            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), $itr->phoneNum, PHPExcel_Cell_DataType::TYPE_STRING);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . ($counter), $itr->online);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . ($counter), $itr->phoneNum, PHPExcel_Cell_DataType::TYPE_STRING);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($counter), $itr->NID, PHPExcel_Cell_DataType::TYPE_STRING);
             $objPHPExcel->getActiveSheet()->setCellValue('B' . ($counter), $itr->lastName);
             $objPHPExcel->getActiveSheet()->setCellValue('A' . ($counter), $itr->firstName);
 

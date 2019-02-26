@@ -199,6 +199,10 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 
 Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function () {
 
+	Route::post('deleteFromQuiz', array('as' => 'deleteFromQuiz', 'uses' => 'QuizController@deleteFromQuiz'));
+
+	Route::post('addToRegularQuiz', array('as' => 'addToRegularQuiz', 'uses' => 'QuizController@addToRegularQuiz'));
+	
 	Route::post('getQuestionByOrganizationId', array('as' => 'getQuestionByOrganizationId', 'uses' => 'QuestionController@getQuestionByOrganizationId'));
 
 	Route::get('chooseSystemQuiz', array('as' => 'chooseSystemQuiz', 'uses' => 'ReportController@chooseSystemQuiz'));

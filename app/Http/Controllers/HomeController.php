@@ -266,6 +266,14 @@ class HomeController extends Controller {
 
 	public function profile() {
 
+//		$start = microtime(true);
+//		echo time();
+//		$questions = DB::select('select choicesCount, question.id, question.questionFile, question.kindQ, question.neededTime as qoqId from question, regularQOQ WHERE questionId = question.id and quizId = ' . 171 . ' order by regularQOQ.qNo ASC');
+//		var_dump($questions);
+//		DB::select('call getQuizQuestions("' . 171 . '")');
+//		dd(microtime(true) - $start);
+
+
 		if(Auth::user()->level == getValueInfo('studentLevel')) {
 
 			$user = Auth::user();
