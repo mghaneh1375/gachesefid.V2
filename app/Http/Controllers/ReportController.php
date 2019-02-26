@@ -424,6 +424,18 @@ class ReportController extends Controller {
 
     public function participantsQuizReport($quizId) {
 
+        $items = DB::select('select q.id, u.firstName, u.lastName, u.phoneNum, q.online from users u, quizRegistry q WHERE u.id = q.uId and q.qId = ' . $quizId);
+        foreach ($items as $itr) {
+            if($itr->online == 1)
+                $itr->online = "آنلاین";
+            else
+                $itr->online = "حضوری";
+        }
+        return view('Reports.participantsQuizReport', ['items' => $items, 'quizId' => $quizId]);
+    }
+
+    public function participantsQuizReportExcel($quizId) {
+
         $objPHPExcel = new PHPExcel();
         $objPHPExcel->getProperties()->setCreator("Gachesefid");
         $objPHPExcel->getProperties()->setLastModifiedBy("Gachesefid");
@@ -592,21 +604,26 @@ class ReportController extends Controller {
     
     public function studentReport($mode = "", $key = "", $page = 1) {
 
-        if($mode != "" && $mode != "name" && $mode != "username")
+        if($mode != "" && $mode != "name" && $mode != "username" && $mode != 'nid')
             $page = $mode;
 
         $start = ($page - 1) * 20;
-        $name = $username = "";
+        $name = $username = $nid = "";
 
         if($mode == "name") {
             $name = makeValidInput($key);
             $users = DB::select("select * from users where concat(firstName, ' ', lastName) LIKE '%$name%' limit $start, 20");
-            $total = count(DB::select("select * from users where concat(firstName, ' ', lastName) LIKE '%$name%' "));
+            $total = DB::select("select count(*) as countNum from users where concat(firstName, ' ', lastName) LIKE '%$name%' ")[0]->countNum;
         }
         else if($mode == "username") {
             $username = makeValidInput($key);
             $users = DB::select("select * from users where username LIKE '%$username%' limit $start, 20");
-            $total = count(DB::select("select * from users where username LIKE '%$username%'"));
+            $total = DB::select("select count(*) as countNum from users where username LIKE '%$username%'")[0]->countNum;
+        }
+        else if($mode == "nid") {
+            $nid = makeValidInput($key);
+            $users = DB::select("select * from users where nid LIKE '%$nid%' limit $start, 20");
+            $total = DB::select("select count(*) as countNum from users where nid LIKE '%$nid%'")[0]->countNum;
         }
 
         else {
@@ -641,7 +658,7 @@ class ReportController extends Controller {
         }
 
         return view('Reports.studentReport', array('users' => $users, 'username' => $username,
-            'total' => $total, 'page' => $page, 'name' => $name));
+            'total' => $total, 'page' => $page, 'name' => $name, 'nid' => $nid));
     }
 
     public function doEditUser() {

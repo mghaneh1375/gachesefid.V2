@@ -46,6 +46,14 @@
                 <input id="username" value="{{(!empty($username) ? $username : '')}}" type="text">
                 <span style="cursor: pointer" onclick="document.location.href = '{{route('home')}}' + '/studentReport/username/' + $('#username').val() + '/{{$page}}'" class="glyphicon glyphicon-search"></span>
             </div>
+            <div style="clear: both"></div>
+            <div style="float: right">
+                <label for="nid" style="min-width: 130px; text-align: right">
+کد ملی
+                </label>
+                <input id="nid" value="{{(!empty($nid) ? $nid : '')}}" type="text">
+                <span style="cursor: pointer" onclick="document.location.href = '{{route('home')}}' + '/studentReport/nid/' + $('#nid').val() + '/{{$page}}'" class="glyphicon glyphicon-search"></span>
+            </div>
         </div>
 
 
@@ -55,6 +63,7 @@
                 <tr>
                     <td><center>نام</center></td>
                     <td><center>نام خانوادگی</center></td>
+                    <td><center>کد ملی</center></td>
                     <td><center>نام کاربری</center></td>
                     <td><center>شماره تماس</center></td>
                     <td><center>پایه تحصیلی</center></td>
@@ -67,6 +76,7 @@
                     <tr>
                         <td><center>{{$user->firstName}}</center></td>
                         <td><center>{{$user->lastName}}</center></td>
+                        <td><center>{{$user->NID}}</center></td>
                         <td><center>{{$user->username}}</center></td>
                         <td><center>{{$user->phoneNum}}</center></td>
                         <td><center>{{$user->grade}}</center></td>

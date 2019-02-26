@@ -239,6 +239,20 @@ class QuizController extends Controller {
         return view('rankingSelectQuiz', array('quizes' => $quizes));
     }
 
+    public function toggleStatusOnline() {
+
+        if(isset($_POST["id"])) {
+
+            $tmp = QuizRegistry::whereId(makeValidInput($_POST["id"]));
+            if($tmp != null) {
+                $tmp->online = !$tmp->online;
+                $tmp->save();
+                echo "ok";
+            }
+        }
+
+    }
+
     public function getROQ() {
 
         if(isset($_POST["username"]) && isset($_POST["password"]) &&
