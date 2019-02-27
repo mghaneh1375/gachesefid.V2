@@ -2399,7 +2399,6 @@ sumTaraz DESC');
             $tmpROQ2->quizId = $quizId;
             $tmpROQ2->result = $tmpResult;
             $tmpROQ2->save();
-
         }
         else {
             $tmpROQ2 = [];

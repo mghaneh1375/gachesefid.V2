@@ -7,6 +7,8 @@ use App\models\AdviserInfo;
 use App\models\ComposeQuiz;
 use App\models\Question;
 use App\models\QuizRegistry;
+use App\models\RegularQOQ;
+use App\models\ROQ2;
 use App\models\School;
 use App\models\StudentAdviser;
 use App\models\Transaction;
@@ -264,15 +266,109 @@ class HomeController extends Controller {
 		echo "nok1";
 	}
 
-	public function profile() {
+	public function testMyFunc() {
 
-//		$start = microtime(true);
+		$start = microtime(true);
 //		echo time();
 //		$questions = DB::select('select choicesCount, question.id, question.questionFile, question.kindQ, question.neededTime as qoqId from question, regularQOQ WHERE questionId = question.id and quizId = ' . 171 . ' order by regularQOQ.qNo ASC');
 //		var_dump($questions);
 //		DB::select('call getQuizQuestions("' . 171 . '")');
-//		dd(microtime(true) - $start);
 
+
+		$today = getToday();
+//		$date = $today["date"];
+//		$time = $today["time"];
+		$uId = 4512;
+		$quizId = 171;
+		$date = "13970923";
+		$time = "1400";
+		$currTime = "123";
+
+		$quiz = DB::select('select rQ.*, qR.id as qRID, qR.timeEntry from quizRegistry qR, regularQuiz rQ WHERE rQ.id = ' . $quizId .
+			' and qR.qId = ' . $quizId . ' and qR.uId = ' . $uId .
+			' and qR.quizMode = ' .getValueInfo('regularQuiz')
+		);
+
+		if($quiz == null || count($quiz) == 0)
+			return Redirect::to('profile');
+
+		$quiz = $quiz[0];
+
+		if(!(($quiz->startDate < $date && $quiz->endDate > $date) ||
+			($quiz->startDate < $date && $quiz->endDate >= $date && $quiz->endTime > $time) ||
+			($quiz->startDate == $date && $quiz->startTime <= $time && (
+					($quiz->startDate == $quiz->endDate && $quiz->endTime > $time) ||
+					($quiz->startDate != $quiz->endDate) ||
+					($quiz->endDate == $date && $quiz->endTime > $time)
+				)
+			)))
+			return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]));
+
+		$timeLen = calcTimeLenQuiz($quiz->id, 'regular');
+
+		if($quiz->timeEntry == "") {
+			$timeEntry = time();
+			$quizRegistry = QuizRegistry::whereId($quiz->qRID);
+			$quizRegistry->timeEntry = $timeEntry;
+			$quizRegistry->save();
+		}
+		else {
+//            return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]));
+			$timeEntry = $quiz->timeEntry;
+		}
+
+		$reminder = $timeLen * 60 - $currTime + $timeEntry;
+
+		if($reminder <= 0)
+			return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]));
+
+//        $roqs = DB::select('select ROQ2.result, ROQ2.id from ROQ2, question where quizId = ' . $quizId . " and uId = " . $uId . " and
+//                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ2.questionId");
+
+		$roqs = ROQ2::whereUId($uId)->whereQuizId($quizId)->first();
+
+//        if($roqs == null || count($roqs) == 0) {
+//            $this->fillRegularROQ($quizId);
+//
+//            $roqs = DB::select('select ROQ2.result, ROQ2.id from ROQ2, question where quizId = ' . $quizId . " and uId = " . $uId . " and
+//                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ2.questionId");
+//        }
+
+		if($roqs == null) {
+
+			$quizQuestionsNo = RegularQOQ::whereQuizId($quizId)->count();
+
+			$tmpResult = "";
+			$roqs = [];
+
+			for ($i = 0; $i < $quizQuestionsNo; $i++) {
+				$tmpResult .= "0";
+				$roqs[$i] = 0;
+			}
+
+			$tmpROQ2 = new ROQ2();
+			$tmpROQ2->uId = $uId;
+			$tmpROQ2->quizId = $quizId;
+			$tmpROQ2->result = $tmpResult;
+			$tmpROQ2->save();
+		}
+		else {
+			$tmpROQ2 = [];
+			$tmpResult = $roqs->result;
+			for ($i = 0; $i < strlen($tmpResult); $i++) {
+				$tmpROQ2[$i] = $tmpResult[$i];
+			}
+
+			$roqs = $tmpROQ2;
+		}
+
+		$questions = DB::select('select choicesCount, question.id, question.questionFile, question.kindQ, question.neededTime as qoqId from question, regularQOQ WHERE questionId = question.id and quizId = ' . $quizId . ' order by regularQOQ.qNo ASC');
+
+		dd((microtime(true) - $start) * 1000);
+		
+	}
+	
+	public function profile() {
 
 		if(Auth::user()->level == getValueInfo('studentLevel')) {
 

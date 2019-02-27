@@ -189,6 +189,8 @@ Route::group(array('middleware' => ['nothing', 'auth']), function () {
 
 	Route::get('profile', array('as' => 'profile', 'uses' => 'HomeController@profile'));
 
+	Route::get('testMyFunc', array('as' => 'testMyFunc', 'uses' => 'HomeController@testMyFunc'));
+
 });
 
 Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
