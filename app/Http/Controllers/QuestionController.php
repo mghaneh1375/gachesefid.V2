@@ -986,9 +986,9 @@ class QuestionController extends Controller {
 
                             $tmp = 8;
                             while ($tmp < count($question)) {
-                                $subject = Subject::find($question[$tmp++]);
+                                $subject = Subject::whereName($question[$tmp++]);
                                 if($subject == null) {
-                                    $errors[count($errors)] = $question[0];
+                                    $errors[count($errors)] = "err6: " . $question[0];
                                     SOQ::where('qId', '=', $newQuestion->id)->delete();
                                     $newQuestion->delete();
                                     unlink($newPath);

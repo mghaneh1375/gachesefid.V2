@@ -471,6 +471,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone', 'quiz']), functi
 
 });
 
+Route::post('submitAllAnsRegularQuiz', array('as' => 'submitAllAnsRegularQuiz', 'uses' => 'QuizController@submitAllAnsRegularQuiz'));
+
 Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 
 	Route::post('getLessons', array('as' => 'getLessons', 'uses' => 'ContentController@getLessons'));
@@ -532,8 +534,6 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 	Route::post('submitAnsSystemQuiz', array('as' => 'submitAnsSystemQuiz', 'uses' => 'QuizController@submitAnsSystemQuiz'));
 
 	Route::post('submitAnsRegularQuiz', array('as' => 'submitAnsRegularQuiz', 'uses' => 'QuizController@submitAnsRegularQuiz'));
-
-	Route::post('submitAllAnsRegularQuiz', array('as' => 'submitAllAnsRegularQuiz', 'uses' => 'QuizController@submitAllAnsRegularQuiz'));
 	
 	Route::post('submitAnsSelfQuiz', array('as' => 'submitAnsSelfQuiz', 'uses' => 'QuizController@submitAnsSelfQuiz'));
 

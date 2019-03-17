@@ -19,7 +19,7 @@ class TarazController extends Controller {
 
     private function getAverageLesson($lId, $qId, $qEntryIds) {
 
-        $questionIds = DB::select('SELECT question.id, question.ans, question.choicesCount, question.kindQ, question.level FROM regularQOQ, question, SOQ WHERE regularQOQ.mark <> 0 and SOQ.qId = question.id and regularQOQ.quizId = ' . $qId . ' and question.id = regularQOQ.questionId and ' . $lId . ' IN (SELECT subject.lessonId FROM subject WHERE subject.id = SOQ.sId)');
+        $questionIds = DB::select('SELECT question.id, question.ans, question.telorance, question.choicesCount, question.kindQ, question.level FROM regularQOQ, question, SOQ WHERE regularQOQ.mark <> 0 and SOQ.qId = question.id and regularQOQ.quizId = ' . $qId . ' and question.id = regularQOQ.questionId and ' . $lId . ' IN (SELECT subject.lessonId FROM subject WHERE subject.id = SOQ.sId)');
 
         $regularQuizMode = getValueInfo('regularQuiz');
 
@@ -29,23 +29,35 @@ class TarazController extends Controller {
             for($j = 0; $j < count($questionIds); $j++) {
 
                 if($i == 0) {
+
                     $condition = ['questionId' => $questionIds[$j]->id, 'status' => 1];
-                    $count = ROQ::where($condition)->count();
+                    $count = 0;
+                    $correct = 0;
+                    $roqsTmp = ROQ::where($condition)->select('result')->get();
 
-                    if($count > 10) {
-                        $condition = ['questionId' => $questionIds[$j]->id, 'result' => $questionIds[$j]->ans, 'status' => 1];
-                        $correct = ROQ::where($condition)->count();
-
-                        $level = 3; // hard
-                        if (($correct * 1.0) / $count > 0.6)
-                            $level = 1; // easy
-                        if (($correct * 1.0) / $count > 0.3)
-                            $level = 2; // average
-
-                        $q = Question::whereId($questionIds[$j]->id);
-                        $q->level = $level;
-                        $q->save();
+                    if($questionIds[$j]->kindQ == 1) {
+                        foreach ($roqsTmp as $itr) {
+                            $count++;
+                            if ($itr->result == $questionIds[$j]->ans)
+                                $correct++;
+                        }
                     }
+                    else {
+                        foreach ($roqsTmp as $itr) {
+                            $count++;
+                            if ($itr->result >= $questionIds[$j]->ans - $questionIds[$j]->telorance &&
+                                $itr->result <= $questionIds[$j]->ans + $questionIds[$j]->telorance)
+                                $correct++;
+                        }
+                    }
+
+                    $level = 3; // hard
+                    if (($correct * 1.0) / $count > 0.6)
+                        $level = 1; // easy
+                    if (($correct * 1.0) / $count > 0.3)
+                        $level = 2; // average
+
+                    DB::update('update question set level = ' . $level . ' where id = ' . $questionIds[$j]->id);
                 }
 
                 $conditions = ['uId' => $qEntryIds[$i]->uId, 'questionId' => $questionIds[$j]->id,
@@ -59,8 +71,11 @@ class TarazController extends Controller {
                         $stdAns->result = -1;
                         $stdAns->save();
                     }
-
-                    else if($questionIds[$j]->ans == $stdAns->result)
+                    else if($questionIds[$j]->kindQ == 1 && $questionIds[$j]->ans == $stdAns->result)
+                        $percent++;
+                    else if ($questionIds[$j]->kindQ == 0 &&
+                        $stdAns->result >= $questionIds[$j]->ans - $questionIds[$j]->telorance &&
+                        $stdAns->result <= $questionIds[$j]->ans + $questionIds[$j]->telorance)
                         $percent++;
                     else if($stdAns->result != 0)
                         $percent -= (1 / ($questionIds[$j]->choicesCount - 1));
@@ -132,7 +147,7 @@ class TarazController extends Controller {
             }
         }
 
-        $qoqs = DB::select('select question.id, question.ans as ans, question.choicesCount, SOQ.sId as sId from regularQOQ, question, SOQ WHERE regularQOQ.quizId = ' . $quizId . ' AND regularQOQ.questionId = question.id and question.id = SOQ.qId');
+        $qoqs = DB::select('select question.id, question.ans as ans, question.kindQ, question.telorance, question.choicesCount, SOQ.sId as sId from regularQOQ, question, SOQ WHERE regularQOQ.quizId = ' . $quizId . ' AND regularQOQ.questionId = question.id and question.id = SOQ.qId');
         $totals = array();
 
         foreach ($sIds as $sId)
@@ -147,7 +162,10 @@ class TarazController extends Controller {
             $totals[$qoq->sId]++;
 
             foreach ($roqs as $roq) {
-                if($qoq->ans == $roq->result)
+                if(($qoq->kindQ == 1 && $qoq->ans == $roq->result) ||
+                    ($qoq->kindQ == 0 && $roq->result >= $qoq->ans - $qoq->telorance &&
+                    $roq->result <= $qoq->ans + $qoq->telorance)
+                )
                     $percentInSubjects[$roq->uId][$qoq->sId]++;
                 else if($roq->result != 0)
                     $percentInSubjects[$roq->uId][$qoq->sId] -= (1 / ($qoq->choicesCount - 1));
@@ -292,7 +310,7 @@ class TarazController extends Controller {
 
         $date = getToday();
         $quizes = DB::select('select id, name from regularQuiz WHERE endDate < ' . $date["date"] . " or " .
-        "(endDate = " . $date["date"] . " and endTime < " . $date["time"] . ")");
+        "(endDate = " . $date["date"] . " and endTime < " . $date["time"] . ") order by id desc");
 
         return view('createTarazTable', array('quizes' => $quizes, 'mode' => $mode));
 

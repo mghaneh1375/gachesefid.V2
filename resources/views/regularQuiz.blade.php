@@ -36,16 +36,20 @@
         function saveAnsAuto() {
 
             var finalResult = "";
-            for(i = 0; i < answer.length; i++) {
-                finalResult += answer[i];
-            }
+            for(i = 0; i < answer.length -1; i++)
+                finalResult += answer[i] + "-";
+
+            if(answer.length > 0)
+                finalResult += answer[answer.length - 1];
 
             $.ajax({
                 type: 'post',
                 url: submitAllAnsURL,
                 data: {
                     'newVals': finalResult,
-                    'quizId': quizId
+                    'quizId': quizId,
+                    'uId': '{{isset($uId) ? $uId : ''}}',
+                    'verify': '{{isset($verify) ? $verify : ''}}'
                 }
             });
 
@@ -68,7 +72,10 @@
 
         function submitC(val) {
             answer[qIdx] = val;
-            return;
+        }
+
+        function submitC2() {
+            answer[qIdx] = ($("#real").val() + "." + $("#img").val());
         }
 
 //        function submitC(val) {
@@ -135,6 +142,8 @@
 
         function incQ() {
             if(qIdx + 1 < questionArr.length) {
+                if(questionArr[qIdx].kindQ != "1")
+                    submitC2();
                 qIdx++;
                 SUQ();
             }
@@ -142,14 +151,28 @@
 
         function decQ() {
             if(qIdx - 1 >= 0) {
+                if(questionArr[qIdx].kindQ != "1")
+                    submitC2();
                 qIdx--;
                 SUQ();
             }
         }
 
         function JMPTOQUIZ(idx) {
+            if(questionArr[qIdx].kindQ != "1")
+                submitC2();
             qIdx = idx;
             SUQ();
+        }
+
+        function isNumberKey(evt)  {
+
+            var charCode = (evt.which) ? evt.which : event.keyCode;
+
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+
+            return true;
         }
 
         function SUQ() {
@@ -214,7 +237,12 @@
 
             else {
 //                newNode = "<center style='margin-top: 20px'><label for='yourAns'>پاسخ شما:</label><input style='max-width: 100px' onchange='submitC(this.value)' type='text' value='" + answer[qIdx].result + "'></center>";
-                newNode = "<center style='margin-top: 20px'><label for='yourAns'>پاسخ شما:</label><input style='max-width: 100px' onchange='submitC(this.value)' type='text' value='" + answer[qIdx] + "'></center>";
+                var tmpArr = answer[qIdx].split('.', 2);
+                if(tmpArr.length == 1)
+                    tmpArr[1] = 0;
+                newNode = "<center style='margin-top: 20px'><p style='color: red;'>پاسخ شما:</p>";
+                newNode += "<span style='margin: 10px'>قسمت صحیح</span><input onkeypress='return isNumberKey(event)' id='real' style='max-width: 100px' type='text' value='" + tmpArr[0] + "'>";
+                newNode += "<span style='margin: 10px'>قسمت اعشار</span><input onkeypress='return isNumberKey(event)' maxlength='2' id='img' style='max-width: 100px' type='text' value='" + tmpArr[1] + "'></center>";
             }
             $("#BQ").append(newNode);
         }
@@ -339,15 +367,20 @@ if ($questions == null || $numQ == 0) {
 
         function submitAllAns(url) {
 
+            if(questionArr[qIdx].kindQ != "1")
+                submitC2();
+
             if(mode == "special") {
                 document.location.href = url;
                 return;
             }
 
             var finalResult = "";
-            for(i = 0; i < answer.length; i++) {
-                finalResult += answer[i];
-            }
+            for(i = 0; i < answer.length -1; i++)
+                finalResult += answer[i] + "-";
+
+            if(answer.length > 0)
+                finalResult += answer[answer.length - 1];
 
             $("#errMsgConfirm").empty().append("در حال ارسال پاسخ برگ به سرور لطفا شکیبا باشید");
             $("#errMsgConfirm2").empty().append("در حال ارسال پاسخ برگ به سرور لطفا شکیبا باشید");
@@ -357,7 +390,9 @@ if ($questions == null || $numQ == 0) {
                 url: submitAllAnsURL,
                 data: {
                     'newVals': finalResult,
-                    'quizId': quizId
+                    'quizId': quizId,
+                    'uId': '{{isset($uId) ? $uId : ''}}',
+                    'verify': '{{isset($verify) ? $verify : ''}}'
                 },
                 success: function (response) {
                     if(response == "ok") {

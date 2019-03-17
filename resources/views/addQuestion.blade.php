@@ -219,7 +219,7 @@
                 <div class="submitOptions" style="margin-top: 10px">
                     <button name="submitBtn" class="btn btn-success">تایید</button>
                 </div>
-                <div class="errorText">{{$err}}</div>
+                <div class="errorText">{!! html_entity_decode($err) !!}</div>
             </form>
         </div>
     </span>
