@@ -95,10 +95,10 @@
                             @if($kindKarname->coherences)
                                 <td><center>{{$lesson->coherence}}</center></td>
                             @endif
-                            <td><center>{{$roq[2][$i]}}</center></td>
-                            <td><center>{{$roq[1][$i]}}</center></td>
-                            <td><center>{{$roq[0][$i]}}</center></td>
-                            <td><center>{{$roq[2][$i] - $roq[0][$i] - $roq[1][$i]}}</center></td>
+                            <td><center>{{$roq[$i][2]}}</center></td>
+                            <td><center>{{$roq[$i][1]}}</center></td>
+                            <td><center>{{$roq[$i][0]}}</center></td>
+                            <td><center>{{$roq[$i][2] - $roq[$i][0] - $roq[$i][1]}}</center></td>
 
                             @if($kindKarname->lessonMark)
                                 <td><center style="direction: ltr">{{($taraz[$i]->percent <= 0) ? 0 : round($taraz[$i]->percent * $totalMark / 100, 0)}}</center></td>

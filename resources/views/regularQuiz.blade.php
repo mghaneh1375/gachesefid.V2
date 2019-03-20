@@ -20,6 +20,8 @@
         var submitAns = '{{route('submitAnsRegularQuiz')}}';
         var submitAllAnsURL = '{{route('submitAllAnsRegularQuiz')}}';
 
+        var myArr = ['اول', 'دوم', 'سوم', 'چهارم', 'پنجم', 'ششم', 'هفتم', 'هشتم', 'نهم'];
+
         $(document).ready(function () {
 
             setTimeout("saveAnsAuto()", 1000 * 60 * 30);
@@ -35,8 +37,14 @@
 
         function saveAnsAuto() {
 
+            if(questionArr[qIdx].kindQ == "0")
+                submitC2();
+
+            if(mode == "special")
+                return;
+
             var finalResult = "";
-            for(i = 0; i < answer.length -1; i++)
+            for(i = 0; i < answer.length - 1; i++)
                 finalResult += answer[i] + "-";
 
             if(answer.length > 0)
@@ -76,6 +84,20 @@
 
         function submitC2() {
             answer[qIdx] = ($("#real").val() + "." + $("#img").val());
+        }
+
+        function submitC3() {
+
+            var str = "";
+
+            for(i = 0; i < questionArr[qIdx].choicesCount - 1; i++) {
+                str += $("#sentence_" + i).val() + "?";
+            }
+
+            if(questionArr[qIdx].choicesCount > 0)
+                str += $("#sentence_" + (questionArr[qIdx].choicesCount - 1)).val();
+
+            answer[qIdx] = str;
         }
 
 //        function submitC(val) {
@@ -177,13 +199,6 @@
 
         function SUQ() {
 
-//            for(i = 0; i < answer.length; i++) {
-//                if(answer[i].result == 0)
-//                    document.getElementById("td_" + i).style.backgroundColor = "white";
-//                else
-//                    document.getElementById("td_" + i).style.backgroundColor = "gray";
-//            }
-
             for(i = 0; i < answer.length; i++) {
                 if(answer[i] == 0)
                     document.getElementById("td_" + i).style.backgroundColor = "white";
@@ -235,14 +250,48 @@
 
             }
 
-            else {
-//                newNode = "<center style='margin-top: 20px'><label for='yourAns'>پاسخ شما:</label><input style='max-width: 100px' onchange='submitC(this.value)' type='text' value='" + answer[qIdx].result + "'></center>";
-                var tmpArr = answer[qIdx].split('.', 2);
-                if(tmpArr.length == 1)
+            else if(questionArr[qIdx].kindQ == "0") {
+                var tmpArr = (answer[qIdx] + "").split('.', 2);
+                if(tmpArr.length != 2) {
+                    tmpArr = [];
+                    tmpArr[0] = 0;
                     tmpArr[1] = 0;
+                }
                 newNode = "<center style='margin-top: 20px'><p style='color: red;'>پاسخ شما:</p>";
                 newNode += "<span style='margin: 10px'>قسمت صحیح</span><input onkeypress='return isNumberKey(event)' id='real' style='max-width: 100px' type='text' value='" + tmpArr[0] + "'>";
                 newNode += "<span style='margin: 10px'>قسمت اعشار</span><input onkeypress='return isNumberKey(event)' maxlength='2' id='img' style='max-width: 100px' type='text' value='" + tmpArr[1] + "'></center>";
+            }
+
+            else {
+                var tmpArr2 = (answer[qIdx] + "").split('?', questionArr[qIdx].choicesCount);
+                if(tmpArr2.length != questionArr[qIdx].choicesCount) {
+                    tmpArr2 = [];
+                    for(i = 0; i < questionArr[qIdx].choicesCount; i++) {
+                        tmpArr2[i] = 0;
+                    }
+                }
+                newNode = "<center style='margin-top: 20px'><p style='color: red;'>پاسخ شما:</p>";
+                for(i = 0; i < questionArr[qIdx].choicesCount; i++) {
+                    newNode += "<div><label for='sentence_" + i +"' style='margin: 10px'>گزاره " + myArr[i] + "</label>";
+                    newNode += "<select style='width: 120px' id='sentence_" + i +"' onchange='submitC3()'>";
+                    if(tmpArr2[i] == 0) {
+                        newNode += "<option value='0'>سفید</option>";
+                        newNode += "<option value='1'>درست</option>";
+                        newNode += "<option value='2'>نادرست</option>";
+                    }
+                    else if(tmpArr2[i] == 1) {
+                        newNode += "<option value='1'>درست</option>";
+                        newNode += "<option value='2'>نادرست</option>";
+                        newNode += "<option value='0'>سفید</option>";
+                    }
+                    else if(tmpArr2[i] == 2) {
+                        newNode += "<option value='2'>نادرست</option>";
+                        newNode += "<option value='1'>درست</option>";
+                        newNode += "<option value='0'>سفید</option>";
+                    }
+                    newNode += "</select></div>";
+                }
+                newNode += "</center>";
             }
             $("#BQ").append(newNode);
         }
@@ -367,7 +416,7 @@ if ($questions == null || $numQ == 0) {
 
         function submitAllAns(url) {
 
-            if(questionArr[qIdx].kindQ != "1")
+            if(questionArr[qIdx].kindQ == "0")
                 submitC2();
 
             if(mode == "special") {
@@ -376,7 +425,7 @@ if ($questions == null || $numQ == 0) {
             }
 
             var finalResult = "";
-            for(i = 0; i < answer.length -1; i++)
+            for(i = 0; i < answer.length - 1; i++)
                 finalResult += answer[i] + "-";
 
             if(answer.length > 0)

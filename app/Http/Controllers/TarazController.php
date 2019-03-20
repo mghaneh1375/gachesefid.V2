@@ -19,23 +19,26 @@ class TarazController extends Controller {
 
     private function getAverageLesson($lId, $qId, $qEntryIds) {
 
-        $questionIds = DB::select('SELECT question.id, question.ans, question.telorance, question.choicesCount, question.kindQ, question.level FROM regularQOQ, question, SOQ WHERE regularQOQ.mark <> 0 and SOQ.qId = question.id and regularQOQ.quizId = ' . $qId . ' and question.id = regularQOQ.questionId and ' . $lId . ' IN (SELECT subject.lessonId FROM subject WHERE subject.id = SOQ.sId)');
+        $questionIds = DB::select('SELECT mark, question.id, question.ans, question.telorance, question.choicesCount, question.kindQ, question.level FROM regularQOQ, question, SOQ WHERE regularQOQ.mark <> 0 and SOQ.qId = question.id and regularQOQ.quizId = ' . $qId . ' and question.id = regularQOQ.questionId and ' . $lId . ' IN (SELECT subject.lessonId FROM subject WHERE subject.id = SOQ.sId)');
 
         $regularQuizMode = getValueInfo('regularQuiz');
 
         $totalPercent = 0;
+        $sumMark = 0;
+
         for($i = 0; $i < count($qEntryIds); $i++) {
             $percent = 0;
             for($j = 0; $j < count($questionIds); $j++) {
 
                 if($i == 0) {
-
+                    $sumMark += $questionIds[$j]->mark;
                     $condition = ['questionId' => $questionIds[$j]->id, 'status' => 1];
                     $count = 0;
                     $correct = 0;
                     $roqsTmp = ROQ::where($condition)->select('result')->get();
 
-                    if($questionIds[$j]->kindQ == 1) {
+                    if($questionIds[$j]->kindQ == 1 ||
+                        $questionIds[$j]->kindQ == 2) {
                         foreach ($roqsTmp as $itr) {
                             $count++;
                             if ($itr->result == $questionIds[$j]->ans)
@@ -67,25 +70,41 @@ class TarazController extends Controller {
                 if($stdAns != null) {
 
                     if($questionIds[$j]->kindQ == 1 && ($stdAns->result > $questionIds[$j]->choicesCount || $stdAns->result < 0)) {
-                        $percent -= (1 / ($questionIds[$j]->choicesCount - 1));
+                        $percent -= (1 / ($questionIds[$j]->choicesCount - 1)) * $questionIds[$j]->mark;
                         $stdAns->result = -1;
                         $stdAns->save();
                     }
                     else if($questionIds[$j]->kindQ == 1 && $questionIds[$j]->ans == $stdAns->result)
-                        $percent++;
+                        $percent += $questionIds[$j]->mark;
                     else if ($questionIds[$j]->kindQ == 0 &&
                         $stdAns->result >= $questionIds[$j]->ans - $questionIds[$j]->telorance &&
                         $stdAns->result <= $questionIds[$j]->ans + $questionIds[$j]->telorance)
-                        $percent++;
-                    else if($stdAns->result != 0)
-                        $percent -= (1 / ($questionIds[$j]->choicesCount - 1));
+                        $percent += $questionIds[$j]->mark;
+                    else if($questionIds[$j]->kindQ == 2) {
+
+                        $tmpTelorance = explode('.', $questionIds[$j]->telorance);
+
+                        if(strlen($tmpTelorance[1]) == 1)
+                            $tmpTelorance[1] = $tmpTelorance[1] . '0';
+
+                        $stdAns->result = (int)$stdAns->result . '';
+
+                        for($k = 0; $k < strlen($stdAns->result); $k++) {
+                            if($stdAns->result[$k] == $questionIds[$j]->ans[$k])
+                                $percent += $questionIds[$j]->mark * ($tmpTelorance[0] / 100);
+                            else if($stdAns->result[$k] != 0)
+                                $percent -= $questionIds[$j]->mark * ($tmpTelorance[1] / 100);
+                        }
+                    }
+                    else if($questionIds[$j]->kindQ == 1 && $stdAns->result != 0)
+                        $percent -= (1 / ($questionIds[$j]->choicesCount - 1)) * $questionIds[$j]->mark;
                 }
             }
 
             $conditions = ["qEntryId" => $qEntryIds[$i]->id, 'lId' => $lId];
             $taraz = Taraz::where($conditions)->first();
             if($taraz != null) {
-                $taraz->percent = round($percent / count($questionIds) * 100, 4);
+                $taraz->percent = round($percent / $sumMark * 100, 4);
                 $taraz->save();
             }
             else {
@@ -131,7 +150,7 @@ class TarazController extends Controller {
 
     public function fillSubjectsPercentTable($quizId) {
 
-        SubjectsPercent::where('qId', '=', $quizId)->delete();
+        SubjectsPercent::whereQId($quizId)->delete();
 
         $uIds = DB::select('select qR.id, qR.uId from quizRegistry qR WHERE qR.qId = ' . $quizId . ' and qR.quizMode = ' . getValueInfo('regularQuiz') .
             ' and (select count(*) from ROQ r where r.uId = qR.uId and r.quizMode = qR.quizMode and r.quizId = qR.qId) > 0'
@@ -147,7 +166,7 @@ class TarazController extends Controller {
             }
         }
 
-        $qoqs = DB::select('select question.id, question.ans as ans, question.kindQ, question.telorance, question.choicesCount, SOQ.sId as sId from regularQOQ, question, SOQ WHERE regularQOQ.quizId = ' . $quizId . ' AND regularQOQ.questionId = question.id and question.id = SOQ.qId');
+        $qoqs = DB::select('select mark, question.id, question.ans as ans, question.kindQ, question.telorance, question.choicesCount, SOQ.sId as sId from regularQOQ, question, SOQ WHERE regularQOQ.quizId = ' . $quizId . ' AND regularQOQ.questionId = question.id and question.id = SOQ.qId');
         $totals = array();
 
         foreach ($sIds as $sId)
@@ -159,16 +178,33 @@ class TarazController extends Controller {
 
             $condition = ['quizMode' => $regularQuizMode, 'quizId' => $quizId, 'questionId' => $qoq->id];
             $roqs = ROQ::where($condition)->select('result', 'uId')->get();
-            $totals[$qoq->sId]++;
+            $totals[$qoq->sId] += $qoq->mark;
 
             foreach ($roqs as $roq) {
                 if(($qoq->kindQ == 1 && $qoq->ans == $roq->result) ||
-                    ($qoq->kindQ == 0 && $roq->result >= $qoq->ans - $qoq->telorance &&
-                    $roq->result <= $qoq->ans + $qoq->telorance)
+                    ($qoq->kindQ == 0 && $roq->result >= ($qoq->ans - $qoq->telorance) &&
+                    $roq->result <= ($qoq->ans + $qoq->telorance))
                 )
-                    $percentInSubjects[$roq->uId][$qoq->sId]++;
-                else if($roq->result != 0)
-                    $percentInSubjects[$roq->uId][$qoq->sId] -= (1 / ($qoq->choicesCount - 1));
+                    $percentInSubjects[$roq->uId][$qoq->sId] += $qoq->mark;
+                else if($qoq->kindQ == 2) {
+
+                    $tmpTelorance = explode('.', $qoq->telorance);
+
+                    if(strlen($tmpTelorance[1]) == 1)
+                        $tmpTelorance[1] = $tmpTelorance[1] . '0';
+
+                    $roq->result = (int)$roq->result . '';
+
+                    for($k = 0; $k < strlen($roq->result); $k++) {
+                        if($roq->result[$k] == $qoq->ans[$k])
+                            $percentInSubjects[$roq->uId][$qoq->sId] += $qoq->mark * ($tmpTelorance[0] / 100);
+                        else if($roq->result[$k] != 0)
+                            $percentInSubjects[$roq->uId][$qoq->sId] -= $qoq->mark * ($tmpTelorance[1] / 100);
+                        echo $percentInSubjects[$roq->uId][$qoq->sId];
+                    }
+                }
+                else if($qoq->kindQ == 1 && $roq->result != 0)
+                    $percentInSubjects[$roq->uId][$qoq->sId] -= (1 / ($qoq->choicesCount - 1)) * $qoq->mark;
             }
         }
 

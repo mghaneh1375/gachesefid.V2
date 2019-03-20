@@ -5,6 +5,7 @@
 
     <script>
 
+        var myArr = ['اول', 'دوم', 'سوم', 'چهارم', 'پنجم', 'ششم', 'هفتم', 'هشتم', 'نهم'];
         var likeQuestionDir = '{{route('likeQuestion')}}';
         var answer = {!! json_encode($roqs) !!};
         var qIdx = 0;
@@ -132,27 +133,86 @@
 
                 newNode = newNode + "</select></center>";
             }
-            else {
+            else if(questionArr[qIdx].kindQ == "0") {
                 newNode += "<center style='margin-top: 20px'><label for='yourAns'>پاسخ شما:</label><input readonly style='max-width: 100px' onchange='submitC(this.value)' type='text' value='" + answer[qIdx].result + "'></center>";
             }
-            $("#likesNo").empty().append(questionArr[qIdx].likeNo);
-            $("#correctNo").empty().append(questionArr[qIdx].correct);
-            $("#incorrectNo").empty().append(questionArr[qIdx].incorrect);
-            $("#whiteNo").empty().append(questionArr[qIdx].white);
-            $("#percent").empty().append(Math.round((questionArr[qIdx].correct * 100) / (questionArr[qIdx].correct + questionArr[qIdx].incorrect + questionArr[qIdx].white)));
-            $("#qLevel").empty().append(questionArr[qIdx].level);
-            $("#totalAns").empty().append(questionArr[qIdx].correct + questionArr[qIdx].incorrect + questionArr[qIdx].white);
-            $("#discussion").attr('data-val', questionArr[qIdx].discussion);
+            else {
 
-            if(questionArr[qIdx].hasLike)
-                $('#likeDiv').empty().append('<i onclick="likeQuestion()" data-val="selected" onmouseleave="likeMouseLeaveEvent(this)" onmouseenter="likeMouseEnterEvent(this)" style="cursor: pointer; font-size: 20px" class="fa fa-heart" aria-hidden="true"></i>');
-            else
-                $('#likeDiv').empty().append('<i onclick="likeQuestion()" data-val="unselected" onmouseleave="likeMouseLeaveEvent(this)" onmouseenter="likeMouseEnterEvent(this)" style="cursor: pointer; font-size: 20px" class="fa fa-heart-o" aria-hidden="true"></i>');
+                var tmpArr2 = [];
+                answer[qIdx].result = answer[qIdx].result + "";
+
+                for (i = 0; i < questionArr[qIdx].choicesCount; i++)
+                    tmpArr2[i] = answer[qIdx].result[i];
+
+                newNode = "<center style='margin-top: 20px'><p style='color: red;'>پاسخ شما:</p>";
+                for (i = 0; i < questionArr[qIdx].choicesCount; i++) {
+                    newNode += "<div><label for='sentence_" + i + "' style='margin: 10px'>گزاره " + myArr[i] + "</label>";
+                    newNode += "<select style='width: 120px' id='sentence_" + i + "' readonly='true' '>";
+                    if (tmpArr2[i] == 0) {
+                        newNode += "<option value='0'>سفید</option>";
+                        newNode += "<option value='1'>درست</option>";
+                        newNode += "<option value='2'>نادرست</option>";
+                    }
+                    else if (tmpArr2[i] == 1) {
+                        newNode += "<option value='1'>درست</option>";
+                        newNode += "<option value='2'>نادرست</option>";
+                        newNode += "<option value='0'>سفید</option>";
+                    }
+                    else if (tmpArr2[i] == 2) {
+                        newNode += "<option value='2'>نادرست</option>";
+                        newNode += "<option value='1'>درست</option>";
+                        newNode += "<option value='0'>سفید</option>";
+                    }
+                    newNode += "</select></div>";
+                }
+
+
+                var qInfo = "";
+
+                for (i = 0; i < questionArr[qIdx].choicesCount; i++) {
+                    totalAns = (questionArr[qIdx].corrects[i] + questionArr[qIdx].inCorrects[i] + questionArr[qIdx].whites[i]);
+                    qInfo += '<h4>گزاره ' + myArr[i] + '</h4>';
+                    qInfo += '<p><span>تعداد پاسخ گویی:&nbsp;&nbsp;</span><span>' + totalAns + '</span></p>';
+                    qInfo += '<p><span>تعداد جواب صحیح:&nbsp;&nbsp;</span><span>' + questionArr[qIdx].corrects[i] + '</span></p>';
+                    qInfo += '<p><span>تعداد جواب ناصحیح:&nbsp;&nbsp;</span><span>' + questionArr[qIdx].inCorrects[i] + '</span></p>';
+                    qInfo += '<p><span>تعداد جواب بدون پاسخ:&nbsp;&nbsp;</span><span>' + questionArr[qIdx].whites[i] + '</span></p>';
+                    qInfo += '<p><span>درصد پاسخ گویی:&nbsp;&nbsp;</span><span>' + Math.round(questionArr[qIdx].corrects[i] * 100 / totalAns) + '</span></p>';
+                }
+
+                $("#infoForKind2").removeClass('hidden');
+                $("#infoForKind0").addClass('hidden');
+                $('#paneForKind2').empty().append(qInfo);
+
+                if (questionArr[qIdx].hasLike)
+                    $('#likeDiv').empty().append('<i onclick="likeQuestion()" data-val="selected" onmouseleave="likeMouseLeaveEvent(this)" onmouseenter="likeMouseEnterEvent(this)" style="cursor: pointer; font-size: 20px" class="fa fa-heart" aria-hidden="true"></i>');
+                else
+                    $('#likeDiv').empty().append('<i onclick="likeQuestion()" data-val="unselected" onmouseleave="likeMouseLeaveEvent(this)" onmouseenter="likeMouseEnterEvent(this)" style="cursor: pointer; font-size: 20px" class="fa fa-heart-o" aria-hidden="true"></i>');
+
+            }
+
+            if(questionArr[qIdx].kindQ != "2") {
+
+                $("#likesNo").empty().append(questionArr[qIdx].likeNo);
+                $("#correctNo").empty().append(questionArr[qIdx].correct);
+                $("#incorrectNo").empty().append(questionArr[qIdx].incorrect);
+                $("#whiteNo").empty().append(questionArr[qIdx].white);
+                $("#percent").empty().append(Math.round((questionArr[qIdx].correct * 100) / (questionArr[qIdx].correct + questionArr[qIdx].incorrect + questionArr[qIdx].white)));
+                $("#qLevel").empty().append(questionArr[qIdx].level);
+                $("#totalAns").empty().append(questionArr[qIdx].correct + questionArr[qIdx].incorrect + questionArr[qIdx].white);
+                $("#discussion").attr('data-val', questionArr[qIdx].discussion);
+
+                if (questionArr[qIdx].hasLike)
+                    $('#likeDiv').empty().append('<i onclick="likeQuestion()" data-val="selected" onmouseleave="likeMouseLeaveEvent(this)" onmouseenter="likeMouseEnterEvent(this)" style="cursor: pointer; font-size: 20px" class="fa fa-heart" aria-hidden="true"></i>');
+                else
+                    $('#likeDiv').empty().append('<i onclick="likeQuestion()" data-val="unselected" onmouseleave="likeMouseLeaveEvent(this)" onmouseenter="likeMouseEnterEvent(this)" style="cursor: pointer; font-size: 20px" class="fa fa-heart-o" aria-hidden="true"></i>');
+
+                $("#infoForKind0").removeClass('hidden');
+                $("#infoForKind2").addClass('hidden');
+            }
 
             $("#BQ").empty().append(newNode);
 
             newNode = "<span><img alt='در حال بارگذاری تصویر' style='max-width: 100%' src='{{URL::asset('images/answers/system')}}/" + questionArr[qIdx].ansFile + "'></span><br/>";
-
             $("#BA").empty().append(newNode);
         }
 
@@ -274,10 +334,10 @@ if ($questions == null || $numQ == 0) {
 
             <div class='col-xs-8 well well-sm' style="margin-top: 10px; border: 3px solid black; background-color: #ffffff">
                 <div id="BQ" style='height: auto; width: auto; max-width: 100%'></div>
+                <div id="BA" style='height: auto; width: auto; max-width: 100%'></div>
             </div>
 
-
-            <div class="col-xs-3" style="margin-top: 50px">
+            <div id="infoForKind0" class="col-xs-3" style="margin-top: 50px">
                 <div class="col-xs-12">
                     <p><span id="likesNo"></span><span>&nbsp;&nbsp;&nbsp;<i class="fa fa-thumbs-up" aria-hidden="true"></i></span></p>
                     <p><span>تعداد پاسخ گویی:&nbsp;&nbsp;</span><span id="totalAns"></span></p>
@@ -286,26 +346,19 @@ if ($questions == null || $numQ == 0) {
                     <p><span>تعداد جواب بدون پاسخ:&nbsp;&nbsp;</span><span id="whiteNo"></span></p>
                     <p><span>درصد پاسخ گویی:&nbsp;&nbsp;</span><span id="percent"></span></p>
                     <p><span>سطح سختی:&nbsp;&nbsp;</span><span id="qLevel"></span></p>
-                    {{--<p><span>ناظر:&nbsp;&nbsp;</span><span id="controller"></span></p>--}}
-                    {{--<p><span>طراح:&nbsp;&nbsp;</span><span id="author"></span></p>--}}
                 </div>
             </div>
-        </div>
 
-        <div class="col-xs-12">
-            <div class="col-xs-1"></div>
-
-            <div class='col-xs-8 well well-sm' style="margin-top: 10px; border: 3px solid black; background-color: #ffffff">
-                <div id="BA" style='height: auto; width: auto; max-width: 100%'></div>
+            <div id="infoForKind2" class="col-xs-3 hidden" style="margin-top: 50px">
+                <p><span id="likesNo"></span><span>&nbsp;&nbsp;&nbsp;<i class="fa fa-thumbs-up" aria-hidden="true"></i></span></p>
+                <div class="col-xs-12" id="paneForKind2"></div>
             </div>
-
-            <div class="col-xs-3"></div>
         </div>
 
         <div class="col-xs-12">
             <div style='margin-top: 5px; padding: 10px'>
                 <center>
-                    <button class="btn btn-default" id="discussion" data-val="" onclick="goToDiscussionRoom()">ورود به پرسش و پاسخ سوال</button>
+                    {{--<button class="btn btn-default" id="discussion" data-val="" onclick="goToDiscussionRoom()">ورود به پرسش و پاسخ سوال</button>--}}
                     <button id="backQ" class="btn btn-default" onclick="decQ()">سوال قبلی</button>
                     <button id="nxtQ" class="btn btn-default" onclick="incQ()">سوال بعدی</button>
                     <button class="btn btn-danger" onclick="showConfirmationPane()">بازگشت به صفحه آزمون های من</button>

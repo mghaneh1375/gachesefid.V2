@@ -969,14 +969,22 @@ class QuestionController extends Controller {
                             $newQuestion->kindQ = $question[4];
                             $newQuestion->ans = $question[5];
                             $newQuestion->author = $uId;
-                            $newQuestion->organizationId = $question[7];
                             $newQuestion->status = 1;
+                            $organIndex = 7;
 
                             if($question[4] == 1)
                                 $newQuestion->choicesCount = $question[6];
-                            else
+                            else if($question[4] == 0) {
                                 $newQuestion->telorance = $question[6];
+                                $newQuestion->choicesCount = 2;
+                            }
+                            else {
+                                $organIndex = 9;
+                                $newQuestion->choicesCount = $question[6];
+                                $newQuestion->telorance = $question[7] . '.' . $question[8];
+                            }
 
+                            $newQuestion->organizationId = $question[$organIndex];
                             $newQuestion->save();
 
                             $controllerActivity = new ControllerActivity();
@@ -984,7 +992,7 @@ class QuestionController extends Controller {
                             $controllerActivity->qId = $newQuestion->id;
                             $controllerActivity->save();
 
-                            $tmp = 8;
+                            $tmp = $organIndex + 1;
                             while ($tmp < count($question)) {
                                 $subject = Subject::whereName($question[$tmp++]);
                                 if($subject == null) {

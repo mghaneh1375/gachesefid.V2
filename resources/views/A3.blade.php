@@ -96,10 +96,10 @@
                         <tr>
                             <td><center>{{$lesson->name}}</center></td>
                             <td><center>{{$lesson->coherence}}</center></td>
-                            <td><center>{{$roq[2][$i]}}</center></td>
-                            <td><center>{{$roq[1][$i]}}</center></td>
-                            <td><center>{{$roq[0][$i]}}</center></td>
-                            <td><center>{{$roq[2][$i] - $roq[0][$i] - $roq[1][$i]}}</center></td>
+                            <td><center>{{$roq[$i][2]}}</center></td>
+                            <td><center>{{$roq[$i][1]}}</center></td>
+                            <td><center>{{$roq[$i][0]}}</center></td>
+                            <td><center>{{$roq[$i][2] - $roq[$i][0] - $roq[$i][1]}}</center></td>
 
                             <td><center style="direction: ltr">{{($taraz[$i]->percent <= 0) ? 0 : round($taraz[$i]->percent * $totalMark / 100, 0)}}</center></td>
                             <td><center style="direction: ltr">{{round($taraz[$i]->percent, 0)}}</center></td>
@@ -128,7 +128,7 @@
                     <td><center>رتبه در استان</center></td>
                     <td><center>رتبه در شهر/منطقه</center></td>
                     <td><center>تراز</center></td>
-                    <td><center>وضعیت</center></td>
+                    {{--<td><center>وضعیت</center></td>--}}
                 </tr>
 
                 @foreach($lessons as $lesson)
@@ -145,21 +145,21 @@
 
                         <td><center style="direction: ltr">{{$taraz[$i]->taraz}}</center></td>
 
-                        <td>
-                            <center>
-                                @foreach($status as $itr)
-                                    @if(($itr->type && $itr->floor <= $taraz[$i]->percent &&
-                                     $taraz[$i]->percent <= $itr->ceil) || (!$itr->type && $kindKarname->lessonAvg &&
-                                     $taraz[$i]->percent <= $avgs[$i]->avg + $itr->ceil && $taraz[$i]->percent >= $avgs[$i]->avg - $itr->floor))
-                                        @if($itr->pic)
-                                            <img width="40px" height="40px" src="{{URL::asset('status') . '/' . $itr->status}}">
-                                        @else
-                                            <p style="background-color: {{$itr->color}}">{{$itr->status}}</p>
-                                        @endif
-                                    @endif
-                                @endforeach
-                            </center>
-                        </td>
+                        {{--<td>--}}
+                            {{--<center>--}}
+                                {{--@foreach($status as $itr)--}}
+                                    {{--@if(($itr->type && $itr->floor <= $taraz[$i]->percent &&--}}
+                                     {{--$taraz[$i]->percent <= $itr->ceil) || (!$itr->type && $kindKarname->lessonAvg &&--}}
+                                     {{--$taraz[$i]->percent <= $avgs[$i]->avg + $itr->ceil && $taraz[$i]->percent >= $avgs[$i]->avg - $itr->floor))--}}
+                                        {{--@if($itr->pic)--}}
+                                            {{--<img width="40px" height="40px" src="{{URL::asset('status') . '/' . $itr->status}}">--}}
+                                        {{--@else--}}
+                                            {{--<p style="background-color: {{$itr->color}}">{{$itr->status}}</p>--}}
+                                        {{--@endif--}}
+                                    {{--@endif--}}
+                                {{--@endforeach--}}
+                            {{--</center>--}}
+                        {{--</td>--}}
                     </tr>
                     <?php $i++; ?>
                 @endforeach

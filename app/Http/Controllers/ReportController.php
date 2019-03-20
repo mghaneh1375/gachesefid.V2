@@ -1261,13 +1261,16 @@ class ReportController extends Controller {
                     $qInfo->correct = DB::select('select count(*) as countNum from ROQ, studentsAdviser WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
                         " and studentsAdviser.adviserId = " . $user->id . " and studentsAdviser.studentId = ROQ.uId and ROQ.result = " . $qInfo->ans . " and ROQ.questionId = " . $qInfo->id
                     )[0]->countNum;
-                else
+                else if($qInfo->kindQ == 0)
                     $qInfo->correct = DB::select('select count(*) as countNum from ROQ, studentsAdviser WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
                         " and studentsAdviser.adviserId = " . $user->id . " and studentsAdviser.studentId = ROQ.uId and ROQ.result >= " . ($qInfo->ans - $qInfo->telorance) .
                         " and result <= " . ($qInfo->ans + $qInfo->telorance) .
                         " and ROQ.questionId = " . $qInfo->id
                     )[0]->countNum;
-
+                else {
+                    $tmpArr = DB::select('select result from ROQ, studentsAdviser WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
+                        " and adviserId = " . $user->id . " and studentId = uId and questionId = " . $qInfo->id);
+                }
             }
         }
 
@@ -1287,12 +1290,16 @@ class ReportController extends Controller {
                     $qInfo->correct = DB::select('select count(*) as countNum from ROQ, namayandeSchool nS, schoolStudent sS WHERE nS.sId = sS.sId and quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
                         " and nS.nId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.result = " . $qInfo->ans . " and ROQ.questionId = " . $qInfo->id
                     )[0]->countNum;
-                else
+                else if($qInfo->kindQ == 0)
                     $qInfo->correct = DB::select('select count(*) as countNum from ROQ, namayandeSchool nS, schoolStudent sS WHERE nS.sId = sS.sId and quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
                         " and nS.nId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.result >= " . ($qInfo->ans - $qInfo->telorance) .
                         " and result <= " . ($qInfo->ans + $qInfo->telorance) . " and ROQ.questionId = " . $qInfo->id
                     )[0]->countNum;
-
+                else {
+                    $tmpArr = DB::select('select result from ROQ, namayandeSchool nS, schoolStudent sS WHERE nS.sId = sS.sId and quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
+                        " and nS.nId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.questionId = " . $qInfo->id
+                    );
+                }
             }
         }
 
@@ -1312,11 +1319,14 @@ class ReportController extends Controller {
                     $qInfo->correct = DB::select('select count(*) as countNum from ROQ, schoolStudent sS WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
                         " and sS.sId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.result = " . $qInfo->ans . " and ROQ.questionId = " . $qInfo->id
                     )[0]->countNum;
-                else
+                else if($qInfo->kindQ == 0)
                     $qInfo->correct = DB::select('select count(*) as countNum from ROQ, schoolStudent sS WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
                         " and sS.sId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.result >= " . ($qInfo->ans - $qInfo->telorance) .
                         " and result <= " . ($qInfo->ans + $qInfo->telorance) . " and ROQ.questionId = " . $qInfo->id
                     )[0]->countNum;
+                else
+                    $tmpArr = DB::select('select result from ROQ, schoolStudent sS WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
+                        " and sS.sId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.questionId = " . $qInfo->id);
             }
         }
 
@@ -1334,16 +1344,53 @@ class ReportController extends Controller {
                         'result' => $qInfo->ans];
                     $qInfo->correct = ROQ::where($condition)->count();
                 }
-                else
+                else if($qInfo->kindQ == 0) {
                     $qInfo->correct = DB::select('select count(*) as countNum from ROQ WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
                         " and ROQ.result >= " . ($qInfo->ans - $qInfo->telorance) .
                         " and result <= " . ($qInfo->ans + $qInfo->telorance) .
                         " and ROQ.questionId = " . $qInfo->id
                     )[0]->countNum;
+                }
+                else
+                    $tmpArr = ROQ::whereQuestionId($qInfo->id)->whereQuizId($quizId)->select('result')->get();
             }
         }
 
         foreach ($qInfos as $qInfo) {
+
+            if($qInfo->kindQ == 2) {
+
+                $corrects = $inCorrects = $whites = [];
+                $first = true;
+
+                foreach ($tmpArr as $itr) {
+
+                    $itr->result = (string)$itr->result;
+
+                    if($first) {
+                        for ($k = 0; $k < strlen($itr->result); $k++) {
+                            $corrects[$k] = 0;
+                            $inCorrects[$k] = 0;
+                            $whites[$k] = 0;
+                        }
+                        $first = false;
+                    }
+
+                    for ($k = 0; $k < strlen($itr->result); $k++) {
+                        if ($itr->result[$k] == $qInfo->ans[$k])
+                            $corrects[$k] = $corrects[$k] + 1;
+                        else if ($itr->result[$k] != 0)
+                            $inCorrects[$k] = $inCorrects[$k] + 1;
+                        else
+                            $whites[$k] = $whites[$k] + 1;
+                    }
+                }
+
+                $qInfo->corrects = $corrects;
+                $qInfo->inCorrects = $inCorrects;
+                $qInfo->whites = $whites;
+            }
+
             $contents = DB::select('select subject.name as subjectName, lesson.name as lessonName from SOQ, subject, lesson WHERE SOQ.qId = ' . $qInfo->id . ' and SOQ.sId = subject.id and subject.lessonId = lesson.id');
             $subjects = [];
             $lessons = [];
@@ -1367,7 +1414,7 @@ class ReportController extends Controller {
         $regularQuizMode = getValueInfo('regularQuiz');
         $user = Auth::user();
 
-        $qInfos = DB::select("select question.id, question.ans " .
+        $qInfos = DB::select("select telorance, kindQ, question.id, ans " .
             "from question, regularQOQ WHERE regularQOQ.quizId = " . $quizId . " and " .
             "regularQOQ.questionId = question.id order by regularQOQ.id ASC");
 
@@ -1386,11 +1433,23 @@ class ReportController extends Controller {
                     " and adviserId = " . $user->id . " and studentId = ROQ.uId and ROQ.result = 0 and ROQ.questionId = " . $qInfo->id
                 )[0]->countNum;
 
-                $qInfo->correct = DB::select('select count(*) as countNum from ROQ, studentsAdviser WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
-                    " and studentsAdviser.adviserId = " . $user->id . " and studentsAdviser.studentId = ROQ.uId and ROQ.result = " . $qInfo->ans . " and ROQ.questionId = " . $qInfo->id
-                )[0]->countNum;
+                if($qInfo->kindQ == 1)
+                    $qInfo->correct = DB::select('select count(*) as countNum from ROQ, studentsAdviser WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
+                        " and studentsAdviser.adviserId = " . $user->id . " and studentsAdviser.studentId = ROQ.uId and ROQ.result = " . $qInfo->ans . " and ROQ.questionId = " . $qInfo->id
+                    )[0]->countNum;
+                else if($qInfo->kindQ == 0)
+                    $qInfo->correct = DB::select('select count(*) as countNum from ROQ, studentsAdviser WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
+                        " and studentsAdviser.adviserId = " . $user->id . " and studentsAdviser.studentId = ROQ.uId and ROQ.result >= " . ($qInfo->ans - $qInfo->telorance) .
+                        " and result <= " . ($qInfo->ans + $qInfo->telorance) .
+                        " and ROQ.questionId = " . $qInfo->id
+                    )[0]->countNum;
+                else {
+                    $tmpArr = DB::select('select result from ROQ, studentsAdviser WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
+                        " and adviserId = " . $user->id . " and studentId = uId and questionId = " . $qInfo->id);
+                }
             }
         }
+
         else if($user->level == getValueInfo('namayandeLevel')) {
 
             $total = DB::select('select count(*) as countNum from ROQ, namayandeSchool nS, schoolStudent sS WHERE nS.sId = sS.sId and quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
@@ -1403,11 +1462,23 @@ class ReportController extends Controller {
                     " and nS.nId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.result = 0 and ROQ.questionId = " . $qInfo->id
                 )[0]->countNum;
 
-                $qInfo->correct = DB::select('select count(*) as countNum from ROQ, namayandeSchool nS, schoolStudent sS WHERE nS.sId = sS.sId and quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
-                    " and nS.nId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.result = " . $qInfo->ans . " and ROQ.questionId = " . $qInfo->id
-                )[0]->countNum;
+                if($qInfo->kindQ == 1)
+                    $qInfo->correct = DB::select('select count(*) as countNum from ROQ, namayandeSchool nS, schoolStudent sS WHERE nS.sId = sS.sId and quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
+                        " and nS.nId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.result = " . $qInfo->ans . " and ROQ.questionId = " . $qInfo->id
+                    )[0]->countNum;
+                else if($qInfo->kindQ == 0)
+                    $qInfo->correct = DB::select('select count(*) as countNum from ROQ, namayandeSchool nS, schoolStudent sS WHERE nS.sId = sS.sId and quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
+                        " and nS.nId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.result >= " . ($qInfo->ans - $qInfo->telorance) .
+                        " and result <= " . ($qInfo->ans + $qInfo->telorance) . " and ROQ.questionId = " . $qInfo->id
+                    )[0]->countNum;
+                else {
+                    $tmpArr = DB::select('select result from ROQ, namayandeSchool nS, schoolStudent sS WHERE nS.sId = sS.sId and quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
+                        " and nS.nId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.questionId = " . $qInfo->id
+                    );
+                }
             }
         }
+
         else if($user->level == getValueInfo('schoolLevel')) {
 
             $total = DB::select('select count(*) as countNum from ROQ, schoolStudent sS WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
@@ -1420,11 +1491,21 @@ class ReportController extends Controller {
                     " and sS.sId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.result = 0 and ROQ.questionId = " . $qInfo->id
                 )[0]->countNum;
 
-                $qInfo->correct = DB::select('select count(*) as countNum from ROQ, schoolStudent sS WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
-                    " and sS.sId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.result = " . $qInfo->ans . " and ROQ.questionId = " . $qInfo->id
-                )[0]->countNum;
+                if($qInfo->kindQ == 1)
+                    $qInfo->correct = DB::select('select count(*) as countNum from ROQ, schoolStudent sS WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
+                        " and sS.sId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.result = " . $qInfo->ans . " and ROQ.questionId = " . $qInfo->id
+                    )[0]->countNum;
+                else if($qInfo->kindQ == 0)
+                    $qInfo->correct = DB::select('select count(*) as countNum from ROQ, schoolStudent sS WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
+                        " and sS.sId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.result >= " . ($qInfo->ans - $qInfo->telorance) .
+                        " and result <= " . ($qInfo->ans + $qInfo->telorance) . " and ROQ.questionId = " . $qInfo->id
+                    )[0]->countNum;
+                else
+                    $tmpArr = DB::select('select result from ROQ, schoolStudent sS WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
+                        " and sS.sId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.questionId = " . $qInfo->id);
             }
         }
+
         else {
             $condition = ['questionId' => $qInfos[0]->id, 'quizId' => $quizId, 'quizMode' => $regularQuizMode];
             $total = ROQ::where($condition)->count();
@@ -1434,13 +1515,58 @@ class ReportController extends Controller {
                     'result' => 0];
                 $qInfo->white = ROQ::where($condition)->count();
 
-                $condition = ['questionId' => $qInfo->id, 'quizId' => $quizId, 'quizMode' => $regularQuizMode,
-                    'result' => $qInfo->ans];
-                $qInfo->correct = ROQ::where($condition)->count();
+                if($qInfo->kindQ == 1) {
+                    $condition = ['questionId' => $qInfo->id, 'quizId' => $quizId, 'quizMode' => $regularQuizMode,
+                        'result' => $qInfo->ans];
+                    $qInfo->correct = ROQ::where($condition)->count();
+                }
+                else if($qInfo->kindQ == 0) {
+                    $qInfo->correct = DB::select('select count(*) as countNum from ROQ WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
+                        " and ROQ.result >= " . ($qInfo->ans - $qInfo->telorance) .
+                        " and result <= " . ($qInfo->ans + $qInfo->telorance) .
+                        " and ROQ.questionId = " . $qInfo->id
+                    )[0]->countNum;
+                }
+                else
+                    $tmpArr = ROQ::whereQuestionId($qInfo->id)->whereQuizId($quizId)->select('result')->get();
             }
         }
 
         foreach ($qInfos as $qInfo) {
+
+            if($qInfo->kindQ == 2) {
+
+                $corrects = $inCorrects = $whites = [];
+                $first = true;
+
+                foreach ($tmpArr as $itr) {
+
+                    $itr->result = (string)$itr->result;
+
+                    if($first) {
+                        for ($k = 0; $k < strlen($itr->result); $k++) {
+                            $corrects[$k] = 0;
+                            $inCorrects[$k] = 0;
+                            $whites[$k] = 0;
+                        }
+                        $first = false;
+                    }
+
+                    for ($k = 0; $k < strlen($itr->result); $k++) {
+                        if ($itr->result[$k] == $qInfo->ans[$k])
+                            $corrects[$k] = $corrects[$k] + 1;
+                        else if ($itr->result[$k] != 0)
+                            $inCorrects[$k] = $inCorrects[$k] + 1;
+                        else
+                            $whites[$k] = $whites[$k] + 1;
+                    }
+                }
+
+                $qInfo->corrects = $corrects;
+                $qInfo->inCorrects = $inCorrects;
+                $qInfo->whites = $whites;
+            }
+
             $contents = DB::select('select subject.name as subjectName, lesson.name as lessonName from SOQ, subject, lesson WHERE SOQ.qId = ' . $qInfo->id . ' and SOQ.sId = subject.id and subject.lessonId = lesson.id');
             $subjects = [];
             $lessons = [];
@@ -1476,27 +1602,50 @@ class ReportController extends Controller {
 
         $i = 1;
         foreach($qInfos as $qInfo) {
-            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($i + 1), $i);
-            $objPHPExcel->getActiveSheet()->setCellValue('B' . ($i + 1), $qInfo->ans);
-            $j = 'C';
-            foreach($qInfo->subjects as $itr)
-                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), $itr);
+            if($qInfo->kindQ != 2) {
+                $objPHPExcel->getActiveSheet()->setCellValue('A' . ($i + 1), $i);
+                $objPHPExcel->getActiveSheet()->setCellValue('B' . ($i + 1), $qInfo->ans);
+                $j = 'C';
+                foreach ($qInfo->subjects as $itr)
+                    $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), $itr);
 
-            foreach($qInfo->lessons as $itr)
-                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), $itr);
+                foreach ($qInfo->lessons as $itr)
+                    $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), $itr);
 
-            if($total != 0) {
-                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), round($qInfo->correct * 100 / $total, 0));
-                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), round((($total - $qInfo->correct - $qInfo->white) * 100 / $total), 0));
-                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), round(($qInfo->white * 100 / $total), 0));
+                if ($total != 0) {
+                    $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), round($qInfo->correct * 100 / $total, 0));
+                    $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), round((($total - $qInfo->correct - $qInfo->white) * 100 / $total), 0));
+                    $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), round(($qInfo->white * 100 / $total), 0));
+                } else {
+                    $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), 0);
+                    $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), 0);
+                    $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), 0);
+                }
+                $objPHPExcel->getActiveSheet()->setCellValue($j . ($i + 1), $qInfo->level);
+                $i++;
             }
             else {
-                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), 0);
-                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), 0);
-                $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + 1), 0);
+                $myArr = ['اول', 'دوم', 'سوم', 'چهارم', 'پنجم', 'ششم', 'هفتم', 'هشتم', 'نهم'];
+                for($k = 0; $k < strlen($qInfo->ans); $k++) {
+                    $objPHPExcel->getActiveSheet()->setCellValue('A' . ($i + $k + 1), $i . ' - ' . 'گزاره ' . $myArr[$k]);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B' . ($i + $k + 1), $qInfo->ans[$k]);
+                    $j = 'C';
+                    foreach ($qInfo->subjects as $itr)
+                        $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + $k + 1), $itr);
+
+                    foreach ($qInfo->lessons as $itr)
+                        $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + $k + 1), $itr);
+
+                    $total = $qInfo->corrects[$k] + $qInfo->inCorrects[$k] + $qInfo->whites[$k];
+
+                    $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + $k + 1), round($qInfo->corrects[$k] * 100 / $total, 0));
+                    $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + $k + 1), round(($qInfo->inCorrects[$k] * 100 / $total), 0));
+                    $objPHPExcel->getActiveSheet()->setCellValue($j++ . ($i + $k + 1), round(($qInfo->whites[$k] * 100 / $total), 0));
+
+                    $objPHPExcel->getActiveSheet()->setCellValue($j . ($i + $k + 1), $qInfo->level);
+                }
+                $i += $k;
             }
-            $objPHPExcel->getActiveSheet()->setCellValue($j . ($i + 1), $qInfo->level);
-            $i++;
         }
 
         $fileName = __DIR__ . "/../../../public/registrations/A1.xlsx";
@@ -2973,13 +3122,51 @@ class ReportController extends Controller {
         $avgs = DB::select('select SUM(percent) / count(*) as avg, MAX(percent) as maxPercent, MIN(percent) as minPercent FROM taraz, quizRegistry WHERE quizRegistry.qId = ' . $quizId . ' and quizRegistry.id  = taraz.qEntryId GROUP by(taraz.lId)');
 
 
-        $inCorrects =  DB::select('SELECT count(*) as inCorrects, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE ROQ.quizId = ' . $quizId . ' and ROQ.questionId = question.id and question.ans <> ROQ.result and ROQ.result <> 0 and ROQ.uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.lessonId)');
-        $corrects =  DB::select('SELECT count(*) as corrects, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE ROQ.quizId = ' . $quizId . ' and ROQ.questionId = question.id and question.ans = ROQ.result and ROQ.uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.lessonId)');
-        $total = DB::select('SELECT count(*) as total, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE ROQ.quizId = ' . $quizId . ' and ROQ.questionId = question.id and ROQ.uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.lessonId)');
-
-        $roq = $this->getResultOfSpecificContainer($total, $corrects, $inCorrects);
-
         $lessons = getLessonQuiz($quizId);
+        $roq = [];
+        $counterTmp = 0;
+
+        foreach ($lessons as $lesson) {
+
+            $kindQ2 = DB::select('select result, ans, kindQ, telorance from ROQ, SOQ, question, subject where uId = ' . $uId . ' and subject.id = sId and qId = question.id and quizId = ' . $quizId . ' and question.id = questionId and lessonId = ' . $lesson->id);
+
+            if($kindQ2 != null) {
+
+                $corrects = $inCorrects = 0;
+                $totalQ = count($kindQ2);
+
+                foreach ($kindQ2 as $itrKindQ2) {
+
+                    if($itrKindQ2->kindQ == 1) {
+                        if($itrKindQ2->ans == $itrKindQ2->result)
+                            $corrects++;
+                        else if($itrKindQ2->result != 0)
+                            $inCorrects++;
+                    }
+
+                    else if($itrKindQ2->kindQ == 0) {
+                        if($itrKindQ2->ans - $itrKindQ2->telorance <= $itrKindQ2->result &&
+                            $itrKindQ2->ans + $itrKindQ2->telorance >= $itrKindQ2->result)
+                            $corrects++;
+                        else if($itrKindQ2->result != 0)
+                            $inCorrects++;
+                    }
+
+                    else {
+                        $itrKindQ2->result = (string)$itrKindQ2->result;
+                        $totalQ += strlen($itrKindQ2->result) - 1;
+                        for ($k = 0; $k < strlen($itrKindQ2->result); $k++) {
+                            if ($itrKindQ2->result[$k] == $itrKindQ2->ans[$k])
+                                $corrects++;
+                            else if ($itrKindQ2->result[$k] != 0)
+                                $inCorrects++;
+                        }
+                    }
+                }
+
+                $roq[$counterTmp++] = [$inCorrects, $corrects, $totalQ];
+            }
+        }
 
         $taraz = Taraz::whereQEntryId($qEntryId->id)->get();
 
@@ -3006,7 +3193,7 @@ class ReportController extends Controller {
 
         $regularQuizMode = getValueInfo('regularQuiz');
 
-        $qInfos = DB::select("select question.id, question.ans, ROQ.result ".
+        $qInfos = DB::select("select kindQ, question.id, question.ans, ROQ.result ".
             "from question, ROQ WHERE ROQ.quizId = " . $quizId . " and " .
             "ROQ.questionId = question.id and ROQ.quizMode = " . $regularQuizMode . " and ROQ.uId = " . $uId .
             " order by ROQ.id ASC");
@@ -3018,7 +3205,7 @@ class ReportController extends Controller {
         $totalQKarname = ROQ::where($condition)->count();
 
         foreach ($qInfos as $qInfo) {
-
+            $qInfo->result = (string)$qInfo->result;
             $contents = DB::select('select subject.name as subjectName from SOQ, subject WHERE SOQ.qId = ' . $qInfo->id . ' and SOQ.sId = subject.id');
             $subjectsTmp = [];
             $i = 0;
@@ -3454,20 +3641,51 @@ class ReportController extends Controller {
 
         $avgs = DB::select('select SUM(percent) / count(*) as avg, MAX(percent) as maxPercent, MIN(percent) as minPercent FROM taraz, quizRegistry WHERE quizRegistry.qId = ' . $quizId . ' and quizRegistry.id  = taraz.qEntryId GROUP by(taraz.lId)');
 
-        $inCorrects1 =  DB::select('SELECT count(*) as inCorrects, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE quizId = ' . $quizId . ' and questionId = question.id and result <> 0 and kindQ = 0 and (result > ans + telorance or result < ans - telorance) and ROQ.uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.lessonId)');
-        $inCorrects2 =  DB::select('SELECT count(*) as inCorrects, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE quizId = ' . $quizId . ' and questionId = question.id and result <> 0 and kindQ = 1 and ans <> result and uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.lessonId)');
-
-        $corrects1 =  DB::select('SELECT count(*) as corrects, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE quizId = ' . $quizId . ' and questionId = question.id and kindQ = 0 and result >= ans - telorance and result <= ans + telorance and ROQ.uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.lessonId)');
-        $corrects2 =  DB::select('SELECT count(*) as corrects, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE quizId = ' . $quizId . ' and questionId = question.id and ans = result and kindQ = 1 and uId = ' . $uId . ' and subject.id = sId and qId = question.id group by(lessonId)');
-
-        $total = DB::select('SELECT count(*) as total, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE ROQ.quizId = ' . $quizId . ' and ROQ.questionId = question.id and ROQ.uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.lessonId)');
-
-        $corrects = array_merge($corrects1, $corrects2);
-        $inCorrects = array_merge($inCorrects1, $inCorrects2);
-        
-        $roq = $this->getResultOfSpecificContainer($total, $corrects, $inCorrects);
-
         $lessons = getLessonQuiz($quizId);
+        $roq = [];
+        $counterTmp = 0;
+
+        foreach ($lessons as $lesson) {
+
+            $kindQ2 = DB::select('select result, ans, kindQ, telorance from ROQ, SOQ, question, subject where uId = ' . $uId . ' and subject.id = sId and qId = question.id and quizId = ' . $quizId . ' and question.id = questionId and lessonId = ' . $lesson->id);
+
+            if($kindQ2 != null) {
+
+                $corrects = $inCorrects = 0;
+                $totalQ = count($kindQ2);
+
+                foreach ($kindQ2 as $itrKindQ2) {
+
+                    if($itrKindQ2->kindQ == 1) {
+                        if($itrKindQ2->ans == $itrKindQ2->result)
+                            $corrects++;
+                        else if($itrKindQ2->result != 0)
+                            $inCorrects++;
+                    }
+
+                    else if($itrKindQ2->kindQ == 0) {
+                        if($itrKindQ2->ans - $itrKindQ2->telorance <= $itrKindQ2->result &&
+                            $itrKindQ2->ans + $itrKindQ2->telorance >= $itrKindQ2->result)
+                            $corrects++;
+                        else if($itrKindQ2->result != 0)
+                            $inCorrects++;
+                    }
+
+                    else {
+                        $itrKindQ2->result = (string)$itrKindQ2->result;
+                        $totalQ += strlen($itrKindQ2->result) - 1;
+                        for ($k = 0; $k < strlen($itrKindQ2->result); $k++) {
+                            if ($itrKindQ2->result[$k] == $itrKindQ2->ans[$k])
+                                $corrects++;
+                            else if ($itrKindQ2->result[$k] != 0)
+                                $inCorrects++;
+                        }
+                    }
+                }
+
+                $roq[$counterTmp++] = [$inCorrects, $corrects, $totalQ];
+            }
+        }
 
         $taraz = Taraz::whereQEntryId($qEntryId->id)->get();
 

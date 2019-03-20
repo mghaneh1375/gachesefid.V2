@@ -12,6 +12,7 @@ use App\models\RegularQOQ;
 use App\models\RegularQuiz;
 use App\models\ROQ2;
 use App\models\SoldQuestion;
+use App\models\SubjectsPercent;
 use App\models\SystemQOQ;
 use App\models\User;
 use App\models\Mellat;
@@ -705,18 +706,56 @@ class QuizController extends Controller {
             }
         }
 
-        $inCorrects1 =  DB::select('SELECT count(*) as inCorrects, SOQ.sId as target FROM ROQ, SOQ, question, subject WHERE quizId = ' . $quizId . ' and questionId = question.id and result <> 0 and kindQ = 0 and (result > ans + telorance or result < ans - telorance) and ROQ.uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.id)');
-        $inCorrects2 =  DB::select('SELECT count(*) as inCorrects, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE quizId = ' . $quizId . ' and questionId = question.id and result <> 0 and kindQ = 1 and ans <> result and uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.id)');
+        $roq = [];
+        $counterTmp = 0;
 
-        $corrects1 =  DB::select('SELECT count(*) as corrects, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE quizId = ' . $quizId . ' and questionId = question.id and kindQ = 0 and result >= ans - telorance and result <= ans + telorance and ROQ.uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.id)');
-        $corrects2 =  DB::select('SELECT count(*) as corrects, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE quizId = ' . $quizId . ' and questionId = question.id and ans = result and kindQ = 1 and uId = ' . $uId . ' and subject.id = sId and qId = question.id group by(subject.id)');
+        foreach ($subjects as $subject) {
+            
+            $percent = SubjectsPercent::whereUId($uId)->whereSId($subject->id)->whereQId($quizId)->first();
+            if($percent == null)
+                $percent = -1;
+            else
+                $percent = $percent->percent;
 
-        $total = DB::select('SELECT count(*) as total, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE ROQ.quizId = ' . $quizId . ' and ROQ.questionId = question.id and ROQ.uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.id)');
+            $totalQInSpecificSubject = DB::select('select result, ans, kindQ, telorance from ROQ, SOQ, question where uId = ' . $uId . ' and qId = question.id and quizId = ' . $quizId . ' and question.id = questionId and sId = ' . $subject->id);
 
-        $corrects = array_merge($corrects1, $corrects2);
-        $inCorrects = array_merge($inCorrects1, $inCorrects2);
+            if($totalQInSpecificSubject != null) {
 
-        $roq = $this->getResultOfSpecificContainer($total, $corrects, $inCorrects);
+                $corrects = $inCorrects = 0;
+                $totalQ = count($totalQInSpecificSubject);
+
+                foreach ($totalQInSpecificSubject as $itr) {
+
+                    if($itr->kindQ == 1) {
+                        if($itr->ans == $itr->result)
+                            $corrects++;
+                        else if($itr->result != 0)
+                            $inCorrects++;
+                    }
+
+                    else if($itr->kindQ == 0) {
+                        if($itr->ans - $itr->telorance <= $itr->result &&
+                            $itr->ans + $itr->telorance >= $itr->result)
+                            $corrects++;
+                        else if($itr->result != 0)
+                            $inCorrects++;
+                    }
+
+                    else {
+                        $itr->result = (string)$itr->result;
+                        $totalQ += strlen($itr->result) - 1;
+                        for ($k = 0; $k < strlen($itr->result); $k++) {
+                            if ($itr->result[$k] == $itr->ans[$k])
+                                $corrects++;
+                            else if ($itr->result[$k] != 0)
+                                $inCorrects++;
+                        }
+                    }
+                }
+                
+                $roq[$counterTmp++] = [$inCorrects, $corrects, $totalQ, $percent];
+            }
+        }
 
         $totalMark = 20;
 
@@ -747,6 +786,8 @@ class QuizController extends Controller {
 
         foreach ($qInfos as $qInfo) {
 
+            $qInfo->result = ((int)$qInfo->result . '');
+
             $condition = ['questionId' => $qInfo->id, 'quizId' => $quizId, 'quizMode' => $regularQuizMode,
                 'result' => 0];
             $qInfo->white = ROQ::where($condition)->count();
@@ -756,10 +797,43 @@ class QuizController extends Controller {
                     'result' => $qInfo->ans];
                 $qInfo->correct = ROQ::where($condition)->count();
             }
-            else {
+            elseif($qInfo->kindQ == 0) {
                 $qInfo->correct = DB::select('select count(*) as countNum from ROQ WHERE questionId = ' . $qInfo->id . ' and quizId = ' . $quizId .
                     ' and quizMode = ' . $regularQuizMode . ' and result >= ' . ($qInfo->ans - $qInfo->telorance) .
                     ' and result <= ' . ($qInfo->ans + $qInfo->telorance))[0]->countNum;
+            }
+            else {
+
+                $roqsTmp = ROQ::whereQuestionId($qInfo->id)->whereQuizId($quizId)->select('result')->get();
+                $corrects = $inCorrects = $whites = [];
+                $first = true;
+
+                foreach ($roqsTmp as $itr) {
+
+                    $itr->result = (string)$itr->result;
+
+                    if($first) {
+                        for ($k = 0; $k < strlen($itr->result); $k++) {
+                            $corrects[$k] = 0;
+                            $inCorrects[$k] = 0;
+                            $whites[$k] = 0;
+                        }
+                        $first = false;
+                    }
+
+                    for ($k = 0; $k < strlen($itr->result); $k++) {
+                        if ($itr->result[$k] == $qInfo->ans[$k])
+                            $corrects[$k] = $corrects[$k] + 1;
+                        else if ($itr->result[$k] != 0)
+                            $inCorrects[$k] = $inCorrects[$k] + 1;
+                        else
+                            $whites[$k] = $whites[$k] + 1;
+                    }
+                }
+
+                $qInfo->corrects = $corrects;
+                $qInfo->inCorrects = $inCorrects;
+                $qInfo->whites = $whites;
             }
             
             $contents = DB::select('select subject.name as subjectName, lesson.name as lessonName from SOQ, subject, lesson WHERE SOQ.qId = ' . $qInfo->id . ' and SOQ.sId = subject.id and subject.lessonId = lesson.id');
@@ -831,20 +905,52 @@ class QuizController extends Controller {
                 $avgs = DB::select('select SUM(percent) / count(*) as avg FROM taraz, quizRegistry WHERE quizRegistry.qId = ' . $quizId . ' and quizRegistry.id  = taraz.qEntryId GROUP by(taraz.lId)');
         }
 
-        $inCorrects1 =  DB::select('SELECT count(*) as inCorrects, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE quizId = ' . $quizId . ' and questionId = question.id and result <> 0 and kindQ = 0 and (result > ans + telorance or result < ans - telorance) and ROQ.uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.lessonId)');
-        $inCorrects2 =  DB::select('SELECT count(*) as inCorrects, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE quizId = ' . $quizId . ' and questionId = question.id and result <> 0 and kindQ = 1 and ans <> result and uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.lessonId)');
-
-        $corrects1 =  DB::select('SELECT count(*) as corrects, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE quizId = ' . $quizId . ' and questionId = question.id and kindQ = 0 and result >= ans - telorance and result <= ans + telorance and ROQ.uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.lessonId)');
-        $corrects2 =  DB::select('SELECT count(*) as corrects, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE quizId = ' . $quizId . ' and questionId = question.id and ans = result and kindQ = 1 and uId = ' . $uId . ' and subject.id = sId and qId = question.id group by(lessonId)');
-
-        $total = DB::select('SELECT count(*) as total, subject.lessonId as target FROM ROQ, SOQ, question, subject WHERE ROQ.quizId = ' . $quizId . ' and ROQ.questionId = question.id and ROQ.uId = ' . $uId . ' and subject.id = SOQ.sId and SOQ.qId = question.id group by(subject.lessonId)');
-
-        $corrects = array_merge($corrects1, $corrects2);
-        $inCorrects = array_merge($inCorrects1, $inCorrects2);
-
-        $roq = $this->getResultOfSpecificContainer($total, $corrects, $inCorrects);
+        $roq = [];
+        $counterTmp = 0;
 
         $lessons = getLessonQuiz($quizId);
+
+        foreach ($lessons as $lesson) {
+
+            $totalQInSpecificLesson = DB::select('select result, ans, kindQ, telorance from ROQ, SOQ, question, subject where uId = ' . $uId . ' and qId = question.id and quizId = ' . $quizId . ' and question.id = questionId and sId = subject.id and subject.lessonId = ' . $lesson->id);
+
+            if($totalQInSpecificLesson != null) {
+
+                $corrects = $inCorrects = 0;
+                $totalQ = count($totalQInSpecificLesson);
+
+                foreach ($totalQInSpecificLesson as $itr) {
+
+                    if($itr->kindQ == 1) {
+                        if($itr->ans == $itr->result)
+                            $corrects++;
+                        else if($itr->result != 0)
+                            $inCorrects++;
+                    }
+
+                    else if($itr->kindQ == 0) {
+                        if($itr->ans - $itr->telorance <= $itr->result &&
+                            $itr->ans + $itr->telorance >= $itr->result)
+                            $corrects++;
+                        else if($itr->result != 0)
+                            $inCorrects++;
+                    }
+
+                    else {
+                        $itr->result = (string)$itr->result;
+                        $totalQ += strlen($itr->result) - 1;
+                        for ($k = 0; $k < strlen($itr->result); $k++) {
+                            if ($itr->result[$k] == $itr->ans[$k])
+                                $corrects++;
+                            else if ($itr->result[$k] != 0)
+                                $inCorrects++;
+                        }
+                    }
+                }
+
+                $roq[$counterTmp++] = [$inCorrects, $corrects, $totalQ];
+            }
+        }
 
         $taraz = Taraz::whereQEntryId($qEntryId->id)->get();
 
@@ -937,29 +1043,6 @@ sumTaraz DESC');
             'lessons' => $lessons, 'taraz' => $taraz, 'rankInLessonState' => $rankInLessonState, 'stateRank' => $stateRank,
             'avgs' => $avgs, 'roq' => $roq, 'cityRank' => $cityRank, "totalMark" => $totalMark,
             'avgRate' => $avgRate, 'avgTaraz' => $avgTaraz, 'sumRate' => $sumRate, 'sumTaraz' => $sumTaraz));
-    }
-
-    private function getResultOfSpecificContainer($total, $corrects, $inCorrects) {
-
-        $j = $k = 0;
-        $correctsArr = $inCorrectsArr = $totalArr = array();
-
-        for($i = 0; $i < count($total); $i++) {
-
-            $totalArr[$i] = $total[$i]->total;
-
-            if($j < count($corrects) && $total[$i]->target == $corrects[$j]->target)
-                $correctsArr[$i] = $corrects[$j++]->corrects;
-            else
-                $correctsArr[$i] = 0;
-
-            if($k < count($inCorrects) && $total[$i]->target == $inCorrects[$k]->target)
-                $inCorrectsArr[$i] = $inCorrects[$k++]->inCorrects;
-            else
-                $inCorrectsArr[$i] = 0;
-        }
-
-        return [$inCorrectsArr, $correctsArr, $totalArr];
     }
 
     public function quizStatus() {
@@ -2231,17 +2314,52 @@ sumTaraz DESC');
                     $question->correct = ROQ::where($condition)->count();
                     $question->incorrect = DB::select('select count(*) as countNum from ROQ WHERE questionId = ' . $question->id . ' and result <> ' . $question->ans
                         . " and result <> 0")[0]->countNum;
+
+                    $condition = ['questionId' => $question->id, 'result' => 0];
+                    $question->white = ROQ::where($condition)->count();
                 }
-                else {
+                else if($question->kindQ == 0){
                     $question->correct = DB::select('select count(*) as countNum from ROQ WHERE questionId = ' . $question->id . ' and result >= ' . ($question->ans - $question->telorance) .
                         ' and result <= ' . ($question->ans + $question->telorance))[0]->countNum;
-
                     $question->incorrect = DB::select('select count(*) as countNum from ROQ WHERE questionId = ' . $question->id . ' and result <> 0 and (result < ' . ($question->ans - $question->telorance) .
                         ' or result > ' . ($question->ans + $question->telorance) . ')')[0]->countNum;
-                }
 
-                $condition = ['questionId' => $question->id, 'result' => 0];
-                $question->white = ROQ::where($condition)->count();
+                    $condition = ['questionId' => $question->id, 'result' => 0];
+                    $question->white = ROQ::where($condition)->count();
+                }
+                else {
+
+                    $roqsTmp = ROQ::whereQuestionId($question->id)->select('result')->get();
+                    $corrects = $inCorrects = $whites = [];
+                    $first = true;
+
+                    foreach ($roqsTmp as $itr) {
+
+                        $itr->result = (string)$itr->result;
+
+                        if($first) {
+                            for ($k = 0; $k < strlen($itr->result); $k++) {
+                                $corrects[$k] = 0;
+                                $inCorrects[$k] = 0;
+                                $whites[$k] = 0;
+                            }
+                            $first = false;
+                        }
+
+                        for ($k = 0; $k < strlen($itr->result); $k++) {
+                            if ($itr->result[$k] == $question->ans[$k])
+                                $corrects[$k] = $corrects[$k] + 1;
+                            else if ($itr->result[$k] != 0)
+                                $inCorrects[$k] = $inCorrects[$k] + 1;
+                            else
+                                $whites[$k] = $whites[$k] + 1;
+                        }
+                    }
+
+                    $question->corrects = $corrects;
+                    $question->inCorrects = $inCorrects;
+                    $question->whites = $whites;
+                }
 
                 $condition = ['uId' => $uId, 'questionId' => $question->id];
                 $question->hasLike = (LOK::where($condition)->count() == 1) ? true : false;
@@ -3803,6 +3921,17 @@ sumTaraz DESC');
             $str = explode('-', $itr->result);
 
             for($i = 0; $i < count($str); $i++) {
+
+                if(count(explode('?', $str[$i])) > 1) {
+                    $tmpStr = "";
+                    $tmpArr = explode('?', $str[$i]);
+
+                    for($j = 0; $j < count($tmpArr); $j++)
+                        $tmpStr .= $tmpArr[$j];
+
+                    $str[$i] = $tmpStr;
+                }
+
                 $tmp = new ROQ();
                 $tmp->uId = $itr->uId;
                 $tmp->quizId = $itr->quizId;

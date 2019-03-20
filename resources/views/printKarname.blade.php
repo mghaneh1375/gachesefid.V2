@@ -1,3 +1,4 @@
+<?php $myArr = ['اول', 'دوم', 'سوم', 'چهارم', 'پنجم', 'ششم', 'هفتم', 'هشتم', 'نهم'] ?>
 <!DOCTYPE>
 <html>
     <head>
@@ -230,10 +231,10 @@
                             <tr>
                                 <td><center>{{$lesson->name}}</center></td>
                                 <td><center>{{$lesson->coherence}}</center></td>
-                                <td><center>{{$roq[2][$i]}}</center></td>
-                                <td><center>{{$roq[1][$i]}}</center></td>
-                                <td><center>{{$roq[0][$i]}}</center></td>
-                                <td><center>{{$roq[2][$i] - $roq[0][$i] - $roq[1][$i]}}</center></td>
+                                <td><center>{{$roq[$i][2]}}</center></td>
+                                <td><center>{{$roq[$i][1]}}</center></td>
+                                <td><center>{{$roq[$i][0]}}</center></td>
+                                <td><center>{{$roq[$i][2] - $roq[$i][0] - $roq[$i][1]}}</center></td>
 
                                 <td><center style="direction: ltr">{{($taraz[$i]->percent <= 0) ? 0 : round($taraz[$i]->percent * $totalMark / 100, 0)}}</center></td>
                                 <td><center style="direction: ltr">{{round($taraz[$i]->percent, 0)}}</center></td>
@@ -266,7 +267,7 @@
 
                             <td><center>تراز</center></td>
 
-                            <td><center>وضعیت</center></td>
+                            {{--<td><center>وضعیت</center></td>--}}
                         </tr>
 
                         @foreach($lessons as $lesson)
@@ -282,21 +283,21 @@
                                 <td><center>{{$rankInLessonCity[$i]}}</center></td>
 
                                 <td><center style="direction: ltr">{{$taraz[$i]->taraz}}</center></td>
-                                <td>
-                                    <center>
-                                        @foreach($status as $itr)
-                                            @if(($itr->type && $itr->floor <= $taraz[$i]->percent &&
-                                             $taraz[$i]->percent <= $itr->ceil) || (!$itr->type &&
-                                             $taraz[$i]->percent <= $avgs[$i]->avg + $itr->ceil && $taraz[$i]->percent >= $avgs[$i]->avg - $itr->floor))
-                                                @if($itr->pic)
-                                                    <img width="40px" height="40px" src="{{URL('status') . '/' . $itr->status}}">
-                                                @else
-                                                    <p style="background-color: {{$itr->color}}">{{$itr->status}}</p>
-                                                @endif
-                                            @endif
-                                        @endforeach
-                                    </center>
-                                </td>
+                                {{--<td>--}}
+                                    {{--<center>--}}
+                                        {{--@foreach($status as $itr)--}}
+                                            {{--@if(($itr->type && $itr->floor <= $taraz[$i]->percent &&--}}
+                                             {{--$taraz[$i]->percent <= $itr->ceil) || (!$itr->type &&--}}
+                                             {{--$taraz[$i]->percent <= $avgs[$i]->avg + $itr->ceil && $taraz[$i]->percent >= $avgs[$i]->avg - $itr->floor))--}}
+                                                {{--@if($itr->pic)--}}
+                                                    {{--<img width="40px" height="40px" src="{{URL('status') . '/' . $itr->status}}">--}}
+                                                {{--@else--}}
+                                                    {{--<p style="background-color: {{$itr->color}}">{{$itr->status}}</p>--}}
+                                                {{--@endif--}}
+                                            {{--@endif--}}
+                                        {{--@endforeach--}}
+                                    {{--</center>--}}
+                                {{--</td>--}}
                             </tr>
                             <?php $i++; ?>
                         @endforeach
@@ -323,19 +324,58 @@
                                 </tr>
                     @endif
 
-                                <tr>
-                                    <td><center>{{$i}}</center></td>
-                                    <td><center style="direction: ltr">{{$qInfo->result}}</center></td>
-                                    <td><center>{{$qInfo->ans}}</center></td>
-                                    <td><center style="direction: ltr">{{$qInfo->level}}</center></td>
-                                    <td>
-                                        <center>
-                                            @foreach($qInfo->subjects as $itr)
-                                                <span>{{$itr}}</span><span>&nbsp;</span>
-                                            @endforeach
-                                        </center>
-                                    </td>
-                                </tr>
+                                @if($qInfo->kindQ != 2)
+                                    <tr>
+                                        <td><center>{{$i}}</center></td>
+                                        <td><center style="direction: ltr">{{$qInfo->result}}</center></td>
+                                        <td><center>{{$qInfo->ans}}</center></td>
+                                        <td><center style="direction: ltr">{{$qInfo->level}}</center></td>
+                                        <td>
+                                            <center>
+                                                @foreach($qInfo->subjects as $itr)
+                                                    <span>{{$itr}}</span><span>&nbsp;</span>
+                                                @endforeach
+                                            </center>
+                                        </td>
+                                    </tr>
+                                @else
+                                    @for($k = 0; $k < strlen($qInfo->ans); $k++)
+                                        <tr>
+                                            <td><center>{{$i}} -گزاره {{$myArr[$k]}}</center></td>
+
+                                            <td>
+                                                <center>
+                                                    @if($qInfo->result[$k] == 1)
+                                                        <span>صحیح</span>
+                                                    @elseif($qInfo->result[$k] != 0)
+                                                        <span>ناصحیح</span>
+                                                    @else
+                                                        <span>سفید</span>
+                                                    @endif
+                                                </center>
+                                            </td>
+
+                                            <td>
+                                                <center>
+                                                    @if($qInfo->ans[$k] == 1)
+                                                        <span>صحیح</span>
+                                                    @else
+                                                        <span>ناصحیح</span>
+                                                    @endif
+                                                </center>
+                                            </td>
+
+                                            <td><center style="direction: ltr">{{$qInfo->level}}</center></td>
+                                            <td>
+                                                <center>
+                                                    @foreach($qInfo->subjects as $itr)
+                                                        <span>{{$itr}}</span><span>&nbsp;</span>
+                                                    @endforeach
+                                                </center>
+                                            </td>
+                                        </tr>
+                                    @endfor
+                                @endif
 
                     @if(($i - 1) % 15 == 14 || $i == $size)
                             </table>

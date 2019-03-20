@@ -72,9 +72,9 @@
                     @if($kindKarname->subjectCountryRank)
                         <td><center>رتبه در کشور</center></td>
                     @endif
-                    @if(count($status) > 0)
-                        <td><center>وضعیت</center></td>
-                    @endif
+                    {{--@if(count($status) > 0)--}}
+                        {{--<td><center>وضعیت</center></td>--}}
+                    {{--@endif--}}
                 </tr>
 
                 <?php
@@ -84,23 +84,20 @@
                 @foreach($subjects as $subject)
 
                     <?php
-                    $percent[$i] = ($minusMark) ?
-                            round(($roq[1][$i] * 3.0 - $roq[0][$i]) / (3.0 * $roq[2][$i]), 2) * 100 :
-                            round($roq[1][$i] / $roq[2][$i], 2) * 100;
-
-                    $allow = true;
+                        $percent[$i] = $roq[$i][3];
+                        $allow = true;
                     ?>
                         <tr>
                             <td><center>{{$subject->name}}</center></td>
-                            <td><center>{{$roq[2][$i]}}</center></td>
-                            <td><center>{{$roq[1][$i]}}</center></td>
-                            <td><center>{{$roq[0][$i]}}</center></td>
-                            <td><center>{{$roq[2][$i] - $roq[1][$i] - $roq[0][$i]}}</center></td>
+                            <td><center>{{$roq[$i][2]}}</center></td>
+                            <td><center>{{$roq[$i][1]}}</center></td>
+                            <td><center>{{$roq[$i][0]}}</center></td>
+                            <td><center>{{$roq[$i][2] - $roq[$i][1] - $roq[$i][0]}}</center></td>
 
                             @if($kindKarname->subjectMark)
-                                <td><center style="direction: ltr">{{($percent[$i] <= 0) ? 0 : round($percent[$i] * $totalMark / 100, 0)}}</center></td>
+                                <td><center style="direction: ltr">{{$roq[$i][3] * $totalMark / 100}}</center></td>
                             @endif
-                            <td><center style="direction: ltr">{{$percent[$i]}}</center></td>
+                            <td><center style="direction: ltr">{{$roq[$i][3]}}</center></td>
                             @if($kindKarname->subjectAvg)
                                 <td><center style="direction: ltr">{{round($avgs[$i]->avg, 0)}}</center></td>
                             @endif
@@ -119,23 +116,23 @@
                             @if($kindKarname->subjectCountryRank)
                                 <td><center>{{$countryRank[$i]}}</center></td>
                             @endif
-                            @if(count($status) > 0)
-                                <td>
-                                    <center>
-                                        @foreach($status as $itr)
-                                            @if($itr->type && $itr->floor <= $percent[$i] && $percent[$i] <= $itr->ceil
-                                                || (!$itr->type && $kindKarname->subjectAvg &&
-                                                $avgs[$i]->avg - $itr->floor <= $percent[$i] && $avgs[$i]->avg + $itr->ceil >= $percent[$i]))
-                                                @if($itr->pic)
-                                                    <img width="40px" height="40px" src="{{URL('public/status') . '/' . $itr->status}}">
-                                                @else
-                                                    <p style="background-color: {{$itr->color}}">{{$itr->status}}</p>
-                                                @endif
-                                            @endif
-                                        @endforeach
-                                    </center>
-                                </td>
-                            @endif
+                            {{--@if(count($status) > 0)--}}
+                                {{--<td>--}}
+                                    {{--<center>--}}
+                                        {{--@foreach($status as $itr)--}}
+                                            {{--@if($itr->type && $itr->floor <= $percent[$i] && $percent[$i] <= $itr->ceil--}}
+                                                {{--|| (!$itr->type && $kindKarname->subjectAvg &&--}}
+                                                {{--$avgs[$i]->avg - $itr->floor <= $percent[$i] && $avgs[$i]->avg + $itr->ceil >= $percent[$i]))--}}
+                                                {{--@if($itr->pic)--}}
+                                                    {{--<img width="40px" height="40px" src="{{URL('public/status') . '/' . $itr->status}}">--}}
+                                                {{--@else--}}
+                                                    {{--<p style="background-color: {{$itr->color}}">{{$itr->status}}</p>--}}
+                                                {{--@endif--}}
+                                            {{--@endif--}}
+                                        {{--@endforeach--}}
+                                    {{--</center>--}}
+                                {{--</td>--}}
+                            {{--@endif--}}
                         </tr>
                         <?php
                         $i++;
