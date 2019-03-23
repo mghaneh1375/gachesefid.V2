@@ -33,6 +33,7 @@
         var changeQNoDir = '{{route('changeQNoRegularQuiz')}}';
         var elseQuizDir = '{{route('elseQuiz')}}';
         var deleteQFromQ = '{{route('deleteQFromQ')}}';
+        var changeQMarkDir = '{{route('changeQMarkRegular')}}';
         var deleteDeletedQFromQ = '{{route('deleteDeletedQFromQ')}}';
         var changeRankingCountDir = '{{route('changeRankingCount')}}';
         var homeDir = '{{route('home')}}';

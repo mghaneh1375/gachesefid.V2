@@ -2520,33 +2520,43 @@ sumTaraz DESC');
         if($reminder <= 0)
             return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]));
 
-//        $roqs = DB::select('select ROQ2.result, ROQ2.id from ROQ2, question where quizId = ' . $quizId . " and uId = " . $uId . " and
-//                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ2.questionId");
-
         $roqs = ROQ2::whereUId($uId)->whereQuizId($quizId)->first();
-        
-//        if($roqs == null || count($roqs) == 0) {
-//            $this->fillRegularROQ($quizId);
-//
-//            $roqs = DB::select('select ROQ2.result, ROQ2.id from ROQ2, question where quizId = ' . $quizId . " and uId = " . $uId . " and
-//                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ2.questionId");
-//        }
+
+        $questions = DB::select('select choicesCount, question.id, question.questionFile, question.kindQ, question.neededTime as qoqId from question, regularQOQ WHERE questionId = question.id and quizId = ' . $quizId . ' order by regularQOQ.qNo ASC');
 
         if($roqs == null) {
-            
-            $quizQuestionsNo = RegularQOQ::whereQuizId($quizId)->count();
 
             $tmpResult = "";
             $roqs = [];
 
-            for ($i = 0; $i < $quizQuestionsNo - 1; $i++) {
-                $tmpResult .= "0-";
-                $roqs[$i] = 0;
+            for ($i = 0; $i < count($questions) - 1; $i++) {
+
+                $str = "";
+
+                if($questions[$i]->kindQ == 2) {
+                    for($j = 0; $j < $questions[$i]->choicesCount; $j++)
+                        $str .= "0";
+                }
+                else
+                    $str .= "0";
+
+                $roqs[$i] = $str;
+                $tmpResult .= $str . "-";
             }
 
-            if($quizQuestionsNo > 0) {
-                $tmpResult .= "0";
-                $roqs[$quizQuestionsNo - 1] = 0;
+            if(count($questions) > 0) {
+
+                $str = "";
+
+                if($questions[count($questions) - 1]->kindQ == 2) {
+                    for($j = 0; $j < $questions[count($questions) - 1]->choicesCount; $j++)
+                        $str .= "0";
+                }
+                else
+                    $str .= "0";
+
+                $tmpResult .= $str;
+                $roqs[count($questions) - 1] = $str;
             }
 
             $tmpROQ2 = new ROQ2();
@@ -2566,8 +2576,6 @@ sumTaraz DESC');
 
             $roqs = $tmpROQ2;
         }
-
-        $questions = DB::select('select choicesCount, question.id, question.questionFile, question.kindQ, question.neededTime as qoqId from question, regularQOQ WHERE questionId = question.id and quizId = ' . $quizId . ' order by regularQOQ.qNo ASC');
 
         return view('regularQuiz', array('quiz' => $quiz, 'mode' => 'normal', 'questions' => $questions, 'uId' => $uId,
             'reminder' => $reminder, 'roqs' => $roqs, 'verify' => $verify));
@@ -3517,15 +3525,8 @@ sumTaraz DESC');
         if(isset($_POST["quizId"])) {
 
             $quizId = makeValidInput($_POST["quizId"]);
-//            $quiz = RegularQuiz::whereId($quizId);
-//            $today = getToday();
 
-            /*if($quiz->startDate < $today["date"] || ($quiz->startDate == $today["date"] && $quiz->startTime < $today["time"])) {
-                echo "timeOut";
-                return;
-            }*/
-
-            $questions = DB::select('select regularQOQ.qNo as qNo, organizationId, questionFile, ans, users.level as authorLevel, ansFile, question.level,
+            $questions = DB::select('select regularQOQ.qNo as qNo, mark, organizationId, questionFile, ans, users.level as authorLevel, ansFile, question.level,
                 neededTime, question.id from question, regularQOQ, users WHERE users.id = author and
                 quizId = ' .$quizId . ' and questionId = question.id order By regularQOQ.qNo ASC');
 
@@ -3549,12 +3550,12 @@ sumTaraz DESC');
     }
 
     public function changeMarkQ() {
-
+        
         if(isset($_POST["quizId"]) && isset($_POST["questionId"]) && isset($_POST["val"])) {
 
             $condition = ['quizId' => makeValidInput($_POST["quizId"]),
                 'questionId' => makeValidInput($_POST["questionId"])];
-
+            
             $qoq = SystemQOQ::where($condition)->first();
 
             if($qoq != null) {
@@ -3567,6 +3568,24 @@ sumTaraz DESC');
 
     }
 
+    public function changeQMarkRegular() {
+
+        if(isset($_POST["quizId"]) && isset($_POST["questionId"]) && isset($_POST["val"])) {
+
+            $condition = ['quizId' => makeValidInput($_POST["quizId"]),
+                'questionId' => makeValidInput($_POST["questionId"])];
+
+            $qoq = RegularQOQ::where($condition)->first();
+
+            if($qoq != null) {
+                $qoq->mark = makeValidInput($_POST["val"]);
+                $qoq->save();
+                echo "ok";
+            }
+
+        }
+    }
+    
     public function changeQNoRegularQuiz() {
         if(isset($_POST["quizId"]) && isset($_POST["questionId"]) && isset($_POST["val"])) {
 

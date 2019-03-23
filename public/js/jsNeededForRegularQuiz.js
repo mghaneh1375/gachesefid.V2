@@ -177,8 +177,7 @@ function addQuestionToQuiz(quizId) {
                 questions = response;
             }
             else{
-                $("#msg").empty();
-                $("#msg").append('سوالی موجود نیست');
+                $("#msg").empty().append('سوالی موجود نیست');
                 $("#nextQ").addClass('hidden');
             }
 
@@ -316,7 +315,6 @@ function getSubjects(lessonId) {
                 response = JSON.parse(response);
 
                 newElement = "";
-                $("#subjects").empty();
 
                 if (response.length == 0)
                     newElement = "<option value='none'>مبحثی موجود نیست</option>";
@@ -325,7 +323,7 @@ function getSubjects(lessonId) {
                     newElement = "<option value='" + response[i].id + "'>" + response[i].name + "</option>";
                 }
 
-                $("#subjects").append(newElement);
+                $("#subjects").empty().append(newElement);
                 getSubjectQuestions($("#subjects").val());
             }
         });
@@ -436,14 +434,39 @@ function showQuestion() {
     }
     newElement += "<div class='col-xs-4'>سطح سختی " + level + "</div>";
     newElement += "<div class='col-xs-4'> پاسخ " + questions[currIdx].ans + "</div>";
+    newElement += "<div class='col-xs-12' style='margin-top: 20px'>";
     newElement += "<div class='col-xs-6'><center><button class='btn btn-danger' onclick='removeQFromQ(\"" + questions[currIdx].id + "\")' data-toggle='tooltip' title='حذف سوال از آزمون'><span class='glyphicon glyphicon-remove'></span></button></center></div>";
     newElement += "<div class='col-xs-6'><center> شماره سوال <input style='max-width: 100px' type='number' value='" + questions[currIdx].qNo + "' onchange='changeQNo(\"" + questions[currIdx].id + "\", this.value)'></center></div>";
-
-    newElement += '<div class="col-xs-12">';
+    newElement += "</div>";
+    newElement += "<div class='col-xs-12' style='margin-top: 20px'>";
+    newElement += "<div class='col-xs-6'><span>نمره: </span><input id='markQ' type='number' min='1' max='100' value='" + questions[currIdx].mark + "'><button onclick='sendQuestionMark()' class='btn btn-warning'>ثبت نمره</button></div>";
+    newElement += '<div class="col-xs-6">';
     newElement += '<input placeholder="کد سازمانی سوال" type="text" id="jumpVal">';
     newElement += '<span style="margin-right: 10px" class="btn btn-danger" onclick="jumpToSpecificQuestion()">بپر</span></div>';
+    newElement += "</div>";
 
     $("#qInfo").empty().append(newElement);
+}
+
+function sendQuestionMark() {
+
+    var newVal = $("#markQ").val();
+
+    $.ajax({
+        type: 'post',
+        url: changeQMarkDir,
+        data: {
+            'quizId': currQuiz,
+            'questionId': questions[currIdx].id,
+            'val': newVal
+        },
+        success: function (response) {
+            if(response == "ok") {
+                questions[currIdx].mark = newVal;
+                alert("علمیات با موفقیت انجام گرفت");
+            }
+        }
+    })
 }
 
 function changeQNo(qId, val) {
@@ -607,8 +630,7 @@ function fetchQ() {
         },
         success: function (response) {
             if(response == "nok") {
-                $("#fetchErr").empty();
-                $("#fetchErr").append('سوالی با کد سازمانی وارد شده وجود ندارد');
+                $("#fetchErr").empty().append('سوالی با کد سازمانی وارد شده وجود ندارد');
             }
             else {
                 response = JSON.parse(response);

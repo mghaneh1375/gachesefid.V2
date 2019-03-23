@@ -761,6 +761,8 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 	Route::post('changeQNo', array('as' => 'changeQNo', 'uses' => 'QuizController@changeQNo'));
 
+	Route::post('changeQMarkRegular', array('as' => 'changeQMarkRegular', 'uses' => 'QuizController@changeQMarkRegular'));
+
 	Route::post('changeQNoRegularQuiz', array('as' => 'changeQNoRegularQuiz', 'uses' => 'QuizController@changeQNoRegularQuiz'));
 
 	Route::post('createTarazTable', array('as' => 'createTarazTable', 'uses' => 'TarazController@createTarazTable'));

@@ -164,7 +164,7 @@
 
         function incQ() {
             if(qIdx + 1 < questionArr.length) {
-                if(questionArr[qIdx].kindQ != "1")
+                if(questionArr[qIdx].kindQ == "0")
                     submitC2();
                 qIdx++;
                 SUQ();
@@ -173,7 +173,7 @@
 
         function decQ() {
             if(qIdx - 1 >= 0) {
-                if(questionArr[qIdx].kindQ != "1")
+                if(questionArr[qIdx].kindQ == "0")
                     submitC2();
                 qIdx--;
                 SUQ();
@@ -181,7 +181,7 @@
         }
 
         function JMPTOQUIZ(idx) {
-            if(questionArr[qIdx].kindQ != "1")
+            if(questionArr[qIdx].kindQ == "0")
                 submitC2();
             qIdx = idx;
             SUQ();
@@ -225,21 +225,12 @@
             if(questionArr[qIdx].kindQ == "1") {
                 newNode = "<center style='margin-top: 20px;'><span style='font-size: 20px; color: #ff0000'>پاسخ : </span><select class='mySelect' style='width: 60px; font-size: 14px' id='choices' onchange='submitC(this.value)'>";
 
-//                if (answer[qIdx].result == 0)
-//                    newNode = newNode + "<option value='0' selected>سفید</option>";
-//                else
-//                    newNode = newNode + "<option value='0'>سفید</option>";
-
                 if (answer[qIdx] == 0)
                     newNode = newNode + "<option value='0' selected>سفید</option>";
                 else
                     newNode = newNode + "<option value='0'>سفید</option>";
 
                 for(i = 1; i <= questionArr[qIdx].choicesCount; i++) {
-//                    if (answer[qIdx].result == i)
-//                        newNode = newNode + "<option value='" + i + "' selected>گزینه " + i + "</option>";
-//                    else
-//                        newNode = newNode + "<option value='" + i + "'>گزینه " + i + "</option>";
                     if (answer[qIdx] == i)
                         newNode = newNode + "<option value='" + i + "' selected>گزینه " + i + "</option>";
                     else
@@ -258,8 +249,8 @@
                     tmpArr[1] = 0;
                 }
                 newNode = "<center style='margin-top: 20px'><p style='color: red;'>پاسخ شما:</p>";
-                newNode += "<span style='margin: 10px'>قسمت صحیح</span><input onkeypress='return isNumberKey(event)' id='real' style='max-width: 100px' type='text' value='" + tmpArr[0] + "'>";
-                newNode += "<span style='margin: 10px'>قسمت اعشار</span><input onkeypress='return isNumberKey(event)' maxlength='2' id='img' style='max-width: 100px' type='text' value='" + tmpArr[1] + "'></center>";
+                newNode += "<span style='margin: 10px'>قسمت اعشار</span><input onkeypress='return isNumberKey(event)' maxlength='2' id='img' style='max-width: 100px' type='text' value='" + tmpArr[1] + "'>";
+                newNode += "<span style='margin: 10px'>قسمت صحیح</span><input onkeypress='return isNumberKey(event)' id='real' style='max-width: 100px' type='text' value='" + tmpArr[0] + "'></center>";
             }
 
             else {

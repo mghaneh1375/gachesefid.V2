@@ -1270,6 +1270,35 @@ class ReportController extends Controller {
                 else {
                     $tmpArr = DB::select('select result from ROQ, studentsAdviser WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
                         " and adviserId = " . $user->id . " and studentId = uId and questionId = " . $qInfo->id);
+                    $corrects = $inCorrects = $whites = [];
+                    $first = true;
+
+                    foreach ($tmpArr as $itr) {
+
+                        $itr->result = (string)$itr->result;
+
+                        if($first) {
+                            for ($k = 0; $k < strlen($itr->result); $k++) {
+                                $corrects[$k] = 0;
+                                $inCorrects[$k] = 0;
+                                $whites[$k] = 0;
+                            }
+                            $first = false;
+                        }
+
+                        for ($k = 0; $k < strlen($itr->result); $k++) {
+                            if ($itr->result[$k] == $qInfo->ans[$k])
+                                $corrects[$k] = $corrects[$k] + 1;
+                            else if ($itr->result[$k] != 0)
+                                $inCorrects[$k] = $inCorrects[$k] + 1;
+                            else
+                                $whites[$k] = $whites[$k] + 1;
+                        }
+                    }
+
+                    $qInfo->corrects = $corrects;
+                    $qInfo->inCorrects = $inCorrects;
+                    $qInfo->whites = $whites;
                 }
             }
         }
@@ -1299,6 +1328,35 @@ class ReportController extends Controller {
                     $tmpArr = DB::select('select result from ROQ, namayandeSchool nS, schoolStudent sS WHERE nS.sId = sS.sId and quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
                         " and nS.nId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.questionId = " . $qInfo->id
                     );
+                    $corrects = $inCorrects = $whites = [];
+                    $first = true;
+
+                    foreach ($tmpArr as $itr) {
+
+                        $itr->result = (string)$itr->result;
+
+                        if($first) {
+                            for ($k = 0; $k < strlen($itr->result); $k++) {
+                                $corrects[$k] = 0;
+                                $inCorrects[$k] = 0;
+                                $whites[$k] = 0;
+                            }
+                            $first = false;
+                        }
+
+                        for ($k = 0; $k < strlen($itr->result); $k++) {
+                            if ($itr->result[$k] == $qInfo->ans[$k])
+                                $corrects[$k] = $corrects[$k] + 1;
+                            else if ($itr->result[$k] != 0)
+                                $inCorrects[$k] = $inCorrects[$k] + 1;
+                            else
+                                $whites[$k] = $whites[$k] + 1;
+                        }
+                    }
+
+                    $qInfo->corrects = $corrects;
+                    $qInfo->inCorrects = $inCorrects;
+                    $qInfo->whites = $whites;
                 }
             }
         }
@@ -1324,9 +1382,39 @@ class ReportController extends Controller {
                         " and sS.sId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.result >= " . ($qInfo->ans - $qInfo->telorance) .
                         " and result <= " . ($qInfo->ans + $qInfo->telorance) . " and ROQ.questionId = " . $qInfo->id
                     )[0]->countNum;
-                else
+                else {
                     $tmpArr = DB::select('select result from ROQ, schoolStudent sS WHERE quizId = ' . $quizId . " and quizMode = " . $regularQuizMode .
                         " and sS.sId = " . $user->id . " and sS.uId = ROQ.uId and ROQ.questionId = " . $qInfo->id);
+                    $corrects = $inCorrects = $whites = [];
+                    $first = true;
+
+                    foreach ($tmpArr as $itr) {
+
+                        $itr->result = (string)$itr->result;
+
+                        if($first) {
+                            for ($k = 0; $k < strlen($itr->result); $k++) {
+                                $corrects[$k] = 0;
+                                $inCorrects[$k] = 0;
+                                $whites[$k] = 0;
+                            }
+                            $first = false;
+                        }
+
+                        for ($k = 0; $k < strlen($itr->result); $k++) {
+                            if ($itr->result[$k] == $qInfo->ans[$k])
+                                $corrects[$k] = $corrects[$k] + 1;
+                            else if ($itr->result[$k] != 0)
+                                $inCorrects[$k] = $inCorrects[$k] + 1;
+                            else
+                                $whites[$k] = $whites[$k] + 1;
+                        }
+                    }
+
+                    $qInfo->corrects = $corrects;
+                    $qInfo->inCorrects = $inCorrects;
+                    $qInfo->whites = $whites;
+                }
             }
         }
 
@@ -1351,46 +1439,43 @@ class ReportController extends Controller {
                         " and ROQ.questionId = " . $qInfo->id
                     )[0]->countNum;
                 }
-                else
+                else {
                     $tmpArr = ROQ::whereQuestionId($qInfo->id)->whereQuizId($quizId)->select('result')->get();
+
+                    $corrects = $inCorrects = $whites = [];
+                    $first = true;
+
+                    foreach ($tmpArr as $itr) {
+
+                        $itr->result = (string)$itr->result;
+
+                        if($first) {
+                            for ($k = 0; $k < strlen($itr->result); $k++) {
+                                $corrects[$k] = 0;
+                                $inCorrects[$k] = 0;
+                                $whites[$k] = 0;
+                            }
+                            $first = false;
+                        }
+
+                        for ($k = 0; $k < strlen($itr->result); $k++) {
+                            if ($itr->result[$k] == $qInfo->ans[$k])
+                                $corrects[$k] = $corrects[$k] + 1;
+                            else if ($itr->result[$k] != 0)
+                                $inCorrects[$k] = $inCorrects[$k] + 1;
+                            else
+                                $whites[$k] = $whites[$k] + 1;
+                        }
+                    }
+
+                    $qInfo->corrects = $corrects;
+                    $qInfo->inCorrects = $inCorrects;
+                    $qInfo->whites = $whites;
+                }
             }
         }
 
         foreach ($qInfos as $qInfo) {
-
-            if($qInfo->kindQ == 2) {
-
-                $corrects = $inCorrects = $whites = [];
-                $first = true;
-
-                foreach ($tmpArr as $itr) {
-
-                    $itr->result = (string)$itr->result;
-
-                    if($first) {
-                        for ($k = 0; $k < strlen($itr->result); $k++) {
-                            $corrects[$k] = 0;
-                            $inCorrects[$k] = 0;
-                            $whites[$k] = 0;
-                        }
-                        $first = false;
-                    }
-
-                    for ($k = 0; $k < strlen($itr->result); $k++) {
-                        if ($itr->result[$k] == $qInfo->ans[$k])
-                            $corrects[$k] = $corrects[$k] + 1;
-                        else if ($itr->result[$k] != 0)
-                            $inCorrects[$k] = $inCorrects[$k] + 1;
-                        else
-                            $whites[$k] = $whites[$k] + 1;
-                    }
-                }
-
-                $qInfo->corrects = $corrects;
-                $qInfo->inCorrects = $inCorrects;
-                $qInfo->whites = $whites;
-            }
-
             $contents = DB::select('select subject.name as subjectName, lesson.name as lessonName from SOQ, subject, lesson WHERE SOQ.qId = ' . $qInfo->id . ' and SOQ.sId = subject.id and subject.lessonId = lesson.id');
             $subjects = [];
             $lessons = [];
