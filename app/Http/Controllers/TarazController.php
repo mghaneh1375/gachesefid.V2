@@ -27,11 +27,18 @@ class TarazController extends Controller {
         $sumMark = 0;
 
         for($i = 0; $i < count($qEntryIds); $i++) {
+
             $percent = 0;
+            $percent2 = 0;
+            $percent3 = 0;
+
             for($j = 0; $j < count($questionIds); $j++) {
 
                 if($i == 0) {
-                    $sumMark += $questionIds[$j]->mark;
+
+                    if($questionIds[$j]->kindQ == 1)
+                        $sumMark += $questionIds[$j]->mark;
+
                     $condition = ['questionId' => $questionIds[$j]->id, 'status' => 1];
                     $count = 0;
                     $correct = 0;
@@ -79,7 +86,7 @@ class TarazController extends Controller {
                     else if ($questionIds[$j]->kindQ == 0 &&
                         $stdAns->result >= $questionIds[$j]->ans - $questionIds[$j]->telorance &&
                         $stdAns->result <= $questionIds[$j]->ans + $questionIds[$j]->telorance)
-                        $percent += $questionIds[$j]->mark;
+                        $percent2 += $questionIds[$j]->mark;
                     else if($questionIds[$j]->kindQ == 2) {
 
                         $tmpTelorance = explode('.', $questionIds[$j]->telorance);
@@ -91,9 +98,9 @@ class TarazController extends Controller {
 
                         for($k = 0; $k < strlen($stdAns->result); $k++) {
                             if($stdAns->result[$k] == $questionIds[$j]->ans[$k])
-                                $percent += $questionIds[$j]->mark * ($tmpTelorance[0] / 100);
+                                $percent3 += $questionIds[$j]->mark * ($tmpTelorance[0] / 100);
                             else if($stdAns->result[$k] != 0)
-                                $percent -= $questionIds[$j]->mark * ($tmpTelorance[1] / 100);
+                                $percent3 -= $questionIds[$j]->mark * ($tmpTelorance[1] / 100);
                         }
                     }
                     else if($questionIds[$j]->kindQ == 1 && $stdAns->result != 0)
@@ -104,17 +111,21 @@ class TarazController extends Controller {
             $conditions = ["qEntryId" => $qEntryIds[$i]->id, 'lId' => $lId];
             $taraz = Taraz::where($conditions)->first();
             if($taraz != null) {
-                $taraz->percent = round($percent / $sumMark * 100, 4);
+                $taraz->percent = $percent;
+                $taraz->percent2 = $percent2;
+                $taraz->percent3 = $percent3;
                 $taraz->save();
             }
             else {
                 $taraz = new Taraz();
                 $taraz->qEntryId = $qEntryIds[$i]->id;
                 $taraz->lId = $lId;
-                $taraz->percent = round($percent / count($questionIds) * 100, 4);
+                $taraz->percent = $percent;
+                $taraz->percent2 = $percent2;
+                $taraz->percent3 = $percent3;
                 $taraz->save();
             }
-            $totalPercent += $taraz->percent;
+            $totalPercent += $taraz->percent + $taraz->percent2 + $taraz->percent3;
         }
 
         return round(($totalPercent / count($qEntryIds)), 4);
@@ -133,7 +144,7 @@ class TarazController extends Controller {
 
     public function getEnherafMeyar($lId, $lessonAvg, $quizId) {
 
-        $percents = DB::select('select percent from taraz, quizRegistry WHERE taraz.lId = ' . $lId .' and taraz.qEntryId = quizRegistry.id AND quizRegistry.qId = '. $quizId);
+        $percents = DB::select('select (percent + percent2 + percent3) as percent from taraz, quizRegistry WHERE taraz.lId = ' . $lId .' and taraz.qEntryId = quizRegistry.id AND quizRegistry.qId = '. $quizId);
         $sum = 0.0;
         for($i = 0; $i < count($percents); $i++)
             $sum += pow($percents[$i]->percent - $lessonAvg, 2);
@@ -159,10 +170,14 @@ class TarazController extends Controller {
         $sIds = DB::select('select DISTINCT SOQ.sId as sId FROM regularQOQ, SOQ WHERE regularQOQ.quizId = ' . $quizId . ' AND regularQOQ.questionId = SOQ.qId');
 
         $percentInSubjects = array();
+        $percent2InSubjects = array();
+        $percent3InSubjects = array();
 
         foreach($uIds as $uId) {
             foreach($sIds as $sId) {
-                $percentInSubjects[$uId->uId][$sId->sId] = 0;;
+                $percentInSubjects[$uId->uId][$sId->sId] = 0;
+                $percent2InSubjects[$uId->uId][$sId->sId] = 0;
+                $percent3InSubjects[$uId->uId][$sId->sId] = 0;
             }
         }
 
@@ -178,14 +193,16 @@ class TarazController extends Controller {
 
             $condition = ['quizMode' => $regularQuizMode, 'quizId' => $quizId, 'questionId' => $qoq->id];
             $roqs = ROQ::where($condition)->select('result', 'uId')->get();
-            $totals[$qoq->sId] += $qoq->mark;
+
+            if($qoq->kindQ == 1)
+                $totals[$qoq->sId] += $qoq->mark;
 
             foreach ($roqs as $roq) {
-                if(($qoq->kindQ == 1 && $qoq->ans == $roq->result) ||
-                    ($qoq->kindQ == 0 && $roq->result >= ($qoq->ans - $qoq->telorance) &&
-                    $roq->result <= ($qoq->ans + $qoq->telorance))
-                )
+                if(($qoq->kindQ == 1 && $qoq->ans == $roq->result))
                     $percentInSubjects[$roq->uId][$qoq->sId] += $qoq->mark;
+                else if($qoq->kindQ == 0 && $roq->result >= ($qoq->ans - $qoq->telorance) &&
+                    $roq->result <= ($qoq->ans + $qoq->telorance))
+                    $percent2InSubjects[$roq->uId][$qoq->sId] += $qoq->mark;
                 else if($qoq->kindQ == 2) {
 
                     $tmpTelorance = explode('.', $qoq->telorance);
@@ -197,14 +214,13 @@ class TarazController extends Controller {
 
                     for($k = 0; $k < strlen($roq->result); $k++) {
                         if($roq->result[$k] == $qoq->ans[$k])
-                            $percentInSubjects[$roq->uId][$qoq->sId] += $qoq->mark * ($tmpTelorance[0] / 100);
+                            $percent3InSubjects[$roq->uId][$qoq->sId] += $qoq->mark * ($tmpTelorance[0] / 100);
                         else if($roq->result[$k] != 0)
-                            $percentInSubjects[$roq->uId][$qoq->sId] -= $qoq->mark * ($tmpTelorance[1] / 100);
-                        echo $percentInSubjects[$roq->uId][$qoq->sId];
+                            $percent3InSubjects[$roq->uId][$qoq->sId] -= $qoq->mark * ($tmpTelorance[1] / 100);
                     }
                 }
                 else if($qoq->kindQ == 1 && $roq->result != 0)
-                    $percentInSubjects[$roq->uId][$qoq->sId] -= (1 / ($qoq->choicesCount - 1)) * $qoq->mark;
+                    $percent2InSubjects[$roq->uId][$qoq->sId] -= (1 / ($qoq->choicesCount - 1)) * $qoq->mark;
             }
         }
 
@@ -215,14 +231,15 @@ class TarazController extends Controller {
                 $subjectsPercent->sId = $sId->sId;
                 $subjectsPercent->uId = $uId->uId;
 
-                $subjectsPercent->percent =
-                    round(($percentInSubjects[$uId->uId][$sId->sId] / $totals[$sId->sId] * 100), 4);
+                $subjectsPercent->percent = $percentInSubjects[$uId->uId][$sId->sId];
+//                    round(($percentInSubjects[$uId->uId][$sId->sId] / $totals[$sId->sId] * 100), 4);
 
+                $subjectsPercent->percent2 = $percent2InSubjects[$uId->uId][$sId->sId];
+                $subjectsPercent->percent3 = $percent3InSubjects[$uId->uId][$sId->sId];
                 $subjectsPercent->save();
             }
         }
-
-
+        
         echo "ok";
     }
 

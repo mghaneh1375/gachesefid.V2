@@ -57,74 +57,139 @@
         <a href="{{route('seeResult', ['quizId' => $quizId])}}"><button class="btn btn-primary">بازگشت به مرحله قبل</button></a>
         <div class="line"></div>
         <div style="overflow-x: auto">
-            <table style="margin-top: 10px; width: 100%; border-bottom: 2px solid #656565; margin-bottom: 10px">
+
+            <h3>کارنامه سوالات تستی</h3>
+
+            <table style="margin-top: 10px; width: 100%; margin-bottom: 10px; border-bottom: 2px solid #656565">
                 <tr>
                     <td><center>نام درس</center></td>
-                    @if($kindKarname->coherences)
-                        <td><center>ضریب درس</center></td>
-                    @endif
+                    <td><center>ضریب درس</center></td>
                     <td><center>تعداد کل سوالات</center></td>
                     <td><center>درست</center></td>
                     <td><center>نادرست</center></td>
                     <td><center>نزده</center></td>
-                    @if($kindKarname->lessonMark)
-                        <td><center><span>نمره از </span><span>{{$totalMark}}</span></center></td>
-                    @endif
+                    <td><center><span>نمره از </span><span>{{$totalMark}}</span></center></td>
                     <td><center>درصد پاسخ گویی</center></td>
-                    @if($kindKarname->lessonAvg)
-                        <td><center>میانگین درصد پاسخ گویی</center></td>
-                    @endif
-                    @if($kindKarname->lessonMaxPercent)
-                        <td><center>بیشترین درصد پاسخ گویی</center></td>
-                    @endif
-                    @if($kindKarname->lessonMinPercent)
-                        <td><center>کمترین درصد پاسخ گویی</center></td>
-                    @endif
+                    <td><center>میانگین درصد پاسخ گویی</center></td>
+                    <td><center>بیشترین درصد پاسخ گویی</center></td>
+                    <td><center>کمترین درصد پاسخ گویی</center></td>
                 </tr>
 
                 <?php
                 $i = 0;
-                $sum = 0;
-                $total = 0;
                 ?>
 
                 @foreach($lessons as $lesson)
 
+                    @if($roq[$i][2] != 0)
+
+                        <?php $percent = round($taraz[$i]->percent * 100 / $roq[$i][3], 2); ?>
+                        <?php $minPercent = round($avgs[$i]->minPercent * 100 / $roq[$i][3], 2); ?>
+                        <?php $maxPercent = round($avgs[$i]->maxPercent * 100 / $roq[$i][3], 2); ?>
+                        <?php $avgPercent = round($avgs[$i]->avg * 100 / $roq[$i][3], 2); ?>
+
                         <tr>
                             <td><center>{{$lesson->name}}</center></td>
-                            @if($kindKarname->coherences)
-                                <td><center>{{$lesson->coherence}}</center></td>
-                            @endif
+                            <td><center>{{$lesson->coherence}}</center></td>
                             <td><center>{{$roq[$i][2]}}</center></td>
                             <td><center>{{$roq[$i][1]}}</center></td>
                             <td><center>{{$roq[$i][0]}}</center></td>
                             <td><center>{{$roq[$i][2] - $roq[$i][0] - $roq[$i][1]}}</center></td>
 
-                            @if($kindKarname->lessonMark)
-                                <td><center style="direction: ltr">{{($taraz[$i]->percent <= 0) ? 0 : round($taraz[$i]->percent * $totalMark / 100, 0)}}</center></td>
-                            @endif
-                            <td><center style="direction: ltr">{{round($taraz[$i]->percent, 0)}}</center></td>
-                            @if($kindKarname->lessonAvg)
-                                <td><center style="direction: ltr">{{round($avgs[$i]->avg, 0)}}</center></td>
-                            @endif
-                            @if($kindKarname->lessonMaxPercent)
-                                <td><center style="direction: ltr">{{round($avgs[$i]->maxPercent, 0)}}</center></td>
-                            @endif
-                            @if($kindKarname->lessonMinPercent)
-                                <td><center style="direction: ltr">{{round($avgs[$i]->minPercent, 0)}}</center></td>
-                            @endif
+                            <td><center style="direction: ltr">{{($percent <= 0) ? 0 : round($percent * $totalMark / 100, 0)}}</center></td>
+                            <td><center style="direction: ltr">{{$percent}}</center></td>
+                            <td><center style="direction: ltr">{{$avgPercent}}</center></td>
+                            <td><center style="direction: ltr">{{$maxPercent}}</center></td>
+                            <td><center style="direction: ltr">{{$minPercent}}</center></td>
                         </tr>
-                        <?php
-                        $sum += $taraz[$i]->taraz * $lesson->coherence;
-                        $total += $lesson->coherence;
-                        $i++;
-                        ?>
-                        @endforeach
+                    @endif
+                    <?php
+                    $i++;
+                    ?>
+                @endforeach
+            </table>
+
+            <h3>کارنامه سوالات کوتاه پاسخ</h3>
+            <table style="margin-top: 10px; width: 100%; border-bottom: 2px solid #656565; margin-bottom: 10px">
+                <tr>
+                    <td><center>نام درس</center></td>
+                    <td><center>تعداد کل سوالات</center></td>
+                    <td><center>درست</center></td>
+                    <td><center>نادرست</center></td>
+                    <td><center>نزده</center></td>
+                    <td><center>نمره</center></td>
+                    <td><center>میانگین نمره</center></td>
+                    <td><center>بیشترین نمره</center></td>
+                    <td><center>کمترین نمره</center></td>
+                </tr>
+
+                <?php
+                $i = 0;
+                ?>
+
+                @foreach($lessons as $lesson)
+                    @if($roq2[$i][2] != 0)
+                        <tr>
+                            <td><center>{{$lesson->name}}</center></td>
+                            <td><center>{{$roq2[$i][2]}}</center></td>
+                            <td><center>{{$roq2[$i][1]}}</center></td>
+                            <td><center>{{$roq2[$i][0]}}</center></td>
+                            <td><center>{{$roq2[$i][2] - $roq2[$i][0] - $roq2[$i][1]}}</center></td>
+                            <td><center style="direction: ltr">{{round($taraz[$i]->percent2, 2)}}</center></td>
+                            <td><center style="direction: ltr">{{round($avgs[$i]->avg2, 2)}}</center></td>
+                            <td><center style="direction: ltr">{{round($avgs[$i]->maxPercent2, 2)}}</center></td>
+                            <td><center style="direction: ltr">{{round($avgs[$i]->minPercent2, 2)}}</center></td>
+                        </tr>
+                    @endif
+                    <?php
+                    $i++;
+                    ?>
+                @endforeach
+            </table>
+
+            <h3>کارنامه سوالات چند گزاره ای</h3>
+            <table style="margin-top: 10px; width: 100%; border-bottom: 2px solid #656565; margin-bottom: 10px">
+                <tr>
+                    <td><center>نام درس</center></td>
+                    <td><center>تعداد کل سوالات</center></td>
+                    <td><center>درست</center></td>
+                    <td><center>نادرست</center></td>
+                    <td><center>نزده</center></td>
+                    <td><center>نمره</center></td>
+                    <td><center>میانگین نمره</center></td>
+                    <td><center>بیشترین نمره</center></td>
+                    <td><center>کمترین نمره</center></td>
+                </tr>
+
+                <?php
+                $i = 0;
+                ?>
+
+                @foreach($lessons as $lesson)
+                    @if($roq3[$i][2] != 0)
+                        <tr>
+                            <td><center>{{$lesson->name}}</center></td>
+                            <td><center>{{$roq3[$i][2]}}</center></td>
+                            <td><center>{{$roq3[$i][1]}}</center></td>
+                            <td><center>{{$roq3[$i][0]}}</center></td>
+                            <td><center>{{$roq3[$i][2] - $roq3[$i][0] - $roq3[$i][1]}}</center></td>
+                            <td><center style="direction: ltr">{{round($taraz[$i]->percent3, 2)}}</center></td>
+                            <td><center style="direction: ltr">{{round($avgs[$i]->avg3, 2)}}</center></td>
+                            <td><center style="direction: ltr">{{round($avgs[$i]->maxPercent3, 2)}}</center></td>
+                            <td><center style="direction: ltr">{{round($avgs[$i]->minPercent3, 2)}}</center></td>
+                        </tr>
+                    @endif
+                    <?php
+                    $i++;
+                    ?>
+                @endforeach
             </table>
         </div>
 
         <?php
             $i = 0;
+            $sum = 0;
+            $total = 0;
         ?>
 
         <table style="margin-top: 30px; width: 100%">
@@ -144,12 +209,17 @@
                 @if($kindKarname->partialTaraz)
                     <td><center>تراز</center></td>
                 @endif
-                @if($kindKarname->lessonStatus)
-                    <td><center>وضعیت</center></td>
-                @endif
+                {{--@if($kindKarname->lessonStatus)--}}
+                    {{--<td><center>وضعیت</center></td>--}}
+                {{--@endif--}}
             </tr>
 
             @foreach($lessons as $lesson)
+
+                <?php
+                $sum += $taraz[$i]->taraz;
+                $total++;
+                ?>
 
                 <tr>
 
@@ -167,23 +237,23 @@
                     @if($kindKarname->partialTaraz)
                         <td><center style="direction: ltr">{{$taraz[$i]->taraz}}</center></td>
                     @endif
-                    @if($kindKarname->lessonStatus)
-                        <td>
-                            <center>
-                                @foreach($status as $itr)
-                                    @if(($itr->type && $itr->floor <= $taraz[$i]->percent &&
-                                     $taraz[$i]->percent <= $itr->ceil) || (!$itr->type && $kindKarname->lessonAvg &&
-                                     $taraz[$i]->percent <= $avgs[$i]->avg + $itr->ceil && $taraz[$i]->percent >= $avgs[$i]->avg - $itr->floor))
-                                        @if($itr->pic)
-                                            <img width="40px" height="40px" src="{{URL('status') . '/' . $itr->status}}">
-                                        @else
-                                            <p style="background-color: {{$itr->color}}">{{$itr->status}}</p>
-                                        @endif
-                                    @endif
-                                @endforeach
-                            </center>
-                        </td>
-                    @endif
+                    {{--@if($kindKarname->lessonStatus)--}}
+                        {{--<td>--}}
+                            {{--<center>--}}
+                                {{--@foreach($status as $itr)--}}
+                                    {{--@if(($itr->type && $itr->floor <= $taraz[$i]->percent &&--}}
+                                     {{--$taraz[$i]->percent <= $itr->ceil) || (!$itr->type && $kindKarname->lessonAvg &&--}}
+                                     {{--$taraz[$i]->percent <= $avgs[$i]->avg + $itr->ceil && $taraz[$i]->percent >= $avgs[$i]->avg - $itr->floor))--}}
+                                        {{--@if($itr->pic)--}}
+                                            {{--<img width="40px" height="40px" src="{{URL('status') . '/' . $itr->status}}">--}}
+                                        {{--@else--}}
+                                            {{--<p style="background-color: {{$itr->color}}">{{$itr->status}}</p>--}}
+                                        {{--@endif--}}
+                                    {{--@endif--}}
+                                {{--@endforeach--}}
+                            {{--</center>--}}
+                        {{--</td>--}}
+                    {{--@endif--}}
                 </tr>
                 <?php $i++; ?>
             @endforeach
@@ -258,15 +328,15 @@
 
                 percents = [];
                 for(i = 0; i < taraz.length; i++)
-                    percents[i] = Math.round(taraz[i].percent);
+                    percents[i] = Math.round(taraz[i].percent + taraz[i].percent2 + taraz[i].percent3);
 
                 for(i = 0; i < lessons.length; i++)
                     lessons[i] = lessons[i].name;
 
                 maxPercents = [];
                 for(i = 0; i < avgs.length; i++) {
-                    maxPercents[i] = Math.round(avgs[i].maxPercent);
-                    avgs[i] = Math.round(avgs[i].avg);
+                    maxPercents[i] = Math.round(avgs[i].maxPercent + avgs[i].maxPercent2 + avgs[i].maxPercent3);
+                    avgs[i] = Math.round(avgs[i].avg + avgs[i].avg2 + avgs[i].avg3);
                 }
                 Highcharts.chart('barChart1', {
 

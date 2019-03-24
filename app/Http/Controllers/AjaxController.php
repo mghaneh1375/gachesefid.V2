@@ -51,7 +51,7 @@ class AjaxController extends Controller {
                     if ($enherafMeyar == 0)
                         $taraz->taraz = 5000;
                     else
-                        $taraz->taraz = 1000 * (($taraz->percent - $lessonAVG) / $enherafMeyar) + 5000;
+                        $taraz->taraz = 1000 * ((($taraz->percent + $taraz->percent2 + $taraz->percent3) - $lessonAVG) / $enherafMeyar) + 5000;
                     $taraz->save();
                 }
             }

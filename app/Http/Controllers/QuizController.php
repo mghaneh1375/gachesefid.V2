@@ -905,50 +905,63 @@ class QuizController extends Controller {
                 $avgs = DB::select('select SUM(percent) / count(*) as avg FROM taraz, quizRegistry WHERE quizRegistry.qId = ' . $quizId . ' and quizRegistry.id  = taraz.qEntryId GROUP by(taraz.lId)');
         }
 
+        $lessons = getLessonQuiz($quizId);
         $roq = [];
+        $roq2 = [];
+        $roq3 = [];
         $counterTmp = 0;
 
-        $lessons = getLessonQuiz($quizId);
+        $avgs = DB::select('select SUM(percent3) / count(*) as avg3, MAX(percent3) as maxPercent3, MIN(percent3) as minPercent3, SUM(percent2) / count(*) as avg2, MAX(percent2) as maxPercent2, MIN(percent2) as minPercent2, SUM(percent) / count(*) as avg, MAX(percent) as maxPercent, MIN(percent) as minPercent FROM taraz, quizRegistry WHERE quizRegistry.qId = ' . $quizId . ' and quizRegistry.id  = taraz.qEntryId GROUP by(taraz.lId)');
 
         foreach ($lessons as $lesson) {
 
-            $totalQInSpecificLesson = DB::select('select result, ans, kindQ, telorance from ROQ, SOQ, question, subject where uId = ' . $uId . ' and qId = question.id and quizId = ' . $quizId . ' and question.id = questionId and sId = subject.id and subject.lessonId = ' . $lesson->id);
+            $kindQ2 = DB::select('select result, ans, kindQ, telorance, mark from regularQOQ qoq, ROQ roq, SOQ, question, subject where qoq.questionId = question.id and qoq.quizId = ' . $quizId . ' and uId = ' . $uId . ' and subject.id = sId and qId = question.id and roq.quizId = ' . $quizId . ' and question.id = roq.questionId and lessonId = ' . $lesson->id);
 
-            if($totalQInSpecificLesson != null) {
+            if($kindQ2 != null) {
 
                 $corrects = $inCorrects = 0;
-                $totalQ = count($totalQInSpecificLesson);
+                $corrects2 = $inCorrects2 = 0;
+                $corrects3 = $inCorrects3 = 0;
+                $totalQ1 = 0;
+                $totalMark = 0;
+                $totalQ2 = 0;
+                $totalQ3 = 0;
 
-                foreach ($totalQInSpecificLesson as $itr) {
+                foreach ($kindQ2 as $itrKindQ2) {
 
-                    if($itr->kindQ == 1) {
-                        if($itr->ans == $itr->result)
+                    if($itrKindQ2->kindQ == 1) {
+                        if($itrKindQ2->ans == $itrKindQ2->result)
                             $corrects++;
-                        else if($itr->result != 0)
+                        else if($itrKindQ2->result != 0)
                             $inCorrects++;
+                        $totalQ1++;
+                        $totalMark += $itrKindQ2->mark;
                     }
 
-                    else if($itr->kindQ == 0) {
-                        if($itr->ans - $itr->telorance <= $itr->result &&
-                            $itr->ans + $itr->telorance >= $itr->result)
-                            $corrects++;
-                        else if($itr->result != 0)
-                            $inCorrects++;
+                    else if($itrKindQ2->kindQ == 0) {
+                        if($itrKindQ2->ans - $itrKindQ2->telorance <= $itrKindQ2->result &&
+                            $itrKindQ2->ans + $itrKindQ2->telorance >= $itrKindQ2->result)
+                            $corrects2++;
+                        else if($itrKindQ2->result != 0)
+                            $inCorrects2++;
+                        $totalQ2++;
                     }
 
                     else {
-                        $itr->result = (string)$itr->result;
-                        $totalQ += strlen($itr->result) - 1;
-                        for ($k = 0; $k < strlen($itr->result); $k++) {
-                            if ($itr->result[$k] == $itr->ans[$k])
-                                $corrects++;
-                            else if ($itr->result[$k] != 0)
-                                $inCorrects++;
+                        $itrKindQ2->result = (string)$itrKindQ2->result;
+                        $totalQ3 += strlen($itrKindQ2->result);
+                        for ($k = 0; $k < strlen($itrKindQ2->result); $k++) {
+                            if ($itrKindQ2->result[$k] == $itrKindQ2->ans[$k])
+                                $corrects3++;
+                            else if ($itrKindQ2->result[$k] != 0)
+                                $inCorrects3++;
                         }
                     }
                 }
 
-                $roq[$counterTmp++] = [$inCorrects, $corrects, $totalQ];
+                $roq[$counterTmp] = [$inCorrects, $corrects, $totalQ1, $totalMark];
+                $roq2[$counterTmp] = [$inCorrects2, $corrects2, $totalQ2];
+                $roq3[$counterTmp++] = [$inCorrects3, $corrects3, $totalQ3];
             }
         }
 
@@ -1041,7 +1054,7 @@ sumTaraz DESC');
         return view('generalKarname', array('quizId' => $quizId, 'status' => $status, 'kindKarname' => $kindKarname,
             'rank' => $rank, 'rankInLessonCity' => $rankInLessonCity, 'rankInLesson' => $rankInLesson, 'pack' => $pack,
             'lessons' => $lessons, 'taraz' => $taraz, 'rankInLessonState' => $rankInLessonState, 'stateRank' => $stateRank,
-            'avgs' => $avgs, 'roq' => $roq, 'cityRank' => $cityRank, "totalMark" => $totalMark,
+            'avgs' => $avgs, 'roq' => $roq, 'roq2' => $roq2, 'roq3' => $roq3, 'cityRank' => $cityRank, "totalMark" => $totalMark,
             'avgRate' => $avgRate, 'avgTaraz' => $avgTaraz, 'sumRate' => $sumRate, 'sumTaraz' => $sumTaraz));
     }
 
