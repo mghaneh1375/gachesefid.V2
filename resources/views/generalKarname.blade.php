@@ -109,81 +109,99 @@
                 @endforeach
             </table>
 
-            <h3>کارنامه سوالات کوتاه پاسخ</h3>
-            <table style="margin-top: 10px; width: 100%; border-bottom: 2px solid #656565; margin-bottom: 10px">
-                <tr>
-                    <td><center>نام درس</center></td>
-                    <td><center>تعداد کل سوالات</center></td>
-                    <td><center>درست</center></td>
-                    <td><center>نادرست</center></td>
-                    <td><center>نزده</center></td>
-                    <td><center>نمره</center></td>
-                    <td><center>میانگین نمره</center></td>
-                    <td><center>بیشترین نمره</center></td>
-                    <td><center>کمترین نمره</center></td>
-                </tr>
+            <?php $i = 0; $allow = false; ?>
+            @foreach($lessons as $lesson)
+                @if($roq2[$i++][2] != 0)
+                    <?php $allow = true; ?>
+                @endif
+            @endforeach
 
-                <?php
-                $i = 0;
-                ?>
+            @if($allow)
+                <h3>کارنامه سوالات کوتاه پاسخ</h3>
+                <table style="margin-top: 10px; width: 100%; border-bottom: 2px solid #656565; margin-bottom: 10px">
+                    <tr>
+                        <td><center>نام درس</center></td>
+                        <td><center>تعداد کل سوالات</center></td>
+                        <td><center>درست</center></td>
+                        <td><center>نادرست</center></td>
+                        <td><center>نزده</center></td>
+                        <td><center>نمره</center></td>
+                        <td><center>میانگین نمره</center></td>
+                        <td><center>بیشترین نمره</center></td>
+                        <td><center>کمترین نمره</center></td>
+                    </tr>
 
-                @foreach($lessons as $lesson)
-                    @if($roq2[$i][2] != 0)
-                        <tr>
-                            <td><center>{{$lesson->name}}</center></td>
-                            <td><center>{{$roq2[$i][2]}}</center></td>
-                            <td><center>{{$roq2[$i][1]}}</center></td>
-                            <td><center>{{$roq2[$i][0]}}</center></td>
-                            <td><center>{{$roq2[$i][2] - $roq2[$i][0] - $roq2[$i][1]}}</center></td>
-                            <td><center style="direction: ltr">{{round($taraz[$i]->percent2, 2)}}</center></td>
-                            <td><center style="direction: ltr">{{round($avgs[$i]->avg2, 2)}}</center></td>
-                            <td><center style="direction: ltr">{{round($avgs[$i]->maxPercent2, 2)}}</center></td>
-                            <td><center style="direction: ltr">{{round($avgs[$i]->minPercent2, 2)}}</center></td>
-                        </tr>
-                    @endif
                     <?php
-                    $i++;
+                    $i = 0;
                     ?>
-                @endforeach
-            </table>
 
-            <h3>کارنامه سوالات چند گزاره ای</h3>
-            <table style="margin-top: 10px; width: 100%; border-bottom: 2px solid #656565; margin-bottom: 10px">
-                <tr>
-                    <td><center>نام درس</center></td>
-                    <td><center>تعداد کل سوالات</center></td>
-                    <td><center>درست</center></td>
-                    <td><center>نادرست</center></td>
-                    <td><center>نزده</center></td>
-                    <td><center>نمره</center></td>
-                    <td><center>میانگین نمره</center></td>
-                    <td><center>بیشترین نمره</center></td>
-                    <td><center>کمترین نمره</center></td>
-                </tr>
+                    @foreach($lessons as $lesson)
+                        @if($roq2[$i][2] != 0)
+                            <tr>
+                                <td><center>{{$lesson->name}}</center></td>
+                                <td><center>{{$roq2[$i][2]}}</center></td>
+                                <td><center>{{$roq2[$i][1]}}</center></td>
+                                <td><center>{{$roq2[$i][0]}}</center></td>
+                                <td><center>{{$roq2[$i][2] - $roq2[$i][0] - $roq2[$i][1]}}</center></td>
+                                <td><center style="direction: ltr">{{round($taraz[$i]->percent2, 2)}}</center></td>
+                                <td><center style="direction: ltr">{{round($avgs[$i]->avg2, 2)}}</center></td>
+                                <td><center style="direction: ltr">{{round($avgs[$i]->maxPercent2, 2)}}</center></td>
+                                <td><center style="direction: ltr">{{round($avgs[$i]->minPercent2, 2)}}</center></td>
+                            </tr>
+                        @endif
+                        <?php
+                        $i++;
+                        ?>
+                    @endforeach
+                </table>
+            @endif
 
-                <?php
-                $i = 0;
-                ?>
+            <?php $i = 0; $allow = false; ?>
+            @foreach($lessons as $lesson)
+                @if($roq3[$i++][2] != 0)
+                    <?php $allow = true; ?>
+                @endif
+            @endforeach
 
-                @foreach($lessons as $lesson)
-                    @if($roq3[$i][2] != 0)
-                        <tr>
-                            <td><center>{{$lesson->name}}</center></td>
-                            <td><center>{{$roq3[$i][2]}}</center></td>
-                            <td><center>{{$roq3[$i][1]}}</center></td>
-                            <td><center>{{$roq3[$i][0]}}</center></td>
-                            <td><center>{{$roq3[$i][2] - $roq3[$i][0] - $roq3[$i][1]}}</center></td>
-                            <td><center style="direction: ltr">{{round($taraz[$i]->percent3, 2)}}</center></td>
-                            <td><center style="direction: ltr">{{round($avgs[$i]->avg3, 2)}}</center></td>
-                            <td><center style="direction: ltr">{{round($avgs[$i]->maxPercent3, 2)}}</center></td>
-                            <td><center style="direction: ltr">{{round($avgs[$i]->minPercent3, 2)}}</center></td>
-                        </tr>
-                    @endif
+            @if($allow)
+                <h3>کارنامه سوالات چند گزاره ای</h3>
+                <table style="margin-top: 10px; width: 100%; border-bottom: 2px solid #656565; margin-bottom: 10px">
+                    <tr>
+                        <td><center>نام درس</center></td>
+                        <td><center>تعداد کل سوالات</center></td>
+                        <td><center>درست</center></td>
+                        <td><center>نادرست</center></td>
+                        <td><center>نزده</center></td>
+                        <td><center>نمره</center></td>
+                        <td><center>میانگین نمره</center></td>
+                        <td><center>بیشترین نمره</center></td>
+                        <td><center>کمترین نمره</center></td>
+                    </tr>
+
                     <?php
-                    $i++;
+                    $i = 0;
                     ?>
-                @endforeach
-            </table>
+
+                    @foreach($lessons as $lesson)
+                        @if($roq3[$i][2] != 0)
+                            <tr>
+                                <td><center>{{$lesson->name}}</center></td>
+                                <td><center>{{$roq3[$i][2]}}</center></td>
+                                <td><center>{{$roq3[$i][1]}}</center></td>
+                                <td><center>{{$roq3[$i][0]}}</center></td>
+                                <td><center>{{$roq3[$i][2] - $roq3[$i][0] - $roq3[$i][1]}}</center></td>
+                                <td><center style="direction: ltr">{{round($taraz[$i]->percent3, 2)}}</center></td>
+                                <td><center style="direction: ltr">{{round($avgs[$i]->avg3, 2)}}</center></td>
+                                <td><center style="direction: ltr">{{round($avgs[$i]->maxPercent3, 2)}}</center></td>
+                                <td><center style="direction: ltr">{{round($avgs[$i]->minPercent3, 2)}}</center></td>
+                            </tr>
+                        @endif
+                        <?php
+                        $i++;
+                        ?>
+                    @endforeach
+                </table>
+            @endif
         </div>
 
         <?php

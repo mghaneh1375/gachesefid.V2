@@ -655,25 +655,13 @@ class QuizController extends Controller {
     private function showSubjectKarname($uId, $quizId, $kindKarname, $lId) {
 
         $status = array();
-        $avgs = array();
 
         $cityId = RedundantInfo1::whereUId($uId)->first()->cityId;
 
         if($kindKarname->subjectStatus)
             $status = QuizStatus::whereLevel(2)->get();
 
-        if($kindKarname->subjectAvg &&  $kindKarname->subjectMaxPercent) {
-            if($kindKarname->subjectMinPercent)
-                $avgs = DB::select('select SUM(percent) / count(*) as avg, MAX(percent) as maxPercent, MIN(percent) as minPercent FROM subjectsPercent, subject WHERE qId = ' . $quizId . ' and subject.id = sId and subject.lessonId = ' . $lId . ' GROUP by(sId)');
-            else
-                $avgs = DB::select('select SUM(percent) / count(*) as avg, MAX(percent) as maxPercent FROM subjectsPercent, subject WHERE qId = ' . $quizId . ' and subject.id = sId and subject.lessonId = ' . $lId . ' GROUP by(sId)');
-        }
-        else if($kindKarname->subjectAvg) {
-            if($kindKarname->subjectMinPercent)
-                $avgs = DB::select('select SUM(percent) / count(*) as avg, MIN(percent) as minPercent FROM subjectsPercent WHERE qId = ' . $quizId . ' and subject.id = sId and subject.lessonId = ' . $lId . ' GROUP by(sId)');
-            else
-                $avgs = DB::select('select SUM(percent) / count(*) as avg FROM subjectsPercent WHERE qId = ' . $quizId . ' and subject.id = sId and subject.lessonId = ' . $lId . ' GROUP by(sId)');
-        }
+        $avgs = DB::select('select SUM(percent3) / count(*) as avg3, MAX(percent3) as maxPercent3, MIN(percent3) as minPercent3, SUM(percent2) / count(*) as avg2, MAX(percent2) as maxPercent2, MIN(percent2) as minPercent2, SUM(percent) / count(*) as avg, MAX(percent) as maxPercent, MIN(percent) as minPercent FROM subject, subjectsPercent WHERE qId = ' . $quizId . ' and subject.id = sId and subject.lessonId = ' . $lId . ' GROUP by(sId)');
 
         $cityRank = array();
         $stateRank = array();
@@ -684,7 +672,7 @@ class QuizController extends Controller {
         if($kindKarname->subjectCityRank) {
             $counter = 0;
             foreach ($subjects as $subject) {
-                $tmp = DB::select('SELECT subjectsPercent.uId, subjectsPercent.percent as taraz from redundantInfo1 rd, subjectsPercent WHERE rd.uId = subjectsPercent.uId and rd.cityId = ' . $cityId . ' and subjectsPercent.qId = ' . $quizId . ' and subjectsPercent.sId = ' . $subject->id . ' ORDER by subjectsPercent.percent DESC');
+                $tmp = DB::select('SELECT subjectsPercent.uId, (percent + percent2 + percent3) as taraz from redundantInfo1 rd, subjectsPercent WHERE rd.uId = subjectsPercent.uId and rd.cityId = ' . $cityId . ' and subjectsPercent.qId = ' . $quizId . ' and subjectsPercent.sId = ' . $subject->id . ' ORDER by taraz DESC');
                 $cityRank[$counter++] = $this->getRank($tmp, $uId);
             }
         }
@@ -693,7 +681,7 @@ class QuizController extends Controller {
             $counter = 0;
             $stateId = State::whereId(City::whereId($cityId)->stateId)->id;
             foreach ($subjects as $subject) {
-                $tmp = DB::select('SELECT subjectsPercent.uId, subjectsPercent.percent as taraz from redundantInfo1 rd, city ci, subjectsPercent WHERE rd.uId = subjectsPercent.uId and rd.cityId = ci.id and ci.stateId = ' . $stateId . ' and subjectsPercent.qId = ' . $quizId . ' and subjectsPercent.sId = ' . $subject->id . ' ORDER by subjectsPercent.percent DESC');
+                $tmp = DB::select('SELECT subjectsPercent.uId, (percent + percent2 + percent3) as taraz from redundantInfo1 rd, city ci, subjectsPercent WHERE rd.uId = subjectsPercent.uId and rd.cityId = ci.id and ci.stateId = ' . $stateId . ' and subjectsPercent.qId = ' . $quizId . ' and subjectsPercent.sId = ' . $subject->id . ' ORDER by taraz DESC');
                 $stateRank[$counter++] = $this->getRank($tmp, $uId);
             }
         }
@@ -701,28 +689,29 @@ class QuizController extends Controller {
         if($kindKarname->subjectCountryRank) {
             $counter = 0;
             foreach ($subjects as $subject) {
-                $tmp = DB::select('SELECT subjectsPercent.uId, subjectsPercent.percent as taraz from subjectsPercent WHERE subjectsPercent.qId = ' . $quizId . ' and subjectsPercent.sId = ' . $subject->id . ' ORDER by subjectsPercent.percent DESC');
+                $tmp = DB::select('SELECT subjectsPercent.uId, (percent + percent2 + percent3) as taraz from subjectsPercent WHERE subjectsPercent.qId = ' . $quizId . ' and subjectsPercent.sId = ' . $subject->id . ' ORDER by taraz DESC');
                 $countryRank[$counter++] = $this->getRank($tmp, $uId);
             }
         }
 
         $roq = [];
+        $roq2 = [];
+        $roq3 = [];
         $counterTmp = 0;
+        $subjectPercents = [];
 
         foreach ($subjects as $subject) {
-            
-            $percent = SubjectsPercent::whereUId($uId)->whereSId($subject->id)->whereQId($quizId)->first();
-            if($percent == null)
-                $percent = -1;
-            else
-                $percent = $percent->percent;
 
             $totalQInSpecificSubject = DB::select('select result, ans, kindQ, telorance from ROQ, SOQ, question where uId = ' . $uId . ' and qId = question.id and quizId = ' . $quizId . ' and question.id = questionId and sId = ' . $subject->id);
 
             if($totalQInSpecificSubject != null) {
 
                 $corrects = $inCorrects = 0;
-                $totalQ = count($totalQInSpecificSubject);
+                $corrects2 = $inCorrects2 = 0;
+                $corrects3 = $inCorrects3 = 0;
+                $totalQ = 0;
+                $totalQ2 = 0;
+                $totalQ3 = 0;
 
                 foreach ($totalQInSpecificSubject as $itr) {
 
@@ -731,29 +720,35 @@ class QuizController extends Controller {
                             $corrects++;
                         else if($itr->result != 0)
                             $inCorrects++;
+
+                        $totalQ++;
                     }
 
                     else if($itr->kindQ == 0) {
                         if($itr->ans - $itr->telorance <= $itr->result &&
                             $itr->ans + $itr->telorance >= $itr->result)
-                            $corrects++;
+                            $corrects2++;
                         else if($itr->result != 0)
-                            $inCorrects++;
+                            $inCorrects2++;
+                        $totalQ2++;
                     }
 
                     else {
                         $itr->result = (string)$itr->result;
-                        $totalQ += strlen($itr->result) - 1;
+                        $totalQ3 += strlen($itr->result);
                         for ($k = 0; $k < strlen($itr->result); $k++) {
                             if ($itr->result[$k] == $itr->ans[$k])
-                                $corrects++;
+                                $corrects3++;
                             else if ($itr->result[$k] != 0)
-                                $inCorrects++;
+                                $inCorrects3++;
                         }
                     }
                 }
-                
-                $roq[$counterTmp++] = [$inCorrects, $corrects, $totalQ, $percent];
+
+                $subjectPercents[$counterTmp] = SubjectsPercent::whereUId($uId)->whereQId($quizId)->whereSId($subject->id)->first();
+                $roq[$counterTmp] = [$inCorrects, $corrects, $totalQ];
+                $roq2[$counterTmp] = [$inCorrects2, $corrects2, $totalQ2];
+                $roq3[$counterTmp++] = [$inCorrects3, $corrects3, $totalQ3];
             }
         }
 
@@ -766,7 +761,8 @@ class QuizController extends Controller {
 
         return view('subjectKarname', array('quizId' => $quizId, 'status' => $status, 'roq' => $roq, 'subjects' => $subjects,
             'kindKarname' => $kindKarname, 'avgs' => $avgs, 'cityRank' => $cityRank, 'stateRank' => $stateRank,
-            'countryRank' => $countryRank, 'totalMark' => $totalMark, 'minusMark' => $minusMark));
+            'countryRank' => $countryRank, 'totalMark' => $totalMark, 'minusMark' => $minusMark,
+            'roq2' => $roq2, 'roq3' => $roq3, 'subjectPercents' => $subjectPercents));
     }
 
     private function showQuestionKarname($uId, $quizId) {
@@ -872,7 +868,6 @@ class QuizController extends Controller {
         $rankInLesson = array();
         $cityRank = -1;
         $stateRank = -1;
-        $avgs = [];
         $stateId = -1;
         $rankInLessonCity = array();
         $rankInLessonState = array();
@@ -890,19 +885,6 @@ class QuizController extends Controller {
         if($kindKarname->lessonStateRank) {
             $stateId = State::whereId(City::whereId($cityId)->stateId)->id;
             $stateRank = calcRankInState($quizId, $uId, $stateId);
-        }
-
-        if($kindKarname->lessonAvg &&  $kindKarname->lessonMaxPercent) {
-            if($kindKarname->lessonMinPercent)
-                $avgs = DB::select('select SUM(percent) / count(*) as avg, MAX(percent) as maxPercent, MIN(percent) as minPercent FROM taraz, quizRegistry WHERE quizRegistry.qId = ' . $quizId . ' and quizRegistry.id  = taraz.qEntryId GROUP by(taraz.lId)');
-            else
-                $avgs = DB::select('select SUM(percent) / count(*) as avg, MAX(percent) as maxPercent FROM taraz, quizRegistry WHERE quizRegistry.qId = ' . $quizId . ' and quizRegistry.id  = taraz.qEntryId GROUP by(taraz.lId)');
-        }
-        else if($kindKarname->lessonAvg) {
-            if($kindKarname->lessonMinPercent)
-                $avgs = DB::select('select SUM(percent) / count(*) as avg, MIN(percent) as minPercent FROM taraz, quizRegistry WHERE quizRegistry.qId = ' . $quizId . ' and quizRegistry.id  = taraz.qEntryId GROUP by(taraz.lId)');
-            else
-                $avgs = DB::select('select SUM(percent) / count(*) as avg FROM taraz, quizRegistry WHERE quizRegistry.qId = ' . $quizId . ' and quizRegistry.id  = taraz.qEntryId GROUP by(taraz.lId)');
         }
 
         $lessons = getLessonQuiz($quizId);
