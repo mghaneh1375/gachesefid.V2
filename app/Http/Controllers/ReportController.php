@@ -3209,21 +3209,27 @@ class ReportController extends Controller {
         $stateId = State::whereId(City::whereId($cityId)->stateId)->id;
         $stateRank = calcRankInState($quizId, $uId, $stateId);
 
-        $avgs = DB::select('select SUM(percent) / count(*) as avg, MAX(percent) as maxPercent, MIN(percent) as minPercent FROM taraz, quizRegistry WHERE quizRegistry.qId = ' . $quizId . ' and quizRegistry.id  = taraz.qEntryId GROUP by(taraz.lId)');
-
-
         $lessons = getLessonQuiz($quizId);
         $roq = [];
+        $roq2 = [];
+        $roq3 = [];
         $counterTmp = 0;
+
+        $avgs = DB::select('select SUM(percent3) / count(*) as avg3, MAX(percent3) as maxPercent3, MIN(percent3) as minPercent3, SUM(percent2) / count(*) as avg2, MAX(percent2) as maxPercent2, MIN(percent2) as minPercent2, SUM(percent) / count(*) as avg, MAX(percent) as maxPercent, MIN(percent) as minPercent FROM taraz, quizRegistry WHERE quizRegistry.qId = ' . $quizId . ' and quizRegistry.id  = taraz.qEntryId GROUP by(taraz.lId)');
 
         foreach ($lessons as $lesson) {
 
-            $kindQ2 = DB::select('select result, ans, kindQ, telorance from ROQ, SOQ, question, subject where uId = ' . $uId . ' and subject.id = sId and qId = question.id and quizId = ' . $quizId . ' and question.id = questionId and lessonId = ' . $lesson->id);
+            $kindQ2 = DB::select('select result, ans, kindQ, telorance, mark from regularQOQ qoq, ROQ roq, SOQ, question, subject where qoq.questionId = question.id and qoq.quizId = ' . $quizId . ' and uId = ' . $uId . ' and subject.id = sId and qId = question.id and roq.quizId = ' . $quizId . ' and question.id = roq.questionId and lessonId = ' . $lesson->id);
 
             if($kindQ2 != null) {
 
                 $corrects = $inCorrects = 0;
-                $totalQ = count($kindQ2);
+                $corrects2 = $inCorrects2 = 0;
+                $corrects3 = $inCorrects3 = 0;
+                $totalQ1 = 0;
+                $totalMark = 0;
+                $totalQ2 = 0;
+                $totalQ3 = 0;
 
                 foreach ($kindQ2 as $itrKindQ2) {
 
@@ -3232,29 +3238,34 @@ class ReportController extends Controller {
                             $corrects++;
                         else if($itrKindQ2->result != 0)
                             $inCorrects++;
+                        $totalQ1++;
+                        $totalMark += $itrKindQ2->mark;
                     }
 
                     else if($itrKindQ2->kindQ == 0) {
                         if($itrKindQ2->ans - $itrKindQ2->telorance <= $itrKindQ2->result &&
                             $itrKindQ2->ans + $itrKindQ2->telorance >= $itrKindQ2->result)
-                            $corrects++;
+                            $corrects2++;
                         else if($itrKindQ2->result != 0)
-                            $inCorrects++;
+                            $inCorrects2++;
+                        $totalQ2++;
                     }
 
                     else {
                         $itrKindQ2->result = (string)$itrKindQ2->result;
-                        $totalQ += strlen($itrKindQ2->result) - 1;
+                        $totalQ3 += strlen($itrKindQ2->result);
                         for ($k = 0; $k < strlen($itrKindQ2->result); $k++) {
                             if ($itrKindQ2->result[$k] == $itrKindQ2->ans[$k])
-                                $corrects++;
+                                $corrects3++;
                             else if ($itrKindQ2->result[$k] != 0)
-                                $inCorrects++;
+                                $inCorrects3++;
                         }
                     }
                 }
 
-                $roq[$counterTmp++] = [$inCorrects, $corrects, $totalQ];
+                $roq[$counterTmp] = [$inCorrects, $corrects, $totalQ1, $totalMark];
+                $roq2[$counterTmp] = [$inCorrects2, $corrects2, $totalQ2];
+                $roq3[$counterTmp++] = [$inCorrects3, $corrects3, $totalQ3];
             }
         }
 
@@ -3307,11 +3318,12 @@ class ReportController extends Controller {
             $qInfo->level = getQuestionLevel($qInfo->id);
         }
 
-        return view('printKarname', array('quizId' => $quizId, 'status' => $status, 'name' => $user->firstName . ' ' . $user->lastName,
-            'rank' => $rank, 'rankInLessonCity' => $rankInLessonCity, 'rankInLesson' => $rankInLesson, 'uId' => $uId, 'qInfos' => $qInfos,
-            'lessons' => $lessons, 'taraz' => $taraz, 'rankInLessonState' => $rankInLessonState, 'stateRank' => $stateRank, 'totalQKarname' => $totalQKarname,
-            'avgs' => $avgs, 'roq' => $roq, 'cityRank' => $cityRank, "totalMark" => $totalMark));
-        
+        return view('printKarname', array('quizId' => $quizId, 'status' => $status,
+            'name' => $user->firstName . ' ' . $user->lastName, 'rank' => $rank, 'rankInLessonCity' => $rankInLessonCity,
+            'rankInLesson' => $rankInLesson, 'uId' => $uId, 'qInfos' => $qInfos, 'lessons' => $lessons,
+            'taraz' => $taraz, 'rankInLessonState' => $rankInLessonState, 'stateRank' => $stateRank,
+            'totalQKarname' => $totalQKarname, 'avgs' => $avgs, 'roq' => $roq, 'roq2' => $roq2,
+            'roq3' => $roq3, 'cityRank' => $cityRank, "totalMark" => $totalMark));
     }
 
     public function printA5($quizId) {
