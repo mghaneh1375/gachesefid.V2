@@ -1024,7 +1024,7 @@ class ReportController extends Controller {
 
         foreach ($users as $user) {
 
-            $tmp = DB::select('select lesson.name, lesson.coherence, taraz.percent, taraz.taraz from taraz, lesson WHERE taraz.qEntryId = ' . $user->id .
+            $tmp = DB::select('select lesson.name, lesson.coherence, (percent + percent2 + percent3) as percent, taraz.taraz from taraz, lesson WHERE taraz.qEntryId = ' . $user->id .
                 ' and lesson.id = taraz.lId');
 
             $user->lessons = $tmp;
@@ -1069,7 +1069,6 @@ class ReportController extends Controller {
         $objPHPExcel->getProperties()->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.");
 
         $objPHPExcel->setActiveSheetIndex(0);
-
         $user = Auth::user();
         $regularQuizMode = getValueInfo('regularQuiz');
 
@@ -1115,7 +1114,7 @@ class ReportController extends Controller {
 
         foreach ($users as $user) {
 
-            $tmp = DB::select('select lesson.name, lesson.coherence, taraz.percent, taraz.taraz from taraz, lesson WHERE taraz.qEntryId = ' . $user->id .
+            $tmp = DB::select('select lesson.name, lesson.coherence, (percent + percent2 + percent3) as percent, taraz.taraz from taraz, lesson WHERE taraz.qEntryId = ' . $user->id .
                 ' and lesson.id = taraz.lId');
 
             $user->lessons = $tmp;
@@ -1152,16 +1151,20 @@ class ReportController extends Controller {
         $objPHPExcel->getActiveSheet()->setCellValue('A1', 'نام و نام خانوادگی');
 
         $j = 'E';
+        $allow = false;
 
         if(count($users) > 0) {
+
+            $allow = (count($users[0]->lessons) == 1) ? false : true;
             foreach($users[0]->lessons as $itr) {
                 $objPHPExcel->getActiveSheet()->setCellValue(($j++) . '1', $itr->name);
 
             }
         }
 
+        if($allow)
+            $objPHPExcel->getActiveSheet()->setCellValue(($j++) . '1', 'میانگین');
 
-        $objPHPExcel->getActiveSheet()->setCellValue(($j++) . '1', 'میانگین');
         $objPHPExcel->getActiveSheet()->setCellValue(($j++) . '1', 'تراز کل');
         $objPHPExcel->getActiveSheet()->setCellValue(($j++) . '1', 'رتبه در شهر');
         $objPHPExcel->getActiveSheet()->setCellValue(($j++) . '1', 'رتبه در استان');
@@ -1196,11 +1199,13 @@ class ReportController extends Controller {
                 $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, $itr->percent);
             }
             if($sumCoherence != 0) {
-                $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, round(($sumLesson / $sumCoherence), 0));
+                if($allow)
+                    $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, round(($sumLesson / $sumCoherence), 0));
                 $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, round(($sumTaraz / $sumCoherence), 0));
             }
             else {
-                $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, round(($sumLesson), 0));
+                if($allow)
+                    $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, round(($sumLesson), 0));
                 $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, round(($sumTaraz), 0));
             }
             $objPHPExcel->getActiveSheet()->setCellValue($j++ . $i, $user->cityRank);
@@ -3310,7 +3315,6 @@ class ReportController extends Controller {
     }
 
     public function printA5($quizId) {
-
         $user = Auth::user();
         $regularQuizMode = getValueInfo('regularQuiz');
 
@@ -3356,7 +3360,7 @@ class ReportController extends Controller {
 
         foreach ($users as $user) {
 
-            $tmp = DB::select('select lesson.name, lesson.coherence, taraz.percent, taraz.taraz from taraz, lesson WHERE taraz.qEntryId = ' . $user->id .
+            $tmp = DB::select('select lesson.name, lesson.coherence, (percent + percent2 + percent3) as percent, taraz.taraz from taraz, lesson WHERE taraz.qEntryId = ' . $user->id .
                 ' and lesson.id = taraz.lId');
 
             $user->lessons = $tmp;
@@ -3395,7 +3399,7 @@ class ReportController extends Controller {
         $condition = ['qId' => $quizId, 'quizMode' => getValueInfo('regularQuiz'), 'uId' => $uId];
         $qEntryId = QuizRegistry::where($condition)->first();
 
-        if($qEntryId == null || ($qEntryId->online == 1 && empty($qEntryId->timeEntry))) {
+        if($qEntryId == null) {
 
             if(empty($backURL))
                 return $this->preA3($quizId, 'فرد مورد نظر در آزمون شرکت نکرده است');
@@ -3790,7 +3794,7 @@ class ReportController extends Controller {
         }
 
         $totalMark = 20;
-        
+
         return view('A3', array('quizId' => $quizId, 'status' => $status, 'backURL' => $backURL, 'name' => $user->firstName . ' ' . $user->lastName,
             'rank' => $rank, 'rankInLessonCity' => $rankInLessonCity, 'rankInLesson' => $rankInLesson, 'uId' => $uId,
             'lessons' => $lessons, 'taraz' => $taraz, 'rankInLessonState' => $rankInLessonState, 'stateRank' => $stateRank,

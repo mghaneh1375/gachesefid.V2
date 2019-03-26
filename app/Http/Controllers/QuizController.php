@@ -782,7 +782,7 @@ class QuizController extends Controller {
 
         foreach ($qInfos as $qInfo) {
 
-            $qInfo->result = ((int)$qInfo->result . '');
+            $qInfo->result = (string)$qInfo->result;
 
             $condition = ['questionId' => $qInfo->id, 'quizId' => $quizId, 'quizMode' => $regularQuizMode,
                 'result' => 0];

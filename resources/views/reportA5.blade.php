@@ -46,12 +46,15 @@
                     <td><center>استان</center></td>
                     <td><center>مدرسه</center></td>
                     @if(count($users) > 0)
+                        <?php (count($users[0]->lessons) == 1) ? $allow = false : $allow = true ?>
                         @foreach($users[0]->lessons as $itr)
                             <td><center>{{$itr->name}}</center></td>
                         @endforeach
                     @endif
 
-                    <td><center>میانگین</center></td>
+                    @if($allow)
+                        <td><center>میانگین</center></td>
+                    @endif
                     <td><center>تراز کل</center></td>
                     <td><center>رتبه در شهر/منطقه</center></td>
                     <td><center>رتبه در استان</center></td>
@@ -78,13 +81,17 @@
                                     $sumCoherence += $itr->coherence;
                                 }
                             ?>
-                            <td><center style="direction: ltr">{{$itr->percent}}</center></td>
+                            <td><center style="direction: ltr">{{round($itr->percent, 2)}}</center></td>
                         @endforeach
                         @if($sumCoherence != 0)
-                            <td><center style="direction: ltr">{{round(($sumLesson / $sumCoherence), 0)}}</center></td>
-                            <td><center style="direction: ltr">{{round(($sumTaraz / $sumCoherence), 0)}}</center></td>
+                            @if($allow)
+                                <td><center style="direction: ltr">{{round(($sumLesson / $sumCoherence), 2)}}</center></td>
+                            @endif
+                            <td><center style="direction: ltr">{{round(($sumTaraz / $sumCoherence), 2)}}</center></td>
                         @else
-                            <td><center style="direction: ltr">{{round(($sumLesson), 0)}}</center></td>
+                            @if($allow)
+                                <td><center style="direction: ltr">{{round(($sumLesson), 0)}}</center></td>
+                            @endif
                             <td><center style="direction: ltr">{{round(($sumTaraz), 0)}}</center></td>
                         @endif
                         <td><center>{{$user->cityRank}}</center></td>

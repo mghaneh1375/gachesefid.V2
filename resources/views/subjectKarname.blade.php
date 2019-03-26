@@ -224,7 +224,7 @@
                 </table>
             @endif
 
-            <?php $sum = 0; $total = 0; $i = 0; ?>
+            <?php $percents = []; $calcAvg = []; $i = 0; ?>
 
             <table>
 
@@ -246,8 +246,8 @@
                 @foreach($subjects as $subject)
 
                     <?php
-                    $sum += ($subjectPercents[$i]->percent + $subjectPercents[$i]->percent2 + $subjectPercents[$i]->percent3);
-                    $total++;
+                        $percents[$i] = ($subjectPercents[$i]->percent + $subjectPercents[$i]->percent2 + $subjectPercents[$i]->percent3);
+                        $calcAvg[$i] = ($avgs[$i]->avg + $avgs[$i]->avg2 + $avgs[$i]->avg3);
                     ?>
 
 
@@ -296,14 +296,13 @@
 
             <script type="text/javascript">
 
-{{--                var percents = {!! json_encode($percent) !!};--}}
+                var percents = {!! json_encode($percents) !!};
                 var subjects = {!! json_encode($subjects) !!};
-                var avgs = {!! json_encode($avgs) !!};
+                var avgs = {!! json_encode($calcAvg) !!};
 
                 var min = 0;
 
                 for(i = 0; i < subjects.length; i++) {
-                    avgs[i] = Math.round(avgs[i].avg);
                     subjects[i] = subjects[i].name;
 
                     if(avgs[i] < min)

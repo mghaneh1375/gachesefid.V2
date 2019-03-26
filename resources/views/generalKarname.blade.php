@@ -58,56 +58,65 @@
         <div class="line"></div>
         <div style="overflow-x: auto">
 
-            <h3>کارنامه سوالات تستی</h3>
+            <?php $i = 0; $allow = false; ?>
+            @foreach($lessons as $lesson)
+                @if($roq[$i++][2] != 0)
+                    <?php $allow = true; ?>
+                @endif
+            @endforeach
 
-            <table style="margin-top: 10px; width: 100%; margin-bottom: 10px; border-bottom: 2px solid #656565">
-                <tr>
-                    <td><center>نام درس</center></td>
-                    <td><center>ضریب درس</center></td>
-                    <td><center>تعداد کل سوالات</center></td>
-                    <td><center>درست</center></td>
-                    <td><center>نادرست</center></td>
-                    <td><center>نزده</center></td>
-                    <td><center><span>نمره از </span><span>{{$totalMark}}</span></center></td>
-                    <td><center>درصد پاسخ گویی</center></td>
-                    <td><center>میانگین درصد پاسخ گویی</center></td>
-                    <td><center>بیشترین درصد پاسخ گویی</center></td>
-                    <td><center>کمترین درصد پاسخ گویی</center></td>
-                </tr>
+            @if($allow)
+                <h3>کارنامه سوالات تستی</h3>
 
-                <?php
-                $i = 0;
-                ?>
+                <table style="margin-top: 10px; width: 100%; margin-bottom: 10px; border-bottom: 2px solid #656565">
+                    <tr>
+                        <td><center>نام درس</center></td>
+                        <td><center>ضریب درس</center></td>
+                        <td><center>تعداد کل سوالات</center></td>
+                        <td><center>درست</center></td>
+                        <td><center>نادرست</center></td>
+                        <td><center>نزده</center></td>
+                        <td><center><span>نمره از </span><span>{{$totalMark}}</span></center></td>
+                        <td><center>درصد پاسخ گویی</center></td>
+                        <td><center>میانگین درصد پاسخ گویی</center></td>
+                        <td><center>بیشترین درصد پاسخ گویی</center></td>
+                        <td><center>کمترین درصد پاسخ گویی</center></td>
+                    </tr>
 
-                @foreach($lessons as $lesson)
-
-                    @if($roq[$i][2] != 0)
-
-                        <?php $percent = round($taraz[$i]->percent * 100 / $roq[$i][3], 2); ?>
-                        <?php $minPercent = round($avgs[$i]->minPercent * 100 / $roq[$i][3], 2); ?>
-                        <?php $maxPercent = round($avgs[$i]->maxPercent * 100 / $roq[$i][3], 2); ?>
-                        <?php $avgPercent = round($avgs[$i]->avg * 100 / $roq[$i][3], 2); ?>
-
-                        <tr>
-                            <td><center>{{$lesson->name}}</center></td>
-                            <td><center>{{$lesson->coherence}}</center></td>
-                            <td><center>{{$roq[$i][2]}}</center></td>
-                            <td><center>{{$roq[$i][1]}}</center></td>
-                            <td><center>{{$roq[$i][0]}}</center></td>
-                            <td><center>{{$roq[$i][2] - $roq[$i][0] - $roq[$i][1]}}</center></td>
-
-                            <td><center style="direction: ltr">{{($percent <= 0) ? 0 : round($percent * $totalMark / 100, 0)}}</center></td>
-                            <td><center style="direction: ltr">{{$percent}}</center></td>
-                            <td><center style="direction: ltr">{{$avgPercent}}</center></td>
-                            <td><center style="direction: ltr">{{$maxPercent}}</center></td>
-                            <td><center style="direction: ltr">{{$minPercent}}</center></td>
-                        </tr>
-                    @endif
                     <?php
-                    $i++;
+                    $i = 0;
                     ?>
-                @endforeach
-            </table>
+
+                    @foreach($lessons as $lesson)
+
+                        @if($roq[$i][2] != 0)
+
+                            <?php $percent = round($taraz[$i]->percent * 100 / $roq[$i][3], 2); ?>
+                            <?php $minPercent = round($avgs[$i]->minPercent * 100 / $roq[$i][3], 2); ?>
+                            <?php $maxPercent = round($avgs[$i]->maxPercent * 100 / $roq[$i][3], 2); ?>
+                            <?php $avgPercent = round($avgs[$i]->avg * 100 / $roq[$i][3], 2); ?>
+
+                            <tr>
+                                <td><center>{{$lesson->name}}</center></td>
+                                <td><center>{{$lesson->coherence}}</center></td>
+                                <td><center>{{$roq[$i][2]}}</center></td>
+                                <td><center>{{$roq[$i][1]}}</center></td>
+                                <td><center>{{$roq[$i][0]}}</center></td>
+                                <td><center>{{$roq[$i][2] - $roq[$i][0] - $roq[$i][1]}}</center></td>
+
+                                <td><center style="direction: ltr">{{($percent <= 0) ? 0 : round($percent * $totalMark / 100, 0)}}</center></td>
+                                <td><center style="direction: ltr">{{$percent}}</center></td>
+                                <td><center style="direction: ltr">{{$avgPercent}}</center></td>
+                                <td><center style="direction: ltr">{{$maxPercent}}</center></td>
+                                <td><center style="direction: ltr">{{$minPercent}}</center></td>
+                            </tr>
+                        @endif
+                        <?php
+                        $i++;
+                        ?>
+                    @endforeach
+                </table>
+            @endif
 
             <?php $i = 0; $allow = false; ?>
             @foreach($lessons as $lesson)
