@@ -103,39 +103,39 @@
                 newNode += "<center style='margin-top: 20px;'><span style='font-size: 20px; color: #ff0000'>پاسخ شما : </span><select disabled class='mySelect' style='width: 60px; font-size: 14px' id='choices'>";
 
                 if (answer[qIdx].result == -1)
-                    newNode = newNode + "<option selected value='0' selected>خطا</option>";
+                    newNode += "<option selected value='0' selected>خطا</option>";
 
                 if (answer[qIdx].result == 0)
-                    newNode = newNode + "<option value='0' selected>سفید</option>";
+                    newNode += "<option value='0' selected>سفید</option>";
                 else
                     newNode = newNode + "<option value='0'>سفید</option>";
                 if (answer[qIdx].result == 1)
-                    newNode = newNode + "<option value='1' selected>گزینه 1</option>";
+                    newNode += "<option value='1' selected>گزینه 1</option>";
                 else
-                    newNode = newNode + "<option value='1'>گزینه 1</option>";
+                    newNode += "<option value='1'>گزینه 1</option>";
                 if (answer[qIdx].result == 2)
-                    newNode = newNode + "<option value='2' selected>گزینه 2</option>";
+                    newNode += "<option value='2' selected>گزینه 2</option>";
                 else
                     newNode = newNode + "<option value='2'>گزینه 2</option>";
                 if (answer[qIdx].result == 3)
-                    newNode = newNode + "<option value='3' selected>گزینه 3</option>";
+                    newNode += "<option value='3' selected>گزینه 3</option>";
                 else
-                    newNode = newNode + "<option value='3'>گزینه 3</option>";
+                    newNode += "<option value='3'>گزینه 3</option>";
                 if (answer[qIdx].result == 4)
-                    newNode = newNode + "<option value='4' selected>گزینه 4</option>";
+                    newNode += "<option value='4' selected>گزینه 4</option>";
                 else
-                    newNode = newNode + "<option value='4'>گزینه 4</option>";
+                    newNode += "<option value='4'>گزینه 4</option>";
 
                 if (answer[qIdx].result == 5)
-                    newNode = newNode + "<option value='5' selected>گزینه 5</option>";
+                    newNode += "<option value='5' selected>گزینه 5</option>";
                 else
-                    newNode = newNode + "<option value='5'>گزینه 5</option>";
+                    newNode += "<option value='5'>گزینه 5</option>";
 
-                newNode = newNode + "</select></center>";
+                newNode += "</select></center>";
             }
-            else if(questionArr[qIdx].kindQ == "0") {
+            else if(questionArr[qIdx].kindQ == "0")
                 newNode += "<center style='margin-top: 20px'><label for='yourAns'>پاسخ شما:</label><input readonly style='max-width: 100px' onchange='submitC(this.value)' type='text' value='" + answer[qIdx].result + "'></center>";
-            }
+
             else {
 
                 var tmpArr2 = [];
@@ -144,7 +144,7 @@
                 for (i = 0; i < questionArr[qIdx].choicesCount; i++)
                     tmpArr2[i] = answer[qIdx].result[i];
 
-                newNode = "<center style='margin-top: 20px'><p style='color: red;'>پاسخ شما:</p>";
+                newNode += "<center style='margin-top: 20px'><p style='color: red;'>پاسخ شما:</p>";
                 for (i = 0; i < questionArr[qIdx].choicesCount; i++) {
                     newNode += "<div><label for='sentence_" + i + "' style='margin: 10px'>گزاره " + myArr[i] + "</label>";
                     newNode += "<select style='width: 120px' id='sentence_" + i + "' readonly='true' '>";
