@@ -3950,7 +3950,11 @@ sumTaraz DESC');
                 $tmp->uId = $itr->uId;
                 $tmp->quizId = $itr->quizId;
                 $tmp->result = $str[$i];
-                $tmp->questionId = RegularQOQ::whereQuizId($itr->quizId)->whereQNo(($i + 1))->first()->questionId;
+                $qoq = RegularQOQ::whereQuizId($itr->quizId)->whereQNo($i + 1)->select('questionId')->first();
+                if($qoq == null)
+                    dd($i . ' ' . $itr->id);
+                else
+                    $tmp->questionId = $qoq->questionId;
                 $tmp->quizMode = 2;
                 $tmp->status = true;
                 try {
