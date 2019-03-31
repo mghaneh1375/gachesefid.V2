@@ -3391,12 +3391,13 @@ sumTaraz DESC');
                         $lastRow = $workSheet->getHighestRow();
                         $cols = $workSheet->getHighestColumn();
 
-                        if ($cols < 'A') {
+                        if ($cols < 'B') {
                             unlink($path);
                             $err = "تعداد ستون های فایل شما معتبر نمی باشد";
                         } else {
                             for ($row = 1; $row <= $lastRow; $row++) {
-                                $questions[$row - 1] = $workSheet->getCell('A' . $row)->getValue();
+                                $questions[$row - 1][0] = $workSheet->getCell('A' . $row)->getValue();
+                                $questions[$row - 1][1] = $workSheet->getCell('B' . $row)->getValue();
                             }
                             unlink($path);
                             $err = $this->doAddBatchQToQ($questions, $quizId);
@@ -3420,9 +3421,9 @@ sumTaraz DESC');
 
         foreach ($questions as $question) {
 
-            $tmp = Question::where('organizationId', '=', $question)->first();
+            $tmp = Question::whereOrganizationId($question[0])->first();
             if($tmp == null) {
-                $errs .= $question . ', ';
+                $errs .= $question[0] . ', ';
                 $emptyErr = false;
                 continue;
             }
@@ -3430,6 +3431,7 @@ sumTaraz DESC');
             $qoq = new RegularQOQ();
             $qoq->quizId = $quizId;
             $qoq->questionId = $tmp->id;
+            $qoq->mark = $question[1];
 
             $lastQ = RegularQOQ::where('quizId', '=', $quizId)->orderBy('qNo', 'DESC')->first();
 
@@ -3444,7 +3446,7 @@ sumTaraz DESC');
                 $qoq->save();
             }
             catch (Exception $x) {
-                $errs .= $question . ', ';
+                $errs .= $question[0] . ', ';
                 $emptyErr = false;
             }
         }
