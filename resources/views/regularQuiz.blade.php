@@ -439,8 +439,9 @@ if ($questions == null || $numQ == 0) {
                         document.location.href = url;
                     }
                     else {
-                        $("#errMsgConfirm").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا با پشتیبان (09214915905) تماس بگیرید" + "\n" + response);
-                        $("#errMsgConfirm2").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا با پشتیبان (09214915905) تماس بگیرید" + "\n" + response);
+                        submitAllAns2(url, finalResult);
+//                        $("#errMsgConfirm").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا با پشتیبان (09214915905) تماس بگیرید" + "\n" + response);
+//                        $("#errMsgConfirm2").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا با پشتیبان (09214915905) تماس بگیرید" + "\n" + response);
                     }
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {

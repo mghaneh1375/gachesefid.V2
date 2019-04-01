@@ -2670,8 +2670,10 @@ sumTaraz DESC');
 
             $roq = ROQ2::whereUId(makeValidInput($_POST["uId"]))->whereQuizId(makeValidInput($_POST["quizId"]))->first();
 
-            if(!Hash::check($roq->id, $_POST["verify"]))
+            if(!Hash::check($roq->id, $_POST["verify"])) {
+                echo "nok3";
                 return;
+            }
 
             if($roq != null) {
                 $roq->result = makeValidInput($_POST["newVals"]);
