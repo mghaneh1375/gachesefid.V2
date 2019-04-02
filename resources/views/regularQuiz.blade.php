@@ -58,6 +58,13 @@
                     'quizId': quizId,
                     'uId': '{{isset($uId) ? $uId : ''}}',
                     'verify': '{{isset($verify) ? $verify : ''}}'
+                },
+                success: function (response) {
+                    if(response != "ok")
+                        submitAllAns2(url, finalResult);
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    submitAllAns2(url, finalResult);
                 }
             });
 
@@ -99,68 +106,6 @@
 
             answer[qIdx] = str;
         }
-
-//        function submitC(val) {
-//
-//            answer[qIdx].result = val;
-//            return;
-//
-//            if(mode == "special")
-//                return;
-//
-//            $.ajax({
-//                type: 'post',
-//                url: submitAns,
-//                data: {
-//                    'roqId': answer[qIdx].id,
-//                    'newVal': answer[qIdx].result
-//                },
-//                error: function (response) {
-//                    submitCBackUp(answer[qIdx].id, val);
-//                }
-//            });
-//        }
-
-//        function submitCBackUp(roqId, res) {
-//
-//            if(tryCounter >= 100) {
-//
-//                setTimeout(function () {
-//
-//                    $.ajax({
-//                        type: 'post',
-//                        url: submitAns,
-//                        data: {
-//                            'roqId': roqId,
-//                            'newVal': res
-//                        },
-//                        error: function (response) {
-//                            submitCBackUp(roqId, res);
-//                        }
-//                    });
-//
-//                    tryCounter = 0;
-//
-//                }, 30 * 1000);
-//                return;
-//            }
-//
-//            else {
-//                $.ajax({
-//                    type: 'post',
-//                    url: submitAns,
-//                    data: {
-//                        'roqId': roqId,
-//                        'newVal': res
-//                    },
-//                    error: function (response) {
-//                        submitCBackUp(roqId, res);
-//                    }
-//                });
-//
-//                tryCounter++;
-//            }
-//        }
 
         function incQ() {
             if(qIdx + 1 < questionArr.length) {
