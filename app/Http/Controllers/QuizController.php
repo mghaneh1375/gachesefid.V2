@@ -395,9 +395,11 @@ class QuizController extends Controller {
                             ($itr->endDate == $date && $itr->endTime > $time)
                         )
                     )
-                    || ($itr->id == 203 && $uId == 50)
-                    || ($itr->id == 203 && $uId == 4783)
-                    || ($itr->id == 203 && $uId == 4738)) {
+//                    || ($itr->id == 203 && $uId == 50)
+//                    || ($itr->id == 203 && $uId == 4783)
+//                    || ($itr->id == 203 && $uId == 4707)
+//                    || ($itr->id == 203 && $uId == 4738)
+                ) {
 
                     $timeLen = calcTimeLenQuiz($itr->id, 'regular');
 
@@ -2499,7 +2501,7 @@ sumTaraz DESC');
                 )
             ))) {
 
-            if($uId != 50 && $uId != 4783 && $uId != 4738)
+//            if($uId != 50 && $uId != 4783 && $uId != 4738 && $uId != 4707)
                 return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]));
         }
 
@@ -3961,6 +3963,10 @@ sumTaraz DESC');
                 $tmp->uId = $itr->uId;
                 $tmp->quizId = $itr->quizId;
                 $tmp->result = $str[$i];
+
+                if($itr->quizId == 206 && $i >= 107)
+                    continue;
+
                 $qoq = RegularQOQ::whereQuizId($itr->quizId)->whereQNo($i + 1)->select('questionId')->first();
                 if($qoq == null)
                     dd($i . ' ' . $itr->id);

@@ -993,10 +993,10 @@ class ReportController extends Controller {
         }
         else {
             $users = DB::select('SELECT qR.id, qR.uId, sum(taraz.taraz * (SELECT lesson.coherence FROM lesson WHERE lesson.id = taraz.lId)) as weighted_avg from quizRegistry qR, taraz WHERE quizMode = ' . $regularQuizMode . ' and qR.id = taraz.qEntryId and qR.qId = ' . $quizId . ' and (select count(*) from ROQ r where r.uId = qR.uId and r.quizId = qR.qId and r.quizMode = qR.quizMode) > 0 GROUP by (qR.id) ORDER by weighted_avg DESC');
-
         }
 
         $tmp = DB::select('SELECT DISTINCT L.id, L.name, L.coherence from lesson L, SOQ SO, subject S, regularQOQ QO WHERE QO.quizId = ' . $quizId . ' and QO.questionId = SO.qId and SO.sId = S.id and S.lessonId = L.id order by L.id ASC');
+
         $sum = 0;
 
         if($tmp == null || count($tmp) == 0)
@@ -1011,6 +1011,8 @@ class ReportController extends Controller {
         for($i = 0; $i < count($users); $i++)
             $users[$i]->rank = ($i + 1);
 
+
+        $totalMark = DB::select("select sum(r.mark) as sumTotal from regularQOQ r WHERE r.quizId = " . $quizId)[0]->sumTotal;
 
         $preTaraz = (count($users) > 0) ? round($users[0]->weighted_avg / $sum, 0) : 0;
 
@@ -1055,7 +1057,7 @@ class ReportController extends Controller {
             return $a->rank - $b->rank;
         });
 
-        return view('reportA5', array('users' => $users, 'quizId' => $quizId, 'msg' => $msg));
+        return view('reportA5', array('users' => $users, 'quizId' => $quizId, 'msg' => $msg, 'totalMark' => $totalMark));
 
     }
 

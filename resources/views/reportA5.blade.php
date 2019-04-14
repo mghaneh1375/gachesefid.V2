@@ -81,7 +81,7 @@
                                     $sumCoherence += $itr->coherence;
                                 }
                             ?>
-                            <td><center style="direction: ltr">{{round($itr->percent, 2)}}</center></td>
+                            <td><center style="direction: ltr">{{round($itr->percent, 2) . ' - %' . round($itr->percent * 100 / $totalMark, 2)}}</center></td>
                         @endforeach
                         @if($sumCoherence != 0)
                             @if($allow)
