@@ -3739,7 +3739,7 @@ class ReportController extends Controller {
 
         foreach ($lessons as $lesson) {
 
-            $kindQ2 = DB::select('select result, ans, kindQ, telorance, mark from regularQOQ qoq, ROQ roq, SOQ, question, subject where qoq.questionId = question.id and qoq.quizId = ' . $quizId . ' and uId = ' . $uId . ' and subject.id = sId and qId = question.id and roq.quizId = ' . $quizId . ' and question.id = roq.questionId and lessonId = ' . $lesson->id);
+            $kindQ2 = DB::select('select result, ans, kindQ, telorance, mark from regularQOQ qoq, ROQ roq, SOQ, question, subject where qoq.mark <> 0 and qoq.questionId = question.id and qoq.quizId = ' . $quizId . ' and uId = ' . $uId . ' and subject.id = sId and qId = question.id and roq.quizId = ' . $quizId . ' and question.id = roq.questionId and lessonId = ' . $lesson->id);
 
             if($kindQ2 != null) {
 

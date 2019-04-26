@@ -387,40 +387,44 @@ class QuizController extends Controller {
                 else
                     $itr->timeLen = $tmpTimeLen;
 
-                if(($itr->startDate < $date && $itr->endDate > $date) ||
-                    ($itr->startDate < $date && $itr->endDate >= $date && $itr->endTime > $time) ||
-                    ($itr->startDate == $date && $itr->startTime <= $time && (
-                            ($itr->startDate == $itr->endDate && $itr->endTime > $time) ||
-                            ($itr->startDate != $itr->endDate) ||
-                            ($itr->endDate == $date && $itr->endTime > $time)
+                if(ROQ::whereQuizId($itr->id)->whereUId($uId)->count() > 0) {
+                    $itr->quizEntry = -2;
+                }
+
+                else {
+                    if (($itr->startDate < $date && $itr->endDate > $date) ||
+                        ($itr->startDate < $date && $itr->endDate >= $date && $itr->endTime > $time) ||
+                        ($itr->startDate == $date && $itr->startTime <= $time && (
+                                ($itr->startDate == $itr->endDate && $itr->endTime > $time) ||
+                                ($itr->startDate != $itr->endDate) ||
+                                ($itr->endDate == $date && $itr->endTime > $time)
+                            )
                         )
-                    )
 //                    || ($itr->id == 203 && $uId == 50)
 //                    || ($itr->id == 203 && $uId == 4783)
 //                    || ($itr->id == 203 && $uId == 4707)
 //                    || ($itr->id == 203 && $uId == 4738)
-                ) {
+                    ) {
 
-                    $timeLen = calcTimeLenQuiz($itr->id, 'regular');
+                        $timeLen = calcTimeLenQuiz($itr->id, 'regular');
 
-                    if($itr->timeEntry == "") {
-                        $itr->quizEntry = 1;
-                    }
-                    else {
-                        $timeEntry = $itr->timeEntry;
-                        $reminder = $timeLen * 60 - time() + $timeEntry;
-                        if($reminder <= 0)
-                            $itr->quizEntry = -2;
-                        else
+                        if ($itr->timeEntry == "") {
                             $itr->quizEntry = 1;
+                        } else {
+                            $timeEntry = $itr->timeEntry;
+                            $reminder = $timeLen * 60 - time() + $timeEntry;
+                            if ($reminder <= 0)
+                                $itr->quizEntry = -2;
+                            else
+                                $itr->quizEntry = 1;
+                        }
+                    } else if ($itr->startDate > $date ||
+                        ($itr->startDate == $date && $itr->startTime > $time)
+                    ) {
+                        $itr->quizEntry = -1;
+                    } else {
+                        $itr->quizEntry = -2;
                     }
-                }
-                else if($itr->startDate > $date ||
-                    ($itr->startDate == $date && $itr->startTime > $time)) {
-                    $itr->quizEntry = -1;
-                }
-                else {
-                    $itr->quizEntry = -2;
                 }
 
                 $itr->startDate = convertStringToDate($itr->startDate);
@@ -902,7 +906,7 @@ class QuizController extends Controller {
 
         foreach ($lessons as $lesson) {
 
-            $kindQ2 = DB::select('select result, ans, kindQ, telorance, mark from regularQOQ qoq, ROQ roq, SOQ, question, subject where qoq.questionId = question.id and qoq.quizId = ' . $quizId . ' and uId = ' . $uId . ' and subject.id = sId and qId = question.id and roq.quizId = ' . $quizId . ' and question.id = roq.questionId and lessonId = ' . $lesson->id);
+            $kindQ2 = DB::select('select result, ans, kindQ, telorance, mark from regularQOQ qoq, ROQ roq, SOQ, question, subject where qoq.mark <> 0 and qoq.questionId = question.id and qoq.quizId = ' . $quizId . ' and uId = ' . $uId . ' and subject.id = sId and qId = question.id and roq.quizId = ' . $quizId . ' and question.id = roq.questionId and lessonId = ' . $lesson->id);
 
             if($kindQ2 != null) {
 
@@ -2271,10 +2275,14 @@ sumTaraz DESC');
             $date = $today["date"];
             $time = $today["time"];
 
-            if($quiz->startDate > $date || ($quiz->startDate == $date && $quiz->startTime > $time) ||
-                $quiz->endDate > $date || ($quiz->endDate == $date && $quiz->endTime > $time)
-            )
-                return $this->myQuizes('زمان مرور آزمون مورد نظر هنوز نرسیده است');
+            if(ROQ::whereQuizId($quizId)->whereUId($uId)->count() == 0) {
+
+                if ($quiz->startDate > $date || ($quiz->startDate == $date && $quiz->startTime > $time) ||
+                    $quiz->endDate > $date || ($quiz->endDate == $date && $quiz->endTime > $time)
+                )
+                    return $this->myQuizes('زمان مرور آزمون مورد نظر هنوز نرسیده است');
+
+            }
 
             $condition = ['qId' => $quizId, 'uId' => $uId, 'quizMode' => getValueInfo('regularQuiz')];
             $quizRegistry = QuizRegistry::where($condition)->first();

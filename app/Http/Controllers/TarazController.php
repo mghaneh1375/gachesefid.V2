@@ -181,7 +181,7 @@ class TarazController extends Controller {
             }
         }
 
-        $qoqs = DB::select('select mark, question.id, question.ans as ans, question.kindQ, question.telorance, question.choicesCount, SOQ.sId as sId from regularQOQ, question, SOQ WHERE regularQOQ.quizId = ' . $quizId . ' AND regularQOQ.questionId = question.id and question.id = SOQ.qId');
+        $qoqs = DB::select('select mark, question.id, question.ans as ans, question.kindQ, question.telorance, question.choicesCount, SOQ.sId as sId from regularQOQ, question, SOQ WHERE regularQOQ.mark <> 0 and regularQOQ.quizId = ' . $quizId . ' AND regularQOQ.questionId = question.id and question.id = SOQ.qId');
         $totals = array();
 
         foreach ($sIds as $sId)
