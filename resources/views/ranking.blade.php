@@ -90,12 +90,14 @@
             showWithDetail($(this).attr('data-id'), $(this).attr('data-taraz'));
         });
 
+        var totalMark = parseInt('{{$totalMark}}');
+
         function showWithDetail(idx, taraz) {
 
             $(".dark").removeClass('hidden');
 
             lessons = users[idx].lessons;
-            newElement = "<table style='width: 100%'><tr style='background-color: #ccc'><td>" + users[idx].name + "</td><td>" + quizName + "</td></tr></table>";
+            var newElement = "<table style='width: 100%'><tr style='background-color: #ccc'><td>" + users[idx].name + "</td><td>" + quizName + "</td></tr></table>";
 
             newElement += "<table style='width: 100%; margin-top: 10px'>";
             newElement += "<tr style='background-color: #ccc;'>";
@@ -117,7 +119,8 @@
             for (i = 0; i < lessons.length; i++) {
                 newElement += "<tr>";
                 newElement += '<td style="width: 50%">' + lessons[i].name + '</td>';
-                newElement += '<td style="width: 25%"><center style=" direction: ltr">' + lessons[i].percent + '</center></td>';
+                newElement += '<td style="width: 25%"><center style=" direction: ltr"><span>نمره کل: </span><span>&nbsp;</span><span>' + lessons[i].percent + '</span></center></td>';
+                newElement += '<td style="width: 25%"><center style=" direction: ltr"><span>درصد: </span><span>&nbsp;</span><span>' + Math.round(lessons[i].percent * 100 / totalMark) + '</span></center></td>';
                 newElement += '<td style="width: 25%"><center>' + lessons[i].taraz + '</center></td>';
                 newElement += "</tr>";
             }
@@ -131,7 +134,7 @@
 @stop
 
 
-<span id="stdInfo" class="ui_overlay item hidden" style="position: fixed; width: 40%; left: 30%; right: auto; top: 100px; bottom: auto">
+<span id="stdInfo" class="ui_overlay item hidden" style="font-family: IRANSans !important; position: fixed; width: 40%; left: 30%; right: auto; top: 100px; bottom: auto">
     <div style="color: #963019" class="header_text">کارنامه آزمون</div>
     <div onclick="$('#stdInfo').addClass('hidden'); $('.dark').addClass('hidden')" class="ui_close_x"></div>
     <div class="body_text" style="margin-top: 10px; max-height: 400px; overflow: auto"></div>

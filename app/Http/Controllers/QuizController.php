@@ -226,8 +226,11 @@ class QuizController extends Controller {
 
         $const = $const->ranking;
 
+        $totalMark = DB::select("select sum(r.mark) as sumTotal from regularQOQ r WHERE r.quizId = " . $quizId)[0]->sumTotal;
+
         foreach ($users as $user) {
-            $tmp = DB::select('select lesson.name, lesson.coherence, taraz.percent, taraz.taraz from taraz, lesson WHERE taraz.qEntryId = ' . $user->id .
+
+            $tmp = DB::select('select name, coherence, (percent + percent2 + percent3) as percent, taraz from taraz, lesson WHERE taraz.qEntryId = ' . $user->id .
                 ' and lesson.id = taraz.lId');
 
             $user->lessons = $tmp;
@@ -254,7 +257,7 @@ class QuizController extends Controller {
         $limit = (count($users) > $const) ? $const : count($users);
         $users = array_splice($users, 0, $limit);
 
-        return view('ranking', array('users' => $users, 'quizName' => RegularQuiz::whereId($quizId)->name));
+        return view('ranking', array('users' => $users, 'totalMark' => $totalMark, 'quizName' => RegularQuiz::whereId($quizId)->name));
 
     }
 
@@ -2290,14 +2293,14 @@ sumTaraz DESC');
             if($quizRegistry == null)
                 return Redirect::to('profile');
 
-            $roqs = DB::select('select ROQ.result, telorance, kindQ, question.ans as status from ROQ, question where quizId = ' . $quizId . " and uId = " . $uId . " and 
-                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ.questionId");
+            $roqs = DB::select('select r.result, telorance, kindQ, q.ans as status from ROQ r, question q, regularQOQ rq where r.quizId = rq.quizId and r.quizId = ' . $quizId . " and uId = " . $uId . " and 
+                rq.questionId = q.id and rq.mark <> 0 and quizMode = " . getValueInfo('regularQuiz') . " and q.id = r.questionId");
 
             if ($roqs == null || count($roqs) == 0) {
                 $this->fillRegularROQ($quizId);
 
-                $roqs = DB::select('select ROQ.result, telorance, kindQ, question.ans as status from ROQ, question where quizId = ' . $quizId . " and uId = " . $uId . " and 
-                quizMode = " . getValueInfo('regularQuiz') . " and question.id = ROQ.questionId");
+                $roqs = DB::select('select r.result, telorance, kindQ, q.ans as status from ROQ r, question q, regularQOQ rq where r.quizId = rq.quizId and r.quizId = ' . $quizId . " and uId = " . $uId . " and 
+                rq.questionId = q.id and rq.mark <> 0 and quizMode = " . getValueInfo('regularQuiz') . " and q.id = r.questionId");
             }
 
             foreach ($roqs as $roq) {
@@ -2313,7 +2316,7 @@ sumTaraz DESC');
             }
 
             $questions = DB::select('select telorance, ans, ansFile, choicesCount, question.id, question.questionFile, question.kindQ, question.neededTime as qoqId ' .
-                'from question, regularQOQ WHERE questionId = question.id and quizId = ' . $quizId . ' order by regularQOQ.qNo ASC');
+                'from question, regularQOQ WHERE mark <> 0 and questionId = question.id and quizId = ' . $quizId . ' order by regularQOQ.qNo ASC');
 
             foreach ($questions as $question) {
 
