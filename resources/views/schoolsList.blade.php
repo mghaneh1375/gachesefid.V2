@@ -28,7 +28,7 @@
     
     <center style="margin-top: 50px">
         <p>
-            برای انتخاب مدرسه خود، روی نام آن کلیک کنید
+            برای انتخاب مدرسه خود، روی نام آن کلیک کنید(در صورتی که نام مدرسه شما در لیست زیر موجود نبود، <span onclick="setAsMySchool('705')" style="color: red; cursor: pointer">آیریسک تهران</span> را انتخاب نمایید.
         </p>
             <table id="table">
                 <tr>
@@ -38,18 +38,25 @@
                     <td data-sort="asc" data-col="3" style="cursor: pointer" class="alphabeticallySortable"><span>نوع مدرسه</span><span class="sortIcon" id="sortIcon_3"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
                     <td data-sort="asc" data-col="4" style="cursor: pointer" class="alphabeticallySortable"><span>مقطع</span><span class="sortIcon" id="sortIcon_4"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
                     <td data-sort="asc" data-col="5" style="cursor: pointer" class="alphabeticallySortable"><span>جنسیت</span><span class="sortIcon" id="sortIcon_5"><i style="margin-right: 5px" class="fa fa-sort" aria-hidden="true"></i></span></td>
+                    <td>عملیات</td>
                     @if($allowShowSchoolCode)
                         <td>کد مدرسه</td>
                     @endif
                 </tr>
                 @foreach($users as $user)
                     <tr>
-                        <td onclick="setAsMySchool('{{$user->id}}')" style="cursor: pointer" data-toggle="tooltip" title="انتخاب به عنوان مدرسه من" class="myTooltip schoolName">{{$user->schoolName}}</td>
+                        <td data-toggle="tooltip" title="انتخاب به عنوان مدرسه من" class="myTooltip schoolName">{{$user->schoolName}}</td>
                         <td>{{$user->schoolCity}}</td>
                         <td>{{$user->schoolState}}</td>
                         <td>{{$user->schoolKind}}</td>
                         <td>{{$user->schoolLevel}}</td>
                         <td>{{($user->sex == 0) ? 'دخترانه' : 'پسرانه'}}</td>
+
+                        @if($user->id != $sId)
+                            <td onclick="setAsMySchool('{{$user->id}}')"><button class="btn btn-primary">انتخاب به عنوان مدرسه من</button></td>
+                        @else
+                            <td style="color: red"><center>مدرسه من</center></td>
+                        @endif
                         @if($allowShowSchoolCode)
                             <td>{{$user->invitationCode}}</td>
                         @endif

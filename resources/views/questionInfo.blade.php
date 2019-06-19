@@ -52,11 +52,11 @@
                     <button id="nextQ" onclick="nextQ()" style="position: absolute; right: 0; top: 25vh">بعدی</button>
                 </div>
 
-                <div style="margin-top: 30px">
-                    <center>
-                        <button id="discussion" data-val="" onclick="goToDiscussionRoom()">ورود به تالار گفتمان</button>
-                    </center>
-                </div>
+                {{--<div style="margin-top: 30px">--}}
+                    {{--<center>--}}
+                        {{--<button id="discussion" data-val="" onclick="goToDiscussionRoom()">ورود به تالار گفتمان</button>--}}
+                    {{--</center>--}}
+                {{--</div>--}}
             </div>
             <div class="col-xs-2" style="margin-top: 50px">
                 <div class="col-xs-12">

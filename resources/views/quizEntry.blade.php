@@ -94,7 +94,7 @@
 
             @foreach($selfQuizes as $quiz)
                 <tr>
-                    <td><center> آزمون دست ساز  {{$quiz->created}}</center></td>
+                    <td><center> آزمون من  {{$quiz->created}}</center></td>
                     <td><center></center></td>
                     <td></td>
                     <td><center></center></td>

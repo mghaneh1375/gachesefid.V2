@@ -24,6 +24,9 @@
         label {
             float: right;
             width: 200px;
+            font-weight: 700;
+            font-size: 16px;
+            color: black;
         }
         span {
             float: right;
@@ -74,7 +77,7 @@
         <div class="col-xs-12">
             <center>
                 <p>
-                    <label><span>تالیفات و ترجمه ها:</span></label>
+                    <label><span>تالیف و ترجمه:</span></label>
                     <span>{{$adviserInfo->essay}}</span>
                 </p>
             </center>

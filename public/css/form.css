@@ -55,6 +55,14 @@
     font-family: IRANSans;
 }
 
+.myRegister > .data  center > a {
+    padding: 16px;
+    border-radius: 5px;
+    max-width: 250px;
+    font-family: IRANSans;
+}
+
+
 .myRegister > .data  center > input[type=submit]:hover{
     background-color: #ccc;
 }

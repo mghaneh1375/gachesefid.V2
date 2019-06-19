@@ -223,8 +223,8 @@ class RegistrationController extends Controller {
 
                     sendSMS($phoneNum, $activationCode, "activationCode");
 
-                    return view("registration", array("mode" => "pending", "phoneNum" => $phoneNum,
-                        'uId' => $user->id, 'reminder' => 300));
+                    return view("registration", array("mode" => "pending", "phoneNum" => $phoneNum, 'username' => $username,
+                        'firstName' => $firstName, 'uId' => $user->id, 'reminder' => 300));
                 }
             }
 

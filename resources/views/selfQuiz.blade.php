@@ -303,7 +303,7 @@ if ($roqs == null || $numQ == 0) {
         <div class="col-xs-12">
             <div style='margin-top: 5px; padding: 10px'>
                 <center>
-                    <button class="btn btn-default" id="discussion" data-val="" onclick="goToDiscussionRoom()">ورود به تالار گفتمان</button>
+                    {{--<button class="btn btn-default" id="discussion" data-val="" onclick="goToDiscussionRoom()">ورود به تالار گفتمان</button>--}}
                     <button id="backQ" class="btn btn-default" onclick="decQ()">سوال قبلی</button>
                     <button id="nxtQ" class="btn btn-default" onclick="incQ()">سوال بعدی</button>
                     <button class="btn btn-primary" onclick="showConfirmationPaneEnd()">اتمام ارزیابی</button>

@@ -72,6 +72,7 @@ class Kernel extends HttpKernel
         'adviserLevel' => \App\Http\Middleware\AdviserAccess::class,
         'studentLevel' => \App\Http\Middleware\StudentAccess::class,
         'reportLevel' => \App\Http\Middleware\ReportAccess::class,
+        'schoolSelectedController' => \App\Http\Middleware\SchoolSelectedController::class,
         'quiz' => \App\Http\Middleware\QuizAccess::class,
     ];
 }

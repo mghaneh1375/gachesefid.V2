@@ -612,7 +612,7 @@ class QuizController extends Controller {
     }
 
     public function seeResult($quizId = "") {
-
+        
         $uId = Auth::user()->id;
         $msg = "";
 
@@ -1746,7 +1746,7 @@ sumTaraz DESC');
         if (isset($_POST["RefId"]) && isset($_POST["ResCode"]) && isset($_POST["SaleOrderId"]) && isset($_POST["SaleReferenceId"]))  {
 
             if(makeValidInput($_POST["ResCode"]) != 0) {
-                return Redirect::to(route('doQuizRegistryWithStatus', ['quizId' => $quizId, 
+                return Redirect::to(route('doQuizRegistryWithStatus', ['quizId' => $quizId,
                     'mode' => $mode, 'status' => 'err']));
             }
 

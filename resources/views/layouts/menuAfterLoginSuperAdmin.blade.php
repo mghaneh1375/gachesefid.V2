@@ -85,29 +85,32 @@
             <li id="menu-item-2017" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2017"><a href="{{route('advisers')}}" ><i class="menu-item-icon fa fa-edit"></i>مشاوران<i class="seoicon-right-arrow" ></i></a></li>
             <li id="menu-item-2018" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2018"><a href="{{route('namayandeha')}}" ><i class="menu-item-icon fa fa-edit"></i>نمایندگان<i class="seoicon-right-arrow" ></i></a></li>
             <li id="menu-item-2019" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2019"><a href="{{route('schools')}}" ><i class="menu-item-icon fa fa-edit"></i>مدارس<i class="seoicon-right-arrow" ></i></a></li>
+                <li id="menu-item-2019" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2019"><a href="{{route('deactiveUsers')}}" ><i class="menu-item-icon fa fa-edit"></i>تایید کاربران غیر فعال<i class="seoicon-right-arrow" ></i></a></li>
         </ul>
     </li>
 
 
     <li id="menu-item-100" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-has-mega-menu menu-item-has-icon menu-item-100"><a href="#" ><i class="menu-item-icon fa fa-bar-chart-o" ></i>آزمون</a><div class="megamenu" style="" >
             <ul class="mega-menu-row">
-                <li id="menu-item-8000" class="menu-item menu-item-type-custom menu-item-object-custom mega-menu-col menu-item-1985"><a href="#" >سنجش پای تخته!<i class="seoicon-right-arrow" ></i></a>
-                    <ul class="sub-menu sub-menu-has-icons">
-                        <li id="menu-item-8002" class="menu-item menu-item-type-custom
-                                        menu-item-object-custom menu-item-8002"><a href="{{route('onlineQuizes')}}" ><i class="menu-item-icon fa fa-edit"></i>ساخت آزمون<i class="seoicon-right-arrow" ></i></a></li>
-                        <li id="menu-item-8003" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-8003"><a href="{{route('finishQuiz')}}" ><i class="menu-item-icon fa fa-edit"></i>اتمام آزمون<i class="seoicon-right-arrow"
-                                ></i></a></li>
+                {{--<li id="menu-item-8000" class="menu-item menu-item-type-custom menu-item-object-custom mega-menu-col menu-item-1985"><a href="#" >سنجش پای تخته!<i class="seoicon-right-arrow" ></i></a>--}}
+                    {{--<ul class="sub-menu sub-menu-has-icons">--}}
+                        {{--<li id="menu-item-8002" class="menu-item menu-item-type-custom--}}
+                                        {{--menu-item-object-custom menu-item-8002"><a href="{{route('onlineQuizes')}}" ><i class="menu-item-icon fa fa-edit"></i>ساخت آزمون<i class="seoicon-right-arrow" ></i></a></li>--}}
+                        {{--<li id="menu-item-8003" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-8003"><a href="{{route('finishQuiz')}}" ><i class="menu-item-icon fa fa-edit"></i>اتمام آزمون<i class="seoicon-right-arrow"--}}
+                                {{--></i></a></li>--}}
 
-                        <li id="menu-item-8008" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-8008">
-                            <a href="{{route('composeQuizes')}}" ><i class="menu-item-icon fa fa-edit"></i>ساخت بسته های آزمونی<i class="seoicon-right-arrow" ></i></a></li>
-                    </ul>
-                </li>
+                        {{--<li id="menu-item-8008" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-8008">--}}
+                            {{--<a href="{{route('composeQuizes')}}" ><i class="menu-item-icon fa fa-edit"></i>ساخت بسته های آزمونی<i class="seoicon-right-arrow" ></i></a></li>--}}
+                    {{--</ul>--}}
+                {{--</li>--}}
 
                 <li id="menu-item-1984" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children mega-menu-col menu-item-1984"><a href="#" >سنجش پشت میز!</a>
                     <ul class="sub-menu sub-menu-has-icons">
                         <li id="menu-item-1954" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1954"><a href="{{route('regularQuizes')}}" ><i class="menu-item-icon fa fa-edit"></i>ساخت آزمون<i class="seoicon-right-arrow" ></i></a></li>
                         <li id="menu-item-1975" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1975"><a href="{{route('createTarazTable')}}" ><i class="menu-item-icon fa fa-edit"></i>ساخت جدول تراز آزمون<i class="seoicon-right-arrow" ></i></a></li>
                         <li id="menu-item-1976" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1976"><a href="{{route('deleteTarazTable')}}" ><i class="menu-item-icon fa fa-edit"></i>حذف جدول تراز آزمون<i class="seoicon-right-arrow" ></i></a></li>
+                        <li id="menu-item-8008" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-8008">
+                        <a href="{{route('composeQuizes')}}" ><i class="menu-item-icon fa fa-edit"></i>ساخت بسته های آزمونی<i class="seoicon-right-arrow" ></i></a></li>
                     </ul>
                 </li>
             </ul>

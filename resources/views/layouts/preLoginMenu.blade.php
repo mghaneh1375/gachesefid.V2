@@ -3,7 +3,7 @@
 @section('items')
 
 
-    <li id="menu-item-1981" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-has-icon menu-item-1981"><a href="#" ><i class="menu-item-icon fa fa-group" ></i>کاربران</a>
+    <li id="menu-item-1981" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-has-icon menu-item-1981"><a href="#" ><i class="menu-item-icon fa fa-group" ></i>ورود/ثبت نام</a>
         <ul class="sub-menu sub-menu-has-icons">
             <li id="menu-item-1982" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-icon menu-item-1982"><a href="{{route('login')}}" ><i class="menu-item-icon fa fa-edit"></i>ورود<i
                             class="seoicon-right-arrow"
@@ -11,8 +11,8 @@
             <li id="menu-item-1983" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-icon menu-item-1983"><a href="{{route('registration')}}" ><i class="menu-item-icon fa fa-edit" ></i>ثبت‌نام<i class="seoicon-right-arrow"
                     ></i></a></li>
 
-            <li id="menu-item-19812" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-icon menu-item-1983"><a href="{{route('getActivation')}}" ><i class="menu-item-icon fa fa-edit" ></i>دریافت مجدد کد فعال‌سازی<i class="seoicon-right-arrow"
-                    ></i></a></li>
+            {{--<li id="menu-item-19812" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-icon menu-item-1983"><a href="{{route('getActivation')}}" ><i class="menu-item-icon fa fa-edit" ></i>دریافت مجدد کد فعال‌سازی<i class="seoicon-right-arrow"--}}
+                    {{--></i></a></li>--}}
         </ul>
     </li>
 

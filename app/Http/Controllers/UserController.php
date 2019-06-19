@@ -327,11 +327,13 @@ class UserController extends Controller {
     public function schoolsList() {
 
         $users = User::schools()->get();
+
         foreach ($users as $user) {
 
             $tmp = School::whereUId($user->id)->first();
+
             if($tmp == null)
-                return Redirect::to('profile');
+                return Redirect::route('profile');
 
             $user->schoolName = $tmp->name;
             switch ($tmp->kind) {
@@ -363,11 +365,25 @@ class UserController extends Controller {
             $user->schoolState = State::whereId($tmpCity->stateId)->name;
             
             $tmp = NamayandeSchool::where('sId', '=', $user->id)->first();
+
             if($tmp == null)
-                return Redirect::to('profile');
+                return Redirect::route('profile');
 
         }
-        return view('schoolsList', array('users' => $users));
+
+        if(Auth::check()) {
+
+            $sId = SchoolStudent::whereUId(Auth::user()->id)->first();
+
+            if($sId == null)
+                $sId = -1;
+            else
+                $sId = $sId->sId;
+        }
+        else
+            $sId = -1;
+
+        return view('schoolsList', array('users' => $users, 'sId' => $sId));
     }
 
     public function removeSchool() {
@@ -974,5 +990,21 @@ class UserController extends Controller {
         }
 
         echo "nok1";
+    }
+
+    public function deactiveUsers() {
+        return view('deactiveUsers', ['users' => User::whereLevel(getValueInfo('studentLevel'))->whereStatus(0)->get()]);
+    }
+
+    public function activeUser() {
+        
+        if(isset($_POST["userId"])) {
+            $user = User::whereId(makeValidInput($_POST["userId"]));
+            if($user != null) {
+                $user->status = 1;
+                $user->save();
+            }
+        }
+        
     }
 }

@@ -4,9 +4,9 @@
 <center>
     <button onclick="document.location.href = '{{route('registration')}}'" class="btn menuBtn">ثبت نام</button>
 </center>
-<center>
-    <button onclick="document.location.href = '{{route('getActivation')}}'" class="btn menuBtn">دریافت مجدد کد فعال‌سازی</button>
-</center>
+{{--<center>--}}
+    {{--<button onclick="document.location.href = '{{route('getActivation')}}'" class="btn menuBtn">دریافت مجدد کد فعال‌سازی</button>--}}
+{{--</center>--}}
 <center>
     <button onclick="document.location.href = '{{route('profile')}}'" class="btn menuBtn">صفحه کاربری</button>
 </center>

@@ -47,7 +47,7 @@
 
             function showResendBtn() {
 
-                newElement = "<center>";
+                var newElement = "<center>";
                 newElement += '<input type="text" class="hidden" name="phoneNum" value="' + {{$phoneNum}} + '">';
                 newElement += '<input type="hidden" name="uId" value="' + {{$uId}} + '">';
                 newElement += "<input type='submit' value='ارسال مجدد کد فعال سازی' name='resendActivation'>";
@@ -66,12 +66,9 @@
 @section('caption')
 
     @if($mode == "pass1")
-        <div class="title">        فرم ثبت نام
-        </div>
-
+        <div class="title">فرم ثبت نام</div>
     @else
-        <div class="title">تایید حساب کاربری
-        </div>
+        <div class="title">تایید شماره موبایل</div>
     @endif
 
     <div class="line"></div>
@@ -391,7 +388,7 @@
                             <span>
                                 <span  class="help" data-toggle="tooltip" data-placement="top" title="اگر کسی گچ سفید را به شما معرفی کرده، کد وی را در این بخش وارد کنید.">
                                     <img src="{{URL::asset('images/help.png')}}" alt="">
-                                </span>کد معرف
+                                </span>کد معرف (اختیاری)
                             </span>
                         </div>
                     </div>
@@ -413,6 +410,7 @@
                 @elseif($mode == "pending")
 
                     <div class="col-xs-12">
+                        <p style="max-width: 600px; text-align: justify;"><span>{{$firstName}}</span><span> عزیز ثبت نام شما با نام کاربری </span><span>{{$username}}</span><span>&nbsp</span><span>و رمز انتخابی انجام شده است. برای تایید شماره موبایل کد دریافت شده را در کادر زیر وارد کنید. اگر کد را دریافت نکرده اید با شماره خود عدد 110 را به شماره 02166591203 پیامک کنید تا حداکثر تا 24 ساعت کاری بعد حساب کاربری شما فعال خواهد شد.</span></p>
                         <div class="col-xs-7">
                             <input type="text" id="activationCode" name="activationCode" required autofocus maxlength="10">
                         </div>

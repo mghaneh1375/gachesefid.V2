@@ -10,6 +10,22 @@ Route::post('getExams', ['as' => 'getExams', 'uses' => 'AdminController@getExams
 
 Route::post('getMyStudents', ['as' => 'getMyStudents', 'uses' => 'AdminController@getMyStudents']);
 
+Route::get('shift', function() {
+
+	$roq2 = \App\models\ROQ::first();
+
+	for($i = 0; $i < 10000000; $i++) {
+		$roq = new \App\models\ROQ();
+		$roq->questionId = $roq2->questionId;
+		$roq->quizId = $roq2->quizId;
+		$roq->uId = $roq2->uId;
+		$roq->result = 3;
+		$roq->save();
+	}
+
+
+});
+
 Route::get('alaki', function () {
 	return view('alaki');
 });
@@ -183,7 +199,6 @@ Route::group(array('middleware' => ['nothing', 'auth']), function () {
 
 	Route::post('doChangePassword', array('as' => 'doChangePas', 'uses' => 'HomeController@doChangePas'));
 });
-
 
 Route::group(array('middleware' => ['nothing', 'auth']), function () {
 
@@ -367,6 +382,10 @@ Route::group(array('middleware' => ['nothing', 'auth', 'adminLevel']), function 
 
 Route::group(array('middleware' => ['nothing', 'auth', 'adviserLevel']), function () {
 
+	Route::get('deactiveUsers', ['as' => 'deactiveUsers', 'uses' => 'UserController@deactiveUsers']);
+
+	Route::post('activeUser', array('as' => 'activeUser', 'uses' => 'UserController@activeUser'));
+	
 	Route::post('doEditAdviserInfo', array('as' => 'doEditAdviserInfo', 'uses' => 'HomeController@doEditAdviserInfo'));
 
 	Route::get('editAdviserInfo/{msg?}', array('as' => 'editAdviserInfo', 'uses' => 'HomeController@editAdviserInfo'));
@@ -465,10 +484,16 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone', 'quiz']), functi
 
 	Route::get('showQuizWithOutTime/{quizId}/{quizMode}', array('as' => 'showQuizWithOutTime', 'uses' => 'QuizController@showQuizWithOutTime'));
 
-	Route::any('seeResult', array('as' => 'seeResult', 'uses' => 'QuizController@seeResult'));
-
 	Route::post('getQuizLessons', array('as' => 'getQuizLessons', 'uses' => 'AjaxController@getQuizLessons'));
 
+});
+
+Route::group(array('middleware' => ['nothing', 'auth', 'phone', 'schoolSelectedController']), function() {
+
+	Route::any('seeResult', array('as' => 'seeResult', 'uses' => 'QuizController@seeResult'));
+
+	Route::get('myQuizes', array('as' => 'myQuizes', 'uses' => 'QuizController@myQuizes'));
+	
 });
 
 Route::post('submitAllAnsRegularQuiz', array('as' => 'submitAllAnsRegularQuiz', 'uses' => 'QuizController@submitAllAnsRegularQuiz'));
@@ -500,8 +525,6 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 	Route::get('regularQuizRegistry', array('as' => 'regularQuizRegistry', 'uses' => 'QuizController@regularQuizRegistry'));
 
 	Route::get('quizEntry', array('as' => 'quizEntry', 'uses' => 'QuizController@quizEntry'));
-	
-	Route::get('myQuizes', array('as' => 'myQuizes', 'uses' => 'QuizController@myQuizes'));
 
 	Route::get('doComposeQuizRegistry/{composeId}', array('as' => 'doComposeQuizRegistry', 'uses' => 'QuizController@doComposeQuizRegistry'));
 

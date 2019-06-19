@@ -18,13 +18,13 @@
 
 <div class="header">
     <p>آزمون ها</p>
+    <p class="sub-header" onclick="document.location.href = '{{route('regularQuizRegistry')}}'"><span> - </span><span>ثبت نام در آزمون</span></p>
     <p class="sub-header" onclick="document.location.href = '{{route('myQuizes')}}'"><span> - </span><span>آزمون های من</span></p>
-    <p class="sub-header" onclick="document.location.href = '{{route('seeResult')}}'"><span> - </span><span>کارنامه آزمون</span></p>
-    <p class="sub-header" onclick="document.location.href = '{{route('quizRegistry')}}'"><span> - </span><span>ثبت نام در سنجش پای تخته</span></p>
-    <p class="sub-header" onclick="document.location.href = '{{route('regularQuizRegistry')}}'"><span> - </span><span>ثبت نام در سنجش پای میز</span></p>
-    {{--<p class="sub-header" onclick="document.location.href = '{{route('createCustomQuiz')}}'"><span> - </span><span>ساخت آزمون جدید</span></p>--}}
+    {{--<p class="sub-header" onclick="document.location.href = '{{route('quizRegistry')}}'"><span> - </span><span>ثبت نام در سنجش پای تخته</span></p>--}}
+    <p class="sub-header" onclick="document.location.href = '{{route('createCustomQuiz')}}'"><span> - </span><span>ساخت آزمون جدید</span></p>
 </div>
 
+<p class="header" onclick="document.location.href = '{{route('seeResult')}}'">کارنامه آزمون</p>
 <p class="header" onclick="document.location.href = '{{route('ranking1')}}'">رتبه بندی آزمون ها</p>
 <p class="header" onclick="document.location.href = '{{route('schoolsList')}}'">لیست کل مدارس</p>
 

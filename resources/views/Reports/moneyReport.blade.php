@@ -180,10 +180,10 @@
             <label for="regularRegistry">ثبت نام در سنجش پشت میز</label>
             <input id="regularRegistry" type="checkbox" checked>
         </div>
-        <div class="col-xs-12">
-            <label for="systemRegistry">ثبت نام در سنجش پای تخته</label>
-            <input id="systemRegistry" type="checkbox" checked>
-        </div>
+        {{--<div class="col-xs-12">--}}
+            {{--<label for="systemRegistry">ثبت نام در سنجش پای تخته</label>--}}
+            {{--<input id="systemRegistry" type="checkbox" checked>--}}
+        {{--</div>--}}
         <div class="col-xs-12">
             <label for="systemRegistry">شارژ حساب</label>
             <input id="charge" type="checkbox" checked>

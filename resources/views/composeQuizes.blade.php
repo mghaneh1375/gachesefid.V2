@@ -61,8 +61,8 @@
                                                 <p style="margin-right: 5em">
                                                     @if($itr->quizMode == getValueInfo('regularQuiz'))
                                                         <span> سنجش پشت میز </span>
-                                                    @elseif($itr->quizMode == getValueInfo('systemQuiz'))
-                                                        <span> سنجش پای تخته </span>
+                                                    {{--@elseif($itr->quizMode == getValueInfo('systemQuiz'))--}}
+                                                        {{--<span> سنجش پای تخته </span>--}}
                                                     @endif
                                                     <span> {{$itr->quizName}} </span>
                                                     <span onclick="deleteFromPackage('{{$itr->quizId}}', '{{$itr->quizMode}}')" data-toggle="tooltip" title="حذف آزمون از بسته" class="btn btn-warning">
@@ -115,7 +115,7 @@
                             <span>نوع بسته</span>
                             <select name="kindQuiz">
                                 <option value="{{getValueInfo('regularQuiz')}}">سنجش پشت میز</option>
-                                <option value="{{getValueInfo('systemQuiz')}}">سنجش پای تخته</option>
+                                {{--<option value="{{getValueInfo('systemQuiz')}}">سنجش پای تخته</option>--}}
                             </select>
                         </label>
                     </div>
@@ -127,7 +127,7 @@
             </div>
     </span>
 
-    <span id="packageList" class="ui_overlay hidden" style="position: fixed; left: 30%; width: 40%; right: auto; top: 174px; bottom: auto">
+    <span id="packageList" class="ui_overlay hidden" style="position: fixed; left: 30%; width: 40%; right: auto; top: 20px; bottom: auto">
         <div class="header_text">افزودن به بسته ها</div>
         <div onclick="$('#packageList').addClass('hidden'); $('.dark').addClass('hidden');" class="ui_close_x"></div>
             <center class="body_text">

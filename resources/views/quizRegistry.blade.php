@@ -10,11 +10,11 @@
 @stop
 
 @section('caption')
-    @if($mode == 'system')
-        <div class="title">چالش سرعتیِ پای تخته</div>
-    @else
+    {{--@if($mode == 'system')--}}
+        {{--<div class="title">چالش سرعتیِ پای تخته</div>--}}
+    {{--@else--}}
         <div class="title">پشت میزت محکم بشین و امتحان بده</div>
-    @endif
+    {{--@endif--}}
 @stop
 
 @section('main')

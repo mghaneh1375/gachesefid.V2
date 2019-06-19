@@ -25,6 +25,6 @@ class SchoolAccess
             $level == getValueInfo('schoolLevel') || $level == getValueInfo("namayandeLevel"))
             return $next($request);
 
-        return Redirect::to(route('profile'));
+        return Redirect::route('profile');
     }
 }

@@ -76,7 +76,7 @@
 <div class="header">
     <p>آزمون</p>
     <p onclick="document.location.href = '{{route('composeQuizes')}}'" class="sub-header"><span> - </span><span>ساخت بسته های آزمونی</span></p>
-    <p class="sub-header"><span> - </span><span>سنجش پای تخته!</span></p>
+    {{--<p class="sub-header"><span> - </span><span>سنجش پای تخته!</span></p>--}}
     <p class="sub-sub-header" onclick="document.location.href = '{{route('onlineQuizes')}}'"><span> - </span><span>ساخت آزمون</span></p>
     <p class="sub-sub-header" onclick="document.location.href = '{{route('finishQuiz')}}'"><span> - </span><span>اتمام آزمون</span></p>
     <p class="sub-header"><span> - </span><span>سنجش پشت میز!</span></p>
