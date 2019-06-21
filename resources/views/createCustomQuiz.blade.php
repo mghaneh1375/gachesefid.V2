@@ -66,7 +66,7 @@
             </div>
 
             <center>
-                <button onclick="showRecipe()" class="btn btn-primary">مشاهده فاکتور و پرداخت</button>
+                <button onclick="showRecipe()" class="btn btn-primary">پایان ساخت آزمون</button>
             </center>
         </div>
 
@@ -179,7 +179,7 @@
 
     <span id="recipe" class="ui_overlay item hidden" style="position: fixed; left: 30%; width: 40%; right: auto; top: 100px; bottom: auto; max-height: 60vh; overflow: auto">
         <div onclick="$('.item').addClass('hidden'); $('.dark').addClass('hidden');" class="ui_close_x"></div>
-        <div class="header_text">اطلاعات جعبه</div>
+        <div class="header_text">اطلاعات آزمون</div>
         <div  style='max-height: 30vh; min-height: 30vh; overflow: auto' id="recipeBody" class="body_text"></div>
 
         <center>

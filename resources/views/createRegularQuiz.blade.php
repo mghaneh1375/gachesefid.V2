@@ -249,6 +249,15 @@
                 </script>
             </div>
 
+            <div class="col-xs-12" style="margin-top: 5px">
+                <label for="quizKind">برگزاری حضوری؟</label>
+                <select id="quizKind">
+                    <option value="1">بله</option>
+                    <option value="0">خیر</option>
+                </select>
+            </div>
+
+
             <div class="submitOptions" style="margin-top: 10px">
                 <button onclick="doAddQuiz()" class="btn btn-success">تایید</button>
                 <input type="submit" onclick="hideElement()" value="خیر" class="btn btn-default">

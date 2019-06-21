@@ -125,6 +125,9 @@ Route::group(array('middleware' => ['nothing', 'auth', 'schoolLevel']), function
 	Route::post('deleteFromQueue', array('as' => 'deleteFromQueue', 'uses' => 'RegistrationController@deleteFromQueue'));
 	
 	Route::post('deleteStdFromSchool', array('as' => 'deleteStdFromSchool', 'uses' => 'RegistrationController@deleteStdFromSchool'));
+
+	Route::post('deleteBatchStdFromSchool', array('as' => 'deleteBatchStdFromSchool', 'uses' => 'RegistrationController@deleteBatchStdFromSchool'));
+	
 });
 
 Route::group(array('middleware' => ['nothing', 'auth', 'reportLevel']), function () {

@@ -100,7 +100,7 @@ class QuestionController extends Controller {
 
         include_once 'MoneyController.php';
 
-        return view('preTransactionQuestion', array('url' => route('createCustomQuiz'), 'backURL' => route('createCustomQuiz'), 'status' => $status, 'quizId' => $quizId,
+        return view('preTransactionQuestion', array('url' => route('myQuizes'), 'backURL' => route('createCustomQuiz'), 'status' => $status, 'quizId' => $quizId,
             'total' => getTotalMoney(), 'toPay' => UserCreatedQuiz::whereId($quizId)->toPay, 'payURL' => route('doCreateCustomQuizFromAccount'), 'payURL2' => route('doCreateCustomQuizOnline')));
     }
 
@@ -667,20 +667,19 @@ class QuestionController extends Controller {
             $qId = makeValidInput($_POST["qId"]);
             $uId = Auth::user()->id;
             $condition = ['uId' => $uId, 'questionId' => $qId];
-            if(ROQ::where($condition)->count() > 0) {
-                $lok = LOK::where($condition)->first();
-                if($lok == null) {
-                    $lok = new LOK();
-                    $lok->uId = $uId;
-                    $lok->questionId = $qId;
-                    $lok->save();
-                    echo "select";
-                }else {
-                    $lok->delete();
-                    echo "unselected";
-                }
-                return;
+            $lok = LOK::where($condition)->first();
+            if($lok == null) {
+                $lok = new LOK();
+                $lok->uId = $uId;
+                $lok->questionId = $qId;
+                $lok->save();
+                echo "select";
             }
+            else {
+                $lok->delete();
+                echo "unselected";
+            }
+            return;
         }
 
         echo "nok";

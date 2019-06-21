@@ -9,6 +9,8 @@ function getRegularQuizesOfStd(uId) {
         },
         success: function (response) {
 
+            var newElement;
+
             if(response.length < 0)
                 newElement = "آزمونی موجود نیست";
 
@@ -44,6 +46,15 @@ $(document).ready(function () {
 });
 
 function getStdOfQuiz(qId) {
+
+    var presence = $("#qId").find(":selected").attr('data-presence');
+
+    if(presence == 0) {
+        $("#presenceBtn").addClass('hidden');
+    }
+    else {
+        $("#presenceBtn").removeClass('hidden');
+    }
 
     $(":checkbox[name='selectedStd[]']").prop('checked', false);
 

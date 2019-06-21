@@ -25,6 +25,8 @@
         @if($level)
             <a href="{{route('namayandeSchool')}}"><button class="btn btn-primary">بازگشت به مرحله ی قبل</button></a>
         @endif
+
+        <button onclick="deleteBatchUsers()" class="btn btn-danger">حذف موارد انتخاب شده</button>
         
         <table style="padding: 10px">
             <tr>
@@ -52,6 +54,7 @@
 
                     <td><center><button data-toggle="tooltip" title="ویرایش" onclick="editStdOfSchool('{{$itr->id}}', '{{$itr->firstName}}', '{{$itr->lastName}}', '{{$itr->sex}}', '{{$itr->NID}}')" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span></button></center></td>
                     <td><center><button data-toggle="tooltip" title="حذف" onclick="deleteStdFromSchool('{{$itr->id}}')" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button></center></td>
+                    <td><center><input value="{{$itr->id}}" type="checkbox" name="userIds[]"></center></td>
                 </tr>
             @endforeach
 
@@ -128,6 +131,31 @@
     </span>
 
     <script>
+
+        function deleteBatchUsers() {
+
+            var userIds = [];
+            var counter = 0;
+
+            $.each($("input[name='userIds[]']:checked"), function(){
+                userIds[counter++] = $(this).val();
+            });
+
+
+            $.ajax({
+                type: 'post',
+                url: '{{route('deleteBatchStdFromSchool')}}',
+                data: {
+                    'userIds': userIds
+                },
+                success: function (response) {
+                    if(response == "ok") {
+                        document.location.href = '{{$backURL}}';
+                    }
+                }
+            });
+
+        }
 
         var selectedUId;
 

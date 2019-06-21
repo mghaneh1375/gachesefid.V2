@@ -58,6 +58,40 @@ class RegistrationController extends Controller {
 
     }
 
+    public function deleteBatchStdFromSchool() {
+
+        if(isset($_POST['userIds'])) {
+
+            $userIds = $_POST["userIds"];
+            $user = Auth::user();
+
+            if($user->level == getValueInfo('schoolLevel')) {
+
+                foreach ($userIds as $uId) {
+                    $uId = makeValidInput($uId);
+                    $condition = ['sId' => $user->id, 'uId' => $uId];
+                    if(SchoolStudent::where($condition)->count() == 0)
+                        continue;
+
+                    SchoolStudent::whereUId($uId)->delete();
+                }
+
+            }
+            else {
+                foreach ($userIds as $uId) {
+                    $uId = makeValidInput($uId);
+                    $tmp = DB::select('select count(*) as countNum from namayandeSchool nS, schoolStudent sS WHERE sS.sId = nS.sId and nS.nId = ' . $user->id . ' and sS.uId = ' . $uId);
+                    if ($tmp == null || count($tmp) == 0 || $tmp[0]->countNum == 0)
+                        continue;
+
+                    SchoolStudent::whereUId($uId)->delete();
+                }
+            }
+
+            echo "ok";
+        }
+    }
+
     public function doGetActivation() {
         
         if(isset($_POST["phoneNum"])) {
@@ -527,9 +561,9 @@ class RegistrationController extends Controller {
 
     public function groupQuizRegistration() {
 
-        $date = getToday()["date"];
-
+//        $date = getToday()["date"];
 //        $quizes = DB::select('select * from regularQuiz WHERE startReg <= ' . $date . ' and endReg >= ' . $date);
+        
         $quizes = DB::select('select * from regularQuiz');
         foreach ($quizes as $quiz) {
             $quiz->startDate = convertStringToDate($quiz->startDate);
@@ -594,12 +628,18 @@ class RegistrationController extends Controller {
         if(isset($_POST["qId"]) && isset($_POST["stds"]) && isset($_POST["mode"])) {
 
             $qId = makeValidInput($_POST["qId"]);
-            if(RegularQuiz::whereId($qId) == null)
+            $quiz =RegularQuiz::whereId($qId);
+            if($quiz == null)
                 return;
 
             $mode = makeValidInput($_POST["mode"]);
             $mode = ($mode == "online") ? 1 : 0;
             $stds = $_POST["stds"];
+
+            if($mode == 0 && !$quiz->presence) {
+                echo "nok";
+                return;
+            }
 
             $level = Auth::user()->level;
             $uId = Auth::user()->id;

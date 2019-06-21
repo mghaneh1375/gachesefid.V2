@@ -276,7 +276,7 @@ class ReportController extends Controller {
                     $transaction->kindTransactionId = "ثبت نام در آزمون پشت میز";
                     break;
                 case $questionBuyTransaction:
-                    $transaction->kindTransactionId = "ساخت آزمون دست ساز";
+                    $transaction->kindTransactionId = "ساخت آزمون شخصی";
                     break;
             }
         }

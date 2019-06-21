@@ -139,6 +139,7 @@ function editQuiz(quizId) {
             $("#date_input_reg_end").val(response.endReg);
             $("#sTime").val(response.startTime);
             $("#eTime").val(response.endTime);
+            $("#quizKind").val(response.presence);
 
         }
     });
@@ -537,7 +538,7 @@ function showSubQuestion() {
         .css('background-repeat', 'no-repeat')
         .css('background-size', '100% 100%');
 
-    newElement = "<div class='col-xs-12'><div class='col-xs-4'> زمان مورد نیاز: " + subQuestions[subCurrIdx].neededTime + " ثانیه</div>";
+    var newElement = "<div class='col-xs-12'><div class='col-xs-4'> زمان مورد نیاز: " + subQuestions[subCurrIdx].neededTime + " ثانیه</div>";
     switch (subQuestions[subCurrIdx].level) {
         case 1:
         default:
@@ -581,6 +582,8 @@ function doAddQuiz() {
         return;
     }
 
+    var url;
+
     if(currQuiz == -1)
         url = addQuizDir;
     else
@@ -598,7 +601,8 @@ function doAddQuiz() {
             'eTime': $("#eTime").val(),
             'sDateReg': $("#date_input_reg").val(),
             'eDateReg': $("#date_input_reg_end").val(),
-            'quizId': currQuiz
+            'quizId': currQuiz,
+            'presence': $("#quizKind").val()
         },
         success: function (response) {
             if(response == "ok")

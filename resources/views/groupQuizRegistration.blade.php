@@ -51,7 +51,7 @@
             <label style="float: right; font-size: 20px; color: #d9534f; padding: 10px" for="qId">توجه: ابتدا آزمون مورد نظر خود را انتخاب کنید</label>
             <select id="qId" onchange="getStdOfQuiz(this.value)">
                 @foreach($quizes as $quiz)
-                    <option value="{{$quiz->id}}">{{$quiz->name}}- شروع آزمون:
+                    <option data-presence="{{$quiz->presence}}" value="{{$quiz->id}}">{{$quiz->name}}- شروع آزمون:
                         {{$quiz->startDate}}- اتمام آزمون:
                         {{$quiz->endDate}}- شروع ثبت نام:
                         {{$quiz->startReg}}- اتمام ثبت نام:
@@ -91,7 +91,7 @@
     </center>
 
     <center class="col-xs-12" style="padding: 10px">
-        <button onclick="submitRegistry('nonOnline')" class="btn btn-primary">ثبت نام در آزمون حضوری</button>
+        <button id="presenceBtn" onclick="submitRegistry('nonOnline')" class="btn btn-primary">ثبت نام در آزمون حضوری</button>
         <button onclick="submitRegistry('online')" class="btn btn-success">ثبت نام در آزمون آنلاین</button>
         <button onclick="deleteFromQueue()" class="btn btn-danger">حذف از در حال بررسی</button>
     </center>

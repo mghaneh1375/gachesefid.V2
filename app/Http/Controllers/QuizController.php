@@ -2121,12 +2121,12 @@ sumTaraz DESC');
         }
 
         if($reminder <= 0)
-            return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('questionQuiz')]));
+            return Redirect::route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('questionQuiz')]);
 
         $roqs = DB::select('select s.result, question.ans as status, choicesCount, question.id, question.questionFile, question.kindQ from soldQuestion s, question where quizId = ' . $quizId . " and question.id = s.qId order by s.id ASC");
 
         if($roqs == null || count($roqs) == 0)
-            return Redirect::to('profile');
+            return Redirect::route('profile');
 
         foreach ($roqs as $roq) {
             if($roq->status == $roq->result)
@@ -2392,35 +2392,81 @@ sumTaraz DESC');
             if ($quiz == null)
                 return Redirect::to('profile');
 
-            $roqs = DB::select('select ansFile, s.result, question.ans as status, choicesCount, question.id, question.questionFile, question.kindQ from soldQuestion s, question where quizId = ' . $quizId . " and question.id = s.qId order by s.id ASC");
+            $questions = DB::select('select ansFile, s.result, question.ans as status, choicesCount, question.id, question.questionFile, question.kindQ, question.telorance from soldQuestion s, question where quizId = ' . $quizId . " and question.id = s.qId order by s.id ASC");
 
-            if ($roqs == null || count($roqs) == 0)
+            if ($questions == null || count($questions) == 0)
                 return Redirect::to('profile');
 
-            foreach ($roqs as $roq) {
-                if ($roq->status == $roq->result)
-                    $roq->status = 1;
+            foreach ($questions as $question) {
+
+                $question->ans = $question->status;
+
+                if ($question->status == $question->result)
+                    $question->status = 1;
                 else
-                    $roq->status = 0;
+                    $question->status = 0;
 
-                $condition = ['questionId' => $roq->id, 'result' => $roq->status];
-                $roq->correct = ROQ::where($condition)->count();
-                $roq->incorrect = DB::select('select count(*) as countNum from ROQ WHERE questionId = ' . $roq->id . ' and result <> ' . $roq->status
-                    . " and result <> 0")[0]->countNum;
-                $condition = ['questionId' => $roq->id, 'result' => 0];
-                $roq->white = ROQ::where($condition)->count();
 
-                $condition = ['uId' => $uId, 'questionId' => $roq->id];
-                $roq->hasLike = (LOK::where($condition)->count() == 1) ? true : false;
-                $roq->level = getQuestionLevel($roq->id);
+                if ($question->kindQ == 1) {
+                    $condition = ['questionId' => $question->id, 'result' => $question->ans];
+                    $question->correct = ROQ::where($condition)->count();
+                    $question->incorrect = DB::select('select count(*) as countNum from ROQ WHERE questionId = ' . $question->id . ' and result <> ' . $question->ans
+                        . " and result <> 0")[0]->countNum;
 
-                $roq->likeNo = LOK::whereQuestionId($roq->id)->count();
+                    $condition = ['questionId' => $question->id, 'result' => 0];
+                    $question->white = ROQ::where($condition)->count();
+                }
+                else if ($question->kindQ == 0) {
+                    $question->correct = DB::select('select count(*) as countNum from ROQ WHERE questionId = ' . $question->id . ' and result >= ' . ($question->ans - $question->telorance) .
+                        ' and result <= ' . ($question->ans + $question->telorance))[0]->countNum;
+                    $question->incorrect = DB::select('select count(*) as countNum from ROQ WHERE questionId = ' . $question->id . ' and result <> 0 and (result < ' . ($question->ans - $question->telorance) .
+                        ' or result > ' . ($question->ans + $question->telorance) . ')')[0]->countNum;
 
-                $roq->discussion = route('discussion', ['qId' => $roq->id]);
+                    $condition = ['questionId' => $question->id, 'result' => 0];
+                    $question->white = ROQ::where($condition)->count();
+                }
+                else {
+                    $roqsTmp = ROQ::whereQuestionId($question->id)->select('result')->get();
+                    $corrects = $inCorrects = $whites = [];
+                    $first = true;
+
+                    foreach ($roqsTmp as $itr) {
+
+                        $itr->result = (string)$itr->result;
+
+                        if ($first) {
+                            for ($k = 0; $k < strlen($itr->result); $k++) {
+                                $corrects[$k] = 0;
+                                $inCorrects[$k] = 0;
+                                $whites[$k] = 0;
+                            }
+                            $first = false;
+                        }
+
+                        for ($k = 0; $k < strlen($itr->result); $k++) {
+                            if ($itr->result[$k] == $question->ans[$k])
+                                $corrects[$k] = $corrects[$k] + 1;
+                            else if ($itr->result[$k] != 0)
+                                $inCorrects[$k] = $inCorrects[$k] + 1;
+                            else
+                                $whites[$k] = $whites[$k] + 1;
+                        }
+                    }
+
+                    $question->corrects = $corrects;
+                    $question->inCorrects = $inCorrects;
+                    $question->whites = $whites;
+                }
+
+                $condition = ['uId' => $uId, 'questionId' => $question->id];
+                $question->hasLike = (LOK::where($condition)->count() == 1) ? true : false;
+                $question->level = getQuestionLevel($question->id);
+                $question->likeNo = LOK::whereQuestionId($question->id)->count();
+
             }
 
             return view('selfQuiz', array('quiz' => $quiz, 'mode' => 'special',
-                'roqs' => $roqs));
+                'roqs' => $questions));
         }
 
         $quiz = SystemQuiz::whereId($quizId);
@@ -3194,7 +3240,7 @@ sumTaraz DESC');
 
         if(isset($_POST["sTime"]) && isset($_POST["sDate"]) && isset($_POST["eDate"]) && isset($_POST["eTime"]) &&
             isset($_POST["name"]) && isset($_POST["price"]) && isset($_POST["sDateReg"]) &&
-            isset($_POST["eDateReg"]) && isset($_POST["quizId"])) {
+            isset($_POST["eDateReg"]) && isset($_POST["quizId"]) && isset($_POST["presence"])) {
 
             $sDate = composeDate(makeValidInput($_POST["sDate"]));
             $eDate = composeDate(makeValidInput($_POST["eDate"]));
@@ -3234,6 +3280,7 @@ sumTaraz DESC');
 
             $quiz = RegularQuiz::whereId(makeValidInput($_POST["quizId"]));
             $quiz->name = makeValidInput($_POST["name"]);
+            $quiz->presence = (makeValidInput($_POST["presence"]) == "1");
             $quiz->startDate = $sDate;
             $quiz->endDate = $eDate;
             $quiz->startReg = $sDateReg;
@@ -3303,7 +3350,7 @@ sumTaraz DESC');
 
         if(isset($_POST["sTime"]) && isset($_POST["eTime"]) && isset($_POST["sDate"]) && isset($_POST["eDate"]) &&
             isset($_POST["name"]) && isset($_POST["price"]) && isset($_POST["sDateReg"]) &&
-            isset($_POST["eDateReg"])) {
+            isset($_POST["eDateReg"]) && isset($_POST["presence"])) {
 
             $sDate = composeDate(makeValidInput($_POST["sDate"]));
             $eDate = composeDate(makeValidInput($_POST["eDate"]));
@@ -3342,6 +3389,7 @@ sumTaraz DESC');
             }
 
             $quiz = new RegularQuiz();
+            $quiz->presence = (makeValidInput($_POST["presence"]) == "1");
             $quiz->name = makeValidInput($_POST["name"]);
             $quiz->startDate = $sDate;
             $quiz->endDate = $eDate;
