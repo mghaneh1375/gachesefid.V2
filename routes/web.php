@@ -547,7 +547,7 @@ Route::group(array('middleware' => ['nothing', 'auth', 'phone']), function () {
 
 	Route::post('multiPaymentQuiz/{mode}', array('as' => 'multiPaymentQuiz', 'uses' => 'QuizController@multiPaymentQuiz'));
 
-	Route::post('multiPaymentPostQuiz/{mode}/{pack}/{qId1}/{qId2}/{qId3?}/{qId4?}/{qId5?}/{qId6?}', array('as' => 'multiPaymentPostQuiz', 'uses' => 'QuizController@multiPaymentPostQuiz'));
+	Route::post('multiPaymentPostQuiz/{mode}/{pack}/{qId1}/{qId2}/{qId3?}/{qId4?}/{qId5?}/{qId6?}/{qId7?}/{qId8?}/{qId9?}/{qId10?}/{qId11?}/{qId12?}/{qId13?}/{qId14?}/{qId15?}/{qId16?}/{qId17?}/{qId18?}/{qId19?}', array('as' => 'multiPaymentPostQuiz', 'uses' => 'QuizController@multiPaymentPostQuiz'));
 
 	Route::post('paymentPostQuiz/{quizId}/{mode}', array('as' => 'paymentPostQuiz', 'uses' => 'QuizController@paymentPostQuiz'));
 
