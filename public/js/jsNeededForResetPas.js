@@ -12,7 +12,7 @@ function validate(evt) {
 
 function resetPas(noticePane) {
 
-    username = $("#username").val();
+    var username = $("#username").val();
     if(username.length == 0)
         return;
 

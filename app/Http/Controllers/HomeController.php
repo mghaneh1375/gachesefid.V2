@@ -164,11 +164,8 @@ class HomeController extends Controller {
 			if ($user == null) {
 				$user = User::whereNID($username)->first();
 				if ($user == null) {
-					$user = User::wherePhoneNum($username)->first();
-					if ($user == null) {
-						echo "نام کاربری وارد شده معتبر نمی باشد";
-						return;
-					}
+					echo "نام کاربری یا کد ملی وارد شده معتبر نمی باشد";
+					return;
 				}
 			}
 
