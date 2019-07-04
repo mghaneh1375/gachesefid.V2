@@ -19,7 +19,8 @@ function resetPas(noticePane) {
     if($("#email").val() == "" && $("#phone").val() == "")
         return;
 
-    mode = 2;
+    var mode = 2;
+    var val;
 
     if($("#email").val() != "") {
         mode = 1;
@@ -46,9 +47,9 @@ function resetPas(noticePane) {
         success: function (response) {
 
             $(".animatedContainer").addClass('hidden');
+            $(".dark").addClass('hidden');
 
             if(response != "ok") {
-                $(".dark").removeClass('hidden');
                 $("#msg").empty().append(response);
             }
             else {

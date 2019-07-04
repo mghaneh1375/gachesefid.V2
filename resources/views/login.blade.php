@@ -33,7 +33,7 @@
                 </div>
                 <div class="col-xs-12">
                     <center>
-                        <input type="submit" name="login" value="ورود">
+                        <input style="color: white !important; margin-top: 0 !important; background-color: #5cb85c; border: #4cae4c; padding: 16px" type="submit" name="login" value="ورود">
                         <a class="btn btn-danger" href="{{route('resetPas')}}">رمز عبور را فراموش کردم!</a>
                         @if(isset($msg) && !empty($msg))
                             <p class="errorText">{{$msg}}</p>
