@@ -24,7 +24,7 @@
 
         $(document).ready(function () {
 
-            setTimeout("saveAnsAuto()", 1000 * 60 * 30);
+            setTimeout("saveAnsAuto()", 1000 * 60 * 5);
 
             SUQ();
             if(mode == "normal") {
@@ -36,7 +36,7 @@
         });
 
         function saveAnsAuto() {
-
+            
             if(questionArr[qIdx].kindQ == "0")
                 submitC2();
 
@@ -60,15 +60,16 @@
                     'verify': '{{isset($verify) ? $verify : ''}}'
                 },
                 success: function (response) {
+
                     if(response != "ok")
-                        submitAllAns2(url, finalResult);
+                        submitAllAns2(-1, finalResult);
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    submitAllAns2(url, finalResult);
+                    submitAllAns2(-1, finalResult);
                 }
             });
 
-            setTimeout("saveAnsAuto()", 1000 * 60 * 30);
+            setTimeout("saveAnsAuto()", 1000 * 60 * 5);
         }
         
         function checkTime() {
@@ -410,7 +411,8 @@ if ($questions == null || $numQ == 0) {
                 success: function (response) {
 
                     if (response == "ok") {
-                        document.location.href = url;
+                        if(url != -1)
+                            document.location.href = url;
                     }
                     else {
                         $("#errMsgConfirm").empty().append("حطایی در ارسال پاسخ برگ به وجود آمده است لطفا با پشتیبان (09214915905) تماس بگیرید" + "\n" + response);

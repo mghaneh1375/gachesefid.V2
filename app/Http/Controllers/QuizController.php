@@ -2578,7 +2578,7 @@ sumTaraz DESC');
         $reminder = $timeLen * 60 - time() + $timeEntry;
 
         if($reminder <= 0)
-            return Redirect::to(route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]));
+            return Redirect::route('showQuizWithOutTime', ['quizId' => $quizId, 'quizMode' => getValueInfo('regularQuiz')]);
 
         $roqs = ROQ2::whereUId($uId)->whereQuizId($quizId)->first();
 
@@ -2729,7 +2729,7 @@ sumTaraz DESC');
     }
     
     public function submitAllAnsRegularQuiz() {
-
+        
         if(isset($_POST["newVals"]) && isset($_POST["quizId"]) && isset($_POST["uId"]) &&
             isset($_POST["verify"])) {
 
