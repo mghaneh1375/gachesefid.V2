@@ -16,7 +16,7 @@
 
 @section('caption')
     <div class="title" style="width: 500px !important;">
-        لیست مدارس همکار آیریسک
+        فهرست مدارس المپیادی ایران
     </div>
 @stop
 
@@ -28,7 +28,10 @@
     
     <center style="margin-top: 50px">
         <p>
-            برای انتخاب مدرسه خود، روی نام آن کلیک کنید(در صورتی که نام مدرسه شما در لیست زیر موجود نبود، <span onclick="setAsMySchool('705')" style="color: red; cursor: pointer">آیریسک تهران</span> را انتخاب نمایید.
+            اگر مدرسه شما در جدول زیر نیست، <a target="_blank" style="color: red; display: inline-block" href="https://www.irysc.com/irysc-mag.html">این فرم را تکمیل کنید</a> تا پس از بررسی، در لیست اضافه شود.
+            <br/>
+            تا پیش از اضافه شدن نام مدرسه، برای دیدن کارنامه و شرکت در آزمون، <span onclick="setAsMySchool('705')" style="color: red; cursor: pointer">آیریسک تهران</span> را انتخاب کنید.
+
         </p>
             <table id="table">
                 <tr>

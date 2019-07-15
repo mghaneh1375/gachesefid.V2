@@ -60,9 +60,10 @@
     </center>
 
     <span id="confirmationPane" class="ui_overlay item hidden" style="position: fixed; left: 30%; right: 30%; top: 170px; bottom: auto">
-        <div class="header_text">وضعیت خرید</div>
+        <div class="header_text">نتیجه ثبت نام</div>
         <div class="body_text">
-            <h5>خرید شما با موفقیت انجام پذیرفت</h5>
+            <h5>پرداخت هزینه آزمون موفق بود.
+برای دیدن لیست آزمون‌هایی که در آن‌ها ثبت‌نام کرده‌ای، به صفحه <a href="{{route('myQuizes')}}" style="display: inline-block; color: red">آزمون‌های من</a> برو.</h5>
             <div class="col-xs-12" style="margin-top: 10px">
                 <center>
                     <button onclick="document.location.href= '{{$url}}'" class="btn btn-primary">

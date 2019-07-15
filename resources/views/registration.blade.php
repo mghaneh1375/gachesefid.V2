@@ -410,7 +410,11 @@
                 @elseif($mode == "pending")
 
                     <div class="col-xs-12">
-                        <p style="max-width: 600px; text-align: justify;"><span>{{$firstName}}</span><span> عزیز ثبت نام شما با نام کاربری </span><span>{{$username}}</span><span>&nbsp</span><span>و رمز انتخابی انجام شده است. برای تایید شماره موبایل کد دریافت شده را در کادر زیر وارد کنید. اگر کد را دریافت نکرده اید با شماره خود عدد 110 را به شماره 02166591203 پیامک کنید تا حداکثر تا 24 ساعت کاری بعد حساب کاربری شما فعال خواهد شد.</span></p>
+
+                        @if(isset($firstName))
+                            <p style="max-width: 600px; text-align: justify;"><span>{{$firstName}}</span><span> عزیز ثبت نام شما با نام کاربری </span><span>{{$username}}</span><span>&nbsp</span><span>و رمز انتخابی انجام شده است. برای تایید شماره موبایل کد دریافت شده را در کادر زیر وارد کنید. اگر کد را دریافت نکرده اید با شماره خود عدد 110 را به شماره 02166591203 پیامک کنید تا حداکثر تا 24 ساعت کاری بعد حساب کاربری شما فعال خواهد شد.</span></p>
+                        @endif
+
                         <div class="col-xs-7">
                             <input type="text" id="activationCode" name="activationCode" required autofocus maxlength="10">
                         </div>
